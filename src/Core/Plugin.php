@@ -9,36 +9,27 @@ namespace EmjeCreative\EmjeMotion\Core;
  */
 final class Plugin
 {
+    /**
+     * Service container.
+     */
+    private Container $container;
 
-	/**
- 	* Service container.
- 	*/
-	private Container $container;
-
-	/**
+    /**
      * Boot the plugin.
      */
     public function boot(): void
     {
         $this->container = new Container();
 
-    	$this->registerHooks();
+        $this->registerHooks();
     }
 
-	/**
- 	* Get the service container.
- 	*/
-	public function getContainer(): Container
-	{
-    	return $this->container;
-	}
-
     /**
-     * Initialize the plugin.
+     * Get the service container.
      */
-    private function initialize(): void
+    public function getContainer(): Container
     {
-        $this->registerHooks();
+        return $this->container;
     }
 
     /**
@@ -54,22 +45,20 @@ final class Plugin
      */
     public function onPluginsLoaded(): void
     {
-    if ( ! $this->isElementorLoaded() ) {
+        if ( ! $this->isElementorLoaded() ) {
+            ( new \EmjeCreative\EmjeMotion\Admin\AdminNotice() )->register();
 
-        ( new \EmjeCreative\EmjeMotion\Admin\AdminNotice() )->register();
+            return;
+        }
 
-        return;
+        // Elementor initialization will start here.
     }
 
-    // Elementor initialization will start here.
+    /**
+     * Check whether Elementor is loaded.
+     */
+    private function isElementorLoaded(): bool
+    {
+        return did_action( 'elementor/loaded' ) > 0;
     }
-
-	/**
-	* Check whether Elementor is loaded.
- 	*/
-	private function isElementorLoaded(): bool
-	{
-    return did_action( 'elementor/loaded' ) > 0;
-	}
-
 }
