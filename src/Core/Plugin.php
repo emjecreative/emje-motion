@@ -39,5 +39,18 @@ final class Plugin
     public function onPluginsLoaded(): void
     {
         // Future initialization will happen here.
+
+		if ( ! $this->isElementorLoaded() ) {
+        return;
+    	}
+    	// Elementor initialization will start here.
     }
+
+	/**
+	* Check whether Elementor is loaded.
+ 	*/
+	private function isElementorLoaded(): bool
+	{
+    return did_action( 'elementor/loaded' ) > 0;
+	}
 }
