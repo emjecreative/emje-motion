@@ -68,15 +68,15 @@ src/
 
 Admin/
 
+Assets/
+
 Core/
 
 Elementor/
 
-Frontend/
+Helpers/
 
 Modules/
-
-Helpers/
 ```
 
 ---
@@ -125,25 +125,13 @@ No animation logic should exist here.
 
 ---
 
-## Frontend
-
-Responsible for frontend behavior.
-
-Examples:
-
-- Asset Enqueue
-- GSAP Initialization
-- Frontend Hooks
-
----
-
 ## Modules
 
-Each feature should live inside its own module.
+Each feature lives inside its own module.
 
 Example:
 
-```
+```text
 Modules/
 
 SmoothScroll/
@@ -155,7 +143,14 @@ HoverReveal/
 InteractiveCursor/
 ```
 
-Each module should be self-contained.
+Each module is responsible for:
+
+- Registering itself
+- Registering Elementor controls
+- Loading its own assets
+- Running its frontend logic
+
+Modules should not depend on each other.
 
 ---
 

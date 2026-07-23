@@ -12,7 +12,6 @@
 | Version | 1.0 |
 | Type | WordPress Plugin |
 | Builder | Elementor |
-| Development Style | AI-Assisted (OpenCode) |
 | Language | English |
 | License | Free (v1) |
 
