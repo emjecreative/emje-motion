@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace EmjeCreative\EmjeMotion\Elementor;
 
 use EmjeCreative\EmjeMotion\Assets\AssetsManager;
+use EmjeCreative\EmjeMotion\Motion\MotionManager;
 
 /**
  * Handles Elementor integration.
@@ -29,5 +30,8 @@ final class ElementorManager
     {
         $assets = new AssetsManager();
 		$assets->register();
+
+		$motion = new MotionManager();
+    	$motion->register();
     }
 }
