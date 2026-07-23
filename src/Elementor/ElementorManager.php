@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace EmjeCreative\EmjeMotion\Elementor;
 
+use EmjeCreative\EmjeMotion\Assets\AssetsManager;
+
 /**
  * Handles Elementor integration.
  */
@@ -25,6 +27,7 @@ final class ElementorManager
      */
     public function onElementorInit(): void
     {
-        // Future Elementor initialization.
+        $assets = new AssetsManager();
+		$assets->register();
     }
 }
