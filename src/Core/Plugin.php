@@ -9,13 +9,29 @@ namespace EmjeCreative\EmjeMotion\Core;
  */
 final class Plugin
 {
-    /**
+
+	/**
+ 	* Service container.
+ 	*/
+	private Container $container;
+
+	/**
      * Boot the plugin.
      */
     public function boot(): void
     {
-        $this->initialize();
+        $this->container = new Container();
+
+    	$this->registerHooks();
     }
+
+	/**
+ 	* Get the service container.
+ 	*/
+	public function getContainer(): Container
+	{
+    	return $this->container;
+	}
 
     /**
      * Initialize the plugin.
@@ -55,4 +71,5 @@ final class Plugin
 	{
     return did_action( 'elementor/loaded' ) > 0;
 	}
+
 }
