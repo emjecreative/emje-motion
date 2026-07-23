@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace EmjeCreative\EmjeMotion\Core;
 
+use EmjeCreative\EmjeMotion\Modules\TextMotion\TextMotion;
+
 use EmjeCreative\EmjeMotion\Elementor\ElementorManager;
 
 /**
