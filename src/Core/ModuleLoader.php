@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace EmjeCreative\EmjeMotion\Core;
 
+use EmjeCreative\EmjeMotion\Contracts\ModuleInterface;
+
 /**
  * Loads and registers plugin modules.
  */
@@ -12,14 +14,14 @@ final class ModuleLoader
     /**
      * Registered modules.
      *
-     * @var array<object>
+     * @var ModuleInterface[]
      */
     private array $modules = [];
 
     /**
      * Register a module instance.
      */
-    public function register(object $module): void
+    public function register(ModuleInterface $module): void
     {
         $this->modules[] = $module;
     }
