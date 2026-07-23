@@ -1,55 +1,91 @@
-# Emje Motion
+# Emje Motion Product Requirements Document (PRD)
 
-> A lightweight motion toolkit for Elementor that helps creators build modern, interactive websites without writing code.
+> Product requirements and development roadmap for the Emje Motion WordPress plugin.
+
+This document defines the product vision, scope, features, and success criteria for Emje Motion.
+
+All product decisions should be documented here before implementation begins.
+
+Technical implementation details belong in:
+
+- docs/ARCHITECTURE.md
+- docs/CODE_STYLE.md
 
 ---
 
-# Product Information
+# Table of Contents
+
+1. Product Overview
+2. Vision
+3. Goals
+4. Non-Goals
+5. Target Users
+6. Product Principles
+7. Version Strategy
+8. Feature Scope
+9. Module Specifications
+10. Admin Dashboard
+11. Performance Requirements
+12. User Experience Principles
+13. Development Roadmap
+14. Definition of Done
+15. Future Scope
+16. Success Criteria
+
+---
+
+# 1. Product Overview
 
 | Item | Value |
 |------|-------|
 | Product | Emje Motion |
 | Version | 1.0 |
 | Type | WordPress Plugin |
+| Platform | WordPress |
 | Builder | Elementor |
 | Language | English |
 | License | Free (v1) |
 
 ---
 
-# Vision
+# 2. Vision
 
-Create a lightweight and modern animation plugin for Elementor that focuses only on motion design.
+Emje Motion is a lightweight motion toolkit built specifically for Elementor.
 
-Emje Motion is not an Elementor addon that introduces dozens of widgets. Instead, it extends existing Elementor widgets with carefully designed motion effects while keeping the editing experience clean and familiar.
+Instead of introducing dozens of custom widgets, Emje Motion extends existing Elementor widgets with modern, carefully designed motion effects.
 
----
-
-# Goals
-
-- Extend Elementor with modern motion effects.
-- Keep the UI simple and intuitive.
-- Prioritize performance.
-- Use a modular architecture.
-- Load only the required assets.
-- Make every feature easy to discover.
-- Build a solid foundation for a future Pro version.
+The editing experience should remain familiar, clean, and easy to understand.
 
 ---
 
-# Non-Goals
+# 3. Goals
 
-Emje Motion is NOT intended to:
+Version 1 aims to:
 
-- Replace Elementor.
-- Add new Elementor widgets.
-- Become an all-in-one addon plugin.
-- Include unnecessary visual effects.
-- Sacrifice performance for animations.
+- Extend Elementor with modern motion effects
+- Keep the interface simple
+- Prioritize performance
+- Follow a modular architecture
+- Load only required assets
+- Build a strong foundation for future expansion
 
 ---
 
-# Target Users
+# 4. Non-Goals
+
+Version 1 will NOT:
+
+- Replace Elementor
+- Add custom Elementor widgets
+- Become an all-in-one addon
+- Include unnecessary visual effects
+- Sacrifice performance for animations
+
+---
+
+# 5. Target Users
+
+Primary audience:
 
 - UI/UX Designers
 - Freelance Web Designers
@@ -58,75 +94,185 @@ Emje Motion is NOT intended to:
 - Template Kit Creators
 - WordPress Professionals
 
+The plugin should require little to no coding knowledge.
+
 ---
 
-# Product Scope
+# 6. Product Principles
+
+Every feature should follow these principles:
+
+- Lightweight
+- Modular
+- Performance First
+- Designer Friendly
+- No Code Required
+- Simple User Experience
+- Native Elementor Experience
+
+---
+
+# 7. Version Strategy
 
 ## Free Version
 
-### Global
+The first public release.
 
-- Smooth Scroll
+Focus:
 
-### Widget Features
+- Stability
+- Performance
+- Core motion features
 
-Text Motion
+---
 
-Includes:
+## Pro Version
+
+Planned after Version 1.
+
+The Pro version should extend the Free version without changing the Core architecture.
+
+---
+
+# 8. Feature Scope
+
+## Global Modules
+
+### Smooth Scroll
+
+Status:
+
+Planned
+
+Description:
+
+Provides smoother scrolling behavior across the entire website.
+
+---
+
+## Widget Modules
+
+### Text Motion
+
+Status:
+
+In Progress
+
+Supported Widgets:
+
+- Heading
+- Text Editor
+
+Included Effects:
 
 - Scramble Text
 - Text Unfold
 - Fill Reveal
 
-### Container Features
+---
 
-- Hover Reveal
-- Interactive Cursor
+## Container Modules
+
+### Hover Reveal
+
+Status:
+
+Planned
+
+Description:
+
+Interactive hover image reveal.
 
 ---
 
-## Pro Version (Future)
+### Interactive Cursor
 
-Planned only.
+Status:
 
-Will be discussed separately after the Free version is completed.
+Planned
+
+Description:
+
+Custom interactive cursor for supported containers.
 
 ---
 
-# Admin Dashboard
+# 9. Module Specifications
 
-The plugin adds a new admin menu.
+Every module should define:
+
+## Purpose
+
+What problem does the module solve?
+
+---
+
+## Supported Elements
+
+Which Elementor elements are supported?
+
+---
+
+## Controls
+
+Which settings are available?
+
+---
+
+## Assets
+
+Which CSS and JavaScript files are required?
+
+---
+
+## Acceptance Criteria
+
+When is the module considered complete?
+
+---
+
+Example:
+
+### Text Motion
+
+Acceptance Criteria
+
+- Controls appear in supported widgets
+- Settings are saved correctly
+- Frontend animation works
+- Assets load only when needed
+- No JavaScript errors
+- No impact on unsupported widgets
+
+---
+
+# 10. Admin Dashboard
+
+The plugin adds one top-level admin menu.
 
 ```
 Emje Motion
 
 Overview
+
 Settings
+
 About
 ```
 
 ## Overview
 
-Purpose:
+Displays all available modules.
 
-Provide a simple overview of all available modules.
-
-Users can enable or disable each module using toggle switches.
-
-Modules:
-
-- Smooth Scroll
-- Text Motion
-- Hover Reveal
-- Interactive Cursor
+Users can enable or disable modules individually.
 
 ---
 
 ## Settings
 
-Reserved for future global settings.
+Reserved for global plugin settings.
 
-Possible examples:
+Possible future options:
 
 - Performance
 - Reduced Motion
@@ -136,7 +282,7 @@ Possible examples:
 
 ## About
 
-Contains:
+Displays:
 
 - Plugin Version
 - Documentation
@@ -146,217 +292,159 @@ Contains:
 
 ---
 
-# Elementor Integration
+# 11. Performance Requirements
 
-## Heading Widget
+Performance is a product requirement.
 
-Location:
+Rules:
 
-```
-Content
-└── Text Motion
-```
+- Load only enabled modules
+- Load assets conditionally
+- Avoid duplicate CSS
+- Avoid duplicate JavaScript
+- Keep frontend assets lightweight
+- Minimize HTTP requests
 
-Supports:
-
-- Scramble Text
-- Text Unfold
-- Fill Reveal
+Performance takes priority over additional visual effects.
 
 ---
 
-## Text Editor Widget
+# 12. User Experience Principles
 
-Location:
+The interface should be:
 
-```
-Content
-└── Text Motion
-```
+- Clean
+- Familiar
+- Minimal
+- Easy to understand
+- Consistent with Elementor
 
-Supports:
-
-- Scramble Text
-- Text Unfold
-- Fill Reveal
+Users should not feel overwhelmed by configuration options.
 
 ---
 
-## Container
+# 13. Development Roadmap
 
-Location:
+## Phase 1
 
-```
-Advanced
-└── Emje Motion
-```
-
-Supports:
-
-- Hover Reveal
-- Interactive Cursor
-
----
-
-# Feature List
-
-## Smooth Scroll
-
-Category:
-
-Global
+Project Foundation
 
 Status:
 
-Free
-
-Description:
-
-Create a smoother scrolling experience across the entire website.
-
----
-
-## Text Motion
-
-Category:
-
-Widget
-
-Status:
-
-Free
-
-Description:
-
-Adds modern text animations to supported Elementor text widgets.
+Completed
 
 Includes:
 
-- Scramble Text
-- Text Unfold
-- Fill Reveal
+- Composer
+- PSR-4
+- Plugin Bootstrap
+- Dependency Container
+- Module System
+- Documentation
 
 ---
 
-## Hover Reveal
+## Phase 2
 
-Category:
-
-Container
+Text Motion
 
 Status:
 
-Free
+In Progress
 
-Description:
+Includes:
 
-Reveal images using interactive hover animations.
+- Controls
+- Frontend Rendering
+- Assets
+- Testing
 
 ---
 
-## Interactive Cursor
+## Phase 3
 
-Category:
-
-Container
+Smooth Scroll
 
 Status:
 
-Free
-
-Description:
-
-Display a custom interactive cursor while hovering over supported elements.
+Planned
 
 ---
 
-# Performance Strategy
+## Phase 4
 
-Performance is a core principle.
+Hover Reveal
 
-The plugin should:
+Status:
 
-- Load only enabled modules.
-- Avoid loading unnecessary CSS.
-- Avoid loading unnecessary JavaScript.
-- Register Elementor controls only when required.
-- Keep frontend assets as small as possible.
+Planned
 
 ---
 
-# Plugin Philosophy
+## Phase 5
 
-Emje Motion follows these principles:
+Interactive Cursor
 
-- Lightweight
-- Modular
-- Performance First
-- Simple UI
-- Designer Friendly
-- No Code Required
+Status:
+
+Planned
 
 ---
 
-# AI Development Rules
+## Phase 6
 
-This project is developed using AI coding assistants.
+Version 1 Release
 
-Every implementation should follow these rules.
+Status:
 
-## General
-
-- Follow WordPress Coding Standards.
-- Follow PSR-4.
-- Use Composer Autoload.
-- Write clean and maintainable code.
-- Prefer modular architecture.
-- Avoid duplicate code.
-
-## Elementor
-
-- Never modify Elementor core.
-- Extend Elementor using official APIs.
-- Keep controls simple.
-- Hide irrelevant controls.
-
-## Performance
-
-- Never enqueue unused assets.
-- Load scripts conditionally.
-- Minimize frontend requests.
-
-## UI
-
-- Use clear English labels.
-- Keep settings minimal.
-- Avoid overwhelming users with options.
+Planned
 
 ---
 
-# Future Scope
+# 14. Definition of Done
 
-The following ideas are intentionally excluded from version 1.
+A feature is considered complete when:
+
+- Product requirements are met
+- Code follows CODE_STYLE.md
+- Architecture follows ARCHITECTURE.md
+- Feature has been tested
+- No unnecessary assets are loaded
+- No PHP errors
+- No JavaScript errors
+- Documentation has been updated
+
+---
+
+# 15. Future Scope
+
+The following features are intentionally excluded from Version 1.
+
+Possible Pro features:
 
 - Advanced Scroll Effects
-- Background Effects
 - Magnetic Elements
 - Tilt Effects
+- Mouse Parallax
+- Background Effects
 - Motion Timeline
 - Motion Presets
 - Advanced Cursor Effects
 
-These features may be included in the Pro version.
+These features should not require changes to the Core architecture.
 
 ---
 
-# Success Criteria
+# 16. Success Criteria
 
-Version 1.0 is considered complete when:
+Version 1 is considered complete when:
 
-- Smooth Scroll is fully functional.
-- Text Motion works on supported widgets.
-- Hover Reveal works on containers.
-- Interactive Cursor works on containers.
-- All modules can be enabled or disabled.
-- Assets are loaded only when necessary.
-- Plugin remains lightweight and easy to use.
+- Smooth Scroll is fully functional
+- Text Motion works on supported widgets
+- Hover Reveal works on supported containers
+- Interactive Cursor works on supported containers
+- Modules can be enabled or disabled individually
+- Assets load only when required
+- Plugin remains lightweight
+- Plugin remains easy to use
+- Documentation is up to date

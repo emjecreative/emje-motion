@@ -1,219 +1,139 @@
 # Emje Motion Architecture
 
-This document defines the technical architecture of Emje Motion.
+> Technical architecture and development guidelines for the Emje Motion WordPress plugin.
 
-The goal is to keep the project clean, modular, scalable, and easy to maintain.
+This document defines the architecture of Emje Motion. Every implementation should follow this document to keep the project clean, modular, scalable, and maintainable.
 
 ---
 
-# Core Principles
+# Table of Contents
+
+1. Architecture Goals
+2. Design Principles
+3. Technology Stack
+4. High-Level Architecture
+5. Bootstrap Flow
+6. Directory Structure
+7. Core Components
+8. Dependency Injection
+9. Module System
+10. Elementor Integration
+11. Asset Management
+12. Admin Architecture
+13. Settings Architecture
+14. Error Handling
+15. Performance Strategy
+16. Naming Conventions
+17. Adding a New Module
+18. Future Expansion
+19. Architecture Rules
+
+---
+
+# 1. Architecture Goals
+
+The architecture is designed to be:
+
+- Modular
+- Scalable
+- Lightweight
+- Performance-focused
+- Easy to maintain
+- Easy to extend
+- AI-friendly
+
+The Core architecture should remain stable as new modules are introduced.
+
+---
+
+# 2. Design Principles
 
 The project follows these principles:
 
 - Modular Architecture
+- Single Responsibility Principle
+- Dependency Injection
 - PSR-4 Autoloading
 - Composer Based
-- WordPress Coding Standards
 - Performance First
 - Elementor First
-- AI-Friendly Code Structure
+- AI-Friendly Codebase
+
+Every class should have one clear responsibility.
+
+Modules should remain independent.
 
 ---
 
-# Technology Stack
+# 3. Technology Stack
 
 | Component | Technology |
-|-----------|------------|
+|------------|------------|
 | Language | PHP 8.2+ |
 | Frontend | JavaScript (ES6) |
 | Styling | CSS |
 | Builder | Elementor |
 | Animation Engine | GSAP |
 | Dependency Manager | Composer |
-| Autoload | PSR-4 |
+| Autoloading | PSR-4 |
 
 ---
 
-# Project Structure
+# 4. High-Level Architecture
 
 ```
-emje-motion/
-
-assets/
-    css/
-    js/
-    images/
-
-docs/
-
-languages/
-
-src/
-
-vendor/
-
-composer.json
-
+WordPress
+      │
+      ▼
 emje-motion.php
-
-README.md
+      │
+      ▼
+Plugin
+      │
+      ▼
+Container
+      │
+      ├───────────────┐
+      ▼               ▼
+ModuleLoader   ElementorManager
+      │
+      ▼
+Modules
+      │
+      ▼
+Frontend
 ```
 
+The plugin entry point should remain lightweight.
+
+Business logic belongs inside dedicated services.
+
 ---
 
-# Source Structure
+# 5. Bootstrap Flow
 
 ```
-src/
-
-Admin/
-
-Assets/
-
-Core/
-
-Elementor/
-
-Helpers/
-
-Modules/
-```
-
----
-
-# Folder Responsibilities
-
-## Admin
-
-Responsible for everything inside WordPress Admin.
-
-Examples:
-
-- Admin Menu
-- Overview Page
-- Settings Page
-- About Page
-
----
-
-## Core
-
-Contains the plugin bootstrap.
-
-Responsible for:
-
-- Plugin Initialization
-- Service Registration
-- Module Loader
-- Asset Loader
-- Settings Manager
-
----
-
-## Elementor
-
-Contains all Elementor integrations.
-
-Examples:
-
-- Register Controls
-- Register Sections
-- Register Widgets Support
-- Elementor Hooks
-
-No animation logic should exist here.
-
----
-
-## Modules
-
-Each feature lives inside its own module.
-
-Example:
-
-```text
-Modules/
-
-SmoothScroll/
-
-TextMotion/
-
-HoverReveal/
-
-InteractiveCursor/
-```
-
-Each module is responsible for:
-
-- Registering itself
-- Registering Elementor controls
-- Loading its own assets
-- Running its frontend logic
-
-Modules should not depend on each other.
-
----
-
-## Helpers
-
-Contains reusable helper classes.
-
-Examples:
-
-- Utilities
-- Validation
-- Sanitization
-- Common Functions
-
----
-
-# Module Architecture
-
-Every feature should be treated as an independent module.
-
-Example:
-
-```
-Modules/
-
-SmoothScroll/
-
-TextMotion/
-
-HoverReveal/
-
-InteractiveCursor/
-```
-
-Each module is responsible for:
-
-- Registering itself
-- Loading assets
-- Registering Elementor controls
-- Running frontend logic
-
-Modules should not depend on each other.
-
----
-
-# Module Lifecycle
-
-Each module should follow this lifecycle:
-
-```
-Plugin Starts
+WordPress
 
 ↓
 
-Module Registered
+Plugin Loaded
 
 ↓
 
-Module Enabled?
+Plugin Initialized
 
 ↓
 
-YES
+Register Services
+
+↓
+
+Register Modules
+
+↓
+
+Detect Elementor
 
 ↓
 
@@ -221,18 +141,250 @@ Register Controls
 
 ↓
 
-Load Assets
+Register Assets
 
 ↓
 
-Run Feature
+Frontend Ready
 ```
 
-Disabled modules should do nothing.
+The bootstrap process should remain predictable and easy to follow.
 
 ---
 
-# Admin Architecture
+# 6. Directory Structure
+
+```
+assets/
+docs/
+languages/
+src/
+vendor/
+
+composer.json
+emje-motion.php
+README.md
+```
+
+Inside `src/`
+
+```
+Admin/
+Assets/
+Contracts/
+Core/
+Elementor/
+Modules/
+```
+
+Each directory has one clear responsibility.
+
+---
+
+# 7. Core Components
+
+## Plugin
+
+Responsible for bootstrapping the plugin.
+
+Responsibilities:
+
+- Initialize the plugin
+- Register services
+- Start the plugin lifecycle
+
+---
+
+## Container
+
+Responsible for dependency management.
+
+Responsibilities:
+
+- Register shared services
+- Resolve dependencies
+- Centralize object creation
+
+---
+
+## ModuleLoader
+
+Responsible for module management.
+
+Responsibilities:
+
+- Register modules
+- Boot enabled modules
+- Keep modules isolated
+
+---
+
+## ElementorManager
+
+Responsible for Elementor integration.
+
+Responsibilities:
+
+- Register Elementor hooks
+- Register controls
+- Detect Elementor availability
+
+Business logic must never live here.
+
+---
+
+## AssetsManager
+
+Responsible for asset registration.
+
+Responsibilities:
+
+- Register CSS
+- Register JavaScript
+- Conditionally enqueue assets
+
+---
+
+## Admin
+
+Responsible for WordPress admin functionality.
+
+Examples:
+
+- Overview
+- Settings
+- About
+- Admin Notices
+
+---
+
+## ModuleInterface
+
+Defines the contract every module must implement.
+
+Every module should implement the same lifecycle.
+
+---
+
+# 8. Dependency Injection
+
+Constructor Injection should be preferred whenever practical.
+
+Objects should be created by the Container instead of being instantiated throughout the project.
+
+Benefits:
+
+- Easier testing
+- Better separation of concerns
+- Reusable services
+- Cleaner architecture
+
+---
+
+# 9. Module System
+
+Every feature is implemented as an independent module.
+
+Example:
+
+```
+Modules/
+
+TextMotion/
+
+HoverReveal/
+
+SmoothScroll/
+
+InteractiveCursor/
+```
+
+Every module is responsible for:
+
+- Registering itself
+- Registering Elementor controls
+- Registering assets
+- Running frontend logic
+
+Modules must never directly depend on another module.
+
+Communication between modules should happen through shared Core services when necessary.
+
+---
+
+## Module Lifecycle
+
+```
+Plugin
+
+↓
+
+Module Registered
+
+↓
+
+Module Enabled
+
+↓
+
+Register Controls
+
+↓
+
+Register Assets
+
+↓
+
+Frontend Initialization
+```
+
+Disabled modules should perform no work.
+
+---
+
+# 10. Elementor Integration
+
+Emje Motion extends Elementor instead of replacing it.
+
+The plugin does not introduce custom widgets.
+
+Instead, existing Elementor widgets receive additional controls.
+
+Supported widgets include:
+
+- Heading
+- Text Editor
+- Container
+
+Future widget support should follow the same architecture.
+
+---
+
+# 11. Asset Management
+
+Every module manages its own assets.
+
+Assets should only load when required.
+
+Never globally enqueue every JavaScript or CSS file.
+
+Example:
+
+```
+TextMotion
+
+↓
+
+text-motion.css
+
+text-motion.js
+```
+
+Conditional loading is mandatory.
+
+---
+
+# 12. Admin Architecture
 
 The plugin provides three admin pages.
 
@@ -246,217 +398,137 @@ Settings
 About
 ```
 
----
+Overview manages available modules.
 
-## Overview
+Settings manages global configuration.
 
-Purpose:
-
-Manage available modules.
-
-Every module can be enabled or disabled.
-
-This page acts as the plugin dashboard.
+About displays plugin information.
 
 ---
 
-## Settings
+# 13. Settings Architecture
 
-Reserved for global plugin settings.
+Global settings should use the WordPress Settings API.
 
-Examples:
-
-- Performance
-- Debug
-- Reduced Motion
-
----
-
-## About
-
-Displays:
-
-- Plugin Version
-- Documentation
-- Website
-- Changelog
-- Support
-
----
-
-# Elementor Architecture
-
-The plugin extends Elementor instead of replacing it.
-
-No custom Elementor widgets should be added.
-
-Supported widgets receive additional controls.
-
----
-
-## Heading
-
-Location:
-
-```
-Content
-
-Text Motion
-```
-
----
-
-## Text Editor
-
-Location:
-
-```
-Content
-
-Text Motion
-```
-
----
-
-## Container
-
-Location:
-
-```
-Advanced
-
-Emje Motion
-```
-
----
-
-# Assets
-
-Assets should be loaded only when necessary.
-
-Never enqueue every CSS and JS file globally.
-
-Every module manages its own assets.
-
-Example:
-
-```
-SmoothScroll
-
-↓
-
-smooth-scroll.css
-
-smooth-scroll.js
-```
-
----
-
-# Settings Storage
-
-Plugin settings should use the WordPress Settings API.
-
-Modules should store only the necessary configuration.
+Modules should only store settings that are actually required.
 
 Avoid unnecessary database entries.
 
 ---
 
-# Performance Strategy
+# 14. Error Handling
 
-Performance is a top priority.
+Failures should be isolated.
+
+One module failing must never prevent the plugin from loading.
+
+Always fail gracefully.
+
+---
+
+# 15. Performance Strategy
+
+Performance is one of the core goals.
 
 Rules:
 
 - Load only enabled modules.
-- Load assets conditionally.
+- Conditionally enqueue assets.
+- Avoid duplicate CSS.
+- Avoid duplicate JavaScript.
 - Minimize frontend requests.
-- Avoid duplicated JavaScript.
-- Avoid duplicated CSS.
+- Keep module initialization lightweight.
 
 ---
 
-# Dependency Rules
+# 16. Naming Conventions
 
-Modules should never directly depend on another module.
+## Classes
 
-Communication should happen through Core services when necessary.
-
-This keeps the architecture modular.
-
----
-
-# Naming Conventions
-
-Folders
-
-```
-TextMotion
-
-HoverReveal
-
-InteractiveCursor
-```
-
-Classes
+PascalCase
 
 ```
 Plugin
-
 ModuleLoader
-
-AssetLoader
-
-SettingsManager
-
+AssetsManager
 TextMotion
-
-HoverReveal
 ```
 
-Methods
+---
+
+## Methods
+
+camelCase
 
 ```
 register()
 
 boot()
 
-enqueue_assets()
+registerControls()
 
-register_controls()
+enqueueAssets()
 
 init()
 ```
 
-Files
+---
+
+## Files
+
+One class per file.
+
+Example:
 
 ```
-class-plugin.php
+Plugin.php
 
-class-module-loader.php
+ModuleLoader.php
 
-class-text-motion.php
+TextMotion.php
 ```
 
 ---
 
-# AI Development Guidelines
+# 17. Adding a New Module
 
-When implementing code:
+Every new feature should follow the same workflow.
 
-- Keep files small.
-- Prefer composition over large classes.
-- One responsibility per class.
-- Avoid global functions.
-- Avoid duplicated logic.
-- Write self-documenting code.
-- Use dependency injection when appropriate.
+```
+Create Module Folder
+
+↓
+
+Create Module Class
+
+↓
+
+Implement ModuleInterface
+
+↓
+
+Create Controls
+
+↓
+
+Create Assets
+
+↓
+
+Register Module
+
+↓
+
+Testing
+```
+
+New modules should require minimal changes outside their own directory.
 
 ---
 
-# Future Expansion
+# 18. Future Expansion
 
-The architecture should support future modules without changing the core.
+The architecture is designed to support future modules without changing the Core.
 
 Examples:
 
@@ -467,20 +539,34 @@ Examples:
 - Background Effects
 - Motion Timeline
 
-New modules should only require registration through the module loader.
-
-The core architecture should remain unchanged.
+Core services should remain stable.
 
 ---
 
-# Architecture Goal
+# 19. Architecture Rules
 
-The final architecture should be:
+## Allowed
 
-- Clean
-- Modular
-- Scalable
-- Easy to maintain
-- Easy to extend
-- AI-friendly
-- Performance-focused
+- Constructor Injection
+- One Responsibility per Class
+- One Feature per Module
+- Composition over inheritance
+- Independent modules
+- Conditional asset loading
+
+## Forbidden
+
+- God Classes
+- Cross-module dependencies
+- Global helper functions
+- Business logic inside ElementorManager
+- Global asset enqueue
+- Duplicate frontend logic
+
+---
+
+# Final Principle
+
+Architecture decisions should prioritize long-term maintainability over short-term convenience.
+
+Whenever the architecture changes, this document must be updated before implementing new features.
