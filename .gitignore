@@ -1,18 +1,30 @@
 # Composer
 /vendor/
+auth.json
+composer.phar
 
 # Node
 /node_modules/
 
+# Build
+/build/
+/dist/
+
+# Cache
+.php-cs-fixer.cache
+.phpunit.result.cache
+/.phpstan/
+
 # Logs
 *.log
 
-# OS
-.DS_Store
-Thumbs.db
+# Environment
+.env
+.env.local
 
 # IDE
 .vscode/settings.json
 
-# Environment
-.env
+# OS
+.DS_Store
+Thumbs.db
