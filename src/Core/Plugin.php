@@ -30,6 +30,14 @@ final class Plugin
      */
     private function registerHooks(): void
     {
-        // Hooks will be registered here.
+        add_action( 'plugins_loaded', [ $this, 'onPluginsLoaded' ] );
+    }
+
+    /**
+     * Runs after all plugins have loaded.
+     */
+    public function onPluginsLoaded(): void
+    {
+        // Future initialization will happen here.
     }
 }
