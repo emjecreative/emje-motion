@@ -30,7 +30,7 @@ final class Container
      */
     public function set(string $id, callable $factory): void
     {
-        $this->bindings[$id] = $factory;
+        $this->bindings[ $id ] = $factory;
     }
 
     /**
@@ -38,16 +38,16 @@ final class Container
      */
     public function get(string $id): object
     {
-        if (isset($this->instances[$id])) {
-            return $this->instances[$id];
+        if (isset($this->instances[ $id ])) {
+            return $this->instances[ $id ];
         }
 
-        if (!isset($this->bindings[$id])) {
+        if (! isset($this->bindings[ $id ])) {
             throw new InvalidArgumentException(
                 sprintf('Service [%s] is not registered.', $id)
             );
         }
 
-        return $this->instances[$id] = ($this->bindings[$id])();
+        return $this->instances[ $id ] = ($this->bindings[ $id ])();
     }
 }

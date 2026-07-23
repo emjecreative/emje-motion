@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace EmjeCreative\EmjeMotion\Core;
 
-use EmjeCreative\EmjeMotion\Modules\TextMotion\TextMotion;
-
 use EmjeCreative\EmjeMotion\Elementor\ElementorManager;
 
 /**
@@ -41,7 +39,7 @@ final class Plugin
      */
     private function registerHooks(): void
     {
-        add_action( 'plugins_loaded', [ $this, 'onPluginsLoaded' ] );
+        add_action('plugins_loaded', [ $this, 'onPluginsLoaded' ]);
     }
 
     /**
@@ -49,14 +47,14 @@ final class Plugin
      */
     public function onPluginsLoaded(): void
     {
-        if ( ! $this->isElementorLoaded() ) {
-            ( new \EmjeCreative\EmjeMotion\Admin\AdminNotice() )->register();
+        if (! $this->isElementorLoaded()) {
+            (new \EmjeCreative\EmjeMotion\Admin\AdminNotice())->register();
 
             return;
         }
 
         $elementor = new ElementorManager();
-		$elementor->register();
+        $elementor->register();
     }
 
     /**
@@ -64,6 +62,6 @@ final class Plugin
      */
     private function isElementorLoaded(): bool
     {
-        return did_action( 'elementor/loaded' ) > 0;
+        return did_action('elementor/loaded') > 0;
     }
 }

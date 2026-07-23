@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace EmjeCreative\EmjeMotion\Elementor;
 
-use EmjeCreative\EmjeMotion\Assets\AssetsManager;
-use EmjeCreative\EmjeMotion\Motion\MotionManager;
+use EmjeCreative\EmjeMotion\Core\ModuleLoader;
+use EmjeCreative\EmjeMotion\Modules\TextMotion\TextMotion;
 
 /**
  * Handles Elementor integration.
@@ -28,10 +28,20 @@ final class ElementorManager
      */
     public function onElementorInit(): void
     {
-        $assets = new AssetsManager();
-		$assets->register();
+        $this->registerModules();
+    }
 
-		$motion = new MotionManager();
-    	$motion->register();
+    /**
+     * Register all Emje Motion modules.
+     */
+    private function registerModules(): void
+    {
+        $loader = new ModuleLoader();
+
+        $loader->register(
+            new TextMotion()
+        );
+
+        $loader->boot();
     }
 }

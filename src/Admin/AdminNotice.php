@@ -23,11 +23,11 @@ final class AdminNotice
     public function showElementorRequiredNotice(): void
     {
         ?>
-        <div class="notice notice-error">
-            <p>
-                <strong>Emje Motion</strong> requires Elementor to be installed and activated.
-            </p>
-        </div>
-        <?php
+		<div class="notice notice-error">
+			<p>
+				<strong>Emje Motion</strong> requires Elementor to be installed and activated.
+			</p>
+		</div>
+		<?php
     }
 }
