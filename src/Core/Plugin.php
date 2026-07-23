@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace EmjeCreative\EmjeMotion\Core;
 
+use EmjeCreative\EmjeMotion\Elementor\ElementorManager;
+
 /**
  * Core plugin bootstrap.
  */
@@ -51,7 +53,8 @@ final class Plugin
             return;
         }
 
-        // Elementor initialization will start here.
+        $elementor = new ElementorManager();
+		$elementor->register();
     }
 
     /**
