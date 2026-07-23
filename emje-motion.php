@@ -27,6 +27,16 @@ if ( file_exists( $autoload ) ) {
 	require_once $autoload;
 }
 
+register_activation_hook(
+    __FILE__,
+    [ \EmjeCreative\EmjeMotion\Core\Activator::class, 'activate' ]
+);
+
+register_deactivation_hook(
+    __FILE__,
+    [ \EmjeCreative\EmjeMotion\Core\Deactivator::class, 'deactivate' ]
+);
+
 if ( class_exists( \EmjeCreative\EmjeMotion\Core\Plugin::class ) ) {
 	$plugin = new \EmjeCreative\EmjeMotion\Core\Plugin();
 	$plugin->boot();
