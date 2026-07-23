@@ -38,12 +38,14 @@ final class Plugin
      */
     public function onPluginsLoaded(): void
     {
-        // Future initialization will happen here.
+    if ( ! $this->isElementorLoaded() ) {
 
-		if ( ! $this->isElementorLoaded() ) {
+        ( new \EmjeCreative\EmjeMotion\Admin\AdminNotice() )->register();
+
         return;
-    	}
-    	// Elementor initialization will start here.
+    }
+
+    // Elementor initialization will start here.
     }
 
 	/**
