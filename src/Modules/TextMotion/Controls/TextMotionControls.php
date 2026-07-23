@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace EmjeCreative\EmjeMotion\Modules\TextMotion\Controls;
 
+use Elementor\Controls_Manager;
+
 /**
  * Registers Elementor controls for Text Motion.
  */
@@ -32,24 +34,32 @@ final class TextMotionControls
     /**
      * Register controls for Heading widget.
      */
-    public function registerHeadingControls( $element, array $args ): void
+    public function registerHeadingControls($element, array $args): void
     {
-        $this->registerControls( $element );
+        $this->registerControls($element);
     }
 
     /**
      * Register controls for Text Editor widget.
      */
-    public function registerTextEditorControls( $element, array $args ): void
+    public function registerTextEditorControls($element, array $args): void
     {
-        $this->registerControls( $element );
+        $this->registerControls($element);
     }
 
     /**
      * Register shared controls.
      */
-    private function registerControls( $element ): void
+    private function registerControls($element): void
     {
-        // Controls will be added in the next task.
+        $element->start_controls_section(
+            'emje_motion_text_motion',
+            [
+                'label' => __('Text Motion', 'emje-motion'),
+                'tab'   => Controls_Manager::TAB_STYLE,
+            ]
+        );
+
+        $element->end_controls_section();
     }
 }

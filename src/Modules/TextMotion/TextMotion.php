@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace EmjeCreative\EmjeMotion\Modules\TextMotion;
 
 use EmjeCreative\EmjeMotion\Contracts\ModuleInterface;
-
 use EmjeCreative\EmjeMotion\Modules\TextMotion\Controls\TextMotionControls;
 
 /**
@@ -18,6 +17,6 @@ final class TextMotion implements ModuleInterface
      */
     public function register(): void
     {
-        ( new TextMotionControls() )->register();
+		(new TextMotionControls())->register();
     }
 }
