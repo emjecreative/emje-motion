@@ -1,4 +1,5 @@
 import ElementManager from './ElementManager';
+import ScrambleText from '../modules/TextMotion/ScrambleText';
 
 /**
  * Main Motion Engine.
@@ -21,8 +22,15 @@ export default class MotionEngine {
 		elements.forEach((element) => {
 			const config = this.elementManager.getConfig(element);
 
-			console.log(element);
-			console.log(config);
+			switch (config.animation) {
+
+				case 'scramble-text':
+					new ScrambleText(element, config).play();
+					break;
+
+				default:
+					break;
+			}
 		});
 	}
 }

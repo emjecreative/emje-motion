@@ -80,12 +80,35 @@ final class TextMotionFrontend
 	private function buildConfig(array $settings): array
 	{
 		return [
-		'animation' => $settings['emje_motion_animation'] ?? '',
-		'duration'  => (float) ($settings['emje_motion_duration'] ?? 1),
-		'delay'     => (float) ($settings['emje_motion_delay'] ?? 0),
-		'ease'      => $settings['emje_motion_ease'] ?? 'power2.out',
-		'trigger'   => $settings['emje_motion_trigger'] ?? 'load',
-		'playOnce'  => ($settings['emje_motion_play_once'] ?? 'yes') === 'yes',
+			'animation' => $settings['emje_motion_animation'] ?? '',
+
+			'characterSet' => $settings['emje_motion_scramble_character_set'] ?? 'letters-numbers',
+
+			'customCharacters' => $settings['emje_motion_scramble_custom_characters']
+				?? 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789',
+
+			'revealOrder' => $settings['emje_motion_scramble_reveal_order']
+				?? 'left-to-right',
+
+			'scrambleSpeed' => (float) (
+				$settings['emje_motion_scramble_speed'] ?? 1
+			),
+
+			'duration' => (float) (
+				$settings['emje_motion_duration'] ?? 1
+			),
+
+			'delay' => (float) (
+				$settings['emje_motion_delay'] ?? 0
+			),
+
+			'ease' => $settings['emje_motion_ease'] ?? 'power2.out',
+
+			'trigger' => $settings['emje_motion_trigger'] ?? 'load',
+
+			'playOnce' => (
+				$settings['emje_motion_play_once'] ?? 'yes'
+			) === 'yes',
 		];
 	}
 
