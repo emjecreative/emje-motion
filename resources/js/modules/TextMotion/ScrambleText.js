@@ -18,6 +18,9 @@ export default class ScrambleText {
 		this.originalText = '';
 		this.characters = [];
 		this.revealSequence = [];
+
+		this.scrambledCharacters = [];
+		this.lastScrambleUpdate = 0;
     }
 
 	/**
@@ -31,6 +34,18 @@ export default class ScrambleText {
     	);
 
     	this.revealSequence = this.buildRevealSequence();
+
+		this.scrambledCharacters = this.characters.map((character) => {
+
+			if (/\s/.test(character)) {
+				return character;
+			}
+
+			return this.getRandomCharacter();
+
+		});
+
+		this.lastScrambleUpdate = performance.now();
 
 	}
 
@@ -106,6 +121,33 @@ export default class ScrambleText {
 	}
 
 	/**
+	 * Update scrambled characters.
+	 */
+	updateScrambledCharacters() {
+
+		const now = performance.now();
+
+		const refreshInterval = 100 / this.config.scrambleSpeed;
+
+		if (now - this.lastScrambleUpdate < refreshInterval) {
+			return;
+		}
+
+		this.scrambledCharacters = this.characters.map((character) => {
+
+			if (/\s/.test(character)) {
+				return character;
+			}
+
+			return this.getRandomCharacter();
+
+		});
+
+		this.lastScrambleUpdate = now;
+
+	}
+
+	/**
 	 * Render a single animation frame.
 	 *
 	 * @param {number} progress
@@ -123,6 +165,8 @@ export default class ScrambleText {
 			)
 		);
 
+		this.updateScrambledCharacters();
+
 		const output = this.characters.map((character, index) => {
 
 			if (/\s/.test(character)) {
@@ -133,7 +177,7 @@ export default class ScrambleText {
 				return character;
 			}
 
-			return this.getRandomCharacter();
+			return this.scrambledCharacters[index];
 
 		});
 
