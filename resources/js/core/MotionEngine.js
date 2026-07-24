@@ -8,15 +8,21 @@ export default class MotionEngine {
         this.elementManager = new ElementManager();
     }
 
-    /**
-     * Initialize the engine.
-     */
-    init() {
-        const elements = this.elementManager.getElements();
+	/**
+	 * Initialize the engine.
+	 */
+	init() {
+		const elements = this.elementManager.getElements();
 
-        console.log(
-            'Motion Engine Initialized',
-            elements
-        );
-    }
+		if (elements.length === 0) {
+			return;
+		}
+
+		elements.forEach((element) => {
+			const config = this.elementManager.getConfig(element);
+
+			console.log(element);
+			console.log(config);
+		});
+	}
 }
