@@ -125,6 +125,10 @@ export default class ScrambleText {
 
 		const output = this.characters.map((character, index) => {
 
+			if (/\s/.test(character)) {
+				return character;
+			}
+
 			if (revealedIndexes.has(index)) {
 				return character;
 			}
