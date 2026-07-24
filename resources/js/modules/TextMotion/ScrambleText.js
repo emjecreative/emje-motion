@@ -21,6 +21,8 @@ export default class ScrambleText {
 
 		this.scrambledCharacters = [];
 		this.lastScrambleUpdate = 0;
+
+		this.timeline = null;
     }
 
 	/**
@@ -190,19 +192,29 @@ export default class ScrambleText {
 	 */
 	play() {
 
+		if (this.timeline) {
+
+			this.timeline.kill();
+			this.timeline = null;
+
+		}
+
 		this.prepare();
 		const animation = {
 			progress: 0,
 		};
 
-		gsap.to(animation, {
+		this.timeline = gsap.to(animation, {
 			progress: 1,
 			duration: this.config.duration,
     		ease: this.config.ease,
+
 			onUpdate: () => {
-
 				this.renderFrame(animation.progress);
+			},
 
+			onComplete: () => {
+				this.timeline = null;
 			},
 
 		});

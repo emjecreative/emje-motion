@@ -5,14 +5,110 @@ import ScrambleText from '../modules/TextMotion/ScrambleText';
  * Main Motion Engine.
  */
 export default class MotionEngine {
-    constructor() {
-        this.elementManager = new ElementManager();
-    }
+
+	constructor() {
+		this.elementManager = new ElementManager();
+	}
+
+	/**
+	 * Create animation instance.
+	 *
+	 * @param {HTMLElement} element
+	 * @param {Object} config
+	 *
+	 * @returns {Object|null}
+	 */
+	createAnimation(element, config) {
+
+		switch (config.animation) {
+
+			case 'scramble-text':
+				return new ScrambleText(element, config);
+
+			default:
+				return null;
+
+		}
+
+	}
+
+	/**
+	 * Setup animation trigger.
+	 *
+	 * @param {Object} animation
+	 * @param {HTMLElement} element
+	 * @param {Object} config
+	 */
+	setupTrigger(animation, element, config) {
+
+		let hasPlayed = false;
+
+		const playAnimation = () => {
+
+			if (config.playOnce && hasPlayed) {
+				return;
+			}
+
+			animation.play();
+
+			hasPlayed = true;
+
+		};
+
+		switch (config.trigger) {
+
+			case 'hover':
+
+				element.addEventListener('mouseenter', () => {
+
+					playAnimation();
+
+				});
+
+				break;
+
+			case 'viewport': {
+
+				const observer = new IntersectionObserver((entries) => {
+
+					entries.forEach((entry) => {
+
+						if (!entry.isIntersecting) {
+							return;
+						}
+
+						playAnimation();
+
+						if (config.playOnce) {
+							observer.unobserve(element);
+						}
+
+					});
+
+				});
+
+				observer.observe(element);
+
+				break;
+
+			}
+
+			case 'page-load':
+			default:
+
+				playAnimation();
+
+				break;
+
+		}
+
+	}
 
 	/**
 	 * Initialize the engine.
 	 */
 	init() {
+
 		const elements = this.elementManager.getElements();
 
 		if (elements.length === 0) {
@@ -20,17 +116,26 @@ export default class MotionEngine {
 		}
 
 		elements.forEach((element) => {
+
 			const config = this.elementManager.getConfig(element);
 
-			switch (config.animation) {
+			const animation = this.createAnimation(
+				element,
+				config
+			);
 
-				case 'scramble-text':
-					new ScrambleText(element, config).play();
-					break;
-
-				default:
-					break;
+			if (!animation) {
+				return;
 			}
+
+			this.setupTrigger(
+				animation,
+				element,
+				config
+			);
+
 		});
+
 	}
+
 }
