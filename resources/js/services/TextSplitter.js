@@ -30,9 +30,9 @@ export default class TextSplitter {
 
         this.targets = [];
 
-        const by = options.by ?? 'words';
+        const type = options.type ?? options.by ?? 'words';
 
-        switch (by) {
+        switch (type) {
 
             case 'characters':
                 this.splitCharacters();
