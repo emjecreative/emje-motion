@@ -1,4 +1,5 @@
 import { gsap } from 'gsap';
+import Animation from '../../core/Animation';
 
 /**
  * Handles the Fill Reveal animation.
