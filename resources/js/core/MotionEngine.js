@@ -1,5 +1,7 @@
 import ElementManager from './ElementManager';
 import ScrambleText from '../modules/TextMotion/ScrambleText';
+import TextUnfold from '../modules/TextMotion/TextUnfold';
+import FillReveal from '../modules/TextMotion/FillReveal';
 
 /**
  * Main Motion Engine.
@@ -24,6 +26,12 @@ export default class MotionEngine {
 
 			case 'scramble-text':
 				return new ScrambleText(element, config);
+
+			case 'text-unfold':
+				return new TextUnfold(element, config);
+
+			case 'fill-reveal':
+				return new FillReveal(element, config );
 
 			default:
 				return null;
@@ -119,8 +127,12 @@ export default class MotionEngine {
 
 			const config = this.elementManager.getConfig(element);
 
+			const targetElement = this.elementManager.getTargetElement(
+				element
+			);
+
 			const animation = this.createAnimation(
-				element,
+				targetElement,
 				config
 			);
 

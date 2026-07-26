@@ -1,0 +1,41 @@
+.emje-motion-fill {
+
+	position: relative;
+	display: inline-block;
+
+}
+
+.emje-motion-fill__background {
+
+	display: inline-block;
+	opacity: .25;
+
+}
+
+.emje-motion-fill__mask {
+
+	position: absolute;
+
+	top: 0;
+	left: 0;
+
+	width: 0;
+	height: 100%;
+
+	overflow: hidden;
+	white-space: nowrap;
+
+}
+
+.emje-motion-fill__foreground {
+
+	display: inline-block;
+	white-space: nowrap;
+
+}
+
+.emje-motion-char,
+.emje-motion-word,
+.emje-motion-line {
+    display: inline-block;
+}
