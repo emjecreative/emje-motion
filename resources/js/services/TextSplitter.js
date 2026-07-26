@@ -53,6 +53,8 @@ export default class TextSplitter {
 
         this.isSplit = true;
 
+		return this.targets;
+
     }
 
     /**
@@ -204,6 +206,10 @@ export default class TextSplitter {
      *
      * @returns {HTMLElement[]}
      */
+	/**
+	 * @deprecated
+	 * Use split() return value instead.
+	 */
     getTargets() {
 
         return this.targets;

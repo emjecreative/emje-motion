@@ -26,13 +26,11 @@ export default class TextUnfold extends Animation {
      */
     prepare() {
 
-        this.splitter.split({
-            by: this.config.splitBy ?? 'words',
-        });
+	this.targets = this.splitter.split({
+		by: this.config.splitBy ?? 'words',
+	});
 
-        this.targets = this.splitter.getTargets();
-
-		console.log(this.targets);
+	console.log(this.targets);
 
     }
 
