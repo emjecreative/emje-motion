@@ -18,10 +18,12 @@ export default class FillReveal extends Animation {
 
 		this.originalHTML = this.element.innerHTML;
 
-		this.wrapper = null;
-		this.backgroundLayer = null;
-		this.mask = null;
-		this.foregroundLayer = null;
+		this.dom = {
+			wrapper: null,
+			background: null,
+			mask: null,
+			foreground: null,
+		};
 
 	}
 
@@ -44,18 +46,18 @@ export default class FillReveal extends Animation {
 			return;
 		}
 
-		this.wrapper = this.createWrapper();
-		this.backgroundLayer = this.createBackground();
-		this.mask = this.createMask();
-		this.foregroundLayer = this.createForeground();
+		this.dom.wrapper = this.createWrapper();
+		this.dom.background = this.createBackground();
+		this.dom.mask = this.createMask();
+		this.dom.foreground = this.createForeground();
 
-		this.mask.appendChild( this.foregroundLayer );
+		this.dom.mask.appendChild( this.dom.foreground );
 
-		this.wrapper.appendChild( this.backgroundLayer );
-		this.wrapper.appendChild( this.mask );
+		this.dom.wrapper.appendChild(this.dom.background);
+		this.dom.wrapper.appendChild(this.dom.mask);
 
 		this.element.innerHTML = '';
-		this.element.appendChild( this.wrapper );
+		this.element.appendChild( this.dom.wrapper );
 
 	}
 
@@ -126,7 +128,7 @@ export default class FillReveal extends Animation {
 	 */
 	setInitialState() {
 
-		gsap.set( this.mask, {
+		gsap.set( this.dom.mask, {
 			width: 0,
 		} );
 
@@ -141,6 +143,15 @@ export default class FillReveal extends Animation {
 
 		this.prepare();
 
+		this.animate();
+
+	}
+
+	/**
+	 * Run the animation.
+	 */
+	animate() {
+
 		this.timeline = gsap.timeline( {
 
 			delay: this.config.delay,
@@ -153,9 +164,9 @@ export default class FillReveal extends Animation {
 
 		} );
 
-		this.timeline.to( this.mask, {
+		this.timeline.to( this.dom.mask, {
 
-			width: this.wrapper.offsetWidth,
+			width: this.dom.wrapper.offsetWidth,
 
 			duration: this.config.duration,
 
@@ -178,10 +189,12 @@ export default class FillReveal extends Animation {
 
 		this.element.innerHTML = this.originalHTML;
 
-		this.wrapper = null;
-		this.backgroundLayer = null;
-		this.mask = null;
-		this.foregroundLayer = null;
+	this.dom = {
+		wrapper: null,
+		background: null,
+		mask: null,
+		foreground: null,
+	};
 
 	}
 
