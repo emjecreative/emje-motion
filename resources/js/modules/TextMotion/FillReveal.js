@@ -4,7 +4,7 @@ import Animation from '../../core/Animation';
 /**
  * Handles the Fill Reveal animation.
  */
-export default class FillReveal {
+export default class FillReveal extends Animation {
 
 	/**
 	 * Create a new Fill Reveal animation.
@@ -12,10 +12,9 @@ export default class FillReveal {
 	 * @param {HTMLElement} element
 	 * @param {Object} config
 	 */
-	constructor( element, config ) {
+	constructor(element, config) {
 
-		this.element = element;
-		this.config = config;
+		super(element, config);
 
 		this.originalHTML = this.element.innerHTML;
 
@@ -23,8 +22,6 @@ export default class FillReveal {
 		this.backgroundLayer = null;
 		this.mask = null;
 		this.foregroundLayer = null;
-
-		this.timeline = null;
 
 	}
 
@@ -47,18 +44,10 @@ export default class FillReveal {
 			return;
 		}
 
-		this.wrapper = document.createElement( 'span' );
-		this.backgroundLayer = document.createElement( 'span' );
-		this.mask = document.createElement( 'span' );
-		this.foregroundLayer = document.createElement( 'span' );
-
-		this.wrapper.className = 'emje-motion-fill';
-		this.backgroundLayer.className = 'emje-motion-fill__background';
-		this.mask.className = 'emje-motion-fill__mask';
-		this.foregroundLayer.className = 'emje-motion-fill__foreground';
-
-		this.backgroundLayer.innerHTML = this.originalHTML;
-		this.foregroundLayer.innerHTML = this.originalHTML;
+		this.wrapper = this.createWrapper();
+		this.backgroundLayer = this.createBackground();
+		this.mask = this.createMask();
+		this.foregroundLayer = this.createForeground();
 
 		this.mask.appendChild( this.foregroundLayer );
 
@@ -67,6 +56,68 @@ export default class FillReveal {
 
 		this.element.innerHTML = '';
 		this.element.appendChild( this.wrapper );
+
+	}
+
+	/**
+	 * Create the wrapper element.
+	 *
+	 * @returns {HTMLElement}
+	 */
+	createWrapper() {
+
+		const wrapper = document.createElement( 'span' );
+
+		wrapper.className = 'emje-motion-fill';
+
+		return wrapper;
+
+	}
+
+	/**
+	 * Create the background layer.
+	 *
+	 * @returns {HTMLElement}
+	 */
+	createBackground() {
+
+		const background = document.createElement( 'span' );
+
+		background.className = 'emje-motion-fill__background';
+		background.innerHTML = this.originalHTML;
+
+		return background;
+
+	}
+
+	/**
+	 * Create the mask element.
+	 *
+	 * @returns {HTMLElement}
+	 */
+	createMask() {
+
+		const mask = document.createElement( 'span' );
+
+		mask.className = 'emje-motion-fill__mask';
+
+		return mask;
+
+	}
+
+	/**
+	 * Create the foreground layer.
+	 *
+	 * @returns {HTMLElement}
+	 */
+	createForeground() {
+
+		const foreground = document.createElement( 'span' );
+
+		foreground.className = 'emje-motion-fill__foreground';
+		foreground.innerHTML = this.originalHTML;
+
+		return foreground;
 
 	}
 
@@ -86,12 +137,7 @@ export default class FillReveal {
 	 */
 	play() {
 
-		if ( this.timeline ) {
-
-			this.timeline.kill();
-			this.timeline = null;
-
-		}
+		this.killTimeline();
 
 		this.prepare();
 
@@ -116,6 +162,26 @@ export default class FillReveal {
 			ease: this.config.ease,
 
 		} );
+
+	}
+
+	/**
+	 * Destroy the animation.
+	 */
+	destroy() {
+
+		super.destroy();
+
+		if ( ! this.wrapper ) {
+			return;
+		}
+
+		this.element.innerHTML = this.originalHTML;
+
+		this.wrapper = null;
+		this.backgroundLayer = null;
+		this.mask = null;
+		this.foregroundLayer = null;
 
 	}
 
