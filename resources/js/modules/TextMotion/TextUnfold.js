@@ -56,7 +56,9 @@ export default class TextUnfold {
         }
 
         gsap.set(this.targets, {
-            display: 'inline-block',
+			// yPercent: 120,
+    		// opacity: 0,
+			display: 'inline-block',
             willChange: 'transform, opacity',
         });
 

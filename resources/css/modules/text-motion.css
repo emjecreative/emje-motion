@@ -39,3 +39,15 @@
 .emje-motion-line {
     display: inline-block;
 }
+
+
+.emje-motion-word {
+    will-change: transform, opacity;
+}
+
+.emje-motion-char,
+.emje-motion-word {
+	backface-visibility: hidden;
+	transform: translateZ(0);
+}
+
