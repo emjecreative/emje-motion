@@ -1,10 +1,11 @@
 import { gsap } from 'gsap';
+import Animation from '../../core/Animation';
 import TextSplitter from '../../services/TextSplitter';
 
 /**
  * Handles the Text Unfold animation.
  */
-export default class TextUnfold {
+export default class TextUnfold extends Animation {
 
     /**
      * @param {HTMLElement} element
@@ -12,13 +13,11 @@ export default class TextUnfold {
      */
     constructor(element, config) {
 
-        this.element = element;
-        this.config = config;
+        super(element, config);
 
         this.splitter = new TextSplitter(element);
 
         this.targets = [];
-        this.timeline = null;
 
     }
 
@@ -42,12 +41,7 @@ export default class TextUnfold {
      */
     play() {
 
-        if (this.timeline) {
-
-            this.timeline.kill();
-            this.timeline = null;
-
-        }
+		this.killTimeline();
 
         this.prepare();
 
@@ -56,8 +50,6 @@ export default class TextUnfold {
         }
 
         gsap.set(this.targets, {
-			// yPercent: 120,
-    		// opacity: 0,
 			display: 'inline-block',
             willChange: 'transform, opacity',
         });
