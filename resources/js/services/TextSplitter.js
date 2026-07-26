@@ -15,14 +15,12 @@ export default class TextSplitter {
         this.originalHTML = element.innerHTML;
 
         this.targets = [];
-        this.tokens = [];
-
         this.isSplit = false;
 
     }
 
     /**
-     * Split text.
+     * Split element.
      *
      * @param {Object} options
      */
@@ -30,47 +28,22 @@ export default class TextSplitter {
 
         this.revert();
 
-        const by = options.by ?? 'words';
-
-        this.prepare();
-        this.parse(by);
-        this.render(by);
-
-        this.isSplit = true;
-
-    }
-
-    /**
-     * Prepare splitter.
-     */
-    prepare() {
-
         this.targets = [];
-        this.tokens = [];
 
-    }
-
-    /**
-     * Parse content.
-     *
-     * @param {String} by
-     */
-    parse(by) {
-
-        const text = this.element.textContent ?? '';
+        const by = options.by ?? 'words';
 
         switch (by) {
 
             case 'characters':
-                this.parseCharacters(text);
+                this.splitCharacters();
                 break;
 
             case 'words':
-                this.parseWords(text);
+                this.splitWords();
                 break;
 
             case 'lines':
-                this.parseLines(text);
+                this.splitLines();
                 break;
 
             default:
@@ -78,149 +51,153 @@ export default class TextSplitter {
 
         }
 
-    }
-
-    /**
-     * Parse characters.
-     *
-     * @param {String} text
-     */
-    parseCharacters(text) {
-
-        this.tokens = Array.from(text).map((character) => ({
-
-            type: 'character',
-            value: character,
-
-        }));
+        this.isSplit = true;
 
     }
 
     /**
-     * Parse words.
-     *
-     * @param {String} text
+     * Split by words.
      */
-    parseWords(text) {
+    splitWords() {
 
-        const words = text.match(/\S+\s*/g) ?? [];
+        this.walk(this.element, CLASSES.word, false);
 
-        this.tokens = words.map((word) => ({
+    }
 
-            type: 'word',
-            value: word,
+    /**
+     * Split by characters.
+     */
+    splitCharacters() {
 
-        }));
+        this.walk(this.element, CLASSES.character, true);
 
     }
 
     /**
      * Placeholder.
      */
-    parseLines() {
+    splitLines() {
 
-        this.tokens = [];
+        // Coming later.
 
     }
 
+	/**
+	 * Check whether node can be split.
+	 *
+	 * @param {Node} node
+	 * @returns {Boolean}
+	 */
+	isSplittable(node) {
+
+		return (
+			node.nodeType === Node.TEXT_NODE &&
+			node.textContent.trim() !== ''
+		);
+
+	}
+
     /**
-     * Render tokens.
+     * Walk recursively through the DOM.
      *
-     * @param {String} by
+     * @param {Node} node
+     * @param {String} className
+     * @param {Boolean} characters
      */
-    render(by) {
+    walk(node, className, characters) {
 
-        switch (by) {
+        const children = Array.from(node.childNodes);
 
-            case 'characters':
-                this.renderCharacters();
-                break;
+        children.forEach((child) => {
 
-            case 'words':
-                this.renderWords();
-                break;
+            if (this.isSplittable(child)) {
 
-            case 'lines':
-                this.renderLines();
-                break;
+                this.splitTextNode(
+                    child,
+                    className,
+                    characters
+                );
 
-        }
+                return;
 
-    }
+            }
 
-    /**
-     * Render characters.
-     */
-    renderCharacters() {
+            if (child.nodeType === Node.ELEMENT_NODE) {
 
-        const fragment = document.createDocumentFragment();
+                this.walk(
+                    child,
+                    className,
+                    characters
+                );
 
-        this.tokens.forEach((token) => {
-
-            const wrapper = this.createWrapper(CLASSES.character);
-
-            wrapper.textContent =
-                token.value === ' '
-                    ? '\u00A0'
-                    : token.value;
-
-            this.targets.push(wrapper);
-
-            fragment.appendChild(wrapper);
+            }
 
         });
 
-        this.element.replaceChildren(fragment);
-
     }
 
     /**
-     * Render words.
+     * Split a single text node.
+     *
+     * @param {Text} node
+     * @param {String} className
+     * @param {Boolean} characters
      */
-    renderWords() {
+	splitTextNode(node, className, characters) {
 
-        const fragment = document.createDocumentFragment();
+		const fragment = document.createDocumentFragment();
 
-        this.tokens.forEach((token) => {
+		const parts = characters
+			? Array.from(node.textContent)
+			: node.textContent.match(/\S+\s*/g) ?? [];
 
-            const wrapper = this.createWrapper(CLASSES.word);
+		parts.forEach((part) => {
 
-            wrapper.innerHTML = token.value.replace(/ /g, '&nbsp;');
+			const wrapper = this.createWrapper(className);
 
-            this.targets.push(wrapper);
+			if (characters) {
 
-            fragment.appendChild(wrapper);
+				wrapper.textContent =
+					part === ' '
+						? '\u00A0'
+						: part;
 
-        });
+			} else {
 
-        this.element.replaceChildren(fragment);
+				wrapper.innerHTML =
+					part.replace(/ /g, '&nbsp;');
 
-    }
+			}
+
+			this.targets.push(wrapper);
+
+			fragment.appendChild(wrapper);
+
+		});
+
+		node.replaceWith(fragment);
+
+	}
 
     /**
-     * Placeholder.
-     */
-    renderLines() {
-
-        // Coming soon.
-
-    }
-
-    /**
-     * Create wrapper.
+     * Create wrapper element.
      *
      * @param {String} className
      * @returns {HTMLSpanElement}
      */
-    createWrapper(className) {
+	createWrapper(className, text) {
 
-        const wrapper = document.createElement('span');
+		const wrapper = document.createElement('span');
 
-        wrapper.className = className;
+		wrapper.className = className;
 
-        return wrapper;
+		wrapper.appendChild(
+			document.createTextNode(text)
+		);
 
-    }
+		return wrapper;
+
+	}
 
     /**
      * Get animation targets.
@@ -245,7 +222,6 @@ export default class TextSplitter {
         this.element.innerHTML = this.originalHTML;
 
         this.targets = [];
-        this.tokens = [];
 
         this.isSplit = false;
 

@@ -6,132 +6,107 @@ import TextSplitter from '../../services/TextSplitter';
  */
 export default class TextUnfold {
 
-	/**
-	 * Create a new Text Unfold animation.
-	 *
-	 * @param {HTMLElement} element
-	 * @param {Object} config
-	 */
-	constructor(element, config) {
+    /**
+     * @param {HTMLElement} element
+     * @param {Object} config
+     */
+    constructor(element, config) {
 
-		this.element = element;
-		this.config = config;
+        this.element = element;
+        this.config = config;
 
-		this.splitter = new TextSplitter(this.element);
+        this.splitter = new TextSplitter(element);
 
-		this.originalHTML = this.element.innerHTML;
+        this.targets = [];
+        this.timeline = null;
 
-		this.wrapper = null;
-		this.content = null;
-		this.timeline = null;
+    }
 
-	}
+    /**
+     * Prepare animation.
+     */
+    prepare() {
 
-	/**
-	 * Prepare the animation.
-	 */
-	prepare() {
+        this.splitter.split({
+            by: this.config.splitBy ?? 'words',
+        });
 
-		this.splitter.split({
-			by: this.config.splitBy ?? 'words',
-		});
+        this.targets = this.splitter.getTargets();
 
-		this.targets = this.splitter.getTargets();
+		console.log(this.targets);
 
-	}
+    }
 
-	/**
-	 * Build animation markup.
-	 */
-	build() {
+    /**
+     * Play animation.
+     */
+    play() {
 
-		if (this.wrapper) {
-			return;
-		}
+        if (this.timeline) {
 
-		this.wrapper = document.createElement('span');
-		this.content = document.createElement('span');
+            this.timeline.kill();
+            this.timeline = null;
 
-		this.wrapper.className = 'emje-motion-unfold';
-		this.content.className = 'emje-motion-unfold__content';
+        }
 
-		this.content.innerHTML = this.originalHTML;
+        this.prepare();
 
-		this.wrapper.appendChild(this.content);
+        if (!this.targets.length) {
+            return;
+        }
 
-		this.element.innerHTML = '';
+        gsap.set(this.targets, {
+            display: 'inline-block',
+            willChange: 'transform, opacity',
+        });
 
-		this.element.appendChild(this.wrapper);
+        this.timeline = gsap.timeline({
 
-	}
+            delay: this.config.delay ?? 0,
 
-	/**
-	 * Set the initial animation state.
-	 */
-	setInitialState() {
+            onComplete: () => {
 
-		gsap.set(this.wrapper, {
-			display: 'inline-block',
-			overflow: 'hidden',
-			paddingTop: '0.05em',
-			paddingBottom: '0.18em',
-		});
+                this.timeline = null;
 
-		gsap.set(this.content, {
-			display: 'inline-block',
-			yPercent: 120,
-			opacity: 0,
-			scaleY: 1.08,
-			transformOrigin: 'bottom center',
-			willChange: 'transform, opacity',
-		});
+            },
 
-	}
+        });
 
-	/**
-	 * Play the animation.
-	 */
-	play() {
+        this.timeline.fromTo(
 
-		if (this.timeline) {
+            this.targets,
 
-			this.timeline.kill();
-			this.timeline = null;
+            {
+                yPercent: 120,
+                opacity: 0,
+            },
 
-		}
+            {
+                yPercent: 0,
+                opacity: 1,
+                duration: this.config.duration ?? 0.8,
+                stagger: this.config.stagger ?? 0.04,
+                ease: this.config.ease ?? 'power2.out',
+            }
 
-		this.prepare();
+        );
 
-		this.timeline = gsap.timeline({
+    }
 
-			delay: this.config.delay,
+    /**
+     * Cleanup.
+     */
+    destroy() {
 
-			onComplete: () => {
+        if (this.timeline) {
 
-				this.timeline = null;
+            this.timeline.kill();
+            this.timeline = null;
 
-			},
+        }
 
-		});
+        this.splitter.revert();
 
-		this.timeline
-
-			.fromTo(
-				this.content,
-				{
-					yPercent: 120,
-					opacity: 0,
-					scaleY: 1.08,
-				},
-				{
-					yPercent: 0,
-					opacity: 1,
-					scaleY: 1,
-					duration: this.config.duration,
-					ease: this.config.ease,
-				}
-			)
-
-	}
+    }
 
 }
