@@ -139,6 +139,8 @@ export default class FillReveal extends Animation {
 	 */
 	play() {
 
+		console.log('FillReveal play');
+
 		this.killTimeline();
 
 		this.prepare();
@@ -151,6 +153,8 @@ export default class FillReveal extends Animation {
 	 * Run the animation.
 	 */
 	animate() {
+
+		console.log('FillReveal animate');
 
 		this.timeline = gsap.timeline( {
 
