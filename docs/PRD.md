@@ -40,14 +40,14 @@ Detail teknis implementasi ada di:
 | Item | Value |
 |------|-------|
 | Product | Emje Motion |
-| Version | 1.0.0 (In Development) |
+| Version | 1.0.0 (Ready — Tag v1.0.0 pending final manual test) |
 | Type | WordPress Plugin |
 | Platform | WordPress 6.7+ (Tested up to 6.8) |
 | Builder | Elementor 3.23+ (Requires Plugins: elementor) |
 | Language | English (Text Domain: emje-motion) |
 | License | GPL-2.0-or-later |
 | Animation Engine | GSAP 3.15+ (Free) + Lenis (MIT) for Smooth Scroll |
-| Status | In Development — Phase 2 In Progress |
+| Status | Completed — v1.0.0 Ready (Phase 7 Completed, Ready to Tag) |
 
 > **Catatan versi:** `emje-motion.php:15` dan `composer.json` sudah menandai 1.0.0, namun rilis publik 1.0 baru dianggap selesai setelah `Phase 6 — Version 1 Release` memenuhi `Success Criteria` Bab 17.
 
@@ -161,9 +161,9 @@ Migrasi data Free → Pro harus seamless (opsi dan `data-emje-motion` JSON tetap
 | **Library** | **Lenis** (MIT, ~8KB gzipped). Alasan: ringan, tidak merusak Elementor Anchor/Sticky, tidak butuh lisensi berbayar (menolak GSAP ScrollSmoother Club). Alternatif CSS `scroll-behavior: smooth` ditolak karena terlalu kaku. |
 | **Purpose** | Memberikan scroll yang lebih halus di seluruh website untuk persepsi premium tanpa mengubah layout. |
 | **Supported Elements** | Global — toggle di Admin Overview + Settings. Tidak per-widget. |
-| **Controls (Global Settings)** | `Enable` (switch, default Off), `Lerp / Smoothness` (slider 0.05–0.15, default 0.075), `Wheel Multiplier` (0.8–1.5, default 1.0), `Disable on Mobile` (switch, default On, breakpoint < 768px), `Disable if prefers-reduced-motion` (switch, default On) |
+| **Controls (Global Settings)** | `Enable` (switch, default Off), `Lerp / Smoothness` (slider 0.05–0.15, default 0.055), `Wheel Multiplier` (0.8–1.5, default 1.0), `Disable on Mobile` (switch, default On, breakpoint < 768px), `Disable if prefers-reduced-motion` (switch, default On) |
 | **Assets** | `resources/js/modules/SmoothScroll/LenisScroll.js` + `smooth-scroll.css` (hanya class `html.lenis`). Load kondisional via `AssetsManager::shouldLoadFrontendAssets()` + filter `emje_motion_should_load_assets`. Tidak ada listener jika modul Off. |
-| **Behavior** | Init Lenis di `MotionEngine`, RAF loop via `requestAnimationFrame`, support `data-lenis-prevent` untuk Elementor Lightbox/Popup, auto-destroy di Editor/Preview (`is_admin()` atau Elementor preview). Tidak mengganggu `Elementor Anchor` link. |
+| **Behavior** | Init Lenis di `resources/js/frontend.js:22` via `LenisScroll.js` (`bootstrapSmoothScroll()`), RAF loop via `requestAnimationFrame`, support `data-lenis-prevent` untuk Elementor Lightbox/Popup, auto-destroy di Editor/Preview (`is_admin()` atau Elementor preview). Tidak mengganggu `Elementor Anchor` link. |
 | **Fallback** | Non-aktif di touch device jika `Disable on Mobile` On. Non-aktif jika `window.matchMedia('(prefers-reduced-motion: reduce)').matches` (konsisten dengan `resources/js/frontend.js:9`). |
 | **Performance Budget** | < 10KB gzipped tambahan, tidak render-blocking, tidak menambah layout shift. |
 | **Acceptance Criteria** | Toggle On/Off bekerja tanpa reload; anchor link Elementor tetap akurat; FPS > 55 di Chrome DevTools; tidak aktif di editor/preview; tidak aktif di mobile jika opsi On. |
@@ -352,7 +352,7 @@ About
 
 **Storage:** `wp_options` key `emje_motion_settings` (global) + `emje_motion_modules` (enabled map). Hindari entri DB yang tidak perlu (`ARCHITECTURE.md:409-416`).
 
-**Integrasi ModuleLoader:** `ModuleLoader` harus mendukung `isEnabled(string $moduleId): bool` dan `boot()` hanya untuk modul enabled. Saat ini `ModuleLoader.php:22-49` belum punya filter enabled — harus ditambahkan saat implement Admin. `Plugin.php:38-64` Container harus bind `SettingsRepository` baru.
+**Integrasi ModuleLoader:** `ModuleLoader` mendukung `isEnabled(string $moduleId): bool` dengan filter `emje_motion_module_enabled` dan `boot()` hanya untuk modul enabled (`ModuleLoader.php:22-85` — try/catch + WP_DEBUG log). `Plugin.php:38-85` Container bind `SettingsRepository`, `ModuleLoader`, `AssetsManager`, `ElementorManager`, dan `AdminManager` via DI — **Done**.
 
 ## Overview
 
@@ -473,11 +473,13 @@ Antarmuka harus:
 
 User tidak boleh merasa kewalahan dengan opsi konfigurasi.
 
-**Editor Experience (v1):**
+**Editor Experience (v1) — Live Preview (Opsi B):**
 
 - Kontrol Text Motion di `TAB_STYLE` agar familiar (seperti style lain)
-- Preview live di Elementor Editor — butuh `elementor/frontend/init` bootstrap (`frontend.js:26-30`), `AssetsManager::registerEditorAssets()` saat ini masih placeholder (`AssetsManager.php:211-222`) — harus diisi untuk live preview
-- Hover Reveal & Interactive Cursor non-aktif di Editor agar tidak ganggu panel Elementor
+- Preview live di Elementor Editor — `frontend.js` bootstrap via `elementor/frontend/init` + `MotionEngine` attribute observer (`data-emje-motion` `data-emje-hover-reveal` `data-emje-cursor`) + `frontend_available`/`render_type` (live `none` vs `template` untuk DOM) — **Done**
+- `AssetsManager::registerEditorAssets()` → `dist/js/editor.js` + `dist/css/editor.css` + `elementor/preview/enqueue_styles` force frontend in preview — **Done**
+- `MotionEngine` singleton + `WeakMap` instances + debounce 80ms + `isEditMode()` override `prefers-reduced-motion` — **Done**
+- Hover Reveal & Interactive Cursor **aktif di Editor preview** (Opsi B) — `isEditMode()` skip `hover:none`/`prefers-reduced-motion` guards + `reInit()` — **Done**
 
 ---
 
@@ -532,7 +534,7 @@ Completed
 Includes:
 
 - Lenis 1.3.26 (MIT) integration (`LenisScroll.js` — Done)
-- Global Settings (Lerp 0.05–0.15, Wheel Multiplier 0.8–1.5, Respect Reduced Motion, Disable on Mobile — via `SettingsRepository` — Done)
+- Global Settings (Lerp 0.05–0.15 default 0.055, Wheel Multiplier 0.8–1.5 default 1.0, Respect Reduced Motion, Disable on Mobile — via `SettingsRepository:48-53` — Done)
 - Admin Settings UI (Done — `AdminManager` + `settings.php`)
 - Module (`SmoothScroll.php` — inject `window.EmjeMotionSmoothScrollConfig` + `emje_motion_should_load_assets` filter — Done)
 - Conditional loading + `prefers-reduced-motion` + mobile (`hover:none` / `<768px`) handling (Done)
