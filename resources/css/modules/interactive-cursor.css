@@ -1,0 +1,96 @@
+.emje-interactive-cursor {
+    position: relative;
+}
+
+.emje-cursor {
+    position: fixed;
+    top: 0;
+    left: 0;
+    pointer-events: none;
+    z-index: 9999;
+    will-change: transform;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.emje-cursor--hidden {
+    opacity: 0;
+}
+
+.emje-cursor__dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--emje-cursor-color, #000);
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.emje-cursor__ring {
+    width: var(--emje-cursor-size, 20px);
+    height: var(--emje-cursor-size, 20px);
+    border-radius: 50%;
+    border: 1.5px solid var(--emje-cursor-color, #000);
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.emje-cursor__label {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--emje-cursor-color, #000);
+    opacity: 0;
+    transition: opacity 0.2s ease;
+    white-space: nowrap;
+}
+
+.emje-cursor--hover .emje-cursor__label {
+    opacity: 1;
+}
+
+.emje-cursor--difference {
+    mix-blend-mode: difference;
+}
+
+.emje-cursor--difference .emje-cursor__dot,
+.emje-cursor--difference .emje-cursor__ring {
+    background: #fff;
+    border-color: #fff;
+}
+
+.emje-cursor--difference .emje-cursor__label {
+    color: #fff;
+}
+
+.emje-interactive-cursor--hide-native {
+    cursor: none;
+}
+
+.emje-interactive-cursor--hide-native a,
+.emje-interactive-cursor--hide-native button,
+.emje-interactive-cursor--hide-native .elementor-button {
+    cursor: none;
+}
+
+@media (hover: none), (pointer: coarse) {
+    .emje-cursor {
+        display: none !important;
+    }
+
+    .emje-interactive-cursor--hide-native,
+    .emje-interactive-cursor--hide-native a,
+    .emje-interactive-cursor--hide-native button {
+        cursor: auto !important;
+    }
+}
