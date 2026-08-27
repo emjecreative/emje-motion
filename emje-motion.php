@@ -56,7 +56,7 @@ register_activation_hook(
     [
         \EmjeCreative\EmjeMotion\Core\Activator::class,
         'activate',
-    ]
+    ],
 );
 
 register_deactivation_hook(
@@ -64,7 +64,7 @@ register_deactivation_hook(
     [
         \EmjeCreative\EmjeMotion\Core\Deactivator::class,
         'deactivate',
-    ]
+    ],
 );
 
 /*

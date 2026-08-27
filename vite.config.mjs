@@ -6,6 +6,8 @@ export default defineConfig({
         emptyOutDir: true,
         sourcemap: false,
 
+        cssCodeSplit: false,
+
         rollupOptions: {
             input: {
                 frontend: 'resources/js/frontend.js',
@@ -22,7 +24,7 @@ export default defineConfig({
                     const extension = assetInfo.name.split('.').pop();
 
                     if (extension === 'css') {
-                        return 'css/[name].[ext]';
+                        return 'css/frontend.[ext]';
                     }
 
                     if (['png', 'jpg', 'jpeg', 'svg', 'gif', 'webp'].includes(extension)) {
