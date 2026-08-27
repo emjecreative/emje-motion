@@ -49,7 +49,7 @@ final class SettingsRepository
         'respect_reduced_motion' => true,
         'disable_on_mobile' => true,
         'debug_mode' => false,
-        'smooth_scroll_lerp' => 0.075,
+        'smooth_scroll_lerp' => 0.055,
         'smooth_scroll_wheel_multiplier' => 1.0,
     ];
 

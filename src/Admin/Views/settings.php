@@ -62,8 +62,8 @@ settings_errors('emje_motion_settings');
 				<tr>
 					<th scope="row"><?php echo esc_html__('Smoothness (Lerp)', 'emje-motion'); ?></th>
 					<td>
-						<input type="number" name="smooth_scroll_lerp" value="<?php echo esc_attr((string) ($settings['smooth_scroll_lerp'] ?? 0.075)); ?>" min="0.05" max="0.15" step="0.005" />
-						<p class="description"><?php echo esc_html__('Range 0.05–0.15, default 0.075. Lower is smoother.', 'emje-motion'); ?></p>
+						<input type="number" name="smooth_scroll_lerp" value="<?php echo esc_attr((string) ($settings['smooth_scroll_lerp'] ?? 0.055)); ?>" min="0.05" max="0.15" step="0.005" />
+						<p class="description"><?php echo esc_html__('Range 0.05–0.15, default 0.055. Lower is smoother.', 'emje-motion'); ?></p>
 					</td>
 				</tr>
 				<tr>

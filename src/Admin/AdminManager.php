@@ -156,7 +156,7 @@ final class AdminManager
             'respect_reduced_motion' => isset($_POST['respect_reduced_motion']) && $_POST['respect_reduced_motion'] === '1',
             'disable_on_mobile' => isset($_POST['disable_on_mobile']) && $_POST['disable_on_mobile'] === '1',
             'debug_mode' => isset($_POST['debug_mode']) && $_POST['debug_mode'] === '1',
-            'smooth_scroll_lerp' => isset($_POST['smooth_scroll_lerp']) ? (float) $_POST['smooth_scroll_lerp'] : 0.075,
+            'smooth_scroll_lerp' => isset($_POST['smooth_scroll_lerp']) ? (float) $_POST['smooth_scroll_lerp'] : 0.055,
             'smooth_scroll_wheel_multiplier' => isset($_POST['smooth_scroll_wheel_multiplier']) ? (float) $_POST['smooth_scroll_wheel_multiplier'] : 1.0,
         ];
 

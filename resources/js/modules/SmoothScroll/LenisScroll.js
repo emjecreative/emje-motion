@@ -8,7 +8,7 @@ import Lenis from 'lenis';
 export default class LenisScroll {
     constructor(config = {}) {
         this.config = {
-            lerp: config.lerp ?? 0.075,
+            lerp: config.lerp ?? 0.055,
             wheelMultiplier: config.wheelMultiplier ?? 1.0,
             respectReducedMotion: config.respectReducedMotion ?? true,
             disableOnMobile: config.disableOnMobile ?? true,

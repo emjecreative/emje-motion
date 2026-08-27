@@ -51,7 +51,7 @@ final class SmoothScroll implements ModuleInterface
 
         $config = [
             'enabled' => $this->settings->isEnabled($this->getId()),
-            'lerp' => isset($allSettings['smooth_scroll_lerp']) ? (float) $allSettings['smooth_scroll_lerp'] : 0.075,
+            'lerp' => isset($allSettings['smooth_scroll_lerp']) ? (float) $allSettings['smooth_scroll_lerp'] : 0.055,
             'wheelMultiplier' => isset($allSettings['smooth_scroll_wheel_multiplier']) ? (float) $allSettings['smooth_scroll_wheel_multiplier'] : 1.0,
             'respectReducedMotion' => ! empty($allSettings['respect_reduced_motion']),
             'disableOnMobile' => ! empty($allSettings['disable_on_mobile']),
