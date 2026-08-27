@@ -13,7 +13,7 @@ final class AdminNotice
     {
         add_action(
             'admin_notices',
-            [ $this, 'showElementorRequiredNotice' ]
+            [ $this, 'showElementorRequiredNotice' ],
         );
     }
 
@@ -25,7 +25,8 @@ final class AdminNotice
         ?>
 		<div class="notice notice-error">
 			<p>
-				<strong>Emje Motion</strong> requires Elementor to be installed and activated.
+				<strong><?php echo esc_html__('Emje Motion', 'emje-motion'); ?></strong>
+				<?php echo esc_html__('requires Elementor to be installed and activated.', 'emje-motion'); ?>
 			</p>
 		</div>
 		<?php

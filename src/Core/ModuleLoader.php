@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace EmjeCreative\EmjeMotion\Core;
 
+use EmjeCreative\EmjeMotion\Admin\SettingsRepository;
 use EmjeCreative\EmjeMotion\Contracts\ModuleInterface;
 
 /**
@@ -12,29 +13,85 @@ use EmjeCreative\EmjeMotion\Contracts\ModuleInterface;
 final class ModuleLoader
 {
     /**
-     * Registered modules.
+     * Registered modules indexed by module ID.
      *
-     * @var ModuleInterface[]
+     * @var array<string, ModuleInterface>
      */
     private array $modules = [];
 
-    /**
-     * Register a module instance.
-     */
-    public function register(ModuleInterface $module): void
+    private SettingsRepository $settings;
+
+    public function __construct(?SettingsRepository $settings = null)
     {
-        $this->modules[] = $module;
+        $this->settings = $settings ?? new SettingsRepository();
     }
 
     /**
-     * Boot all registered modules.
+     * Register a module instance.
+     *
+     * @param string|null $moduleId Optional explicit ID. If null, will try getId() on module or fallback to class name.
+     */
+    public function register(ModuleInterface $module, ?string $moduleId = null): void
+    {
+        $id = $moduleId ?? $this->resolveModuleId($module);
+        $this->modules[$id] = $module;
+    }
+
+    /**
+     * Check whether a module is enabled.
+     */
+    public function isEnabled(string $moduleId): bool
+    {
+        /**
+         * Allow filtering via `emje_motion_module_enabled`.
+         *
+         * @param bool   $enabled  Whether the module is enabled.
+         * @param string $moduleId Module ID.
+         */
+        $enabled = $this->settings->isEnabled($moduleId);
+
+        return (bool) apply_filters('emje_motion_module_enabled', $enabled, $moduleId);
+    }
+
+    /**
+     * Boot all registered modules that are enabled.
      */
     public function boot(): void
     {
-        foreach ($this->modules as $module) {
-            if (method_exists($module, 'register')) {
+        foreach ($this->modules as $moduleId => $module) {
+            if (! $this->isEnabled($moduleId)) {
+                continue;
+            }
+
+            try {
                 $module->register();
+            } catch (\Throwable $e) {
+                if (defined('WP_DEBUG') && WP_DEBUG) {
+                    error_log(
+                        sprintf(
+                            '[Emje Motion] Failed to register module %s: %s',
+                            $module::class,
+                            $e->getMessage(),
+                        ),
+                    );
+                }
             }
         }
+    }
+
+    /**
+     * Resolve module ID from instance.
+     */
+    private function resolveModuleId(ModuleInterface $module): string
+    {
+        if (method_exists($module, 'getId')) {
+            $id = $module->getId();
+
+            if (is_string($id) && $id !== '') {
+                return $id;
+            }
+        }
+
+        return $module::class;
     }
 }

@@ -4,8 +4,15 @@ declare(strict_types=1);
 
 namespace EmjeCreative\EmjeMotion\Core;
 
-use EmjeCreative\EmjeMotion\Elementor\ElementorManager;
+use EmjeCreative\EmjeMotion\Admin\AdminManager;
+use EmjeCreative\EmjeMotion\Admin\AdminNotice;
+use EmjeCreative\EmjeMotion\Admin\SettingsRepository;
 use EmjeCreative\EmjeMotion\Assets\AssetsManager;
+use EmjeCreative\EmjeMotion\Elementor\ElementorManager;
+use EmjeCreative\EmjeMotion\Modules\HoverReveal\HoverReveal;
+use EmjeCreative\EmjeMotion\Modules\InteractiveCursor\InteractiveCursor;
+use EmjeCreative\EmjeMotion\Modules\SmoothScroll\SmoothScroll;
+use EmjeCreative\EmjeMotion\Modules\TextMotion\TextMotion;
 
 /**
  * Core plugin bootstrap.
@@ -24,7 +31,70 @@ final class Plugin
     {
         $this->container = new Container();
 
+        $this->registerBindings();
         $this->registerHooks();
+    }
+
+    /**
+     * Register service bindings.
+     */
+    private function registerBindings(): void
+    {
+        $this->container->set(
+            SettingsRepository::class,
+            static fn (): SettingsRepository => new SettingsRepository(),
+        );
+
+        $this->container->set(
+            AssetsManager::class,
+            static fn (): AssetsManager => new AssetsManager(),
+        );
+
+        $this->container->set(
+            ModuleLoader::class,
+            fn (): ModuleLoader => new ModuleLoader(
+                $this->container->get(SettingsRepository::class), // @phpstan-ignore-line
+            ),
+        );
+
+        $this->container->set(
+            ElementorManager::class,
+            fn (): ElementorManager => new ElementorManager(
+                $this->container->get(ModuleLoader::class), // @phpstan-ignore-line
+            ),
+        );
+
+        $this->container->set(
+            TextMotion::class,
+            static fn (): TextMotion => new TextMotion(),
+        );
+
+        $this->container->set(
+            SmoothScroll::class,
+            static fn (): SmoothScroll => new SmoothScroll(),
+        );
+
+        $this->container->set(
+            HoverReveal::class,
+            static fn (): HoverReveal => new HoverReveal(),
+        );
+
+        $this->container->set(
+            InteractiveCursor::class,
+            static fn (): InteractiveCursor => new InteractiveCursor(),
+        );
+
+        $this->container->set(
+            AdminNotice::class,
+            static fn (): AdminNotice => new AdminNotice(),
+        );
+
+        $this->container->set(
+            AdminManager::class,
+            fn (): AdminManager => new AdminManager(
+                $this->container->get(SettingsRepository::class), // @phpstan-ignore-line
+            ),
+        );
     }
 
     /**
@@ -48,14 +118,43 @@ final class Plugin
      */
     public function onPluginsLoaded(): void
     {
+        $this->registerAdmin();
+
         if (! $this->isElementorLoaded()) {
-            (new \EmjeCreative\EmjeMotion\Admin\AdminNotice())->register();
+            $notice = $this->container->get(AdminNotice::class); // @phpstan-ignore-line
+            if ($notice instanceof AdminNotice) {
+                $notice->register();
+            }
 
             return;
         }
 
-		(new AssetsManager())->register();
-		(new ElementorManager())->register();
+        $assets = $this->container->get(AssetsManager::class); // @phpstan-ignore-line
+        if ($assets instanceof AssetsManager) {
+            $assets->register();
+        }
+
+        $elementor = $this->container->get(ElementorManager::class); // @phpstan-ignore-line
+        if ($elementor instanceof ElementorManager) {
+            $elementor->register();
+        }
+    }
+
+    private function registerAdmin(): void
+    {
+        if (! is_admin()) {
+            return;
+        }
+
+        $settings = $this->container->get(SettingsRepository::class); // @phpstan-ignore-line
+        if ($settings instanceof SettingsRepository) {
+            $settings->ensureDefaults();
+        }
+
+        $admin = $this->container->get(AdminManager::class); // @phpstan-ignore-line
+        if ($admin instanceof AdminManager) {
+            $admin->register();
+        }
     }
 
     /**
@@ -63,6 +162,8 @@ final class Plugin
      */
     private function isElementorLoaded(): bool
     {
-        return did_action('elementor/loaded') > 0;
+        return class_exists('\Elementor\Plugin')
+            || defined('ELEMENTOR_VERSION')
+            || did_action('elementor/loaded') > 0;
     }
 }

@@ -34,6 +34,14 @@ final class Container
     }
 
     /**
+     * Check whether a service is registered.
+     */
+    public function has(string $id): bool
+    {
+        return isset($this->bindings[ $id ]) || isset($this->instances[ $id ]);
+    }
+
+    /**
      * Resolve a service.
      */
     public function get(string $id): object
@@ -44,7 +52,7 @@ final class Container
 
         if (! isset($this->bindings[ $id ])) {
             throw new InvalidArgumentException(
-                sprintf('Service [%s] is not registered.', $id)
+                sprintf('Service [%s] is not registered.', $id),
             );
         }
 
