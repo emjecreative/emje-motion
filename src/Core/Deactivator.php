@@ -11,6 +11,8 @@ final class Deactivator
 {
     public static function deactivate(): void
     {
-        // Deactivation logic will be added here.
+        // Keep options on deactivation to preserve user settings.
+        // Cleanup is handled via uninstall hook (if ever added).
+        flush_rewrite_rules();
     }
 }
