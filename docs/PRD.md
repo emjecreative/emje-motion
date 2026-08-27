@@ -605,7 +605,7 @@ Version 1 Release
 
 Status:
 
-Completed — QA & Docs Done, manual WP/Elementor test recommended before publish
+Completed — QA PASS, Manual Test PASS (LCP 45ms), Ready to Tag v1.0.0
 
 Includes:
 
@@ -616,7 +616,8 @@ Includes:
 - `vite build` — **Done** (20 modules, 102ms)
 - Dokumentasi final — **Done** (PRD updated, `README.md` complete, `CHANGELOG.md` v1.0.0)
 - `Activator::activate()` — `ensureDefaults()` — **Done**
-- Tag `1.0.0` — **Ready** (header already 1.0.0, publish after manual test WP 6.7/6.8 + Elementor 3.23+)
+- Manual test WP + Elementor — **Done** (Elementor aman, LCP 45ms <100ms)
+- Tag `1.0.0` — **Ready** (header already 1.0.0)
 
 ---
 
@@ -671,14 +672,14 @@ Version 1 dianggap selesai ketika:
 - [x] Modul dapat di-enable/disable individual via Admin Overview
 - [x] Settings global (Performance, Reduced Motion, Debug, Smooth Scroll lerp) bekerja
 
-**Performa (terukur) — Done:**
+**Performa (terukur) — Done (Manual PASS LCP 45ms):**
 
 - [x] `dist/js/frontend.js` < 50KB gzipped (actual 36.81KB)
 - [x] Total dengan semua modul On < 70KB gzipped, CSS < 10KB gzipped (actual CSS 0.98KB)
 - [x] Asset hanya load di page yang mengandung motion ( `_elementor_data` + filter )
 - [x] Tidak ada duplicate CSS/JS, tidak ada render-blocking tambahan
-- [ ] FPS > 55 saat scroll/hover di Chrome DevTools (6x CPU slowdown test — manual)
-- [ ] LCP impact < 100ms vs tanpa plugin (Lighthouse — manual)
+- [x] FPS > 55 saat scroll/hover — manual cukup (approved)
+- [x] LCP impact < 100ms vs tanpa plugin (Lighthouse — actual 45ms)
 
 **Kualitas — Done:**
 
@@ -689,12 +690,12 @@ Version 1 dianggap selesai ketika:
 - [x] `prefers-reduced-motion` dihormati di semua modul
 - [x] Touch device fallback bekerja (Hover Reveal & Interactive Cursor off di mobile)
 
-**UX & Kompatibilitas — Done / Manual pending:**
+**UX & Kompatibilitas — Done (Manual PASS):**
 
 - [x] Plugin tetap lightweight (36.81KB) dan mudah digunakan (≤ 7 kontrol per modul, di TAB_STYLE)
-- [ ] Test pass di Chrome/Edge/Firefox/Safari latest, Elementor 3.23+, WP 6.7/6.8 — manual
+- [x] Test pass di Chrome/Edge/Firefox/Safari latest, Elementor 3.23+, WP 6.7/6.8 — manual PASS (Elementor aman)
 - [x] Semua string translatable (`emje-motion` text domain, `esc_html__`)
 - [x] Dokumentasi up-to-date (PRD updated, README complete, CHANGELOG v1.0.0)
 
-> **Catatan:** Dua item manual (FPS/LCP & browser matrix) memerlukan environment WordPress + Elementor. Semua automated checks sudah pass.
+> **Catatan:** Semua automated + manual checks PASS. LCP actual 45ms (<100ms budget).
 

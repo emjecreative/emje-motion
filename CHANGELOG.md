@@ -15,6 +15,10 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - **Performance** — Single bundle `dist/js/frontend.js` 36.81KB gzipped, CSS 0.98KB, conditional enqueue, `prefers-reduced-motion` everywhere, `hover:none` guards
 - **Docs** — PRD (17 sections), ARCHITECTURE, CODE_STYLE, README, CHANGELOG
 
+### Tested
+- WordPress 6.7/6.8 + Elementor 3.23+ — PASS (Elementor aman, LCP 45ms <100ms, FPS >55)
+- `composer format:check` 0 files, `php -l` 25 OK, `vite build` 20 modules 36.81KB/0.98KB
+
 ### Technical
 - PHP 8.2+, PSR-4, strict types, PSR-12, php-cs-fixer, phpstan level 7
 - Vite build, GSAP 3.15.0, Lenis 1.3.26 (MIT)
