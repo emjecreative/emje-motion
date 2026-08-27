@@ -1,9 +1,10 @@
 import { gsap } from 'gsap';
+import Animation from '../../core/Animation';
 
 /**
  * Handles the Scramble Text animation.
  */
-export default class ScrambleText {
+export default class ScrambleText extends Animation {
 
     /**
      * Create a new Scramble Text animation.
@@ -12,8 +13,7 @@ export default class ScrambleText {
      * @param {Object} config
      */
     constructor(element, config) {
-        this.element = element;
-        this.config = config;
+        super(element, config);
 
 		this.originalText = '';
 		this.characters = [];
@@ -21,8 +21,6 @@ export default class ScrambleText {
 
 		this.scrambledCharacters = [];
 		this.lastScrambleUpdate = 0;
-
-		this.timeline = null;
     }
 
 	/**
@@ -66,6 +64,33 @@ export default class ScrambleText {
 
 			case 'right-to-left':
 				return sequence.reverse();
+
+			case 'center-out': {
+				const result = [];
+				let left = Math.floor((sequence.length - 1) / 2);
+				let right = left + 1;
+
+				if (sequence.length % 2 !== 0) {
+					result.push(left);
+					left -= 1;
+				}
+
+				while (left >= 0 || right < sequence.length) {
+					if (left >= 0) {
+						result.push(left);
+						left -= 1;
+					}
+					if (right < sequence.length) {
+						result.push(right);
+						right += 1;
+					}
+				}
+
+				return result;
+			}
+
+			case 'random':
+				return sequence.sort(() => Math.random() - 0.5);
 
 			default:
 				return sequence;
@@ -129,7 +154,8 @@ export default class ScrambleText {
 
 		const now = performance.now();
 
-		const refreshInterval = 100 / this.config.scrambleSpeed;
+		const speed = Math.min(5, Math.max(0.5, parseFloat(this.config.scrambleSpeed) || 1));
+		const refreshInterval = 100 / speed;
 
 		if (now - this.lastScrambleUpdate < refreshInterval) {
 			return;
@@ -192,12 +218,7 @@ export default class ScrambleText {
 	 */
 	play() {
 
-		if (this.timeline) {
-
-			this.timeline.kill();
-			this.timeline = null;
-
-		}
+		this.killTimeline();
 
 		this.prepare();
 		const animation = {
@@ -207,7 +228,8 @@ export default class ScrambleText {
 		this.timeline = gsap.to(animation, {
 			progress: 1,
 			duration: this.config.duration,
-    		ease: this.config.ease,
+			delay: this.config.delay ?? 0,
+			ease: this.config.ease,
 
 			onUpdate: () => {
 				this.renderFrame(animation.progress);
@@ -218,6 +240,17 @@ export default class ScrambleText {
 			},
 
 		});
+
+	}
+
+	/**
+	 * Cleanup.
+	 */
+	destroy() {
+
+		super.destroy();
+
+		this.element.textContent = this.originalText;
 
 	}
 

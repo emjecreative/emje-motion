@@ -36,13 +36,38 @@ export default class ElementManager {
 	 * Get motion configuration.
 	 *
 	 * @param {HTMLElement} element
-	 * @returns {Object}
+	 * @returns {Object|null}
 	 */
 	getConfig(element) {
 
-		return JSON.parse(
-			element.dataset.emjeMotion
-		);
+		const raw = element.dataset.emjeMotion;
+
+		if (!raw) {
+			return null;
+		}
+
+		try {
+			const config = JSON.parse(raw);
+
+			if (!config || typeof config !== 'object') {
+				return null;
+			}
+
+			const allowedAnimations = ['scramble-text', 'text-unfold', 'fill-reveal'];
+			const allowedTriggers = ['load', 'viewport', 'hover', 'page-load'];
+
+			if (config.animation && !allowedAnimations.includes(config.animation)) {
+				return null;
+			}
+
+			if (config.trigger && !allowedTriggers.includes(config.trigger)) {
+				config.trigger = 'load';
+			}
+
+			return config;
+		} catch (e) {
+			return null;
+		}
 
 	}
 

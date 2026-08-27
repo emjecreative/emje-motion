@@ -42,7 +42,7 @@ export default class FillReveal extends Animation {
 	 */
 	build() {
 
-		if ( this.wrapper ) {
+		if ( this.dom.wrapper ) {
 			return;
 		}
 
@@ -87,6 +87,10 @@ export default class FillReveal extends Animation {
 
 		background.className = 'emje-motion-fill__background';
 		background.innerHTML = this.originalHTML;
+
+		if (typeof this.config.fillBgOpacity !== 'undefined') {
+			background.style.opacity = String(this.config.fillBgOpacity);
+		}
 
 		return background;
 
@@ -139,8 +143,6 @@ export default class FillReveal extends Animation {
 	 */
 	play() {
 
-		console.log('FillReveal play');
-
 		this.killTimeline();
 
 		this.prepare();
@@ -154,11 +156,9 @@ export default class FillReveal extends Animation {
 	 */
 	animate() {
 
-		console.log('FillReveal animate');
-
 		this.timeline = gsap.timeline( {
 
-			delay: this.config.delay,
+			delay: this.config.delay ?? 0,
 
 			onComplete: () => {
 
@@ -170,7 +170,7 @@ export default class FillReveal extends Animation {
 
 		this.timeline.to( this.dom.mask, {
 
-			width: this.dom.wrapper.offsetWidth,
+			width: '100%',
 
 			duration: this.config.duration,
 
@@ -187,18 +187,18 @@ export default class FillReveal extends Animation {
 
 		super.destroy();
 
-		if ( ! this.wrapper ) {
+		if ( ! this.dom.wrapper ) {
 			return;
 		}
 
 		this.element.innerHTML = this.originalHTML;
 
-	this.dom = {
-		wrapper: null,
-		background: null,
-		mask: null,
-		foreground: null,
-	};
+		this.dom = {
+			wrapper: null,
+			background: null,
+			mask: null,
+			foreground: null,
+		};
 
 	}
 

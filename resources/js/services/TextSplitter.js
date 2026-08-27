@@ -47,7 +47,7 @@ export default class TextSplitter {
                 break;
 
             default:
-                throw new Error(`Unsupported split type: ${by}`);
+                throw new Error(`Unsupported split type: ${type}`);
 
         }
 
@@ -187,15 +187,11 @@ export default class TextSplitter {
      * @param {String} className
      * @returns {HTMLSpanElement}
      */
-	createWrapper(className, text) {
+	createWrapper(className) {
 
 		const wrapper = document.createElement('span');
 
 		wrapper.className = className;
-
-		wrapper.appendChild(
-			document.createTextNode(text)
-		);
 
 		return wrapper;
 

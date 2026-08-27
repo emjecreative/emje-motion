@@ -101,6 +101,7 @@ export default class MotionEngine {
 
 			}
 
+			case 'load':
 			case 'page-load':
 			default:
 
@@ -113,40 +114,140 @@ export default class MotionEngine {
 	}
 
 	/**
+	 * Check whether reduced motion is preferred.
+	 *
+	 * @returns {boolean}
+	 */
+	prefersReducedMotion() {
+
+		return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+	}
+
+	/**
+	 * Initialize a single element.
+	 *
+	 * @param {HTMLElement} element
+	 */
+	initElement(element) {
+
+		if (element.dataset.emjeMotionInitialized === 'true') {
+			return;
+		}
+
+		const config = this.elementManager.getConfig(element);
+
+		if (!config) {
+			return;
+		}
+
+		// Respect prefers-reduced-motion — do not animate.
+		if (this.prefersReducedMotion()) {
+			return;
+		}
+
+		const targetElement = this.elementManager.getTargetElement(element);
+
+		const animation = this.createAnimation(targetElement, config);
+
+		if (!animation) {
+			return;
+		}
+
+		element.dataset.emjeMotionInitialized = 'true';
+
+		this.setupTrigger(animation, element, config);
+
+	}
+
+	/**
 	 * Initialize the engine.
 	 */
 	init() {
 
 		const elements = this.elementManager.getElements();
 
-		if (elements.length === 0) {
+		if (elements.length > 0) {
+			elements.forEach((element) => this.initElement(element));
+		}
+
+		this.observeNewElements();
+
+		this.hookElementorFrontend();
+
+	}
+
+	/**
+	 * Observe dynamically added elements (popups, AJAX, infinite scroll).
+	 */
+	observeNewElements() {
+
+		if (typeof MutationObserver === 'undefined') {
 			return;
 		}
 
-		elements.forEach((element) => {
+		const observer = new MutationObserver((mutations) => {
 
-			const config = this.elementManager.getConfig(element);
+			mutations.forEach((mutation) => {
 
-			const targetElement = this.elementManager.getTargetElement(
-				element
-			);
+				mutation.addedNodes.forEach((node) => {
 
-			const animation = this.createAnimation(
-				targetElement,
-				config
-			);
+					if (!(node instanceof HTMLElement)) {
+						return;
+					}
 
-			if (!animation) {
-				return;
-			}
+					if (node.matches('[data-emje-motion]')) {
+						this.initElement(node);
+					}
 
-			this.setupTrigger(
-				animation,
-				element,
-				config
-			);
+					node.querySelectorAll('[data-emje-motion]').forEach((el) => {
+
+						this.initElement(el);
+
+					});
+
+				});
+
+			});
 
 		});
+
+		observer.observe(document.body, { childList: true, subtree: true });
+
+	}
+
+	/**
+	 * Hook into Elementor frontend lifecycle.
+	 */
+	hookElementorFrontend() {
+
+		if (typeof window.elementorFrontend === 'undefined') {
+			window.addEventListener('elementor/frontend/init', () => this.hookElementorFrontend());
+
+			return;
+		}
+
+		if (window.elementorFrontend.hooks) {
+			window.elementorFrontend.hooks.addAction('frontend/element_ready/global', ($el) => {
+
+				const el = $el instanceof jQuery ? $el[0] : $el;
+
+				if (!el) {
+					return;
+				}
+
+				if (el.matches('[data-emje-motion]')) {
+					this.initElement(el);
+				}
+
+				el.querySelectorAll('[data-emje-motion]').forEach((child) => {
+
+					this.initElement(child);
+
+				});
+
+			});
+		}
 
 	}
 

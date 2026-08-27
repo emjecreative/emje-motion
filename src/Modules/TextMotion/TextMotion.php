@@ -13,12 +13,17 @@ use EmjeCreative\EmjeMotion\Modules\TextMotion\Frontend\TextMotionFrontend;
  */
 final class TextMotion implements ModuleInterface
 {
+    public function getId(): string
+    {
+        return 'text-motion';
+    }
+
     /**
      * Register the module.
      */
     public function register(): void
     {
-		(new TextMotionControls())->register();
-		(new TextMotionFrontend())->register();
+        (new TextMotionControls())->register();
+        (new TextMotionFrontend())->register();
     }
 }

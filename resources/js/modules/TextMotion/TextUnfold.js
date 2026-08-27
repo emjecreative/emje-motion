@@ -30,8 +30,6 @@ export default class TextUnfold extends Animation {
 		by: this.config.splitBy ?? 'words',
 	});
 
-	console.log(this.targets);
-
     }
 
     /**
@@ -79,6 +77,9 @@ export default class TextUnfold extends Animation {
                 duration: this.config.duration ?? 0.8,
                 stagger: this.config.stagger ?? 0.04,
                 ease: this.config.ease ?? 'power2.out',
+                onComplete: () => {
+                    gsap.set(this.targets, { clearProps: 'willChange' });
+                },
             }
 
         );
