@@ -563,6 +563,32 @@
                 tip.appendChild(icon);
                 tip.appendChild(bubble);
                 titleEl.appendChild(tip);
+
+                // Position bubble with margin from viewport edges (never cut off left/right)
+                var positionBubble = function() {
+                    var rect = tip.getBoundingClientRect();
+                    var bw = bubble.offsetWidth || 180;
+                    var bh = bubble.offsetHeight || 60;
+                    var vw = document.documentElement.clientWidth || window.innerWidth;
+                    var vh = document.documentElement.clientHeight || window.innerHeight;
+                    var margin = 12;
+                    // Centered above the icon, clamped with 12px margin so it never touches sidebar edges
+                    var left = rect.left + rect.width / 2 - bw / 2;
+                    left = Math.max(margin, Math.min(left, vw - bw - margin));
+                    var top = rect.top - bh - 8;
+                    if (top < margin) {
+                        top = rect.bottom + 8;
+                    }
+                    bubble.style.left = left + 'px';
+                    bubble.style.top = top + 'px';
+                    bubble.style.transform = 'none';
+                };
+                tip.addEventListener('mouseenter', positionBubble);
+                tip.addEventListener('focus', positionBubble);
+                tip.addEventListener('mouseleave', function() {
+                    bubble.style.left = '';
+                    bubble.style.top = '';
+                });
             });
         };
         process();
@@ -770,38 +796,33 @@
                         // preview iframe has its own elements? usually not
                     }
                     allModels.forEach(function(m) { syncContainerFromModel(m); });
-                    // Fallback: also reInit any existing data attributes in preview that have livePreview true (covers PHP-rendered)
-                    var win2 = getPreviewWindow();
-                    var doc2 = getPreviewDocument();
-                    if (win2 && doc2) {
-                        var hoverEls = doc2.querySelectorAll('[data-emje-hover-reveal]');
-                        hoverEls.forEach(function(el) {
-                            try {
-                                var cfg = JSON.parse(el.getAttribute('data-emje-hover-reveal') || '{}');
-                                if (cfg.livePreview === false) return;
-                                if (win2.EmjeMotionHoverReveal && win2.EmjeMotionHoverReveal.reInit) {
-                                    win2.EmjeMotionHoverReveal.reInit(el);
-                                }
-                            } catch (e) {}
-                        });
-                        var cursorEls = doc2.querySelectorAll('[data-emje-cursor]');
-                        cursorEls.forEach(function(el) {
-                            try {
-                                var cfg = JSON.parse(el.getAttribute('data-emje-cursor') || '{}');
-                                if (cfg.livePreview === false) return;
-                                if (win2.EmjeMotionCursor && win2.EmjeMotionCursor.reInit) {
-                                    win2.EmjeMotionCursor.reInit(el);
-                                }
-                            } catch (e) {}
-                        });
-                    }
                 } catch (e) {}
             };
 
-            // Run with delays to ensure preview DOM and elementor models are ready
-            setTimeout(syncAllFromModels, 400);
-            setTimeout(syncAllFromModels, 900);
-            setTimeout(syncAllFromModels, 1500);
+            // Fallback: initAll any existing data attributes in preview (covers PHP-rendered, idempotent safe to poll)
+            var initAllFromPreview = function() {
+                var win2 = getPreviewWindow();
+                var doc2 = getPreviewDocument();
+                if (!win2 || !doc2) return;
+                if (win2.EmjeMotionHoverReveal && typeof win2.EmjeMotionHoverReveal.initAll === 'function') {
+                    win2.EmjeMotionHoverReveal.initAll();
+                }
+                if (win2.EmjeMotionCursor && typeof win2.EmjeMotionCursor.initAll === 'function') {
+                    win2.EmjeMotionCursor.initAll();
+                }
+            };
+
+            // Poll until preview is ready (handles late DOM/model population on editor reopen)
+            var attempts = 0;
+            var pollTimer = setInterval(function() {
+                initAllFromPreview();
+                attempts++;
+                if (attempts >= 12) {
+                    clearInterval(pollTimer);
+                }
+            }, 400);
+            // Model sync runs once (handles unsaved draft state)
+            setTimeout(syncAllFromModels, 500);
         };
 
         // Listen to Elementor preview:loaded (top frame)

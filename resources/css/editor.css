@@ -43,10 +43,7 @@
 .emje-tooltip__bubble {
     visibility: hidden;
     opacity: 0;
-    position: absolute;
-    left: 50%;
-    bottom: calc(100% + 8px);
-    transform: translateX(-50%) translateY(4px);
+    position: fixed;
     background: #23282d;
     color: #fff;
     padding: 6px 8px;
@@ -55,8 +52,8 @@
     line-height: 1.4;
     width: 180px;
     max-width: 180px;
-    z-index: 99;
-    transition: opacity 0.15s, transform 0.15s, visibility 0.15s;
+    z-index: 9999;
+    transition: opacity 0.15s, visibility 0.15s;
     pointer-events: none;
     text-align: left;
     white-space: normal;
@@ -80,7 +77,6 @@
 .emje-tooltip:focus-within .emje-tooltip__bubble {
     visibility: visible;
     opacity: 1;
-    transform: translateX(-50%) translateY(0);
 }
 
 /* Ensure panel allows tooltip overflow */
