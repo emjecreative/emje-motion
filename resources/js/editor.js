@@ -541,6 +541,88 @@
 
     function initBridge() {
         bindEditorChange();
+        bindPreviewLoaded();
+    }
+
+    function bindPreviewLoaded() {
+        // Ensure live preview is applied on editor open / preview reload, not only on change
+        var doPreviewSync = function() {
+            var win = getPreviewWindow();
+            var doc = getPreviewDocument();
+            if (!win || !doc) return;
+            // Find all containers in preview that have Interaction Motion enabled
+            // We need to iterate over Elementor models to know settings, but on preview:loaded we can just
+            // trigger reInit for any existing data-emje-* in preview that should be live
+            // Use a short delay to ensure preview DOM is ready
+            setTimeout(function() {
+                var win2 = getPreviewWindow();
+                var doc2 = getPreviewDocument();
+                if (!win2 || !doc2) return;
+                // For each interaction container in preview, check if its model has live ON
+                // Fallback: if data attribute exists and config livePreview is true, reInit will respect shouldInit
+                var hoverEls = doc2.querySelectorAll('[data-emje-hover-reveal]');
+                hoverEls.forEach(function(el) {
+                    try {
+                        var cfg = JSON.parse(el.getAttribute('data-emje-hover-reveal') || '{}');
+                        if (cfg.livePreview === false) return;
+                        if (win2.EmjeMotionHoverReveal && win2.EmjeMotionHoverReveal.reInit) {
+                            win2.EmjeMotionHoverReveal.reInit(el);
+                        }
+                    } catch (e) {}
+                });
+                var cursorEls = doc2.querySelectorAll('[data-emje-cursor]');
+                cursorEls.forEach(function(el) {
+                    try {
+                        var cfg = JSON.parse(el.getAttribute('data-emje-cursor') || '{}');
+                        if (cfg.livePreview === false) return;
+                        if (win2.EmjeMotionCursor && win2.EmjeMotionCursor.reInit) {
+                            win2.EmjeMotionCursor.reInit(el);
+                        }
+                    } catch (e) {}
+                });
+                // Also handle new unified: if data not yet set but model has it, build via editor models
+                // Iterate over all element models if available
+                try {
+                    var editedView = null;
+                    try { editedView = window.elementor.channels.editor.request('editedElementView'); } catch (err) {}
+                    // If we have a specific widgetId, the above already handled via change handler
+                    // For initial load, we need to sync all containers from the preview's elementorFrontend
+                    // Fallback: trigger a synthetic change for visible containers
+                    if (win2.elementorFrontend && win2.elementorFrontend.elementsHandler) {
+                        // No-op, rely on hoverEls/cursorEls reInit above
+                    }
+                } catch (e) {}
+            }, 300);
+        };
+
+        // Listen to Elementor preview:loaded (top frame)
+        try {
+            if (window.elementor && window.elementor.channels && window.elementor.channels.data) {
+                window.elementor.channels.data.on('preview:loaded', doPreviewSync);
+            }
+        } catch (e) {}
+        try {
+            if (window.elementor && typeof window.elementor.on === 'function') {
+                window.elementor.on('preview:loaded', doPreviewSync);
+            }
+        } catch (e) {}
+        // Also listen to iframe load
+        try {
+            var iframe = document.getElementById('elementor-preview-iframe');
+            if (iframe) {
+                iframe.addEventListener('load', function() {
+                    setTimeout(doPreviewSync, 400);
+                });
+            }
+            // If already loaded
+            setTimeout(doPreviewSync, 800);
+        } catch (e) {}
+        // Re-bind when elementor:init fires (ensure after editor fully inited)
+        try {
+            if (window.elementor) {
+                window.elementor.on('preview:loaded', doPreviewSync);
+            }
+        } catch (e) {}
     }
 
     if (window.elementor && window.elementor.channels && window.elementor.channels.editor) {

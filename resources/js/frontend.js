@@ -55,20 +55,77 @@ function bootstrapAll() {
     bootstrapInteractiveCursor();
 }
 
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', bootstrapAll);
-} else {
-    bootstrapAll();
+function hookElementorFrontend() {
+    if (typeof window.elementorFrontend === 'undefined' || !window.elementorFrontend.hooks) {
+        return;
+    }
+    // Ensure container added via Elementor AJAX/preview is handled
+    window.elementorFrontend.hooks.addAction('frontend/element_ready/container', function($el) {
+        var el = (typeof jQuery !== 'undefined' && $el instanceof jQuery) ? $el[0] : $el;
+        if (!el) return;
+        if (el.matches && el.matches('[data-emje-hover-reveal]')) {
+            HoverReveal.reInit(el);
+        }
+        if (el.querySelectorAll) {
+            el.querySelectorAll('[data-emje-hover-reveal]').forEach(function(e) { HoverReveal.reInit(e); });
+        }
+        if (el.matches && el.matches('[data-emje-cursor]')) {
+            InteractiveCursor.reInit(el);
+        }
+        if (el.querySelectorAll) {
+            el.querySelectorAll('[data-emje-cursor]').forEach(function(e) { InteractiveCursor.reInit(e); });
+        }
+    });
+    window.elementorFrontend.hooks.addAction('frontend/element_ready/global', function() { bootstrapAll(); });
 }
 
-// Elementor frontend init — use proper hook, bootstrap all modules (Opsi B: Hover/Cursor also live in editor)
+function observeNewElements() {
+    if (typeof MutationObserver === 'undefined' || !document.body) {
+        return;
+    }
+    var observer = new MutationObserver(function(mutations) {
+        mutations.forEach(function(m) {
+            m.addedNodes.forEach(function(node) {
+                if (!(node instanceof HTMLElement)) return;
+                if (node.matches && node.matches('[data-emje-hover-reveal]')) {
+                    HoverReveal.reInit(node);
+                }
+                if (node.querySelectorAll) {
+                    node.querySelectorAll('[data-emje-hover-reveal]').forEach(function(e) { HoverReveal.reInit(e); });
+                }
+                if (node.matches && node.matches('[data-emje-cursor]')) {
+                    InteractiveCursor.reInit(node);
+                }
+                if (node.querySelectorAll) {
+                    node.querySelectorAll('[data-emje-cursor]').forEach(function(e) { InteractiveCursor.reInit(e); });
+                }
+            });
+        });
+    });
+    observer.observe(document.body, { childList: true, subtree: true });
+}
+
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', function() {
+        bootstrapAll();
+        observeNewElements();
+        hookElementorFrontend();
+    });
+} else {
+    bootstrapAll();
+    observeNewElements();
+    hookElementorFrontend();
+}
+
+// Elementor frontend init — ensure hooks are registered even if frontend.js loads before elementorFrontend
 function onElementorFrontendInit() {
     bootstrapAll();
+    observeNewElements();
+    hookElementorFrontend();
 }
 
 if (typeof window.elementorFrontend !== 'undefined' && window.elementorFrontend.hooks) {
-    // If already initialized, hook directly
-    window.elementorFrontend.hooks.addAction('frontend/element_ready/global', () => bootstrapAll());
+    hookElementorFrontend();
 } else {
     window.addEventListener('elementor/frontend/init', onElementorFrontendInit);
 }
