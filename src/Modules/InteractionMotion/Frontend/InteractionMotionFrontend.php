@@ -125,13 +125,33 @@ final class InteractionMotionFrontend
     {
         if ($isNew) {
             $image = $settings['emje_interaction_hover_image'] ?? null;
-            $imageUrl = is_array($image) && isset($image['url']) ? (string) $image['url'] : '';
             $imageSize = isset($settings['emje_interaction_hover_image_size']) ? (string) $settings['emje_interaction_hover_image_size'] : 'medium';
+            // Resolve sized URL for quality + speed (thumbnail = smaller file)
+            $imageUrl = '';
+            if (is_array($image)) {
+                if (! empty($image['id'])) {
+                    $sized = wp_get_attachment_image_src((int) $image['id'], $imageSize);
+                    if (is_array($sized) && ! empty($sized[0])) {
+                        $imageUrl = (string) $sized[0];
+                    } elseif (! empty($image['url'])) {
+                        $imageUrl = (string) $image['url'];
+                    }
+                } elseif (! empty($image['url'])) {
+                    $imageUrl = (string) $image['url'];
+                }
+            } elseif (is_string($image) && $image !== '') {
+                $imageUrl = $image;
+            }
             $followSpeed = isset($settings['emje_interaction_hover_follow_speed']) ? (float) $settings['emje_interaction_hover_follow_speed'] : 0.12;
             $scale = isset($settings['emje_interaction_hover_scale']) ? (float) $settings['emje_interaction_hover_scale'] : 1.0;
             $animation = isset($settings['emje_interaction_hover_animation']) ? (string) $settings['emje_interaction_hover_animation'] : 'fade';
             $triggerArea = isset($settings['emje_interaction_hover_trigger_area']) ? (string) $settings['emje_interaction_hover_trigger_area'] : 'container';
             $livePreview = ($settings['emje_interaction_live_preview'] ?? '') === 'yes';
+            // New controls: offset & rotate
+            $offsetX = $this->resolveSliderValue($settings['emje_interaction_hover_offset_x'] ?? 0, 0, -200, 200);
+            $offsetY = $this->resolveSliderValue($settings['emje_interaction_hover_offset_y'] ?? 0, 0, -200, 200);
+            $rotate = $this->resolveSliderValue($settings['emje_interaction_hover_rotate'] ?? 0, 0, 0, 360);
+            $rotateHover = $this->resolveSliderValue($settings['emje_interaction_hover_rotate_hover'] ?? 15, 15, 0, 360);
             // Clamp
             $followSpeed = max(0.05, min(0.3, $followSpeed));
             $scale = max(0.8, min(1.2, $scale));
@@ -153,13 +173,31 @@ final class InteractionMotionFrontend
                 'animation' => $animation,
                 'triggerArea' => $triggerArea,
                 'livePreview' => $livePreview,
+                'offsetX' => $offsetX,
+                'offsetY' => $offsetY,
+                'rotate' => $rotate,
+                'rotateHover' => $rotateHover,
             ];
         }
 
         // Legacy
         $image = $settings['emje_hover_reveal_image'] ?? null;
-        $imageUrl = is_array($image) && isset($image['url']) ? (string) $image['url'] : '';
         $imageSize = isset($settings['emje_hover_reveal_image_size']) ? (string) $settings['emje_hover_reveal_image_size'] : 'medium';
+        $imageUrl = '';
+        if (is_array($image)) {
+            if (! empty($image['id'])) {
+                $sized = wp_get_attachment_image_src((int) $image['id'], $imageSize);
+                if (is_array($sized) && ! empty($sized[0])) {
+                    $imageUrl = (string) $sized[0];
+                } elseif (! empty($image['url'])) {
+                    $imageUrl = (string) $image['url'];
+                }
+            } elseif (! empty($image['url'])) {
+                $imageUrl = (string) $image['url'];
+            }
+        } elseif (is_string($image) && $image !== '') {
+            $imageUrl = $image;
+        }
         $followSpeed = isset($settings['emje_hover_reveal_follow_speed']) ? (float) $settings['emje_hover_reveal_follow_speed'] : 0.12;
         $scale = isset($settings['emje_hover_reveal_scale']) ? (float) $settings['emje_hover_reveal_scale'] : 1.0;
         $animation = isset($settings['emje_hover_reveal_animation']) ? (string) $settings['emje_hover_reveal_animation'] : 'fade';
@@ -173,6 +211,9 @@ final class InteractionMotionFrontend
         if (! in_array($triggerArea, ['container', 'heading'], true)) {
             $triggerArea = 'container';
         }
+        if (! in_array($imageSize, ['thumbnail', 'medium', 'large', 'full'], true)) {
+            $imageSize = 'medium';
+        }
 
         return [
             'imageUrl' => esc_url_raw($imageUrl),
@@ -182,6 +223,10 @@ final class InteractionMotionFrontend
             'animation' => $animation,
             'triggerArea' => $triggerArea,
             'livePreview' => $livePreview,
+            'offsetX' => 0,
+            'offsetY' => 0,
+            'rotate' => 0,
+            'rotateHover' => 15,
         ];
     }
 
@@ -264,5 +309,24 @@ final class InteractionMotionFrontend
             'label' => $label,
             'livePreview' => $livePreview,
         ];
+    }
+
+    /**
+     * Resolve slider value (supports ['size'=>int] or int/string).
+     *
+     * @param mixed $value
+     */
+    private function resolveSliderValue(mixed $value, int $default, int $min, int $max): int
+    {
+        $raw = $value;
+        if (is_array($value) && isset($value['size'])) {
+            $raw = $value['size'];
+        }
+        if (! is_numeric($raw)) {
+            return $default;
+        }
+        $int = (int) $raw;
+
+        return max($min, min($max, $int));
     }
 }

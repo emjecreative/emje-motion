@@ -197,6 +197,114 @@ final class InteractionMotionControls
             ],
         );
 
+        $element->add_control(
+            'emje_interaction_hover_offset_x',
+            [
+                'label' => esc_html__('Offset X', 'emje-motion'),
+                'type' => Controls_Manager::SLIDER,
+                'size_units' => ['px'],
+                'range' => [
+                    'px' => [
+                        'min' => -200,
+                        'max' => 200,
+                        'step' => 1,
+                    ],
+                ],
+                'default' => [
+                    'size' => 0,
+                    'unit' => 'px',
+                ],
+                'description' => esc_html__('Horizontal offset from cursor. Negative = left, positive = right.', 'emje-motion'),
+                'condition' => [
+                    'emje_interaction_enable' => 'yes',
+                    'emje_interaction_effect' => 'hover-reveal',
+                ],
+                'frontend_available' => true,
+                'render_type' => 'none',
+            ],
+        );
+
+        $element->add_control(
+            'emje_interaction_hover_offset_y',
+            [
+                'label' => esc_html__('Offset Y', 'emje-motion'),
+                'type' => Controls_Manager::SLIDER,
+                'size_units' => ['px'],
+                'range' => [
+                    'px' => [
+                        'min' => -200,
+                        'max' => 200,
+                        'step' => 1,
+                    ],
+                ],
+                'default' => [
+                    'size' => 0,
+                    'unit' => 'px',
+                ],
+                'description' => esc_html__('Vertical offset from cursor. Negative = above, positive = below.', 'emje-motion'),
+                'condition' => [
+                    'emje_interaction_enable' => 'yes',
+                    'emje_interaction_effect' => 'hover-reveal',
+                ],
+                'frontend_available' => true,
+                'render_type' => 'none',
+            ],
+        );
+
+        $element->add_control(
+            'emje_interaction_hover_rotate',
+            [
+                'label' => esc_html__('Rotate', 'emje-motion'),
+                'type' => Controls_Manager::SLIDER,
+                'size_units' => ['deg'],
+                'range' => [
+                    'deg' => [
+                        'min' => 0,
+                        'max' => 360,
+                        'step' => 1,
+                    ],
+                ],
+                'default' => [
+                    'size' => 0,
+                    'unit' => 'deg',
+                ],
+                'description' => esc_html__('Static rotate. For hover rotate, set Hover Rotate below.', 'emje-motion'),
+                'condition' => [
+                    'emje_interaction_enable' => 'yes',
+                    'emje_interaction_effect' => 'hover-reveal',
+                ],
+                'frontend_available' => true,
+                'render_type' => 'none',
+            ],
+        );
+
+        $element->add_control(
+            'emje_interaction_hover_rotate_hover',
+            [
+                'label' => esc_html__('Hover Rotate', 'emje-motion'),
+                'type' => Controls_Manager::SLIDER,
+                'size_units' => ['deg'],
+                'range' => [
+                    'deg' => [
+                        'min' => 0,
+                        'max' => 360,
+                        'step' => 1,
+                    ],
+                ],
+                'default' => [
+                    'size' => 15,
+                    'unit' => 'deg',
+                ],
+                'description' => esc_html__('Rotate when hovering. Applied on hover with animation.', 'emje-motion'),
+                'condition' => [
+                    'emje_interaction_enable' => 'yes',
+                    'emje_interaction_effect' => 'hover-reveal',
+                ],
+                'frontend_available' => true,
+                'render_type' => 'none',
+            ],
+        );
+
         // === Interactive Cursor group ===
         $element->add_control(
             'emje_interaction_cursor_heading',

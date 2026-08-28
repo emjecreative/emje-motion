@@ -6,15 +6,13 @@
     position: fixed;
     top: 0;
     left: 0;
-    width: 280px;
-    height: 200px;
     pointer-events: none;
     z-index: 10;
     opacity: 0;
     will-change: transform, opacity;
     overflow: hidden;
     border-radius: 8px;
-    transform: translate(-50%, -50%) scale(0.9);
+    /* width/height and transform are set via JS (gsap) based on Image Size, Scale and Rotate */
 }
 
 .emje-hover-reveal__image img {

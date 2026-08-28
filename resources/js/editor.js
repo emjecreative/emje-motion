@@ -511,7 +511,7 @@
                                 try { targetH.removeAttribute('data-emje-hover-reveal'); } catch(e){}
                                 return;
                             }
-                            try { targetH.setAttribute('data-emje-hover-reveal', JSON.stringify({imageUrl: cfg.imageUrl, imageSize: cfg.imageSize, followSpeed: cfg.followSpeed, scale: cfg.scale, animation: cfg.animation, triggerArea: cfg.triggerArea, livePreview: cfg.livePreview})); } catch(e){}
+                            try { targetH.setAttribute('data-emje-hover-reveal', JSON.stringify({imageUrl: cfg.imageUrl, imageSize: cfg.imageSize, followSpeed: cfg.followSpeed, scale: cfg.scale, animation: cfg.animation, triggerArea: cfg.triggerArea, livePreview: cfg.livePreview, offsetX: cfg.offsetX, offsetY: cfg.offsetY, rotate: cfg.rotate, rotateHover: cfg.rotateHover})); } catch(e){}
                             if (win.EmjeMotionHoverReveal && win.EmjeMotionHoverReveal.reInit) win.EmjeMotionHoverReveal.reInit(targetH);
                         } else {
                             var targetC = findTarget(doc, widgetId, 'data-emje-cursor') || anyTarget;
@@ -612,7 +612,7 @@
                                 try { targetH.removeAttribute('data-emje-hover-reveal'); } catch(e){}
                                 return;
                             }
-                            try { targetH.setAttribute('data-emje-hover-reveal', JSON.stringify({imageUrl: cfgNew.imageUrl, imageSize: cfgNew.imageSize, followSpeed: cfgNew.followSpeed, scale: cfgNew.scale, animation: cfgNew.animation, triggerArea: cfgNew.triggerArea, livePreview: cfgNew.livePreview})); } catch(e){}
+                            try { targetH.setAttribute('data-emje-hover-reveal', JSON.stringify({imageUrl: cfgNew.imageUrl, imageSize: cfgNew.imageSize, followSpeed: cfgNew.followSpeed, scale: cfgNew.scale, animation: cfgNew.animation, triggerArea: cfgNew.triggerArea, livePreview: cfgNew.livePreview, offsetX: cfgNew.offsetX, offsetY: cfgNew.offsetY, rotate: cfgNew.rotate, rotateHover: cfgNew.rotateHover})); } catch(e){}
                             if (win2.EmjeMotionHoverReveal && win2.EmjeMotionHoverReveal.reInit) win2.EmjeMotionHoverReveal.reInit(targetH);
                         } else {
                             var targetC = findTarget(doc2, widgetId, 'data-emje-cursor') || findTarget(doc2, widgetId, 'data-emje-hover-reveal') || (widgetId ? doc2.querySelector('[data-id="' + widgetId + '"]') : null);

@@ -63,6 +63,17 @@ export default class HoverReveal {
         this.imageEl.appendChild(img);
         document.body.appendChild(this.imageEl);
 
+        // Apply Image Size for quality + display (thumbnail 150, medium 280, large 400, full 600)
+        var sizeMap = {
+            thumbnail: { w: 150, h: 150 },
+            medium: { w: 280, h: 200 },
+            large: { w: 400, h: 300 },
+            full: { w: 600, h: 400 },
+        };
+        var sz = sizeMap[this.config.imageSize] || sizeMap.medium;
+        this.imageEl.style.width = sz.w + 'px';
+        this.imageEl.style.height = sz.h + 'px';
+
         // Mobile fallback element inside container.
         this.fallbackEl = document.createElement('div');
         this.fallbackEl.className = 'emje-hover-reveal__fallback';
@@ -73,6 +84,15 @@ export default class HoverReveal {
         this.fallbackEl.appendChild(fallbackImg);
         this.container.appendChild(this.fallbackEl);
         this.container.classList.add('emje-hover-reveal--mobile-fallback');
+
+        // Initial GSAP set for position, scale and rotate (avoid CSS transform conflict)
+        gsap.set(this.imageEl, {
+            xPercent: -50,
+            yPercent: -50,
+            scale: 0.9,
+            rotation: this.config.rotate ?? 0,
+            opacity: 0,
+        });
 
         // GSAP quickTo for smooth follow.
         this.xTo = gsap.quickTo(this.imageEl, 'x', {
@@ -109,19 +129,18 @@ export default class HoverReveal {
         this.isVisible = true;
         this.imageEl.classList.add('emje-hover-reveal__image--visible');
 
-        if (this.config.animation === 'scale') {
-            gsap.to(this.imageEl, {
-                scale: this.config.scale ?? 1,
-                duration: 0.35,
-                ease: 'power2.out',
-            });
-        } else if (this.config.animation === 'fade') {
-            gsap.to(this.imageEl, {
-                opacity: 1,
-                duration: 0.25,
-                ease: 'power2.out',
-            });
-        }
+        // Scale and Rotate always (user wants Scale selalu), regardless of animation
+        var targetScale = this.config.scale ?? 1;
+        var targetRotate = (this.config.rotateHover !== undefined ? this.config.rotateHover : this.config.rotate) ?? this.config.rotate ?? 0;
+        var duration = this.config.animation === 'scale' ? 0.35 : 0.25;
+        gsap.to(this.imageEl, {
+            scale: targetScale,
+            rotation: targetRotate,
+            opacity: 1,
+            duration: duration,
+            ease: 'power2.out',
+        });
+        // Clip animation also needs class (already added)
     }
 
     onLeave() {
@@ -129,21 +148,18 @@ export default class HoverReveal {
             return;
         }
         this.isVisible = false;
-        this.imageEl.classList.remove('emje-hover-reveal__image--visible');
-
-        if (this.config.animation === 'scale') {
-            gsap.to(this.imageEl, {
-                scale: 0.9,
-                duration: 0.25,
-                ease: 'power2.in',
-            });
-        } else if (this.config.animation === 'fade') {
-            gsap.to(this.imageEl, {
-                opacity: 0,
-                duration: 0.2,
-                ease: 'power2.in',
-            });
-        }
+        gsap.to(this.imageEl, {
+            scale: 0.9,
+            rotation: this.config.rotate ?? 0,
+            opacity: 0,
+            duration: 0.25,
+            ease: 'power2.in',
+            onComplete: function() {
+                if (this.imageEl) {
+                    this.imageEl.classList.remove('emje-hover-reveal__image--visible');
+                }
+            }.bind(this),
+        });
     }
 
     onMove(e) {
@@ -151,8 +167,10 @@ export default class HoverReveal {
             return;
         }
 
-        this.xTo(e.clientX);
-        this.yTo(e.clientY);
+        var offsetX = this.config.offsetX || 0;
+        var offsetY = this.config.offsetY || 0;
+        this.xTo(e.clientX + offsetX);
+        this.yTo(e.clientY + offsetY);
     }
 
     init() {

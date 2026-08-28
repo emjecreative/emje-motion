@@ -40,20 +40,12 @@ final class HoverRevealFrontend
             return;
         }
 
-        $image = $settings['emje_hover_reveal_image'] ?? null;
-        $imageUrl = '';
+        // Build config handles sized URL (thumbnail/medium/large/full) for quality
+        $config = $this->buildConfig($settings);
 
-        if (is_array($image) && ! empty($image['url'])) {
-            $imageUrl = esc_url_raw((string) $image['url']);
-        } elseif (is_string($image) && $image !== '') {
-            $imageUrl = esc_url_raw($image);
-        }
-
-        if ($imageUrl === '') {
+        if (empty($config['imageUrl'])) {
             return;
         }
-
-        $config = $this->buildConfig($settings, $imageUrl);
 
         $element->add_render_attribute(
             '_wrapper',
@@ -72,8 +64,32 @@ final class HoverRevealFrontend
      * @param array<string, mixed> $settings
      * @return array<string, mixed>
      */
-    private function buildConfig(array $settings, string $imageUrl): array
+    private function buildConfig(array $settings): array
     {
+        $image = $settings['emje_hover_reveal_image'] ?? null;
+        $imageSize = $settings['emje_hover_reveal_image_size'] ?? 'medium';
+        if (! in_array($imageSize, ['thumbnail', 'medium', 'large', 'full'], true)) {
+            $imageSize = 'medium';
+        }
+
+        $imageUrl = '';
+        if (is_array($image)) {
+            if (! empty($image['id'])) {
+                $sized = wp_get_attachment_image_src((int) $image['id'], $imageSize);
+                if (is_array($sized) && ! empty($sized[0])) {
+                    $imageUrl = (string) $sized[0];
+                } elseif (! empty($image['url'])) {
+                    $imageUrl = (string) $image['url'];
+                }
+            } elseif (! empty($image['url'])) {
+                $imageUrl = (string) $image['url'];
+            }
+        } elseif (is_string($image) && $image !== '') {
+            $imageUrl = $image;
+        }
+
+        $imageUrl = esc_url_raw($imageUrl);
+
         $followSpeed = isset($settings['emje_hover_reveal_follow_speed']) ? (float) $settings['emje_hover_reveal_follow_speed'] : 0.12;
         $followSpeed = max(0.05, min(0.3, $followSpeed));
 
@@ -92,12 +108,6 @@ final class HoverRevealFrontend
             $triggerArea = 'container';
         }
 
-        $imageSize = $settings['emje_hover_reveal_image_size'] ?? 'medium';
-
-        if (! in_array($imageSize, ['thumbnail', 'medium', 'large', 'full'], true)) {
-            $imageSize = 'medium';
-        }
-
         return [
             'imageUrl' => $imageUrl,
             'imageSize' => $imageSize,
@@ -106,6 +116,10 @@ final class HoverRevealFrontend
             'animation' => $animation,
             'triggerArea' => $triggerArea,
             'livePreview' => ($settings['emje_hover_reveal_live_preview'] ?? '') === 'yes',
+            'offsetX' => 0,
+            'offsetY' => 0,
+            'rotate' => 0,
+            'rotateHover' => 15,
         ];
     }
 }
