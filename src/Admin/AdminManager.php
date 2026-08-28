@@ -122,12 +122,23 @@ final class AdminManager
             wp_die(esc_html__('Insufficient permissions.', 'emje-motion'));
         }
 
+        $existing = $this->settings->getModules();
         $modules = [];
 
-        foreach (SettingsRepository::MODULE_IDS as $id) {
+        // Visible modules in Overview (3)
+        foreach (['text-motion', 'smooth-scroll', 'interaction-motion'] as $id) {
             // phpcs:ignore WordPress.Security.NonceVerification.Missing -- already verified
             $key = 'module_' . str_replace('-', '_', $id);
             $modules[$id] = isset($_POST[$key]) && $_POST[$key] === '1';
+        }
+
+        // Preserve legacy hover/cursor for backward compat (old pages still render via InteractionMotionFrontend legacy fallback)
+        $modules['hover-reveal'] = $existing['hover-reveal'] ?? true;
+        $modules['interactive-cursor'] = $existing['interactive-cursor'] ?? true;
+        // Sync legacy to new: if interaction is enabled, keep legacy enabled for old frontend; if interaction disabled, keep legacy as is
+        if (! empty($modules['interaction-motion'])) {
+            $modules['hover-reveal'] = true;
+            $modules['interactive-cursor'] = true;
         }
 
         $this->settings->saveModules($modules);
@@ -226,15 +237,9 @@ final class AdminManager
                 'status' => esc_html__('Available', 'emje-motion'),
                 'icon' => 'arrow-down-alt',
             ],
-            'hover-reveal' => [
-                'label' => esc_html__('Hover Reveal', 'emje-motion'),
-                'description' => esc_html__('Image follow-cursor reveal on Container hover. Premium portfolio effect.', 'emje-motion'),
-                'status' => esc_html__('Available', 'emje-motion'),
-                'icon' => 'images-alt2',
-            ],
-            'interactive-cursor' => [
-                'label' => esc_html__('Interactive Cursor', 'emje-motion'),
-                'description' => esc_html__('Custom dot+ring cursor per Container with hover scaling.', 'emje-motion'),
+            'interaction-motion' => [
+                'label' => esc_html__('Interaction Motion', 'emje-motion'),
+                'description' => esc_html__('Hover Reveal and Interactive Cursor for Container — 1 effect per Container (like Text Motion).', 'emje-motion'),
                 'status' => esc_html__('Available', 'emje-motion'),
                 'icon' => 'admin-customizer',
             ],

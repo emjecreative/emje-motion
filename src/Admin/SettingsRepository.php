@@ -21,6 +21,8 @@ final class SettingsRepository
     public const MODULE_IDS = [
         'text-motion',
         'smooth-scroll',
+        'interaction-motion',
+        // Legacy IDs kept for backward compat (migrated to interaction-motion)
         'hover-reveal',
         'interactive-cursor',
     ];
@@ -36,6 +38,7 @@ final class SettingsRepository
     private const DEFAULT_MODULES = [
         'text-motion' => true,
         'smooth-scroll' => false,
+        'interaction-motion' => true,
         'hover-reveal' => true,
         'interactive-cursor' => true,
     ];

@@ -6,6 +6,7 @@ namespace EmjeCreative\EmjeMotion\Elementor;
 
 use EmjeCreative\EmjeMotion\Core\ModuleLoader;
 use EmjeCreative\EmjeMotion\Modules\HoverReveal\HoverReveal;
+use EmjeCreative\EmjeMotion\Modules\InteractionMotion\InteractionMotion;
 use EmjeCreative\EmjeMotion\Modules\InteractiveCursor\InteractiveCursor;
 use EmjeCreative\EmjeMotion\Modules\SmoothScroll\SmoothScroll;
 use EmjeCreative\EmjeMotion\Modules\TextMotion\TextMotion;
@@ -57,6 +58,9 @@ final class ElementorManager
 
         $cursor = new InteractiveCursor();
         $this->loader->register($cursor, $cursor->getId());
+
+        $interaction = new InteractionMotion();
+        $this->loader->register($interaction, $interaction->getId());
 
         $this->loader->boot();
     }

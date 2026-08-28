@@ -192,6 +192,80 @@
         };
     }
 
+    function buildInteractionConfig(settings) {
+        var get = function(k, d) { var v = settings.get(k); return v !== undefined && v !== null ? v : d; };
+        var enable = get('emje_interaction_enable', '') === 'yes';
+        var effect = get('emje_interaction_effect', 'hover-reveal');
+        if (['hover-reveal', 'interactive-cursor'].indexOf(effect) === -1) effect = 'hover-reveal';
+        var live = get('emje_interaction_live_preview', '') === 'yes';
+
+        if (!enable) {
+            return { enable: false, effect: effect, livePreview: live };
+        }
+
+        if (effect === 'hover-reveal') {
+            var img = get('emje_interaction_hover_image', null);
+            var url = '';
+            if (img && typeof img === 'object' && img.url) url = img.url;
+            else if (typeof img === 'string') url = img;
+            var follow = parseFloat(get('emje_interaction_hover_follow_speed', 0.12));
+            if (isNaN(follow)) follow = 0.12;
+            follow = Math.max(0.05, Math.min(0.3, follow));
+            var scale2 = parseFloat(get('emje_interaction_hover_scale', 1));
+            if (isNaN(scale2)) scale2 = 1;
+            scale2 = Math.max(0.8, Math.min(1.2, scale2));
+            var anim = get('emje_interaction_hover_animation', 'fade');
+            if (['fade', 'scale', 'clip'].indexOf(anim) === -1) anim = 'fade';
+            var trigger = get('emje_interaction_hover_trigger_area', 'container');
+            if (['container', 'heading'].indexOf(trigger) === -1) trigger = 'container';
+            var size2 = get('emje_interaction_hover_image_size', 'medium');
+            if (['thumbnail', 'medium', 'large', 'full'].indexOf(size2) === -1) size2 = 'medium';
+            return {
+                enable: true,
+                effect: effect,
+                livePreview: live,
+                imageUrl: url,
+                imageSize: size2,
+                followSpeed: follow,
+                scale: scale2,
+                animation: anim,
+                triggerArea: trigger
+            };
+        } else {
+            var type2 = get('emje_interaction_cursor_type', 'dot-ring');
+            if (['dot', 'ring', 'dot-ring'].indexOf(type2) === -1) type2 = 'dot-ring';
+            var size2b = 20;
+            var rawSize2 = get('emje_interaction_cursor_size', null);
+            if (rawSize2 && typeof rawSize2 === 'object' && rawSize2.size !== undefined) size2b = parseInt(rawSize2.size, 10);
+            else if (!isNaN(parseInt(rawSize2, 10))) size2b = parseInt(rawSize2, 10);
+            size2b = Math.max(12, Math.min(40, size2b));
+            var color2 = get('emje_interaction_cursor_color', '#000000');
+            if (!color2 || typeof color2 !== 'string') color2 = '#000000';
+            if (!/^#([0-9A-F]{3}){1,2}$/i.test(color2)) color2 = '#000000';
+            var blend2 = get('emje_interaction_cursor_blend_mode', 'normal');
+            if (['normal', 'difference'].indexOf(blend2) === -1) blend2 = 'normal';
+            var scale2b = parseFloat(get('emje_interaction_cursor_hover_scale', 1.5));
+            if (isNaN(scale2b)) scale2b = 1.5;
+            scale2b = Math.max(1.2, Math.min(2, scale2b));
+            var hide2 = get('emje_interaction_cursor_hide_native', 'yes') === 'yes';
+            var label2 = get('emje_interaction_cursor_text_label', '');
+            if (typeof label2 !== 'string') label2 = String(label2);
+            if (label2.length > 20) label2 = label2.substring(0, 20);
+            return {
+                enable: true,
+                effect: effect,
+                livePreview: live,
+                type: type2,
+                size: size2b,
+                color: color2,
+                blendMode: blend2,
+                hoverScale: scale2b,
+                hideNative: hide2,
+                label: label2
+            };
+        }
+    }
+
     $(document).on('click', '.emje-motion-preview-btn', function(e) {
         e.preventDefault();
         var editedView = null;
@@ -372,6 +446,94 @@
                     }, 150);
                     if (editedView) editedView._emjeCursorTimeout = cursorTimer;
                     else view._emjeCursorTimeout = cursorTimer;
+                })();
+
+                // New unified Interaction Motion (1 effect per Container, no both)
+                (function() {
+                    var hasNewEffect = settings.get('emje_interaction_effect') !== undefined;
+                    var hasNewEnable = settings.get('emje_interaction_enable') !== undefined;
+                    if (!hasNewEffect && !hasNewEnable) return; // legacy container, already handled above
+                    var enableNew = settings.get('emje_interaction_enable') === 'yes';
+                    var liveNew = settings.get('emje_interaction_live_preview') === 'yes';
+                    var hoverTargetNew = findTarget(doc, widgetId, 'data-emje-hover-reveal');
+                    var cursorTargetNew = findTarget(doc, widgetId, 'data-emje-cursor');
+                    var anyTarget = hoverTargetNew || cursorTargetNew || (widgetId ? doc.querySelector('[data-id="' + widgetId + '"]') : null);
+                    if (!enableNew || !liveNew) {
+                        [hoverTargetNew, cursorTargetNew, anyTarget].forEach(function(t){
+                            if (!t) return;
+                            try { t.removeAttribute('data-emje-hover-reveal'); } catch(e){}
+                            try { t.removeAttribute('data-emje-cursor'); } catch(e){}
+                            try {
+                                if (win.EmjeMotionHoverReveal && win.EmjeMotionHoverReveal._instances && win.EmjeMotionHoverReveal._instances.get(t)) {
+                                    var oh = win.EmjeMotionHoverReveal._instances.get(t);
+                                    if (oh && typeof oh.destroy === 'function') oh.destroy();
+                                    win.EmjeMotionHoverReveal._instances.delete(t);
+                                    delete t.dataset.emjeHoverRevealInitialized;
+                                }
+                            } catch(e){}
+                            try {
+                                if (win.EmjeMotionCursor && win.EmjeMotionCursor._instances && win.EmjeMotionCursor._instances.get(t)) {
+                                    var oc = win.EmjeMotionCursor._instances.get(t);
+                                    if (oc && typeof oc.destroy === 'function') oc.destroy();
+                                    win.EmjeMotionCursor._instances.delete(t);
+                                    delete t.dataset.emjeCursorInitialized;
+                                }
+                            } catch(e){}
+                        });
+                        try {
+                            var oh2 = doc.body ? doc.body.querySelector('.emje-hover-reveal__image') : null;
+                            if (oh2 && oh2.parentNode) oh2.parentNode.removeChild(oh2);
+                            var oc2 = doc.body ? doc.body.querySelector('.emje-cursor') : null;
+                            if (oc2 && oc2.parentNode) oc2.parentNode.removeChild(oc2);
+                        } catch(e){}
+                        return;
+                    }
+                    clearTimeout(editedView ? editedView._emjeInteractionTimeout : view._emjeInteractionTimeout);
+                    var interTimer = setTimeout(function() {
+                        var cfg = buildInteractionConfig(settings);
+                        if (!cfg.enable) return;
+                        if (cfg.effect === 'hover-reveal') {
+                            var targetH = findTarget(doc, widgetId, 'data-emje-hover-reveal') || anyTarget;
+                            if (!targetH) targetH = findTarget(doc, widgetId, 'data-emje-cursor');
+                            if (!targetH) return;
+                            try {
+                                if (win.EmjeMotionCursor && win.EmjeMotionCursor._instances && win.EmjeMotionCursor._instances.get(targetH)) {
+                                    var oc3 = win.EmjeMotionCursor._instances.get(targetH);
+                                    if (oc3 && typeof oc3.destroy === 'function') oc3.destroy();
+                                    win.EmjeMotionCursor._instances.delete(targetH);
+                                    delete targetH.dataset.emjeCursorInitialized;
+                                    targetH.removeAttribute('data-emje-cursor');
+                                }
+                                var orphanC = doc.body ? doc.body.querySelector('.emje-cursor') : null;
+                                if (orphanC && orphanC.parentNode) orphanC.parentNode.removeChild(orphanC);
+                            } catch(e){}
+                            if (!cfg.imageUrl) {
+                                try { targetH.removeAttribute('data-emje-hover-reveal'); } catch(e){}
+                                return;
+                            }
+                            try { targetH.setAttribute('data-emje-hover-reveal', JSON.stringify({imageUrl: cfg.imageUrl, imageSize: cfg.imageSize, followSpeed: cfg.followSpeed, scale: cfg.scale, animation: cfg.animation, triggerArea: cfg.triggerArea, livePreview: cfg.livePreview})); } catch(e){}
+                            if (win.EmjeMotionHoverReveal && win.EmjeMotionHoverReveal.reInit) win.EmjeMotionHoverReveal.reInit(targetH);
+                        } else {
+                            var targetC = findTarget(doc, widgetId, 'data-emje-cursor') || anyTarget;
+                            if (!targetC) targetC = findTarget(doc, widgetId, 'data-emje-hover-reveal');
+                            if (!targetC) return;
+                            try {
+                                if (win.EmjeMotionHoverReveal && win.EmjeMotionHoverReveal._instances && win.EmjeMotionHoverReveal._instances.get(targetC)) {
+                                    var oh3 = win.EmjeMotionHoverReveal._instances.get(targetC);
+                                    if (oh3 && typeof oh3.destroy === 'function') oh3.destroy();
+                                    win.EmjeMotionHoverReveal._instances.delete(targetC);
+                                    delete targetC.dataset.emjeHoverRevealInitialized;
+                                    targetC.removeAttribute('data-emje-hover-reveal');
+                                    var orphanH = doc.body ? doc.body.querySelector('.emje-hover-reveal__image') : null;
+                                    if (orphanH && orphanH.parentNode) orphanH.parentNode.removeChild(orphanH);
+                                }
+                            } catch(e){}
+                            try { targetC.setAttribute('data-emje-cursor', JSON.stringify({type: cfg.type, size: cfg.size, color: cfg.color, blendMode: cfg.blendMode, hoverScale: cfg.hoverScale, hideNative: cfg.hideNative, label: cfg.label, livePreview: cfg.livePreview})); } catch(e){}
+                            if (win.EmjeMotionCursor && win.EmjeMotionCursor.reInit) win.EmjeMotionCursor.reInit(targetC);
+                        }
+                    }, 150);
+                    if (editedView) editedView._emjeInteractionTimeout = interTimer;
+                    else view._emjeInteractionTimeout = interTimer;
                 })();
             }
         });

@@ -13,12 +13,8 @@ final class InteractiveCursorControls
 {
     public function register(): void
     {
-        add_action(
-            'elementor/element/container/section_background/after_section_end',
-            [$this, 'registerContainerControls'],
-            10,
-            2,
-        );
+        // Deprecated: replaced by InteractionMotion (unified). Keep frontend for backward compat, but hide controls.
+        return;
     }
 
     /**
