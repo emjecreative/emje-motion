@@ -45,6 +45,8 @@ final class HoverRevealControls
                 'label_off' => esc_html__('Off', 'emje-motion'),
                 'return_value' => 'yes',
                 'default' => '',
+                'frontend_available' => true,
+                'render_type' => 'template',
             ],
         );
 
@@ -59,6 +61,8 @@ final class HoverRevealControls
                 'condition' => [
                     'emje_hover_reveal_enable' => 'yes',
                 ],
+                'frontend_available' => true,
+                'render_type' => 'template',
             ],
         );
 
@@ -77,6 +81,8 @@ final class HoverRevealControls
                 'condition' => [
                     'emje_hover_reveal_enable' => 'yes',
                 ],
+                'frontend_available' => true,
+                'render_type' => 'template',
             ],
         );
 
@@ -93,6 +99,8 @@ final class HoverRevealControls
                 'condition' => [
                     'emje_hover_reveal_enable' => 'yes',
                 ],
+                'frontend_available' => true,
+                'render_type' => 'none',
             ],
         );
 
@@ -108,6 +116,8 @@ final class HoverRevealControls
                 'condition' => [
                     'emje_hover_reveal_enable' => 'yes',
                 ],
+                'frontend_available' => true,
+                'render_type' => 'none',
             ],
         );
 
@@ -125,6 +135,8 @@ final class HoverRevealControls
                 'condition' => [
                     'emje_hover_reveal_enable' => 'yes',
                 ],
+                'frontend_available' => true,
+                'render_type' => 'none',
             ],
         );
 
@@ -138,6 +150,38 @@ final class HoverRevealControls
                     'container' => esc_html__('Whole Container', 'emje-motion'),
                     'heading' => esc_html__('Heading Only', 'emje-motion'),
                 ],
+                'condition' => [
+                    'emje_hover_reveal_enable' => 'yes',
+                ],
+                'frontend_available' => true,
+                'render_type' => 'template',
+            ],
+        );
+
+        $element->add_control(
+            'emje_hover_reveal_preview_heading',
+            [
+                'label' => esc_html__('Preview', 'emje-motion'),
+                'type' => Controls_Manager::HEADING,
+                'separator' => 'before',
+                'condition' => [
+                    'emje_hover_reveal_enable' => 'yes',
+                ],
+            ],
+        );
+
+        $element->add_control(
+            'emje_hover_reveal_live_preview',
+            [
+                'label' => esc_html__('Live Preview', 'emje-motion'),
+                'type' => Controls_Manager::SWITCHER,
+                'label_on' => esc_html__('On', 'emje-motion'),
+                'label_off' => esc_html__('Off', 'emje-motion'),
+                'return_value' => 'yes',
+                'default' => '',
+                'description' => esc_html__('Auto preview in Editor. Off saves resources.', 'emje-motion'),
+                'frontend_available' => true,
+                'render_type' => 'none',
                 'condition' => [
                     'emje_hover_reveal_enable' => 'yes',
                 ],

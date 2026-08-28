@@ -1,0 +1,8 @@
+/* Emje Motion Editor styles — minimal, only if needed for panel hints */
+.emje-motion-editor-badge {
+    font-size: 10px;
+    padding: 2px 4px;
+    background: #9300e8;
+    color: #fff;
+    border-radius: 3px;
+}

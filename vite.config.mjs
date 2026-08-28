@@ -15,7 +15,7 @@ export default defineConfig({
 
             output: {
                 format: 'iife',
-    			name: 'EmjeMotion',
+     			name: 'EmjeMotion',
 
 				entryFileNames: 'js/[name].js',
                 chunkFileNames: 'js/chunks/[name]-[hash].js',

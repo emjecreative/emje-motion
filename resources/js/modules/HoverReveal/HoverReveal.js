@@ -15,19 +15,31 @@ export default class HoverReveal {
         this.triggerEl = null;
     }
 
-    shouldInit() {
-        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-            return false;
-        }
-
-        if (window.matchMedia('(hover: none)').matches
-            || window.matchMedia('(pointer: coarse)').matches) {
-            return false;
-        }
-
-        // Do not run in Elementor editor.
+    isEditMode() {
         if (document.body.classList.contains('elementor-editor-active')) {
+            return true;
+        }
+        if (typeof window.elementorFrontend !== 'undefined' && window.elementorFrontend.isEditMode) {
+            try { return window.elementorFrontend.isEditMode(); } catch (e) { return false; }
+        }
+        return false;
+    }
+
+    shouldInit() {
+        // Respect live preview toggle in editor
+        if (this.isEditMode() && this.config.livePreview === false) {
             return false;
+        }
+
+        // In editor preview, allow even with reduced-motion / touch when live is On
+        if (!this.isEditMode()) {
+            if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                return false;
+            }
+            if (window.matchMedia('(hover: none)').matches
+                || window.matchMedia('(pointer: coarse)').matches) {
+                return false;
+            }
         }
 
         if (!this.config.imageUrl) {
@@ -164,10 +176,6 @@ export default class HoverReveal {
     }
 
     static initAll() {
-        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-            return;
-        }
-
         const containers = document.querySelectorAll('[data-emje-hover-reveal]');
         containers.forEach((el) => {
             if (el.dataset.emjeHoverRevealInitialized === 'true') {
@@ -184,6 +192,31 @@ export default class HoverReveal {
             const instance = new HoverReveal(el, config);
             instance.init();
             el.dataset.emjeHoverRevealInitialized = 'true';
+            HoverReveal._instances.set(el, instance);
         });
     }
+
+    static reInit(el) {
+        const old = HoverReveal._instances.get(el);
+        if (old) {
+            old.destroy();
+            HoverReveal._instances.delete(el);
+            delete el.dataset.emjeHoverRevealInitialized;
+        }
+        let config;
+        try {
+            config = JSON.parse(el.getAttribute('data-emje-hover-reveal'));
+        } catch (e) {
+            return;
+        }
+        const instance = new HoverReveal(el, config);
+        instance.init();
+        el.dataset.emjeHoverRevealInitialized = 'true';
+        HoverReveal._instances.set(el, instance);
+    }
+}
+
+HoverReveal._instances = new WeakMap();
+if (typeof window !== 'undefined') {
+    window.EmjeMotionHoverReveal = HoverReveal;
 }

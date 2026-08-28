@@ -112,6 +112,7 @@ final class InteractiveCursorFrontend
             'hoverScale' => $hoverScale,
             'hideNative' => $hideNative,
             'label' => $label,
+            'livePreview' => ($settings['emje_cursor_live_preview'] ?? '') === 'yes',
         ];
     }
 }

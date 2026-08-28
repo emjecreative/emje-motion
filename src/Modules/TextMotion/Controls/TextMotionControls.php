@@ -61,6 +61,7 @@ final class TextMotionControls
         );
 
         $this->registerGeneralControls($element);
+        $this->registerPreviewControls($element);
         $this->registerScrambleControls($element);
         $this->registerUnfoldControls($element);
         $this->registerFillRevealControls($element);
@@ -85,6 +86,8 @@ final class TextMotionControls
                 'label_off' => esc_html__('Off', 'emje-motion'),
                 'return_value' => 'yes',
                 'default' => '',
+                'frontend_available' => true,
+                'render_type' => 'template',
             ],
         );
 
@@ -102,6 +105,8 @@ final class TextMotionControls
                 'condition' => [
                     'emje_motion_enable' => 'yes',
                 ],
+                'frontend_available' => true,
+                'render_type' => 'template',
             ],
         );
     }
@@ -141,6 +146,8 @@ final class TextMotionControls
                     'emje_motion_enable' => 'yes',
                     'emje_motion_animation' => 'scramble-text',
                 ],
+                'frontend_available' => true,
+                'render_type' => 'none',
             ],
         );
 
@@ -156,6 +163,8 @@ final class TextMotionControls
                     'emje_motion_animation' => 'scramble-text',
                     'emje_motion_scramble_character_set' => 'custom',
                 ],
+                'frontend_available' => true,
+                'render_type' => 'none',
             ],
         );
 
@@ -175,6 +184,8 @@ final class TextMotionControls
                     'emje_motion_enable' => 'yes',
                     'emje_motion_animation' => 'scramble-text',
                 ],
+                'frontend_available' => true,
+                'render_type' => 'none',
             ],
         );
 
@@ -195,6 +206,8 @@ final class TextMotionControls
                     'emje_motion_enable' => 'yes',
                     'emje_motion_animation' => 'scramble-text',
                 ],
+                'frontend_available' => true,
+                'render_type' => 'none',
             ],
         );
 
@@ -232,6 +245,8 @@ final class TextMotionControls
                     'emje_motion_enable' => 'yes',
                     'emje_motion_animation' => 'text-unfold',
                 ],
+                'frontend_available' => true,
+                'render_type' => 'template',
             ],
         );
 
@@ -252,6 +267,8 @@ final class TextMotionControls
                     'emje_motion_enable' => 'yes',
                     'emje_motion_animation' => 'text-unfold',
                 ],
+                'frontend_available' => true,
+                'render_type' => 'none',
             ],
         );
     }
@@ -299,6 +316,8 @@ final class TextMotionControls
                     'emje_motion_enable' => 'yes',
                     'emje_motion_animation' => 'fill-reveal',
                 ],
+                'frontend_available' => true,
+                'render_type' => 'none',
             ],
         );
     }
@@ -335,6 +354,8 @@ final class TextMotionControls
                 'condition' => [
                     'emje_motion_enable' => 'yes',
                 ],
+                'frontend_available' => true,
+                'render_type' => 'none',
             ],
         );
 
@@ -353,6 +374,8 @@ final class TextMotionControls
                 'condition' => [
                     'emje_motion_enable' => 'yes',
                 ],
+                'frontend_available' => true,
+                'render_type' => 'none',
             ],
         );
 
@@ -378,9 +401,57 @@ final class TextMotionControls
                 'condition' => [
                     'emje_motion_enable' => 'yes',
                 ],
+                'frontend_available' => true,
+                'render_type' => 'none',
             ],
         );
 
+    }
+
+    private function registerPreviewControls($element): void
+    {
+        $element->add_control(
+            'emje_motion_preview_heading',
+            [
+                'label' => esc_html__('Preview', 'emje-motion'),
+                'type' => Controls_Manager::HEADING,
+                'separator' => 'before',
+                'condition' => [
+                    'emje_motion_enable' => 'yes',
+                ],
+            ],
+        );
+
+        $element->add_control(
+            'emje_motion_live_preview',
+            [
+                'label' => esc_html__('Live Preview', 'emje-motion'),
+                'type' => Controls_Manager::SWITCHER,
+                'label_on' => esc_html__('On', 'emje-motion'),
+                'label_off' => esc_html__('Off', 'emje-motion'),
+                'return_value' => 'yes',
+                'default' => 'yes',
+                'description' => esc_html__('Automatically replay animation when controls change.', 'emje-motion'),
+                'frontend_available' => true,
+                'render_type' => 'none',
+                'condition' => [
+                    'emje_motion_enable' => 'yes',
+                ],
+            ],
+        );
+
+        $element->add_control(
+            'emje_motion_preview_button',
+            [
+                'type' => Controls_Manager::RAW_HTML,
+                'raw' => '<button type="button" class="elementor-button elementor-button-success emje-motion-preview-btn" style="width:100%;margin-top:8px;"><i class="eicon-play" aria-hidden="true"></i> ' . esc_html__('Preview Animation', 'emje-motion') . '</button><div class="elementor-control-field-description">' . esc_html__('Replays animation regardless of Play Once.', 'emje-motion') . '</div>',
+                'content_classes' => 'emje-motion-preview-control',
+                'condition' => [
+                    'emje_motion_enable' => 'yes',
+                    'emje_motion_live_preview' => 'yes',
+                ],
+            ],
+        );
     }
 
     private function registerTriggerControls($element): void
@@ -410,6 +481,8 @@ final class TextMotionControls
                 'condition' => [
                     'emje_motion_enable' => 'yes',
                 ],
+                'frontend_available' => true,
+                'render_type' => 'none',
             ],
         );
 
@@ -429,6 +502,8 @@ final class TextMotionControls
                 'condition' => [
                     'emje_motion_enable' => 'yes',
                 ],
+                'frontend_available' => true,
+                'render_type' => 'none',
             ],
         );
     }

@@ -174,6 +174,8 @@ final class TextMotionFrontend
             'stagger' => $stagger,
 
             'fillBgOpacity' => $bgOpacity,
+
+            'livePreview' => ($settings['emje_motion_live_preview'] ?? 'yes') === 'yes',
         ];
     }
 }

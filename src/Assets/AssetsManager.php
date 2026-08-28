@@ -65,7 +65,7 @@ final class AssetsManager
             1,
         );
 
-        // Editor Assets
+        // Editor Assets (top frame panel)
         add_action(
             'elementor/editor/before_enqueue_scripts',
             [ $this, 'registerEditorAssets' ],
@@ -75,6 +75,13 @@ final class AssetsManager
         add_action(
             'elementor/editor/before_enqueue_scripts',
             [ $this, 'enqueueEditorAssets' ],
+            10,
+        );
+
+        // Preview Assets (iframe) — force frontend in preview even for unsaved drafts
+        add_action(
+            'elementor/preview/enqueue_styles',
+            [ $this, 'enqueuePreviewAssets' ],
             10,
         );
     }
@@ -218,7 +225,27 @@ final class AssetsManager
      */
     public function registerEditorAssets(): void
     {
-        // Editor assets will be added later.
+        $scriptPath = EMJE_MOTION_PATH . 'dist/js/editor.js';
+        $stylePath = EMJE_MOTION_PATH . 'dist/css/editor.css';
+
+        if (file_exists($scriptPath)) {
+            wp_register_script(
+                self::EDITOR_SCRIPT,
+                $this->asset('js/editor.js'),
+                ['jquery', 'elementor-editor'],
+                EMJE_MOTION_VERSION,
+                true,
+            );
+        }
+
+        if (file_exists($stylePath)) {
+            wp_register_style(
+                self::EDITOR_STYLE,
+                $this->asset('css/editor.css'),
+                [],
+                EMJE_MOTION_VERSION,
+            );
+        }
     }
 
     /**
@@ -226,7 +253,30 @@ final class AssetsManager
      */
     public function enqueueEditorAssets(): void
     {
-        // Editor assets will be enqueued later.
+        if (wp_script_is(self::EDITOR_SCRIPT, 'registered')) {
+            wp_enqueue_script(self::EDITOR_SCRIPT);
+        }
+
+        if (wp_style_is(self::EDITOR_STYLE, 'registered')) {
+            wp_enqueue_style(self::EDITOR_STYLE);
+        }
+    }
+
+    /**
+     * Enqueue preview assets — ensure frontend is available in preview iframe.
+     */
+    public function enqueuePreviewAssets(): void
+    {
+        // Ensure frontend handle is registered
+        $this->registerFrontendAssets();
+
+        if (wp_script_is(self::FRONTEND_SCRIPT, 'registered') && ! wp_script_is(self::FRONTEND_SCRIPT, 'enqueued')) {
+            wp_enqueue_script(self::FRONTEND_SCRIPT);
+        }
+
+        if (wp_style_is(self::FRONTEND_STYLE, 'registered') && ! wp_style_is(self::FRONTEND_STYLE, 'enqueued')) {
+            wp_enqueue_style(self::FRONTEND_STYLE);
+        }
     }
 
     /**

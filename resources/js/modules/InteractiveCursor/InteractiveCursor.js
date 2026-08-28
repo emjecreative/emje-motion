@@ -27,20 +27,29 @@ export default class InteractiveCursor {
         this.isInside = false;
     }
 
-    shouldInit() {
-        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-            return false;
-        }
-
-        if (window.matchMedia('(hover: none)').matches
-            || window.matchMedia('(pointer: coarse)').matches) {
-            return false;
-        }
-
+    isEditMode() {
         if (document.body.classList.contains('elementor-editor-active')) {
+            return true;
+        }
+        if (typeof window.elementorFrontend !== 'undefined' && window.elementorFrontend.isEditMode) {
+            try { return window.elementorFrontend.isEditMode(); } catch (e) { return false; }
+        }
+        return false;
+    }
+
+    shouldInit() {
+        if (this.isEditMode() && this.config.livePreview === false) {
             return false;
         }
-
+        if (!this.isEditMode()) {
+            if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                return false;
+            }
+            if (window.matchMedia('(hover: none)').matches
+                || window.matchMedia('(pointer: coarse)').matches) {
+                return false;
+            }
+        }
         return true;
     }
 
@@ -182,14 +191,6 @@ export default class InteractiveCursor {
     }
 
     static initAll() {
-        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-            return;
-        }
-
-        if (window.matchMedia('(hover: none)').matches) {
-            return;
-        }
-
         const containers = document.querySelectorAll('[data-emje-cursor]');
         containers.forEach((el) => {
             if (el.dataset.emjeCursorInitialized === 'true') {
@@ -206,6 +207,31 @@ export default class InteractiveCursor {
             const instance = new InteractiveCursor(el, config);
             instance.init();
             el.dataset.emjeCursorInitialized = 'true';
+            InteractiveCursor._instances.set(el, instance);
         });
     }
+
+    static reInit(el) {
+        const old = InteractiveCursor._instances.get(el);
+        if (old) {
+            old.destroy();
+            InteractiveCursor._instances.delete(el);
+            delete el.dataset.emjeCursorInitialized;
+        }
+        let config;
+        try {
+            config = JSON.parse(el.getAttribute('data-emje-cursor'));
+        } catch (e) {
+            return;
+        }
+        const instance = new InteractiveCursor(el, config);
+        instance.init();
+        el.dataset.emjeCursorInitialized = 'true';
+        InteractiveCursor._instances.set(el, instance);
+    }
+}
+
+InteractiveCursor._instances = new WeakMap();
+if (typeof window !== 'undefined') {
+    window.EmjeMotionCursor = InteractiveCursor;
 }

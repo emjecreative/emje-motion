@@ -105,6 +105,7 @@ final class HoverRevealFrontend
             'scale' => $scale,
             'animation' => $animation,
             'triggerArea' => $triggerArea,
+            'livePreview' => ($settings['emje_hover_reveal_live_preview'] ?? '') === 'yes',
         ];
     }
 }
