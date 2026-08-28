@@ -3,6 +3,16 @@
 All notable changes to Emje Motion are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [1.2.0] - 2026-08-28
+
+### Changed
+- **Interaction Motion** — unified Hover Reveal & Interactive Cursor into `Interaction Motion` (Style tab, 1 effect per Container, no both). Effect select like Text Motion, single Live Preview, controls deprecated keep Frontend backward compat.
+- **Container Style** — Hover Reveal & Interactive Cursor moved Layout → Style tab (section_background), now unified
+- **Editor** — buildInteractionConfig + destroy on Enable/Live off (1 effect per Container), editor.js 29.9KB
+
+### Added
+- InteractionMotion module (Controls + Frontend), handling for new `emje_interaction_*` + legacy fallback
+
 ## [1.1.1] - 2026-08-28
 
 ### Changed

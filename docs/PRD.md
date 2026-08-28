@@ -40,16 +40,16 @@ Detail teknis implementasi ada di:
 | Item | Value |
 |------|-------|
 | Product | Emje Motion |
-| Version | 1.1.1 (Ready — Tag v1.1.1 docs sync PRD live preview) |
+| Version | 1.2.0 (Ready — Interaction Motion unified, 1 effect per Container) |
 | Type | WordPress Plugin |
 | Platform | WordPress 6.7+ (Tested up to 6.8) |
 | Builder | Elementor 3.23+ (Requires Plugins: elementor) |
 | Language | English (Text Domain: emje-motion) |
 | License | GPL-2.0-or-later |
 | Animation Engine | GSAP 3.15+ (Free) + Lenis (MIT) for Smooth Scroll |
-| Status | Completed — v1.1.1 Ready (Phase 7 Completed, docs sync PRD live preview) |
+| Status | Completed — v1.2.0 Ready (Interaction Motion unified, no both) |
 
-> **Catatan versi:** `emje-motion.php:15` menandai 1.1.1 (patch docs sync PRD live preview, build 37.66KB), tag `v1.0.0`/`v1.1.0` immutable, rilis publik dianggap selesai setelah `Phase 7 — Version 1 Release` memenuhi `Success Criteria` Bab 17.
+> **Catatan versi:** `emje-motion.php:15` menandai 1.2.0 (minor Interaction Motion unified, 1 effect per Container), tag `v1.1.1` immutable, build 37.66KB, rilis publik dianggap selesai setelah `Phase 7` memenuhi `Success Criteria` Bab 17.
 
 ---
 
@@ -190,37 +190,20 @@ Migrasi data Free → Pro harus seamless (opsi dan `data-emje-motion` JSON tetap
 
 ## 8.3 Container Modules
 
-### Hover Reveal
+### Interaction Motion (Unified — Hover Reveal + Interactive Cursor)
 
 | Item | Detail |
 |------|--------|
-| **Status** | Completed — Phase 4 |
-| **Tipe** | Container Module (per-Container) |
-| **Purpose** | Saat hover Container, tampilkan gambar mengambang yang mengikuti cursor — untuk portfolio, list, teaser. Differentiator premium untuk Agency/Template Kit, tapi tetap No Code. |
-| **Supported Elements** | `Container` (Elementor Container flex). Tidak untuk Section/Column deprecated. Future bisa extend ke Section jika demand tinggi. |
-| **Controls (per-Container)** | `Enable` (switch), `Reveal Image` (media), `Image Size` (thumbnail/medium/large/full), `Follow Speed` (slider 0.05–0.3, default 0.12), `Scale on Hover` (0.8–1.2, default 1.0), `Reveal Animation` (select: fade / clip-path / scale, default fade), `Trigger Area` (select: whole container / heading only, default whole), `Live Preview` (switch, default Off, frontend_available true — hemat resource, `HoverRevealControls.php:173-189`) |
-| **Assets** | `resources/js/modules/HoverReveal/HoverReveal.js` + `hover-reveal.css` (fixed, `pointer-events: none`, `z-index: 10`, `will-change: transform`). Load hanya jika container punya `data-emje-hover-reveal`. |
-| **Behavior** | Clone image, GSAP `quickTo` untuk x/y (performa tinggi), `mouseenter` → show (opacity/scale), `mousemove` → update position, `mouseleave` → hide. Tidak ada listener global jika tidak ada modul aktif. |
-| **Fallback** | **Disable total di touch device** (`matchMedia('(hover: hover)')` false) + `prefers-reduced-motion`. Di mobile, image tampil static di bawah container (fallback CSS). Non-aktif di Editor. |
-| **Performance Budget** | < 5KB gzipped tambahan, 1 instance per Container aktif, RAF via GSAP ticker, tidak ada `mousemove` listener global jika Off. |
-| **Acceptance Criteria** | Follow smooth tanpa lag (60fps), tidak leak memory saat Elementor re-render, tidak aktif di mobile/touch, no layout shift, tidak mengganggu klik link di dalam Container. |
-
----
-
-### Interactive Cursor
-
-| Item | Detail |
-|------|--------|
-| **Status** | Completed — Phase 5 |
-| **Tipe** | Container Module (per-Container, bukan global) |
-| **Purpose** | Ganti cursor native di Container tertentu dengan dot+ring yang bisa scale/warna saat hover elemen interaktif. Sengaja per-Container (bukan global) agar tidak intrusif dan menjaga aksesibilitas (`PRD: Non-Goals`). |
-| **Supported Elements** | `Container` (pilih Container → cursor custom aktif di dalamnya saja). Global cursor ditolak karena merusak UX dan a11y. |
-| **Controls (per-Container)** | `Enable` (switch), `Cursor Type` (select: dot / ring / dot+ring, default dot+ring), `Size` (12–40px, default 20px), `Color` (color picker, default #000), `Blend Mode` (select: normal / difference, default normal), `Hover Scale` (1.2–2.0, default 1.5, saat hover `a, button, .elementor-button` di dalam Container), `Hide Native Cursor` (switch, default Yes — hanya di dalam Container), `Text Label` (optional text, misal "View" saat hover), `Live Preview` (switch, default Off, frontend_available true — hemat resource, `InteractiveCursorControls.php:190-206`) |
-| **Assets** | `resources/js/modules/InteractiveCursor/InteractiveCursor.js` + `interactive-cursor.css` (fixed divs, `mix-blend-mode`, `pointer-events: none`). Load hanya jika Container aktif. |
-| **Behavior** | Buat 2 div (`cursor-dot`, `cursor-ring`), GSAP `quickTo` untuk ring, `mouseenter/mouseleave` Container untuk show/hide, `mouseenter` pada `a, button` di dalam Container → scale + label. |
-| **Fallback** | **Disable total di touch & `prefers-reduced-motion`**. Native cursor tetap di luar Container. Non-aktif di Editor agar tidak ganggu Elementor panel. |
-| **Performance Budget** | < 5KB gzipped tambahan, 1 cursor per Container aktif (max 2–3 per page wajar), tidak ada listener jika Off, `pointer-events: none`. |
-| **Acceptance Criteria** | Cursor smooth 60fps, tidak flicker saat keluar Container, native cursor balik normal di luar Container, tidak aktif di mobile/editor, tidak ada `cursor: none` global. |
+| **Status** | Completed — Phase 4-5 Unified (1 effect per Container, no both) |
+| **Tipe** | Container Module (per-Container, 1 effect per Container) |
+| **Purpose** | Unified Container motion — pengguna pilih 1 effect per Container (Hover Reveal untuk portfolio image follow, atau Interactive Cursor untuk dot+ring), tanpa menumpuk 2 efek (hasil jelek). Mirip Text Motion `Enable → Animation`, hemat resource. |
+| **Supported Elements** | `Container` (Elementor Container flex). Tidak untuk Section/Column deprecated. |
+| **Controls (per-Container, TAB_STYLE)** | `Enable` (switch, default Off), `Effect` (select: hover-reveal / interactive-cursor, default hover-reveal, frontend_available true, render_type template) — **Hover Reveal** (condition effect==hover-reveal): `Reveal Image` (media), `Image Size` (thumbnail/medium/large/full), `Follow Speed` (0.05–0.3 default 0.12), `Scale on Hover` (0.8–1.2 default 1.0), `Reveal Animation` (fade/scale/clip default fade), `Trigger Area` (container/heading default container); **Interactive Cursor** (condition effect==interactive-cursor): `Cursor Type` (dot/ring/dot+ring default dot+ring), `Size` (12–40 default 20), `Color` (#000), `Blend Mode` (normal/difference), `Hover Scale` (1.2–2.0 default 1.5), `Hide Native` (switch default Yes), `Text Label` (text); **Live Preview** (1 switch, default Off hemat, frontend_available true, condition enable==yes) — terpisah per effect tidak perlu (1 effect per Container) |
+| **Legacy** | `HoverRevealControls.php` & `InteractiveCursorControls.php` deprecated (controls hidden, Frontend keep for backward compat `data-emje-hover-reveal`/`data-emje-cursor`). `InteractionMotionFrontend.php` handle new `emje_interaction_*` + legacy fallback. |
+| **Assets** | `HoverReveal.js` + `hover-reveal.css` dan `InteractiveCursor.js` + `interactive-cursor.css` reuse (tidak ada CSS baru). Load kondisional via `AssetsManager` cek `emje_interaction_enable` + legacy `emje_hover_reveal_enable`/`emje_cursor_enable` + `data-emje-*`. |
+| **Behavior** | Unified Effect select: `hover-reveal` → clone image GSAP `quickTo` x/y; `interactive-cursor` → 2 div dot+ring GSAP `quickTo`. `editor.js` bridge `buildInteractionConfig` + destroy when Enable/Live Off (1 effect per Container). Tidak ada listener global jika Off. |
+| **Fallback** | Disable total di touch `hover:none` + `prefers-reduced-motion`. Mobile fallback static image untuk hover. Native cursor di luar Container. |
+| **Performance Budget** | < 5KB gzipped per effect (reuse), 1 instance per Container aktif, RAF via GSAP, tidak ada `mousemove` jika Off. |
 
 > **Catatan arsitektur:** Ketiga modul Planned di atas dirancang untuk fondasi Pro (`Future Scope` Bab 16: Magnetic, Tilt, Mouse Parallax) — tinggal extend per-Container tanpa ubah Core (`ARCHITECTURE.md:531-541`).
 
@@ -567,19 +550,19 @@ Includes:
 
 ## Phase 5
 
-Interactive Cursor
+Interaction Motion Unified (Hover Reveal + Interactive Cursor — 1 effect per Container)
 
 Status:
 
-Completed
+Completed — Unified (Phase 4-5 merged, no both)
 
 Includes:
 
-- Container Controls (`InteractiveCursorControls.php` — Enable, Type dot/ring/dot+ring, Size 12–40, Color, Blend Mode normal/difference, Hover Scale 1.2–2.0, Hide Native, Text Label — Done)
-- Frontend (`InteractiveCursorFrontend.php` — `data-emje-cursor` JSON — Done)
-- JS/CSS (`InteractiveCursor.js` — GSAP `quickTo`, per-Container dot+ring + `interactive-cursor.css` — Done)
-- Mobile/touch (`hover:none` hide) + `prefers-reduced-motion` + Editor disable (Done)
-- Conditional asset detection (`AssetsManager` — `emje_cursor_enable` — Done)
+- Unified Controls (`InteractionMotionControls.php` — Enable + Effect hover-reveal/interactive-cursor, TAB_STYLE, section_background, 1 Live Preview Off) — Done (replaces HoverReveal/InteractiveCursor separate)
+- Legacy Controls deprecated (hidden) — `HoverRevealControls.php` & `InteractiveCursorControls.php` keep Frontend for backward compat — Done
+- Frontend unified (`InteractionMotionFrontend.php` — handles new `emje_interaction_*` + legacy `emje_hover_reveal_*`/`emje_cursor_*` fallback, data-emje-hover-reveal / data-emje-cursor) — Done
+- SettingsRepository `interaction-motion` ID + Admin Overview 3 modules (Text Motion, Smooth Scroll, Interaction Motion) — Done
+- Editor bridge `editor.js` buildInteractionConfig + destroy on Enable/Live Off (1 effect per Container) — Done
 - Build: total <50KB gzipped (actual 37.66KB @18579b0) — Done
 
 ---
@@ -598,7 +581,7 @@ Includes:
 - `wp_options` `emje_motion_modules` + `emje_motion_settings` with `ensureDefaults()` (Done)
 - `ModuleLoader::isEnabled()` + `isEnabled` filter + `ElementorManager` integration (Done)
 - Capability `manage_options` + `wp_verify_nonce` + `sanitize_*` (Done)
-- Overview: 4 modules Available with toggle + Settings: Reduced Motion / Disable on Mobile / Debug + Smooth Scroll Lerp/Wheel (Done)
+- Overview: 3 modules Available (Text Motion, Smooth Scroll, Interaction Motion) with toggle + Settings: Reduced Motion / Disable on Mobile / Debug + Smooth Scroll Lerp/Wheel (Done) — Hover Reveal & Interactive Cursor merged to Interaction Motion
 - About: version + links (Done)
 - Build: `composer format:check` 0 files, `vite build` 36.81KB — Done
 

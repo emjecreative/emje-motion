@@ -16,15 +16,11 @@ A lightweight motion toolkit for Elementor — extend existing widgets with mode
 - Respects `prefers-reduced-motion` and mobile disable
 - Anchor handling with `data-lenis-prevent`
 
-### Hover Reveal (Container)
-- Image follow-cursor (GSAP quickTo)
-- Reveal animation: fade / scale / clip-path
-- Trigger area: whole container or heading only
-
-### Interactive Cursor (Container)
-- Cursor types: dot / ring / dot+ring
-- Size, color, blend mode (normal/difference), hover scale, hide native, text label
-- Per-container, not global — preserves accessibility
+### Interaction Motion (Container) — 1 effect per Container
+- **Effect:** Hover Reveal or Interactive Cursor (like Text Motion)
+- **Hover Reveal** — Image follow-cursor (GSAP quickTo), Reveal animation: fade / scale / clip-path, Trigger area: whole container or heading only
+- **Interactive Cursor** — Cursor types: dot / ring / dot+ring, Size, color, blend mode (normal/difference), hover scale, hide native, text label
+- Per-container, not global — preserves accessibility, Style tab
 
 ### Admin Dashboard
 - **Overview** — enable/disable modules individually
@@ -48,9 +44,9 @@ A lightweight motion toolkit for Elementor — extend existing widgets with mode
 ## Performance
 
 - Conditional asset loading — only on pages with motion
-- Single bundle: `dist/js/frontend.js` ~36.81KB gzipped, CSS ~0.98KB
+- Single bundle: `dist/js/frontend.js` ~37.66KB gzipped, CSS ~0.98KB
 - Respects `prefers-reduced-motion: reduce`
-- Mobile fallback for Hover Reveal & Interactive Cursor
+- Mobile fallback for Interaction Motion (Hover Reveal & Cursor)
 
 ## Development
 
