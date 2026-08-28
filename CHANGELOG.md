@@ -3,6 +3,17 @@
 All notable changes to Emje Motion are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [1.1.1] - 2026-08-28
+
+### Changed
+- **Docs** — PRD sync live preview (TextMotion default On + Preview button, Hover/Cursor default Off), Status Completed Phase 2/3/4/5, Performance actual 37.66KB gzipped
+- **Version** — bump to 1.1.1 (patch docs sync, no API change, `v1.0.0`/`v1.1.0` immutable)
+
+## [1.1.0] - 2026-08-28
+
+### Added
+- **Editor Live Preview** — TextMotion toggle+button, HoverReveal/Cursor toggle Off hemat, MotionEngine attribute observer + reInit, editor.js bridge, AssetsManager preview enqueue, vite 37.66KB
+
 ## [1.0.0] - 2026-08-29
 
 ### Added

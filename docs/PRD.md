@@ -40,16 +40,16 @@ Detail teknis implementasi ada di:
 | Item | Value |
 |------|-------|
 | Product | Emje Motion |
-| Version | 1.0.0 (Ready — Tag v1.0.0 pending final manual test) |
+| Version | 1.1.1 (Ready — Tag v1.1.1 docs sync PRD live preview) |
 | Type | WordPress Plugin |
 | Platform | WordPress 6.7+ (Tested up to 6.8) |
 | Builder | Elementor 3.23+ (Requires Plugins: elementor) |
 | Language | English (Text Domain: emje-motion) |
 | License | GPL-2.0-or-later |
 | Animation Engine | GSAP 3.15+ (Free) + Lenis (MIT) for Smooth Scroll |
-| Status | Completed — v1.0.0 Ready (Phase 7 Completed, Ready to Tag) |
+| Status | Completed — v1.1.1 Ready (Phase 7 Completed, docs sync PRD live preview) |
 
-> **Catatan versi:** `emje-motion.php:15` dan `composer.json` sudah menandai 1.0.0, namun rilis publik 1.0 baru dianggap selesai setelah `Phase 6 — Version 1 Release` memenuhi `Success Criteria` Bab 17.
+> **Catatan versi:** `emje-motion.php:15` menandai 1.1.1 (patch docs sync PRD live preview, build 37.66KB), tag `v1.0.0`/`v1.1.0` immutable, rilis publik dianggap selesai setelah `Phase 7 — Version 1 Release` memenuhi `Success Criteria` Bab 17.
 
 ---
 
