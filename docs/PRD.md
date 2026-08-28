@@ -156,7 +156,7 @@ Migrasi data Free → Pro harus seamless (opsi dan `data-emje-motion` JSON tetap
 
 | Item | Detail |
 |------|--------|
-| **Status** | Planned — Phase 3 |
+| **Status** | Completed — Phase 3 |
 | **Tipe** | Global Module (site-wide) |
 | **Library** | **Lenis** (MIT, ~8KB gzipped). Alasan: ringan, tidak merusak Elementor Anchor/Sticky, tidak butuh lisensi berbayar (menolak GSAP ScrollSmoother Club). Alternatif CSS `scroll-behavior: smooth` ditolak karena terlalu kaku. |
 | **Purpose** | Memberikan scroll yang lebih halus di seluruh website untuk persepsi premium tanpa mengubah layout. |
@@ -176,12 +176,12 @@ Migrasi data Free → Pro harus seamless (opsi dan `data-emje-motion` JSON tetap
 
 | Item | Detail |
 |------|--------|
-| **Status** | In Progress — Phase 2 (Implementasi Controls + Frontend + Assets sudah ada) |
+| **Status** | Completed — Phase 2 (Controls + Frontend + Assets + Live Preview) |
 | **Supported Widgets** | `heading`, `text-editor` (`TextMotionFrontend.php:19-22`). Future: bisa extend ke `button`, `icon` tanpa ubah Core. |
 | **Included Effects** | `Scramble Text`, `Text Unfold`, `Fill Reveal` |
-| **Controls (per-widget, TAB_STYLE)** | Lihat detail Bab 9.1. Ringkas: `Enable` (switch), `Animation` (scramble-text / text-unfold / fill-reveal), **Scramble:** `Character Set` (letters/numbers/letters-numbers/symbols/custom), `Custom Characters` (text, max 200 char), `Reveal Order` (left-to-right/right-to-left/center-out/random), `Scramble Speed` (0.5–5, default 1); **Unfold:** `Split By` (words/characters), `Stagger` (0–0.5, default 0.04); **Fill Reveal:** `Background Opacity` (0–1, default 0.25); **Timing:** `Duration` (0+, default 1), `Delay` (0+, default 0), `Ease` (none/power1.out/power2.out/power3.out/power4.out/back.out/elastic.out); **Trigger:** `Event` (load/viewport/hover), `Play Once` (switch, default Yes) |
+| **Controls (per-widget, TAB_STYLE)** | Lihat detail Bab 9.1. Ringkas: `Enable` (switch), `Animation` (scramble-text / text-unfold / fill-reveal), **Scramble:** `Character Set` (letters/numbers/letters-numbers/symbols/custom), `Custom Characters` (text, max 200 char), `Reveal Order` (left-to-right/right-to-left/center-out/random), `Scramble Speed` (0.5–5, default 1); **Unfold:** `Split By` (words/characters), `Stagger` (0–0.5, default 0.04); **Fill Reveal:** `Background Opacity` (0–1, default 0.25); **Timing:** `Duration` (0+, default 1), `Delay` (0+, default 0), `Ease` (none/power1.out/power2.out/power3.out/power4.out/back.out/elastic.out); **Trigger:** `Event` (load/viewport/hover), `Play Once` (switch, default Yes); **Preview:** `Live Preview` (switch, default On, frontend_available true), `Preview Animation` (button RAW_HTML, condition enable+live=yes, replays regardless of Play Once) |
 | **Assets** | `resources/js/modules/TextMotion/{ScrambleText.js, TextUnfold.js, FillReveal.js}` + `resources/css/modules/text-motion.css` → build ke `dist/js/frontend.js` + `dist/css/frontend.css` (`vite.config.mjs:12-15`). Enqueue hanya jika `data-emje-motion` ada (`AssetsManager::markFrontendAssetsNeeded()` + `shouldLoadFrontendAssets()` via `_elementor_data` check). |
-| **Frontend Config** | JSON di `data-emje-motion` attribute pada `_wrapper` (`TextMotionFrontend.php:66-70`): `animation`, `characterSet`, `customCharacters`, `revealOrder`, `scrambleSpeed`, `duration`, `delay`, `ease`, `trigger`, `playOnce`, `splitBy`, `stagger`, `fillBgOpacity`. Semua value disanitasi dan di-clamp di `TextMotionFrontend.php:80-178`. |
+| **Frontend Config** | JSON di `data-emje-motion` attribute pada `_wrapper` (`TextMotionFrontend.php:66-70`): `animation`, `characterSet`, `customCharacters`, `revealOrder`, `scrambleSpeed`, `duration`, `delay`, `ease`, `trigger`, `playOnce`, `livePreview` (bool, default true), `splitBy`, `stagger`, `fillBgOpacity`. Semua value disanitasi dan di-clamp di `TextMotionFrontend.php:80-178`. `livePreview` + button `Preview Animation` (`TextMotionControls.php:411-454` condition enable+live=yes) untuk Editor live preview Opsi B. |
 | **Behavior** | `MotionEngine` + `ElementManager` + `TextSplitter` + `Animation` core. `prefers-reduced-motion` → skip init (`frontend.js:9`). Trigger `viewport` pakai IntersectionObserver, `hover` pakai mouseenter, `load` pakai DOMContentLoaded. |
 | **Fallback** | Non-aktif jika `prefers-reduced-motion`. Tidak ada efek di unsupported widget. |
 | **Acceptance Criteria** | Lihat Bab 9.1 |
@@ -194,11 +194,11 @@ Migrasi data Free → Pro harus seamless (opsi dan `data-emje-motion` JSON tetap
 
 | Item | Detail |
 |------|--------|
-| **Status** | Planned — Phase 4 |
+| **Status** | Completed — Phase 4 |
 | **Tipe** | Container Module (per-Container) |
 | **Purpose** | Saat hover Container, tampilkan gambar mengambang yang mengikuti cursor — untuk portfolio, list, teaser. Differentiator premium untuk Agency/Template Kit, tapi tetap No Code. |
 | **Supported Elements** | `Container` (Elementor Container flex). Tidak untuk Section/Column deprecated. Future bisa extend ke Section jika demand tinggi. |
-| **Controls (per-Container)** | `Enable` (switch), `Reveal Image` (media), `Image Size` (thumbnail/medium/large/full), `Follow Speed` (slider 0.05–0.3, default 0.12), `Scale on Hover` (0.8–1.2, default 1.0), `Reveal Animation` (select: fade / clip-path / scale, default fade), `Trigger Area` (select: whole container / heading only, default whole) |
+| **Controls (per-Container)** | `Enable` (switch), `Reveal Image` (media), `Image Size` (thumbnail/medium/large/full), `Follow Speed` (slider 0.05–0.3, default 0.12), `Scale on Hover` (0.8–1.2, default 1.0), `Reveal Animation` (select: fade / clip-path / scale, default fade), `Trigger Area` (select: whole container / heading only, default whole), `Live Preview` (switch, default Off, frontend_available true — hemat resource, `HoverRevealControls.php:173-189`) |
 | **Assets** | `resources/js/modules/HoverReveal/HoverReveal.js` + `hover-reveal.css` (fixed, `pointer-events: none`, `z-index: 10`, `will-change: transform`). Load hanya jika container punya `data-emje-hover-reveal`. |
 | **Behavior** | Clone image, GSAP `quickTo` untuk x/y (performa tinggi), `mouseenter` → show (opacity/scale), `mousemove` → update position, `mouseleave` → hide. Tidak ada listener global jika tidak ada modul aktif. |
 | **Fallback** | **Disable total di touch device** (`matchMedia('(hover: hover)')` false) + `prefers-reduced-motion`. Di mobile, image tampil static di bawah container (fallback CSS). Non-aktif di Editor. |
@@ -211,11 +211,11 @@ Migrasi data Free → Pro harus seamless (opsi dan `data-emje-motion` JSON tetap
 
 | Item | Detail |
 |------|--------|
-| **Status** | Planned — Phase 5 |
+| **Status** | Completed — Phase 5 |
 | **Tipe** | Container Module (per-Container, bukan global) |
 | **Purpose** | Ganti cursor native di Container tertentu dengan dot+ring yang bisa scale/warna saat hover elemen interaktif. Sengaja per-Container (bukan global) agar tidak intrusif dan menjaga aksesibilitas (`PRD: Non-Goals`). |
 | **Supported Elements** | `Container` (pilih Container → cursor custom aktif di dalamnya saja). Global cursor ditolak karena merusak UX dan a11y. |
-| **Controls (per-Container)** | `Enable` (switch), `Cursor Type` (select: dot / ring / dot+ring, default dot+ring), `Size` (12–40px, default 20px), `Color` (color picker, default #000), `Blend Mode` (select: normal / difference, default normal), `Hover Scale` (1.2–2.0, default 1.5, saat hover `a, button, .elementor-button` di dalam Container), `Hide Native Cursor` (switch, default Yes — hanya di dalam Container), `Text Label` (optional text, misal "View" saat hover) |
+| **Controls (per-Container)** | `Enable` (switch), `Cursor Type` (select: dot / ring / dot+ring, default dot+ring), `Size` (12–40px, default 20px), `Color` (color picker, default #000), `Blend Mode` (select: normal / difference, default normal), `Hover Scale` (1.2–2.0, default 1.5, saat hover `a, button, .elementor-button` di dalam Container), `Hide Native Cursor` (switch, default Yes — hanya di dalam Container), `Text Label` (optional text, misal "View" saat hover), `Live Preview` (switch, default Off, frontend_available true — hemat resource, `InteractiveCursorControls.php:190-206`) |
 | **Assets** | `resources/js/modules/InteractiveCursor/InteractiveCursor.js` + `interactive-cursor.css` (fixed divs, `mix-blend-mode`, `pointer-events: none`). Load hanya jika Container aktif. |
 | **Behavior** | Buat 2 div (`cursor-dot`, `cursor-ring`), GSAP `quickTo` untuk ring, `mouseenter/mouseleave` Container untuk show/hide, `mouseenter` pada `a, button` di dalam Container → scale + label. |
 | **Fallback** | **Disable total di touch & `prefers-reduced-motion`**. Native cursor tetap di luar Container. Non-aktif di Editor agar tidak ganggu Elementor panel. |
@@ -290,6 +290,8 @@ Kapan modul dianggap selesai?
 | `emje_motion_ease` | Select | `power2.out` | `enable: yes` |
 | `emje_motion_trigger` | Select (load/viewport/hover) | `load` | `enable: yes` |
 | `emje_motion_play_once` | Switcher | `yes` | `enable: yes` |
+| `emje_motion_live_preview` | Switcher | `yes` (On) | `enable: yes` |
+| `emje_motion_preview_button` | RAW_HTML button | — | `enable: yes` + `live_preview: yes` |
 
 **Assets:**
 
@@ -312,6 +314,7 @@ Kapan modul dianggap selesai?
   "ease": "power2.out",
   "trigger": "load",
   "playOnce": true,
+  "livePreview": true,
   "splitBy": "words",
   "stagger": 0.04,
   "fillBgOpacity": 0.25
@@ -406,12 +409,12 @@ Performance adalah product requirement, bukan opsional.
 
 | Asset | Budget |
 |-------|--------|
-| `dist/js/frontend.js` (Text Motion + core + GSAP) | < 50KB |
+| `dist/js/frontend.js` (Text Motion + core + GSAP) | < 50KB (actual 37.66KB gzipped @18579b0, 109KB raw) |
 | Tambahan Smooth Scroll (Lenis) | < 10KB |
 | Tambahan Hover Reveal | < 5KB |
 | Tambahan Interactive Cursor | < 5KB |
-| `dist/css/frontend.css` total | < 10KB |
-| Total v1 (semua modul On) | < 70KB gzipped |
+| `dist/css/frontend.css` total | < 10KB (actual 0.98KB gzipped, 3.43KB raw) |
+| Total v1 (semua modul On) | < 70KB gzipped (actual ~37.66KB + 0.98KB) |
 
 **Known Limitation v1:** `vite.config.mjs:12-15` single entry `frontend` → semua animasi Text Motion ter-bundle bersama meski hanya satu efek dipakai. Ini diterima untuk v1 demi kesederhanaan. Conditional load sudah mencegah load di page tanpa motion. Split per-modul dipertimbangkan jika total > 50KB.
 
@@ -479,7 +482,7 @@ User tidak boleh merasa kewalahan dengan opsi konfigurasi.
 - Preview live di Elementor Editor — `frontend.js` bootstrap via `elementor/frontend/init` + `MotionEngine` attribute observer (`data-emje-motion` `data-emje-hover-reveal` `data-emje-cursor`) + `frontend_available`/`render_type` (live `none` vs `template` untuk DOM) — **Done**
 - `AssetsManager::registerEditorAssets()` → `dist/js/editor.js` + `dist/css/editor.css` + `elementor/preview/enqueue_styles` force frontend in preview — **Done**
 - `MotionEngine` singleton + `WeakMap` instances + debounce 80ms + `isEditMode()` override `prefers-reduced-motion` — **Done**
-- Hover Reveal & Interactive Cursor **aktif di Editor preview** (Opsi B) — `isEditMode()` skip `hover:none`/`prefers-reduced-motion` guards + `reInit()` — **Done**
+- Hover Reveal & Interactive Cursor **aktif di Editor preview** (Opsi B) — `isEditMode()` skip `hover:none`/`prefers-reduced-motion` guards + `reInit()` + `livePreview` flag (TextMotion default On, Hover/Cursor default Off hemat) — **Done** (`TextMotionControls.php:426-454`, `HoverRevealControls.php:173-189`, `InteractiveCursorControls.php:190-206`, `editor.js` bridge)
 
 ---
 
@@ -539,7 +542,7 @@ Includes:
 - Module (`SmoothScroll.php` — inject `window.EmjeMotionSmoothScrollConfig` + `emje_motion_should_load_assets` filter — Done)
 - Conditional loading + `prefers-reduced-motion` + mobile (`hover:none` / `<768px`) handling (Done)
 - Anchor handling + `data-lenis-prevent` (Done)
-- Build: `dist/js/frontend.js` 35.49KB gzipped (within <50KB budget) — Done
+- Build: `dist/js/frontend.js` <50KB gzipped (actual 37.66KB @18579b0, within budget) — Done
 
 ---
 
@@ -558,7 +561,7 @@ Includes:
 - JS/CSS (`HoverReveal.js` — GSAP `quickTo` + `hover-reveal.css` — Done)
 - Mobile/touch fallback (`hover:none` hide + static fallback) + `prefers-reduced-motion` (Done)
 - Conditional asset detection (`AssetsManager` — `emje_hover_reveal_enable` — Done)
-- Build: total 36.17KB gzipped (within <50KB) — Done
+- Build: total <50KB gzipped (actual 37.66KB @18579b0) — Done
 
 ---
 
@@ -577,7 +580,7 @@ Includes:
 - JS/CSS (`InteractiveCursor.js` — GSAP `quickTo`, per-Container dot+ring + `interactive-cursor.css` — Done)
 - Mobile/touch (`hover:none` hide) + `prefers-reduced-motion` + Editor disable (Done)
 - Conditional asset detection (`AssetsManager` — `emje_cursor_enable` — Done)
-- Build: total 36.81KB gzipped (within <50KB) — Done
+- Build: total <50KB gzipped (actual 37.66KB @18579b0) — Done
 
 ---
 
