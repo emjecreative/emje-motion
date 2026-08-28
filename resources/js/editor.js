@@ -283,13 +283,50 @@
             }
 
             if (widgetType === 'container') {
-                if (settings.get('emje_hover_reveal_enable') === 'yes' && settings.get('emje_hover_reveal_live_preview') === 'yes') {
+                // Hover Reveal: handle enable + live preview, destroy when off
+                (function() {
+                    var hoverEnable = settings.get('emje_hover_reveal_enable') === 'yes';
+                    var hoverLive = settings.get('emje_hover_reveal_live_preview') === 'yes';
+                    var hoverTarget = findTarget(doc, widgetId, 'data-emje-hover-reveal');
+                    // If enable off or live off, destroy existing instance
+                    if (!hoverEnable || !hoverLive) {
+                        if (hoverTarget && win.EmjeMotionHoverReveal) {
+                            try { hoverTarget.removeAttribute('data-emje-hover-reveal'); } catch (e) {}
+                            // Destroy instance if exists
+                            try {
+                                if (win.EmjeMotionHoverReveal._instances && win.EmjeMotionHoverReveal._instances.get(hoverTarget)) {
+                                    var oldHover = win.EmjeMotionHoverReveal._instances.get(hoverTarget);
+                                    if (oldHover && typeof oldHover.destroy === 'function') oldHover.destroy();
+                                    win.EmjeMotionHoverReveal._instances.delete(hoverTarget);
+                                    delete hoverTarget.dataset.emjeHoverRevealInitialized;
+                                } else if (hoverTarget.dataset.emjeHoverRevealInitialized === 'true') {
+                                    // Fallback: still try reInit with empty to clean
+                                    if (win.EmjeMotionHoverReveal.reInit) win.EmjeMotionHoverReveal.reInit(hoverTarget);
+                                    delete hoverTarget.dataset.emjeHoverRevealInitialized;
+                                }
+                                // Also remove any orphan hover image still in body
+                                var orphanHover = doc.body ? doc.body.querySelector('.emje-hover-reveal__image') : null;
+                                if (orphanHover && orphanHover.parentNode) orphanHover.parentNode.removeChild(orphanHover);
+                            } catch (e) {}
+                        }
+                        return;
+                    }
+                    // Both on: reInit with new config
                     clearTimeout(editedView ? editedView._emjeHoverTimeout : view._emjeHoverTimeout);
                     var hoverTimer = setTimeout(function() {
                         var target = findTarget(doc, widgetId, 'data-emje-hover-reveal');
                         if (!target) return;
                         var cfg = buildHoverConfig(settings);
-                        if (!cfg.imageUrl) return;
+                        if (!cfg.imageUrl) {
+                            try { target.removeAttribute('data-emje-hover-reveal'); } catch (e) {}
+                            if (win.EmjeMotionHoverReveal && win.EmjeMotionHoverReveal._instances && win.EmjeMotionHoverReveal._instances.get(target)) {
+                                var old2 = win.EmjeMotionHoverReveal._instances.get(target);
+                                if (old2 && typeof old2.destroy === 'function') old2.destroy();
+                                win.EmjeMotionHoverReveal._instances.delete(target);
+                                delete target.dataset.emjeHoverRevealInitialized;
+                            }
+                            return;
+                        }
                         try { target.setAttribute('data-emje-hover-reveal', JSON.stringify(cfg)); } catch (e) {}
                         if (win.EmjeMotionHoverReveal && win.EmjeMotionHoverReveal.reInit) {
                             win.EmjeMotionHoverReveal.reInit(target);
@@ -297,9 +334,32 @@
                     }, 150);
                     if (editedView) editedView._emjeHoverTimeout = hoverTimer;
                     else view._emjeHoverTimeout = hoverTimer;
-                }
+                })();
 
-                if (settings.get('emje_cursor_enable') === 'yes' && settings.get('emje_cursor_live_preview') === 'yes') {
+                // Interactive Cursor: handle enable + live preview, destroy when off
+                (function() {
+                    var cursorEnable = settings.get('emje_cursor_enable') === 'yes';
+                    var cursorLive = settings.get('emje_cursor_live_preview') === 'yes';
+                    var cursorTarget = findTarget(doc, widgetId, 'data-emje-cursor');
+                    if (!cursorEnable || !cursorLive) {
+                        if (cursorTarget && win.EmjeMotionCursor) {
+                            try { cursorTarget.removeAttribute('data-emje-cursor'); } catch (e) {}
+                            try {
+                                if (win.EmjeMotionCursor._instances && win.EmjeMotionCursor._instances.get(cursorTarget)) {
+                                    var oldCur = win.EmjeMotionCursor._instances.get(cursorTarget);
+                                    if (oldCur && typeof oldCur.destroy === 'function') oldCur.destroy();
+                                    win.EmjeMotionCursor._instances.delete(cursorTarget);
+                                    delete cursorTarget.dataset.emjeCursorInitialized;
+                                } else if (cursorTarget.dataset.emjeCursorInitialized === 'true') {
+                                    if (win.EmjeMotionCursor.reInit) win.EmjeMotionCursor.reInit(cursorTarget);
+                                    delete cursorTarget.dataset.emjeCursorInitialized;
+                                }
+                                var orphanCur = doc.body ? doc.body.querySelector('.emje-cursor') : null;
+                                if (orphanCur && orphanCur.parentNode) orphanCur.parentNode.removeChild(orphanCur);
+                            } catch (e) {}
+                        }
+                        return;
+                    }
                     clearTimeout(editedView ? editedView._emjeCursorTimeout : view._emjeCursorTimeout);
                     var cursorTimer = setTimeout(function() {
                         var target = findTarget(doc, widgetId, 'data-emje-cursor');
@@ -312,7 +372,7 @@
                     }, 150);
                     if (editedView) editedView._emjeCursorTimeout = cursorTimer;
                     else view._emjeCursorTimeout = cursorTimer;
-                }
+                })();
             }
         });
     }
