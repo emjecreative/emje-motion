@@ -131,6 +131,7 @@ final class InteractionMotionControls
                 'max' => 0.3,
                 'step' => 0.01,
                 'description' => esc_html__('How quickly the image follows the cursor. Lower is smoother.', 'emje-motion'),
+                'classes' => 'emje-control--has-tooltip',
                 'condition' => [
                     'emje_interaction_enable' => 'yes',
                     'emje_interaction_effect' => 'hover-reveal',
@@ -480,6 +481,7 @@ final class InteractionMotionControls
                 'return_value' => 'yes',
                 'default' => '',
                 'description' => esc_html__('Auto preview in Editor. Off saves resources.', 'emje-motion'),
+                'classes' => 'emje-control--has-tooltip',
                 'frontend_available' => true,
                 'render_type' => 'none',
                 'condition' => [

@@ -393,9 +393,6 @@
                                     if (win.EmjeMotionHoverReveal.reInit) win.EmjeMotionHoverReveal.reInit(hoverTarget);
                                     delete hoverTarget.dataset.emjeHoverRevealInitialized;
                                 }
-                                // Also remove any orphan hover image still in body
-                                var orphanHover = doc.body ? doc.body.querySelector('.emje-hover-reveal__image') : null;
-                                if (orphanHover && orphanHover.parentNode) orphanHover.parentNode.removeChild(orphanHover);
                             } catch (e) {}
                         }
                         return;
@@ -443,8 +440,6 @@
                                     if (win.EmjeMotionCursor.reInit) win.EmjeMotionCursor.reInit(cursorTarget);
                                     delete cursorTarget.dataset.emjeCursorInitialized;
                                 }
-                                var orphanCur = doc.body ? doc.body.querySelector('.emje-cursor') : null;
-                                if (orphanCur && orphanCur.parentNode) orphanCur.parentNode.removeChild(orphanCur);
                             } catch (e) {}
                         }
                         return;
@@ -495,12 +490,6 @@
                                 }
                             } catch(e){}
                         });
-                        try {
-                            var oh2 = doc.body ? doc.body.querySelector('.emje-hover-reveal__image') : null;
-                            if (oh2 && oh2.parentNode) oh2.parentNode.removeChild(oh2);
-                            var oc2 = doc.body ? doc.body.querySelector('.emje-cursor') : null;
-                            if (oc2 && oc2.parentNode) oc2.parentNode.removeChild(oc2);
-                        } catch(e){}
                         return;
                     }
                     clearTimeout(editedView ? editedView._emjeInteractionTimeout : view._emjeInteractionTimeout);
@@ -519,8 +508,6 @@
                                     delete targetH.dataset.emjeCursorInitialized;
                                     targetH.removeAttribute('data-emje-cursor');
                                 }
-                                var orphanC = doc.body ? doc.body.querySelector('.emje-cursor') : null;
-                                if (orphanC && orphanC.parentNode) orphanC.parentNode.removeChild(orphanC);
                             } catch(e){}
                             if (!cfg.imageUrl) {
                                 try { targetH.removeAttribute('data-emje-hover-reveal'); } catch(e){}
@@ -539,8 +526,6 @@
                                     win.EmjeMotionHoverReveal._instances.delete(targetC);
                                     delete targetC.dataset.emjeHoverRevealInitialized;
                                     targetC.removeAttribute('data-emje-hover-reveal');
-                                    var orphanH = doc.body ? doc.body.querySelector('.emje-hover-reveal__image') : null;
-                                    if (orphanH && orphanH.parentNode) orphanH.parentNode.removeChild(orphanH);
                                 }
                             } catch(e){}
                             try { targetC.setAttribute('data-emje-cursor', JSON.stringify({type: cfg.type, size: cfg.size, color: cfg.color, blendMode: cfg.blendMode, hoverScale: cfg.hoverScale, hideNative: cfg.hideNative, label: cfg.label, livePreview: cfg.livePreview})); } catch(e){}
