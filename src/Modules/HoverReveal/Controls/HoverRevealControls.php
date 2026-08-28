@@ -14,7 +14,7 @@ final class HoverRevealControls
     public function register(): void
     {
         add_action(
-            'elementor/element/container/section_style/after_section_end',
+            'elementor/element/container/section_background/after_section_end',
             [$this, 'registerContainerControls'],
             10,
             2,
