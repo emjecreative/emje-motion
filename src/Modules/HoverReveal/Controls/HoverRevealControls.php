@@ -14,7 +14,7 @@ final class HoverRevealControls
     public function register(): void
     {
         add_action(
-            'elementor/element/container/section_layout/after_section_end',
+            'elementor/element/container/section_style/after_section_end',
             [$this, 'registerContainerControls'],
             10,
             2,
@@ -32,7 +32,7 @@ final class HoverRevealControls
             'emje_motion_hover_reveal',
             [
                 'label' => esc_html__('Hover Reveal', 'emje-motion'),
-                'tab' => Controls_Manager::TAB_LAYOUT,
+                'tab' => Controls_Manager::TAB_STYLE,
             ],
         );
 

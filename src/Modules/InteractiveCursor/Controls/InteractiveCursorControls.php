@@ -14,7 +14,7 @@ final class InteractiveCursorControls
     public function register(): void
     {
         add_action(
-            'elementor/element/container/section_layout/after_section_end',
+            'elementor/element/container/section_style/after_section_end',
             [$this, 'registerContainerControls'],
             10,
             2,
@@ -30,7 +30,7 @@ final class InteractiveCursorControls
             'emje_motion_interactive_cursor',
             [
                 'label' => esc_html__('Interactive Cursor', 'emje-motion'),
-                'tab' => Controls_Manager::TAB_LAYOUT,
+                'tab' => Controls_Manager::TAB_STYLE,
             ],
         );
 
