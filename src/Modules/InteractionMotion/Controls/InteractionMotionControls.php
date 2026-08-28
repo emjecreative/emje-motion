@@ -215,6 +215,7 @@ final class InteractionMotionControls
                     'unit' => 'px',
                 ],
                 'description' => esc_html__('Horizontal offset from cursor. Negative = left, positive = right.', 'emje-motion'),
+                'classes' => 'emje-control--has-tooltip',
                 'condition' => [
                     'emje_interaction_enable' => 'yes',
                     'emje_interaction_effect' => 'hover-reveal',
@@ -242,6 +243,7 @@ final class InteractionMotionControls
                     'unit' => 'px',
                 ],
                 'description' => esc_html__('Vertical offset from cursor. Negative = above, positive = below.', 'emje-motion'),
+                'classes' => 'emje-control--has-tooltip',
                 'condition' => [
                     'emje_interaction_enable' => 'yes',
                     'emje_interaction_effect' => 'hover-reveal',
@@ -269,6 +271,7 @@ final class InteractionMotionControls
                     'unit' => 'deg',
                 ],
                 'description' => esc_html__('Static rotate. For hover rotate, set Hover Rotate below.', 'emje-motion'),
+                'classes' => 'emje-control--has-tooltip',
                 'condition' => [
                     'emje_interaction_enable' => 'yes',
                     'emje_interaction_effect' => 'hover-reveal',
@@ -296,6 +299,7 @@ final class InteractionMotionControls
                     'unit' => 'deg',
                 ],
                 'description' => esc_html__('Rotate when hovering. Applied on hover with animation.', 'emje-motion'),
+                'classes' => 'emje-control--has-tooltip',
                 'condition' => [
                     'emje_interaction_enable' => 'yes',
                     'emje_interaction_effect' => 'hover-reveal',

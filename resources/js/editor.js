@@ -220,6 +220,17 @@
             if (['container', 'heading'].indexOf(trigger) === -1) trigger = 'container';
             var size2 = get('emje_interaction_hover_image_size', 'medium');
             if (['thumbnail', 'medium', 'large', 'full'].indexOf(size2) === -1) size2 = 'medium';
+            var getNum = function(k, def, min, max) {
+                var v = get(k, null);
+                if (v && typeof v === 'object' && v.size !== undefined) v = v.size;
+                var n = parseInt(v, 10);
+                if (isNaN(n)) return def;
+                return Math.max(min, Math.min(max, n));
+            };
+            var offsetX = getNum('emje_interaction_hover_offset_x', 0, -200, 200);
+            var offsetY = getNum('emje_interaction_hover_offset_y', 0, -200, 200);
+            var rotate = getNum('emje_interaction_hover_rotate', 0, 0, 360);
+            var rotateHover = getNum('emje_interaction_hover_rotate_hover', 15, 0, 360);
             return {
                 enable: true,
                 effect: effect,
@@ -229,7 +240,11 @@
                 followSpeed: follow,
                 scale: scale2,
                 animation: anim,
-                triggerArea: trigger
+                triggerArea: trigger,
+                offsetX: offsetX,
+                offsetY: offsetY,
+                rotate: rotate,
+                rotateHover: rotateHover
             };
         } else {
             var type2 = get('emje_interaction_cursor_type', 'dot-ring');
@@ -539,9 +554,60 @@
         });
     }
 
+    function bindTooltips() {
+        var process = function() {
+            document.querySelectorAll('.emje-control--has-tooltip').forEach(function(ctrl) {
+                if (ctrl.querySelector('.emje-tooltip')) return;
+                var desc = ctrl.querySelector('.elementor-control-field-description');
+                if (!desc) return;
+                var text = (desc.textContent || '').trim();
+                if (!text) return;
+                var titleEl = ctrl.querySelector('.elementor-control-title');
+                if (!titleEl) return;
+                var tip = document.createElement('span');
+                tip.className = 'emje-tooltip';
+                tip.setAttribute('tabindex', '0');
+                tip.setAttribute('aria-label', text);
+                var icon = document.createElement('span');
+                icon.className = 'emje-tooltip__icon';
+                icon.textContent = 'i';
+                var bubble = document.createElement('span');
+                bubble.className = 'emje-tooltip__bubble';
+                bubble.setAttribute('role', 'tooltip');
+                bubble.textContent = text;
+                tip.appendChild(icon);
+                tip.appendChild(bubble);
+                titleEl.appendChild(tip);
+            });
+        };
+        process();
+        // Observe panel for re-render (condition changes)
+        try {
+            var panel = document.querySelector('#elementor-panel');
+            if (panel && typeof MutationObserver !== 'undefined') {
+                var obs = new MutationObserver(function() { process(); });
+                obs.observe(panel, { childList: true, subtree: true });
+            }
+        } catch (e) {}
+        try {
+            if (window.elementor && window.elementor.hooks) {
+                window.elementor.hooks.addAction('panel/open_editor/container', process);
+                window.elementor.hooks.addAction('panel/open_editor/heading', process);
+                window.elementor.hooks.addAction('panel/open_editor/text-editor', process);
+            }
+        } catch (e) {}
+        // Also re-run on elementor init
+        try {
+            if (window.jQuery) {
+                window.jQuery(window).on('elementor:init', process);
+            }
+        } catch (e) {}
+    }
+
     function initBridge() {
         bindEditorChange();
         bindPreviewLoaded();
+        bindTooltips();
     }
 
     function bindPreviewLoaded() {
