@@ -282,12 +282,15 @@ final class AssetsManager
     /**
      * Get plugin asset URL.
      *
-     * @param string $path Asset path relative to the dist directory.
+     * @param non-empty-string $path Asset path relative to the dist directory.
      *
-     * @return string
+     * @return non-empty-string
      */
     private function asset(string $path): string
     {
-        return EMJE_MOTION_URL . 'dist/' . ltrim($path, '/');
+        /** @var non-empty-string $url */
+        $url = EMJE_MOTION_URL . 'dist/' . ltrim($path, '/');
+
+        return $url;
     }
 }
