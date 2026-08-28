@@ -550,49 +550,207 @@
             var win = getPreviewWindow();
             var doc = getPreviewDocument();
             if (!win || !doc) return;
-            // Find all containers in preview that have Interaction Motion enabled
-            // We need to iterate over Elementor models to know settings, but on preview:loaded we can just
-            // trigger reInit for any existing data-emje-* in preview that should be live
-            // Use a short delay to ensure preview DOM is ready
-            setTimeout(function() {
-                var win2 = getPreviewWindow();
-                var doc2 = getPreviewDocument();
-                if (!win2 || !doc2) return;
-                // For each interaction container in preview, check if its model has live ON
-                // Fallback: if data attribute exists and config livePreview is true, reInit will respect shouldInit
-                var hoverEls = doc2.querySelectorAll('[data-emje-hover-reveal]');
-                hoverEls.forEach(function(el) {
-                    try {
-                        var cfg = JSON.parse(el.getAttribute('data-emje-hover-reveal') || '{}');
-                        if (cfg.livePreview === false) return;
-                        if (win2.EmjeMotionHoverReveal && win2.EmjeMotionHoverReveal.reInit) {
-                            win2.EmjeMotionHoverReveal.reInit(el);
-                        }
-                    } catch (e) {}
-                });
-                var cursorEls = doc2.querySelectorAll('[data-emje-cursor]');
-                cursorEls.forEach(function(el) {
-                    try {
-                        var cfg = JSON.parse(el.getAttribute('data-emje-cursor') || '{}');
-                        if (cfg.livePreview === false) return;
-                        if (win2.EmjeMotionCursor && win2.EmjeMotionCursor.reInit) {
-                            win2.EmjeMotionCursor.reInit(el);
-                        }
-                    } catch (e) {}
-                });
-                // Also handle new unified: if data not yet set but model has it, build via editor models
-                // Iterate over all element models if available
+
+            // Helper to sync a single container model to preview
+            var syncContainerFromModel = function(model) {
                 try {
-                    var editedView = null;
-                    try { editedView = window.elementor.channels.editor.request('editedElementView'); } catch (err) {}
-                    // If we have a specific widgetId, the above already handled via change handler
-                    // For initial load, we need to sync all containers from the preview's elementorFrontend
-                    // Fallback: trigger a synthetic change for visible containers
-                    if (win2.elementorFrontend && win2.elementorFrontend.elementsHandler) {
-                        // No-op, rely on hoverEls/cursorEls reInit above
+                    var settings = model.get('settings');
+                    if (!settings || typeof settings.get !== 'function') return;
+                    var widgetId = model.get('id');
+                    var win2 = getPreviewWindow();
+                    var doc2 = getPreviewDocument();
+                    if (!win2 || !doc2) return;
+                    // Check new unified first
+                    var hasNew = settings.get('emje_interaction_effect') !== undefined || settings.get('emje_interaction_enable') !== undefined;
+                    if (hasNew) {
+                        var enableNew = settings.get('emje_interaction_enable') === 'yes';
+                        var liveNew = settings.get('emje_interaction_live_preview') === 'yes';
+                        if (!enableNew || !liveNew) {
+                            // Destroy both if off
+                            var t1 = findTarget(doc2, widgetId, 'data-emje-hover-reveal');
+                            var t2 = findTarget(doc2, widgetId, 'data-emje-cursor');
+                            var anyT = t1 || t2 || (widgetId ? doc2.querySelector('[data-id="' + widgetId + '"]') : null);
+                            [t1, t2, anyT].forEach(function(t){
+                                if (!t) return;
+                                try { t.removeAttribute('data-emje-hover-reveal'); } catch(e){}
+                                try { t.removeAttribute('data-emje-cursor'); } catch(e){}
+                                try {
+                                    if (win2.EmjeMotionHoverReveal && win2.EmjeMotionHoverReveal._instances && win2.EmjeMotionHoverReveal._instances.get(t)) {
+                                        var oh = win2.EmjeMotionHoverReveal._instances.get(t);
+                                        if (oh && typeof oh.destroy === 'function') oh.destroy();
+                                        win2.EmjeMotionHoverReveal._instances.delete(t);
+                                        delete t.dataset.emjeHoverRevealInitialized;
+                                    }
+                                } catch(e){}
+                                try {
+                                    if (win2.EmjeMotionCursor && win2.EmjeMotionCursor._instances && win2.EmjeMotionCursor._instances.get(t)) {
+                                        var oc = win2.EmjeMotionCursor._instances.get(t);
+                                        if (oc && typeof oc.destroy === 'function') oc.destroy();
+                                        win2.EmjeMotionCursor._instances.delete(t);
+                                        delete t.dataset.emjeCursorInitialized;
+                                    }
+                                } catch(e){}
+                            });
+                            return;
+                        }
+                        var cfgNew = buildInteractionConfig(settings);
+                        if (!cfgNew.enable) return;
+                        if (cfgNew.effect === 'hover-reveal') {
+                            var targetH = findTarget(doc2, widgetId, 'data-emje-hover-reveal') || findTarget(doc2, widgetId, 'data-emje-cursor') || (widgetId ? doc2.querySelector('[data-id="' + widgetId + '"]') : null);
+                            if (!targetH) return;
+                            // Clean cursor if switching
+                            try {
+                                if (win2.EmjeMotionCursor && win2.EmjeMotionCursor._instances && win2.EmjeMotionCursor._instances.get(targetH)) {
+                                    var oc3 = win2.EmjeMotionCursor._instances.get(targetH);
+                                    if (oc3 && typeof oc3.destroy === 'function') oc3.destroy();
+                                    win2.EmjeMotionCursor._instances.delete(targetH);
+                                    delete targetH.dataset.emjeCursorInitialized;
+                                    targetH.removeAttribute('data-emje-cursor');
+                                }
+                            } catch(e){}
+                            if (!cfgNew.imageUrl) {
+                                try { targetH.removeAttribute('data-emje-hover-reveal'); } catch(e){}
+                                return;
+                            }
+                            try { targetH.setAttribute('data-emje-hover-reveal', JSON.stringify({imageUrl: cfgNew.imageUrl, imageSize: cfgNew.imageSize, followSpeed: cfgNew.followSpeed, scale: cfgNew.scale, animation: cfgNew.animation, triggerArea: cfgNew.triggerArea, livePreview: cfgNew.livePreview})); } catch(e){}
+                            if (win2.EmjeMotionHoverReveal && win2.EmjeMotionHoverReveal.reInit) win2.EmjeMotionHoverReveal.reInit(targetH);
+                        } else {
+                            var targetC = findTarget(doc2, widgetId, 'data-emje-cursor') || findTarget(doc2, widgetId, 'data-emje-hover-reveal') || (widgetId ? doc2.querySelector('[data-id="' + widgetId + '"]') : null);
+                            if (!targetC) return;
+                            try {
+                                if (win2.EmjeMotionHoverReveal && win2.EmjeMotionHoverReveal._instances && win2.EmjeMotionHoverReveal._instances.get(targetC)) {
+                                    var oh3 = win2.EmjeMotionHoverReveal._instances.get(targetC);
+                                    if (oh3 && typeof oh3.destroy === 'function') oh3.destroy();
+                                    win2.EmjeMotionHoverReveal._instances.delete(targetC);
+                                    delete targetC.dataset.emjeHoverRevealInitialized;
+                                    targetC.removeAttribute('data-emje-hover-reveal');
+                                }
+                            } catch(e){}
+                            try { targetC.setAttribute('data-emje-cursor', JSON.stringify({type: cfgNew.type, size: cfgNew.size, color: cfgNew.color, blendMode: cfgNew.blendMode, hoverScale: cfgNew.hoverScale, hideNative: cfgNew.hideNative, label: cfgNew.label, livePreview: cfgNew.livePreview})); } catch(e){}
+                            if (win2.EmjeMotionCursor && win2.EmjeMotionCursor.reInit) win2.EmjeMotionCursor.reInit(targetC);
+                        }
+                        return;
+                    }
+                    // Legacy fallback: hover and cursor separate
+                    var hoverEnable = settings.get('emje_hover_reveal_enable') === 'yes';
+                    var hoverLive = settings.get('emje_hover_reveal_live_preview') === 'yes';
+                    var cursorEnable = settings.get('emje_cursor_enable') === 'yes';
+                    var cursorLive = settings.get('emje_cursor_live_preview') === 'yes';
+                    // Hover
+                    if (hoverEnable && hoverLive) {
+                        var th = findTarget(doc2, widgetId, 'data-emje-hover-reveal');
+                        if (!th) th = widgetId ? doc2.querySelector('[data-id="' + widgetId + '"]') : null;
+                        if (th) {
+                            var cfgH = buildHoverConfig(settings);
+                            if (cfgH.imageUrl) {
+                                try { th.setAttribute('data-emje-hover-reveal', JSON.stringify(cfgH)); } catch(e){}
+                                if (win2.EmjeMotionHoverReveal && win2.EmjeMotionHoverReveal.reInit) win2.EmjeMotionHoverReveal.reInit(th);
+                            }
+                        }
+                    } else if (hoverEnable || settings.get('emje_hover_reveal_enable') !== undefined) {
+                        var th2 = findTarget(doc2, widgetId, 'data-emje-hover-reveal');
+                        if (th2) {
+                            try { th2.removeAttribute('data-emje-hover-reveal'); } catch(e){}
+                            try {
+                                if (win2.EmjeMotionHoverReveal && win2.EmjeMotionHoverReveal._instances && win2.EmjeMotionHoverReveal._instances.get(th2)) {
+                                    var oh2 = win2.EmjeMotionHoverReveal._instances.get(th2);
+                                    if (oh2 && typeof oh2.destroy === 'function') oh2.destroy();
+                                    win2.EmjeMotionHoverReveal._instances.delete(th2);
+                                    delete th2.dataset.emjeHoverRevealInitialized;
+                                }
+                            } catch(e){}
+                        }
+                    }
+                    // Cursor
+                    if (cursorEnable && cursorLive) {
+                        var tc = findTarget(doc2, widgetId, 'data-emje-cursor');
+                        if (!tc) tc = widgetId ? doc2.querySelector('[data-id="' + widgetId + '"]') : null;
+                        if (tc) {
+                            var cfgC = buildCursorConfig(settings);
+                            try { tc.setAttribute('data-emje-cursor', JSON.stringify(cfgC)); } catch(e){}
+                            if (win2.EmjeMotionCursor && win2.EmjeMotionCursor.reInit) win2.EmjeMotionCursor.reInit(tc);
+                        }
+                    } else if (cursorEnable || settings.get('emje_cursor_enable') !== undefined) {
+                        var tc2 = findTarget(doc2, widgetId, 'data-emje-cursor');
+                        if (tc2) {
+                            try { tc2.removeAttribute('data-emje-cursor'); } catch(e){}
+                            try {
+                                if (win2.EmjeMotionCursor && win2.EmjeMotionCursor._instances && win2.EmjeMotionCursor._instances.get(tc2)) {
+                                    var oc2 = win2.EmjeMotionCursor._instances.get(tc2);
+                                    if (oc2 && typeof oc2.destroy === 'function') oc2.destroy();
+                                    win2.EmjeMotionCursor._instances.delete(tc2);
+                                    delete tc2.dataset.emjeCursorInitialized;
+                                }
+                            } catch(e){}
+                        }
                     }
                 } catch (e) {}
-            }, 300);
+            };
+
+            var syncAllFromModels = function() {
+                try {
+                    var allModels = [];
+                    var collect = function(collection) {
+                        if (!collection) return;
+                        var models = collection.models || collection;
+                        if (!models || !models.length) return;
+                        for (var i = 0; i < models.length; i++) {
+                            var m = models[i];
+                            if (!m || typeof m.get !== 'function') continue;
+                            var elType = m.get('elType');
+                            if (elType === 'container') {
+                                allModels.push(m);
+                            }
+                            var children = m.get('elements');
+                            if (children) collect(children);
+                        }
+                    };
+                    if (window.elementor && window.elementor.elements && window.elementor.elements.models) {
+                        collect(window.elementor.elements.models);
+                    } else if (window.elementor && window.elementor.getPreviewContainer) {
+                        var previewContainer = window.elementor.getPreviewContainer();
+                        if (previewContainer && previewContainer.model) {
+                            collect([previewContainer.model]);
+                        }
+                    }
+                    // Also try preview window's elementor
+                    var winPrev = getPreviewWindow();
+                    if (winPrev && winPrev.elementor && winPrev.elementor.elements) {
+                        // preview iframe has its own elements? usually not
+                    }
+                    allModels.forEach(function(m) { syncContainerFromModel(m); });
+                    // Fallback: also reInit any existing data attributes in preview that have livePreview true (covers PHP-rendered)
+                    var win2 = getPreviewWindow();
+                    var doc2 = getPreviewDocument();
+                    if (win2 && doc2) {
+                        var hoverEls = doc2.querySelectorAll('[data-emje-hover-reveal]');
+                        hoverEls.forEach(function(el) {
+                            try {
+                                var cfg = JSON.parse(el.getAttribute('data-emje-hover-reveal') || '{}');
+                                if (cfg.livePreview === false) return;
+                                if (win2.EmjeMotionHoverReveal && win2.EmjeMotionHoverReveal.reInit) {
+                                    win2.EmjeMotionHoverReveal.reInit(el);
+                                }
+                            } catch (e) {}
+                        });
+                        var cursorEls = doc2.querySelectorAll('[data-emje-cursor]');
+                        cursorEls.forEach(function(el) {
+                            try {
+                                var cfg = JSON.parse(el.getAttribute('data-emje-cursor') || '{}');
+                                if (cfg.livePreview === false) return;
+                                if (win2.EmjeMotionCursor && win2.EmjeMotionCursor.reInit) {
+                                    win2.EmjeMotionCursor.reInit(el);
+                                }
+                            } catch (e) {}
+                        });
+                    }
+                } catch (e) {}
+            };
+
+            // Run with delays to ensure preview DOM and elementor models are ready
+            setTimeout(syncAllFromModels, 400);
+            setTimeout(syncAllFromModels, 900);
+            setTimeout(syncAllFromModels, 1500);
         };
 
         // Listen to Elementor preview:loaded (top frame)
