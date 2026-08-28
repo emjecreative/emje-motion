@@ -40,16 +40,16 @@ Detail teknis implementasi ada di:
 | Item | Value |
 |------|-------|
 | Product | Emje Motion |
-| Version | 1.2.0 (Ready — Interaction Motion unified, 1 effect per Container) |
+| Version | 1.2.1 (Ready — fix Interaction Motion live preview on editor reopen) |
 | Type | WordPress Plugin |
 | Platform | WordPress 6.7+ (Tested up to 6.8) |
 | Builder | Elementor 3.23+ (Requires Plugins: elementor) |
 | Language | English (Text Domain: emje-motion) |
 | License | GPL-2.0-or-later |
 | Animation Engine | GSAP 3.15+ (Free) + Lenis (MIT) for Smooth Scroll |
-| Status | Completed — v1.2.0 Ready (Interaction Motion unified, no both) |
+| Status | Completed — v1.2.1 Ready (fix live preview on editor reopen) |
 
-> **Catatan versi:** `emje-motion.php:15` menandai 1.2.0 (minor Interaction Motion unified, 1 effect per Container), tag `v1.1.1` immutable, build 37.66KB, rilis publik dianggap selesai setelah `Phase 7` memenuhi `Success Criteria` Bab 17.
+> **Catatan versi:** `emje-motion.php:15` menandai 1.2.1 (patch fix live preview on editor reopen + Style tab section_background), tag `v1.2.0` immutable, build 37.81KB, rilis publik dianggap selesai setelah `Phase 7` memenuhi `Success Criteria` Bab 17.
 
 ---
 

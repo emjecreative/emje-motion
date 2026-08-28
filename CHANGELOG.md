@@ -3,6 +3,13 @@
 All notable changes to Emje Motion are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [1.2.1] - 2026-08-28
+
+### Fixed
+- **Container Style** — Hover Reveal & Interactive Cursor moved Layout → Style tab now correctly hooks to `section_background` (Container has no `section_style`), plus `vite emptyOutDir false` to preserve `editor.js`
+- **Editor Live Preview** — Interaction Motion live preview now correctly handles `Enable Off` / `Live Off` (destroy preview, remove orphan DOM) and `frontend.js` hook + `MutationObserver` for preview reload race
+- **Editor Reopen** — live preview now syncs on `preview:loaded` via `elementor.elements` models (400/900/1500ms retries), so toggle ON survives publish/close/reopen without needing OFF→ON
+
 ## [1.2.0] - 2026-08-28
 
 ### Changed
