@@ -3,6 +3,12 @@
 All notable changes to Emje Motion are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [1.2.2] - 2026-08-28
+
+### Fixed
+- **Hover Reveal** — Image Size now uses sized src (thumbnail/medium/large/full) + CSS size mapping, Scale always applied regardless of animation (was gated to scale only), Position Offset X/Y -200..200 and Rotate 0-360 + Hover Rotate via GSAP
+- **Editor** — Offset/Rotate/Scale/Image Size now live preview via buildInteractionConfig slider size handling, tooltip bubble fixed with viewport clamp + 12px margin (was cut off left/right)
+
 ## [1.2.1] - 2026-08-28
 
 ### Fixed

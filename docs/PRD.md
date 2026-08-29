@@ -40,16 +40,16 @@ Detail teknis implementasi ada di:
 | Item | Value |
 |------|-------|
 | Product | Emje Motion |
-| Version | 1.2.1 (Ready — fix Interaction Motion live preview on editor reopen) |
+| Version | 1.2.2 (Ready — fix Hover Reveal Image Size/Scale + Position/Rotate) |
 | Type | WordPress Plugin |
 | Platform | WordPress 6.7+ (Tested up to 6.8) |
 | Builder | Elementor 3.23+ (Requires Plugins: elementor) |
 | Language | English (Text Domain: emje-motion) |
 | License | GPL-2.0-or-later |
 | Animation Engine | GSAP 3.15+ (Free) + Lenis (MIT) for Smooth Scroll |
-| Status | Completed — v1.2.1 Ready (fix live preview on editor reopen) |
+| Status | Completed — v1.2.2 Ready (Image Size/Scale + Position/Rotate live) |
 
-> **Catatan versi:** `emje-motion.php:15` menandai 1.2.1 (patch fix live preview on editor reopen + Style tab section_background), tag `v1.2.0` immutable, build 37.81KB, rilis publik dianggap selesai setelah `Phase 7` memenuhi `Success Criteria` Bab 17.
+> **Catatan versi:** `emje-motion.php:15` menandai 1.2.2 (patch Image Size/Scale + Position/Rotate live, tooltip i), tag `v1.2.1` immutable, build 38.03KB, rilis publik dianggap selesai setelah `Phase 7` memenuhi `Success Criteria` Bab 17.
 
 ---
 
