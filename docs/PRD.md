@@ -40,16 +40,16 @@ Detail teknis implementasi ada di:
 | Item | Value |
 |------|-------|
 | Product | Emje Motion |
-| Version | 1.2.2 (Ready — fix Hover Reveal Image Size/Scale + Position/Rotate) |
+| Version | 1.3.0 (Ready — Comet Trail + Text Follow typography/shadow) |
 | Type | WordPress Plugin |
 | Platform | WordPress 6.7+ (Tested up to 6.8) |
 | Builder | Elementor 3.23+ (Requires Plugins: elementor) |
 | Language | English (Text Domain: emje-motion) |
 | License | GPL-2.0-or-later |
 | Animation Engine | GSAP 3.15+ (Free) + Lenis (MIT) for Smooth Scroll |
-| Status | Completed — v1.2.2 Ready (Image Size/Scale + Position/Rotate live) |
+| Status | Completed — v1.3.0 Ready (Comet Trail + Text Follow live) |
 
-> **Catatan versi:** `emje-motion.php:15` menandai 1.2.2 (patch Image Size/Scale + Position/Rotate live, tooltip i), tag `v1.2.1` immutable, build 38.03KB, rilis publik dianggap selesai setelah `Phase 7` memenuhi `Success Criteria` Bab 17.
+> **Catatan versi:** `emje-motion.php:15` menandai 1.3.0 (feat Comet Trail 3-12 dots gradient + Text Follow bg/typography/shadow), tag `v1.3.0` immutable, build 39.88KB gzipped, rilis publik dianggap selesai setelah `Phase 8` memenuhi `Success Criteria` Bab 17.
 
 ---
 
@@ -198,10 +198,10 @@ Migrasi data Free → Pro harus seamless (opsi dan `data-emje-motion` JSON tetap
 | **Tipe** | Container Module (per-Container, 1 effect per Container) |
 | **Purpose** | Unified Container motion — pengguna pilih 1 effect per Container (Hover Reveal untuk portfolio image follow, atau Interactive Cursor untuk dot+ring), tanpa menumpuk 2 efek (hasil jelek). Mirip Text Motion `Enable → Animation`, hemat resource. |
 | **Supported Elements** | `Container` (Elementor Container flex). Tidak untuk Section/Column deprecated. |
-| **Controls (per-Container, TAB_STYLE)** | `Enable` (switch, default Off), `Effect` (select: hover-reveal / interactive-cursor, default hover-reveal, frontend_available true, render_type template) — **Hover Reveal** (condition effect==hover-reveal): `Reveal Image` (media), `Image Size` (thumbnail/medium/large/full), `Follow Speed` (0.05–0.3 default 0.12), `Scale on Hover` (0.8–1.2 default 1.0), `Reveal Animation` (fade/scale/clip default fade), `Trigger Area` (container/heading default container); **Interactive Cursor** (condition effect==interactive-cursor): `Cursor Type` (dot/ring/dot+ring default dot+ring), `Size` (12–40 default 20), `Color` (#000), `Blend Mode` (normal/difference), `Hover Scale` (1.2–2.0 default 1.5), `Hide Native` (switch default Yes), `Text Label` (text); **Live Preview** (1 switch, default Off hemat, frontend_available true, condition enable==yes) — terpisah per effect tidak perlu (1 effect per Container) |
-| **Legacy** | `HoverRevealControls.php` & `InteractiveCursorControls.php` deprecated (controls hidden, Frontend keep for backward compat `data-emje-hover-reveal`/`data-emje-cursor`). `InteractionMotionFrontend.php` handle new `emje_interaction_*` + legacy fallback. |
-| **Assets** | `HoverReveal.js` + `hover-reveal.css` dan `InteractiveCursor.js` + `interactive-cursor.css` reuse (tidak ada CSS baru). Load kondisional via `AssetsManager` cek `emje_interaction_enable` + legacy `emje_hover_reveal_enable`/`emje_cursor_enable` + `data-emje-*`. |
-| **Behavior** | Unified Effect select: `hover-reveal` → clone image GSAP `quickTo` x/y; `interactive-cursor` → 2 div dot+ring GSAP `quickTo`. `editor.js` bridge `buildInteractionConfig` + destroy when Enable/Live Off (1 effect per Container). Tidak ada listener global jika Off. |
+| **Controls (per-Container, TAB_STYLE)** | `Enable` (switch, default Off), `Effect` (select: hover-reveal / interactive-cursor, default hover-reveal, frontend_available true, render_type template) — **Hover Reveal** (condition effect==hover-reveal): `Reveal Image` (media), `Image Size` (thumbnail/medium/large/full), `Follow Speed` (0.05–0.3 default 0.12), `Scale on Hover` (0.8–1.2 default 1.0), `Reveal Animation` (fade/scale/clip default fade), `Trigger Area` (container/heading default container), `Offset X/Y` (-200..200), `Rotate`/`Hover Rotate` (0-360); **Interactive Cursor** (condition effect==interactive-cursor): `Cursor Type` (text-follow/dot-ring/trail default text-follow) — **Text Follow:** `Text Label` (View), `Typography` (Global Fonts), `Background` (#FFF), `Text Color` (#111), `Padding Y 40`/`X 32`, `Radius 99`, `Box Shadow`, `Follow Smoothness` 0.05-0.6 (hidden for trail) — **Dot+Ring:** `Size` 12-40 def 20, `Color` #000, `Hover Scale` 1.2-2.0 — **Comet Trail:** `Dots` 3-12 def 6, `Dot Size` 4-24 def 20, `Head #111`/`Tail #FF4D5A` gradient, `Trail Lag` 0.1-0.5 def 0.35 (unitless), `Fade Tail` (yes) — **Common:** `Hide Native` default Off; **Live Preview** (1 switch, default Off hemat, frontend_available true, condition enable==yes) |
+| **Legacy** | `HoverRevealControls.php` & `InteractiveCursorControls.php` deprecated (controls hidden, Frontend keep for backward compat `data-emje-hover-reveal`/`data-emje-cursor`). `InteractionMotionFrontend.php` handle new `emje_interaction_*` + legacy fallback via `ColorResolver`/`SliderResolver` services + `addDataAttribute` helper. `Controls` split to `HoverControls` + `CursorControls` composition. |
+| **Assets** | `HoverReveal.js` + `hover-reveal.css` dan `InteractiveCursor.js` (text-follow/dot-ring/trail rAF) + `interactive-cursor.css` (trail-dot fixed, follow-box-shadow var). Load kondisional via `AssetsManager` cek `emje_interaction_enable` + legacy + `data-emje-*`. |
+| **Behavior** | Unified Effect select: `hover-reveal` → clone image GSAP `quickTo`; `interactive-cursor` → `text-follow` pill + `dot-ring` + `trail` rAF chain `pt += (lead-pt)*lag` (Kinetics 0.35, size decay 65% + opacity fade). `editor.js` `buildInteractionConfig` + `bindContainerGlobalsListener` direct `change:*` + `bindKitChange` globals, destroy when Enable/Live Off. |
 | **Fallback** | Disable total di touch `hover:none` + `prefers-reduced-motion`. Mobile fallback static image untuk hover. Native cursor di luar Container. |
 | **Performance Budget** | < 5KB gzipped per effect (reuse), 1 instance per Container aktif, RAF via GSAP, tidak ada `mousemove` jika Off. |
 
@@ -392,12 +392,12 @@ Performance adalah product requirement, bukan opsional.
 
 | Asset | Budget |
 |-------|--------|
-| `dist/js/frontend.js` (Text Motion + core + GSAP) | < 50KB (actual 37.66KB gzipped @18579b0, 109KB raw) |
+| `dist/js/frontend.js` (Text Motion + core + GSAP + Trail rAF) | < 50KB (actual 39.88KB gzipped 118.88KB raw) |
 | Tambahan Smooth Scroll (Lenis) | < 10KB |
 | Tambahan Hover Reveal | < 5KB |
-| Tambahan Interactive Cursor | < 5KB |
-| `dist/css/frontend.css` total | < 10KB (actual 0.98KB gzipped, 3.43KB raw) |
-| Total v1 (semua modul On) | < 70KB gzipped (actual ~37.66KB + 0.98KB) |
+| Tambahan Interactive Cursor (dot/ring/text/trail) | < 8KB |
+| `dist/css/frontend.css` total | < 10KB (actual 1.17KB gzipped, 4.37KB raw) |
+| Total v1 (semua modul On) | < 70KB gzipped (actual ~39.88KB + 1.17KB) |
 
 **Known Limitation v1:** `vite.config.mjs:12-15` single entry `frontend` → semua animasi Text Motion ter-bundle bersama meski hanya satu efek dipakai. Ini diterima untuk v1 demi kesederhanaan. Conditional load sudah mencegah load di page tanpa motion. Split per-modul dipertimbangkan jika total > 50KB.
 
@@ -564,6 +564,24 @@ Includes:
 - SettingsRepository `interaction-motion` ID + Admin Overview 3 modules (Text Motion, Smooth Scroll, Interaction Motion) — Done
 - Editor bridge `editor.js` buildInteractionConfig + destroy on Enable/Live Off (1 effect per Container) — Done
 - Build: total <50KB gzipped (actual 37.66KB @18579b0) — Done
+
+---
+
+## Phase 8
+
+Comet Trail + Text Follow Polish
+
+Status:
+
+Completed — 1.3.0 Ready
+
+Includes:
+
+- Comet Trail cursor type `trail` (HoverControls + CursorControls composition, Dots 3-12, Dot Size 20, Head/Tail gradient via `_lerpColor`, Lag 0.35 rAF, Fade)
+- Text Follow polish: Background/Text Color Global, Padding Y 40 / X 32, Radius 99, Typography Global Fonts (var), Box Shadow, Follow Smoothness 0.5
+- Frontend `ColorResolver`/`SliderResolver` services, `sanitizeColor` allow-list, `addDataAttribute` dedup, trail `isEditMode` livePreview handling
+- Editor `bindContainerGlobalsListener` direct `change:*` + `bindKitChange` Kit sync, `buildInteractionConfig` full trail + typography globals, live color/typography without OFF→ON
+- Build: 39.88KB gzipped, `composer format` 0, `phpstan` OK, `vite build` + copy editor
 
 ---
 

@@ -3,6 +3,22 @@
 All notable changes to Emje Motion are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [1.3.0] - 2026-08-30
+
+### Added
+- **Comet Trail (Interaction Motion)** — new cursor type `Comet Trail` (6 dots default, 3-12 range) with head→tail gradient (Head #111111 → Tail #FF4D5A, Global Colors support), lag `0.35` (0.1-0.5) rAF chain (Kinetics 0.35), fade tail, dot size `20` (4-24)
+- **Text Follow** — full controls: Background/Text Color (Global), Padding Y `40` / X `32`, Border Radius `99`, Typography (Global Fonts), Box Shadow, Follow Smoothness `0.5`
+- **Editor Live Preview** — direct `change:*` listeners for all cursor controls (dot-ring/text-follow/trail) + `__globals__` + Kit sync, no toggle OFF→ON needed
+
+### Changed
+- **Interaction Motion** — Cursor Type default `dot-ring` → `text-follow`, `trail` added; `Follow Smoothness` hidden for trail (uses `Trail Lag`); `Hide Native` default `''` (OFF); `Ctrl` split to `HoverControls` + `CursorControls` composition
+- **Frontend** — `ColorResolver`/`SliderResolver` services, `sanitizeColor` allow-list, `addDataAttribute` dedup, `isEditMode` livePreview handling
+
+### Fixed
+- **Typography Global Fonts** — `var(--e-global-typography-*)` now correctly applied (`fontSize` var no longer `var()px`), live preview updates without reload
+- **Trail Color / Dot Size** — gradient interpolation and default `20` now work in editor and frontend
+- **Build** — `vite build` now copies `editor.js`/`editor.css` to `dist`, `phpstan` no errors, `format` clean
+
 ## [1.2.2] - 2026-08-28
 
 ### Fixed

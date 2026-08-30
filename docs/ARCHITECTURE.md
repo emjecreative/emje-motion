@@ -296,7 +296,9 @@ HoverReveal/
 
 SmoothScroll/
 
-InteractiveCursor/
+InteractiveCursor/ (dot-ring/text-follow/trail via InteractionMotion)
+
+InteractionMotion/ (HoverControls + CursorControls composition, ColorResolver/SliderResolver services)
 ```
 
 Every module is responsible for:
@@ -533,11 +535,11 @@ The architecture is designed to support future modules without changing the Core
 Examples:
 
 - Advanced Scroll
-- Magnetic
+- Magnetic (extend Interactive Cursor trail)
 - Tilt
 - Mouse Parallax
 - Background Effects
-- Motion Timeline
+- Motion Timeline (Comet Trail done in 1.3.0 via trail rAF)
 
 Core services should remain stable.
 

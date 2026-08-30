@@ -18,8 +18,8 @@ A lightweight motion toolkit for Elementor — extend existing widgets with mode
 
 ### Interaction Motion (Container) — 1 effect per Container
 - **Effect:** Hover Reveal or Interactive Cursor (like Text Motion)
-- **Hover Reveal** — Image follow-cursor (GSAP quickTo), Reveal animation: fade / scale / clip-path, Trigger area: whole container or heading only
-- **Interactive Cursor** — Cursor types: dot / ring / dot+ring, Size, color, blend mode (normal/difference), hover scale, hide native, text label
+- **Hover Reveal** — Image follow-cursor (GSAP quickTo), Reveal animation: fade / scale / clip-path, Trigger area: whole container or heading only, Image Size/Scale/Offset/Rotate
+- **Interactive Cursor** — Cursor types: **Text Follow** (label + bg/text, padding Y 40 / X 32, radius 99, typography Global, shadow, smoothness), **Dot + Ring** (size, color, hover scale), **Comet Trail** (3-12 dots, size 20, head/tail gradient, lag 0.35, fade) — hide native, per-Container
 - Per-container, not global — preserves accessibility, Style tab
 
 ### Admin Dashboard
@@ -44,9 +44,9 @@ A lightweight motion toolkit for Elementor — extend existing widgets with mode
 ## Performance
 
 - Conditional asset loading — only on pages with motion
-- Single bundle: `dist/js/frontend.js` ~37.66KB gzipped, CSS ~0.98KB
+- Single bundle: `dist/js/frontend.js` ~39.88KB gzipped, CSS ~1.17KB (Comet Trail + Text Follow)
 - Respects `prefers-reduced-motion: reduce`
-- Mobile fallback for Interaction Motion (Hover Reveal & Cursor)
+- Mobile fallback for Interaction Motion (Hover Reveal & Cursor hidden on touch)
 
 ## Development
 
