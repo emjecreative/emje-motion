@@ -61,10 +61,13 @@ final class InteractiveCursorFrontend
      */
     private function buildConfig(array $settings): array
     {
-        $type = $settings['emje_cursor_type'] ?? 'dot-ring';
-
-        if (! in_array($type, ['dot', 'ring', 'dot-ring'], true)) {
+        $type = $settings['emje_cursor_type'] ?? 'text-follow';
+        if (in_array($type, ['dot', 'ring'], true)) {
             $type = 'dot-ring';
+        }
+
+        if (! in_array($type, ['dot-ring', 'text-follow', 'trail'], true)) {
+            $type = 'text-follow';
         }
 
         $size = 20;
@@ -87,21 +90,20 @@ final class InteractiveCursorFrontend
             $color = '#000000';
         }
 
-        $blendMode = $settings['emje_cursor_blend_mode'] ?? 'normal';
-
-        if (! in_array($blendMode, ['normal', 'difference'], true)) {
-            $blendMode = 'normal';
-        }
+        $blendMode = 'normal';
 
         $hoverScale = isset($settings['emje_cursor_hover_scale']) ? (float) $settings['emje_cursor_hover_scale'] : 1.5;
         $hoverScale = max(1.2, min(2.0, $hoverScale));
 
-        $hideNative = ($settings['emje_cursor_hide_native'] ?? 'yes') === 'yes';
+        $hideNative = ($settings['emje_cursor_hide_native'] ?? '') === 'yes';
 
-        $label = isset($settings['emje_cursor_text_label']) ? sanitize_text_field((string) $settings['emje_cursor_text_label']) : '';
+        $label = isset($settings['emje_cursor_text_label']) ? sanitize_text_field((string) $settings['emje_cursor_text_label']) : 'View';
+        if ($label === '') {
+            $label = 'View';
+        }
 
-        if (mb_strlen($label) > 20) {
-            $label = mb_substr($label, 0, 20);
+        if (mb_strlen($label) > 30) {
+            $label = mb_substr($label, 0, 30);
         }
 
         return [
@@ -112,6 +114,33 @@ final class InteractiveCursorFrontend
             'hoverScale' => $hoverScale,
             'hideNative' => $hideNative,
             'label' => $label,
+            'bgColor' => '#FFFFFF',
+            'textColor' => '#111111',
+            'paddingY' => 28,
+            'paddingX' => 36,
+            'radius' => 50,
+            'fontSize' => 14,
+            'typography' => [
+                'fontFamily' => '',
+                'fontSize' => 14,
+                'fontSizeUnit' => 'px',
+                'fontWeight' => '600',
+                'textTransform' => '',
+                'fontStyle' => '',
+                'lineHeight' => '',
+                'letterSpacing' => '',
+            ],
+            'entrance' => 'scale',
+            'followSmoothness' => 0.5,
+            'boxShadow' => '0px 8px 32px 0px rgba(0, 0, 0, 0.12)',
+            'shadow' => true,
+            'shadowBlur' => 32,
+            'trailDots' => 6,
+            'trailSize' => 20,
+            'trailHeadColor' => '#111111',
+            'trailTailColor' => '#FF4D5A',
+            'trailLag' => 0.35,
+            'trailFade' => true,
             'livePreview' => ($settings['emje_cursor_live_preview'] ?? '') === 'yes',
         ];
     }

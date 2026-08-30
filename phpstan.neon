@@ -3,6 +3,7 @@ parameters:
 
     paths:
         - src
+        - emje-motion.php
 
     bootstrapFiles:
         - vendor/autoload.php

@@ -1,6 +1,7 @@
-/**
+﻿/**
  * Editor bridge for Emje Motion live preview.
  * Loaded in Elementor editor top frame via elementor/editor/before_enqueue_scripts.
+ * TODO: Split God File 1030 LOC → editor/textMotionBridge.js, editor/interactionBridge.js, editor/tooltip.js, editor/previewSync.js
  */
 (function() {
     'use strict';
@@ -247,25 +248,141 @@
                 rotateHover: rotateHover
             };
         } else {
-            var type2 = get('emje_interaction_cursor_type', 'dot-ring');
-            if (['dot', 'ring', 'dot-ring'].indexOf(type2) === -1) type2 = 'dot-ring';
+            var type2 = get('emje_interaction_cursor_type', 'text-follow');
+            if (type2 === 'dot' || type2 === 'ring') type2 = 'dot-ring';
+            if (['dot-ring', 'text-follow', 'trail'].indexOf(type2) === -1) type2 = 'text-follow';
             var size2b = 20;
             var rawSize2 = get('emje_interaction_cursor_size', null);
             if (rawSize2 && typeof rawSize2 === 'object' && rawSize2.size !== undefined) size2b = parseInt(rawSize2.size, 10);
             else if (!isNaN(parseInt(rawSize2, 10))) size2b = parseInt(rawSize2, 10);
             size2b = Math.max(12, Math.min(40, size2b));
+            var getSlider = function(k, def, min, max) {
+                var v = get(k, null);
+                if (v && typeof v === 'object' && v.size !== undefined) v = v.size;
+                var n = parseInt(v, 10);
+                if (isNaN(n)) return def;
+                return Math.max(min, Math.min(max, n));
+            };
+            var isValidColor = function(c){ if(!c||typeof c!=='string')return false; c=c.trim(); return /^#([0-9A-F]{3,8})$/i.test(c) || /^(rgba?|hsla?|var)\s*\(.*\)$/i.test(c) || c.indexOf('var(')===0 || /^[a-zA-Z]+$/.test(c); };
+            var resolveGlobalColor = function(g){ if(!g||typeof g!=='string')return g; if(g.indexOf('globals/colors')!==-1){ var m=g.match(/id=([^&]+)/); if(m) return 'var(--e-global-color-'+m[1].replace(/[^a-zA-Z0-9_-]/g,'')+')'; } if(g.indexOf('var(')===0) return g; return g; };
             var color2 = get('emje_interaction_cursor_color', '#000000');
             if (!color2 || typeof color2 !== 'string') color2 = '#000000';
-            if (!/^#([0-9A-F]{3}){1,2}$/i.test(color2)) color2 = '#000000';
-            var blend2 = get('emje_interaction_cursor_blend_mode', 'normal');
-            if (['normal', 'difference'].indexOf(blend2) === -1) blend2 = 'normal';
+            var globalsColorDot = get('__globals__', null);
+            if (globalsColorDot && typeof globalsColorDot === 'object' && globalsColorDot['emje_interaction_cursor_color']) {
+                var gvColorDot = resolveGlobalColor(globalsColorDot['emje_interaction_cursor_color']);
+                if (isValidColor(gvColorDot)) color2 = gvColorDot;
+            }
+            if (!isValidColor(color2)) color2 = '#000000';
+            var blend2 = 'normal';
             var scale2b = parseFloat(get('emje_interaction_cursor_hover_scale', 1.5));
             if (isNaN(scale2b)) scale2b = 1.5;
             scale2b = Math.max(1.2, Math.min(2, scale2b));
-            var hide2 = get('emje_interaction_cursor_hide_native', 'yes') === 'yes';
-            var label2 = get('emje_interaction_cursor_text_label', '');
-            if (typeof label2 !== 'string') label2 = String(label2);
-            if (label2.length > 20) label2 = label2.substring(0, 20);
+            var hide2 = get('emje_interaction_cursor_hide_native', '') === 'yes';
+            var label2 = '';
+            if (type2 === 'text-follow') {
+                label2 = get('emje_interaction_cursor_text_label', 'View');
+                if (typeof label2 !== 'string') label2 = String(label2);
+                if (label2 === '') label2 = 'View';
+                if (label2.length > 30) label2 = label2.substring(0, 30);
+            }
+            var bg2 = get('emje_interaction_cursor_bg_color', '#FFFFFF');
+            var textColor2 = get('emje_interaction_cursor_text_color', '#111111');
+            var globals = get('__globals__', null);
+            if (globals && typeof globals === 'object') {
+                if (globals['emje_interaction_cursor_bg_color']) {
+                    var gv = resolveGlobalColor(globals['emje_interaction_cursor_bg_color']);
+                    if (isValidColor(gv)) bg2 = gv;
+                }
+                if (globals['emje_interaction_cursor_text_color']) {
+                    var gv2 = resolveGlobalColor(globals['emje_interaction_cursor_text_color']);
+                    if (isValidColor(gv2)) textColor2 = gv2;
+                }
+            }
+            if (!isValidColor(bg2)) bg2 = '#FFFFFF';
+            if (!isValidColor(textColor2)) textColor2 = '#111111';
+            var padY2 = getSlider('emje_interaction_cursor_padding_y', 40, 8, 48);
+            var padX2 = getSlider('emje_interaction_cursor_padding_x', 32, 12, 56);
+            var radius2 = getSlider('emje_interaction_cursor_radius', 99, 0, 100);
+            var typo = {};
+            var typoFamily = get('emje_interaction_cursor_typography_font_family', '');
+            if (typeof typoFamily === 'string') typo.fontFamily = typoFamily;
+            var typoSizeRaw = get('emje_interaction_cursor_typography_font_size', null);
+            if (typoSizeRaw && typeof typoSizeRaw === 'object' && typoSizeRaw.size !== undefined) {
+                typo.fontSize = parseInt(typoSizeRaw.size, 10) || 14;
+                typo.fontSizeUnit = typoSizeRaw.unit || 'px';
+            } else {
+                var legacyFs = getSlider('emje_interaction_cursor_font_size', 14, 10, 24);
+                typo.fontSize = legacyFs;
+                typo.fontSizeUnit = 'px';
+            }
+            var typoWeight = get('emje_interaction_cursor_typography_font_weight', '600');
+            typo.fontWeight = typoWeight || '600';
+            var typoTransform = get('emje_interaction_cursor_typography_text_transform', '');
+            typo.textTransform = typoTransform || '';
+            var typoStyle = get('emje_interaction_cursor_typography_font_style', '');
+            typo.fontStyle = typoStyle || '';
+            var typoLineH = get('emje_interaction_cursor_typography_line_height', '');
+            if (typoLineH && typeof typoLineH === 'object' && typoLineH.size !== undefined) typo.lineHeight = typoLineH.size + (typoLineH.unit || '');
+            else if (typoLineH) typo.lineHeight = String(typoLineH);
+            var typoLetter = get('emje_interaction_cursor_typography_letter_spacing', '');
+            if (typoLetter && typeof typoLetter === 'object' && typoLetter.size !== undefined) typo.letterSpacing = typoLetter.size + (typoLetter.unit || 'px');
+            else if (typoLetter) typo.letterSpacing = String(typoLetter);
+            var entrance2 = 'scale';
+            var smoothRaw2 = get('emje_interaction_cursor_follow_smoothness', null);
+            var smooth2 = 0.5;
+            if (smoothRaw2 && typeof smoothRaw2 === 'object' && smoothRaw2.size !== undefined) smooth2 = parseFloat(smoothRaw2.size);
+            else if (!isNaN(parseFloat(smoothRaw2))) smooth2 = parseFloat(smoothRaw2);
+            if (isNaN(smooth2)) smooth2 = 0.5;
+            smooth2 = Math.max(0.05, Math.min(0.6, smooth2));
+            var boxShadowType = get('emje_interaction_cursor_box_shadow_box_shadow_type', 'yes');
+            var boxShadowVal = get('emje_interaction_cursor_box_shadow_box_shadow', null);
+            var boxShadowStr = '0px 8px 32px 0px rgba(0, 0, 0, 0.12)';
+            if (boxShadowType === '' || boxShadowType === 'no' || boxShadowType === 'none') {
+                boxShadowStr = 'none';
+            } else if (boxShadowVal && typeof boxShadowVal === 'object') {
+                var h = boxShadowVal.horizontal !== undefined ? parseInt(boxShadowVal.horizontal, 10) : 0;
+                var v2 = boxShadowVal.vertical !== undefined ? parseInt(boxShadowVal.vertical, 10) : 8;
+                var blur = boxShadowVal.blur !== undefined ? parseInt(boxShadowVal.blur, 10) : 32;
+                var spread = boxShadowVal.spread !== undefined ? parseInt(boxShadowVal.spread, 10) : 0;
+                var col = boxShadowVal.color || 'rgba(0, 0, 0, 0.12)';
+                boxShadowStr = h + 'px ' + v2 + 'px ' + blur + 'px ' + spread + 'px ' + col;
+            }
+            var legacyShadow = get('emje_interaction_cursor_shadow', 'yes') === 'yes';
+            var legacyBlur = getSlider('emje_interaction_cursor_shadow_blur', 32, 0, 60);
+            if (boxShadowStr === '0px 8px 32px 0px rgba(0, 0, 0, 0.12)' && !legacyShadow) {
+                boxShadowStr = 'none';
+            }
+            var trailDotsRaw = get('emje_interaction_cursor_trail_dots', null);
+            var trailDots = 6;
+            if (trailDotsRaw && typeof trailDotsRaw === 'object' && trailDotsRaw.size !== undefined) trailDots = parseInt(trailDotsRaw.size, 10);
+            else if (!isNaN(parseInt(trailDotsRaw, 10))) trailDots = parseInt(trailDotsRaw, 10);
+            trailDots = Math.max(3, Math.min(12, trailDots));
+            var trailSizeRaw = get('emje_interaction_cursor_trail_size', null);
+            var trailSize = 20;
+            if (trailSizeRaw && typeof trailSizeRaw === 'object' && trailSizeRaw.size !== undefined) trailSize = parseInt(trailSizeRaw.size, 10);
+            else if (!isNaN(parseInt(trailSizeRaw, 10))) trailSize = parseInt(trailSizeRaw, 10);
+            trailSize = Math.max(4, Math.min(24, trailSize));
+            var headColor = get('emje_interaction_cursor_trail_head_color', '#111111');
+            var tailColor = get('emje_interaction_cursor_trail_tail_color', '#FF4D5A');
+            if (globals && typeof globals === 'object') {
+                if (globals['emje_interaction_cursor_trail_head_color']) {
+                    var gvHead = resolveGlobalColor(globals['emje_interaction_cursor_trail_head_color']);
+                    if (isValidColor(gvHead)) headColor = gvHead;
+                }
+                if (globals['emje_interaction_cursor_trail_tail_color']) {
+                    var gvTail = resolveGlobalColor(globals['emje_interaction_cursor_trail_tail_color']);
+                    if (isValidColor(gvTail)) tailColor = gvTail;
+                }
+            }
+            if (!isValidColor(headColor)) headColor = '#111111';
+            if (!isValidColor(tailColor)) tailColor = '#FF4D5A';
+            var trailLagRaw = get('emje_interaction_cursor_trail_lag', null);
+            var trailLag = 0.35;
+            if (trailLagRaw && typeof trailLagRaw === 'object' && trailLagRaw.size !== undefined) trailLag = parseFloat(trailLagRaw.size);
+            else if (!isNaN(parseFloat(trailLagRaw))) trailLag = parseFloat(trailLagRaw);
+            if (isNaN(trailLag)) trailLag = 0.35;
+            trailLag = Math.max(0.1, Math.min(0.5, trailLag));
+            var trailFade = get('emje_interaction_cursor_trail_fade', 'yes') === 'yes';
             return {
                 enable: true,
                 effect: effect,
@@ -276,7 +393,25 @@
                 blendMode: blend2,
                 hoverScale: scale2b,
                 hideNative: hide2,
-                label: label2
+                label: label2,
+                bgColor: bg2,
+                textColor: textColor2,
+                paddingY: padY2,
+                paddingX: padX2,
+                radius: radius2,
+                fontSize: typo.fontSize,
+                typography: typo,
+                entrance: entrance2,
+                followSmoothness: smooth2,
+                boxShadow: boxShadowStr,
+                shadow: boxShadowStr !== 'none',
+                shadowBlur: legacyBlur,
+                trailDots: trailDots,
+                trailSize: trailSize,
+                trailHeadColor: headColor,
+                trailTailColor: tailColor,
+                trailLag: trailLag,
+                trailFade: trailFade
             };
         }
     }
@@ -313,6 +448,36 @@
 
     function bindEditorChange() {
         if (!window.elementor.channels || !window.elementor.channels.editor) return;
+
+        // Global colors live preview for Comet Trail & Interactive Cursor
+        try {
+            window.elementor.channels.editor.on('change:__globals__', function(view) {
+                var model = view && view.model ? view.model : null;
+                if (!model || typeof model.get !== 'function') return;
+                var settings = model.get('settings');
+                if (!settings || typeof settings.get !== 'function') return;
+                var globals = settings.get('__globals__');
+                if (!globals || typeof globals !== 'object') return;
+                var hasRelevant = globals['emje_interaction_cursor_bg_color'] !== undefined ||
+                    globals['emje_interaction_cursor_text_color'] !== undefined ||
+                    globals['emje_interaction_cursor_color'] !== undefined ||
+                    globals['emje_interaction_cursor_trail_head_color'] !== undefined ||
+                    globals['emje_interaction_cursor_trail_tail_color'] !== undefined ||
+                    globals['emje_interaction_cursor_typography_font_family'] !== undefined ||
+                    globals['emje_interaction_cursor_typography_typography'] !== undefined;
+                if (!hasRelevant) return;
+                var win = getPreviewWindow();
+                var doc = getPreviewDocument();
+                if (!win || !doc) return;
+                var widgetId = model.get('id');
+                var target = findTarget(doc, widgetId, 'data-emje-cursor') || doc.querySelector('[data-id="' + widgetId + '"]');
+                if (!target) return;
+                var cfg = buildInteractionConfig(settings);
+                if (!cfg.enable || cfg.effect !== 'interactive-cursor' || !cfg.livePreview) return;
+                try { target.setAttribute('data-emje-cursor', JSON.stringify({type: cfg.type, size: cfg.size, color: cfg.color, blendMode: cfg.blendMode, hoverScale: cfg.hoverScale, hideNative: cfg.hideNative, label: cfg.label, bgColor: cfg.bgColor, textColor: cfg.textColor, paddingY: cfg.paddingY, paddingX: cfg.paddingX, radius: cfg.radius, fontSize: cfg.fontSize, typography: cfg.typography, entrance: cfg.entrance, followSmoothness: cfg.followSmoothness, boxShadow: cfg.boxShadow, shadow: cfg.shadow, shadowBlur: cfg.shadowBlur, trailDots: cfg.trailDots, trailSize: cfg.trailSize, trailHeadColor: cfg.trailHeadColor, trailTailColor: cfg.trailTailColor, trailLag: cfg.trailLag, trailFade: cfg.trailFade, livePreview: cfg.livePreview})); } catch(e){}
+                if (win.EmjeMotionCursor && win.EmjeMotionCursor.reInit) win.EmjeMotionCursor.reInit(target);
+            });
+        } catch(e){}
 
         window.elementor.channels.editor.on('change', function(view) {
             var editedView = null;
@@ -528,7 +693,7 @@
                                     targetC.removeAttribute('data-emje-hover-reveal');
                                 }
                             } catch(e){}
-                            try { targetC.setAttribute('data-emje-cursor', JSON.stringify({type: cfg.type, size: cfg.size, color: cfg.color, blendMode: cfg.blendMode, hoverScale: cfg.hoverScale, hideNative: cfg.hideNative, label: cfg.label, livePreview: cfg.livePreview})); } catch(e){}
+                            try { targetC.setAttribute('data-emje-cursor', JSON.stringify({type: cfg.type, size: cfg.size, color: cfg.color, blendMode: cfg.blendMode, hoverScale: cfg.hoverScale, hideNative: cfg.hideNative, label: cfg.label, bgColor: cfg.bgColor, textColor: cfg.textColor, paddingY: cfg.paddingY, paddingX: cfg.paddingX, radius: cfg.radius, fontSize: cfg.fontSize, typography: cfg.typography, entrance: cfg.entrance, followSmoothness: cfg.followSmoothness, boxShadow: cfg.boxShadow, shadow: cfg.shadow, shadowBlur: cfg.shadowBlur, trailDots: cfg.trailDots, trailSize: cfg.trailSize, trailHeadColor: cfg.trailHeadColor, trailTailColor: cfg.trailTailColor, trailLag: cfg.trailLag, trailFade: cfg.trailFade, livePreview: cfg.livePreview})); } catch(e){}
                             if (win.EmjeMotionCursor && win.EmjeMotionCursor.reInit) win.EmjeMotionCursor.reInit(targetC);
                         }
                     }, 150);
@@ -619,6 +784,150 @@
         bindEditorChange();
         bindPreviewLoaded();
         bindTooltips();
+        bindContainerGlobalsListener();
+        bindKitChange();
+    }
+
+    function bindContainerGlobalsListener() {
+        try {
+            if (!window.elementor || !window.elementor.hooks) return;
+            window.elementor.hooks.addAction('panel/open_editor/container', function(panel, model, view) {
+                try {
+                    var settings = model.get('settings');
+                    if (!settings || typeof settings.on !== 'function') return;
+                    if (settings._emjeGlobalsBound) return;
+                    settings._emjeGlobalsBound = true;
+
+                    var debouncedSync = function() {
+                        clearTimeout(settings._emjeGlobalsTimer);
+                        settings._emjeGlobalsTimer = setTimeout(function() {
+                            var win = getPreviewWindow();
+                            var doc = getPreviewDocument();
+                            if (!win || !doc || !win.EmjeMotionCursor) return;
+                            var widgetId = model.get('id');
+                            var target = findTarget(doc, widgetId, 'data-emje-cursor') || doc.querySelector('[data-id="' + widgetId + '"]');
+                            if (!target) return;
+                            var eff = settings.get('emje_interaction_effect');
+                            var en = settings.get('emje_interaction_enable');
+                            if (en !== 'yes' || eff !== 'interactive-cursor') return;
+                            if (settings.get('emje_interaction_live_preview') !== 'yes') return;
+                            var cfg = buildInteractionConfig(settings);
+                            if (!cfg.enable || cfg.effect !== 'interactive-cursor') return;
+                            try {
+                                target.setAttribute('data-emje-cursor', JSON.stringify({
+                                    type: cfg.type, size: cfg.size, color: cfg.color, blendMode: cfg.blendMode,
+                                    hoverScale: cfg.hoverScale, hideNative: cfg.hideNative, label: cfg.label,
+                                    bgColor: cfg.bgColor, textColor: cfg.textColor, paddingY: cfg.paddingY, paddingX: cfg.paddingX,
+                                    radius: cfg.radius, fontSize: cfg.fontSize, typography: cfg.typography,
+                                    entrance: cfg.entrance, followSmoothness: cfg.followSmoothness, boxShadow: cfg.boxShadow,
+                                    shadow: cfg.shadow, shadowBlur: cfg.shadowBlur, trailDots: cfg.trailDots, trailSize: cfg.trailSize, trailHeadColor: cfg.trailHeadColor, trailTailColor: cfg.trailTailColor, trailLag: cfg.trailLag, trailFade: cfg.trailFade, livePreview: cfg.livePreview
+                                }));
+                            } catch(e){}
+                            win.EmjeMotionCursor.reInit(target);
+                        }, 120);
+                    };
+
+                    // Dot Ring
+                    settings.on('change:emje_interaction_cursor_color', debouncedSync);
+                    settings.on('change:emje_interaction_cursor_size', debouncedSync);
+                    settings.on('change:emje_interaction_cursor_hover_scale', debouncedSync);
+                    // Text Follow
+                    settings.on('change:emje_interaction_cursor_bg_color', debouncedSync);
+                    settings.on('change:emje_interaction_cursor_text_color', debouncedSync);
+                    settings.on('change:emje_interaction_cursor_text_label', debouncedSync);
+                    settings.on('change:emje_interaction_cursor_padding_y', debouncedSync);
+                    settings.on('change:emje_interaction_cursor_padding_x', debouncedSync);
+                    settings.on('change:emje_interaction_cursor_radius', debouncedSync);
+                    settings.on('change:emje_interaction_cursor_follow_smoothness', debouncedSync);
+                    settings.on('change:emje_interaction_cursor_typography_typography', debouncedSync);
+                    settings.on('change:emje_interaction_cursor_typography_font_family', debouncedSync);
+                    settings.on('change:emje_interaction_cursor_typography_font_size', debouncedSync);
+                    settings.on('change:emje_interaction_cursor_typography_font_weight', debouncedSync);
+                    settings.on('change:emje_interaction_cursor_typography_text_transform', debouncedSync);
+                    settings.on('change:emje_interaction_cursor_typography_font_style', debouncedSync);
+                    settings.on('change:emje_interaction_cursor_box_shadow_box_shadow_type', debouncedSync);
+                    settings.on('change:emje_interaction_cursor_box_shadow_box_shadow', debouncedSync);
+                    // Comet Trail
+                    settings.on('change:emje_interaction_cursor_trail_head_color', debouncedSync);
+                    settings.on('change:emje_interaction_cursor_trail_tail_color', debouncedSync);
+                    settings.on('change:emje_interaction_cursor_trail_dots', debouncedSync);
+                    settings.on('change:emje_interaction_cursor_trail_size', debouncedSync);
+                    settings.on('change:emje_interaction_cursor_trail_lag', debouncedSync);
+                    settings.on('change:emje_interaction_cursor_trail_fade', debouncedSync);
+                    settings.on('change:emje_interaction_cursor_type', debouncedSync);
+                    settings.on('change:__globals__', debouncedSync);
+                    // Fallback generic
+                    settings.on('change', function(m) {
+                        var ch = m.changed || {};
+                        if (ch['__globals__'] !== undefined ||
+                            ch['emje_interaction_cursor_color'] !== undefined ||
+                            ch['emje_interaction_cursor_bg_color'] !== undefined ||
+                            ch['emje_interaction_cursor_text_color'] !== undefined ||
+                            ch['emje_interaction_cursor_trail_head_color'] !== undefined ||
+                            ch['emje_interaction_cursor_trail_tail_color'] !== undefined ||
+                            ch['emje_interaction_cursor_typography_typography'] !== undefined ||
+                            ch['emje_interaction_cursor_typography_font_family'] !== undefined ||
+                            ch['emje_interaction_cursor_box_shadow_box_shadow'] !== undefined) {
+                            debouncedSync();
+                        }
+                    });
+                } catch(e){}
+            });
+        } catch(e){}
+    }
+
+    function bindKitChange() {
+        var syncKit = function() {
+            var win = getPreviewWindow();
+            var doc = getPreviewDocument();
+            if (!win || !doc) return;
+            try {
+                var allModels = [];
+                var collect = function(collection) {
+                    if (!collection) return;
+                    var models = collection.models || collection;
+                    if (!models || !models.length) return;
+                    for (var i = 0; i < models.length; i++) {
+                        var m = models[i];
+                        if (!m || typeof m.get !== 'function') continue;
+                        if (m.get('elType') === 'container') allModels.push(m);
+                        var ch = m.get('elements');
+                        if (ch) collect(ch);
+                    }
+                };
+                if (window.elementor && window.elementor.elements && window.elementor.elements.models) {
+                    collect(window.elementor.elements.models);
+                }
+                allModels.forEach(function(m){
+                    try {
+                        var s = m.get('settings');
+                        if (!s || typeof s.get !== 'function') return;
+                        var wid = m.get('id');
+                        var win2 = getPreviewWindow();
+                        var doc2 = getPreviewDocument();
+                        if (!win2 || !doc2) return;
+                        var cfg = buildInteractionConfig(s);
+                        if (!cfg.enable || !cfg.livePreview) return;
+                        if (cfg.effect !== 'interactive-cursor') return;
+                        var target = findTarget(doc2, wid, 'data-emje-cursor') || doc2.querySelector('[data-id="' + wid + '"]');
+                        if (!target) return;
+                        try { target.setAttribute('data-emje-cursor', JSON.stringify({type: cfg.type, size: cfg.size, color: cfg.color, blendMode: cfg.blendMode, hoverScale: cfg.hoverScale, hideNative: cfg.hideNative, label: cfg.label, bgColor: cfg.bgColor, textColor: cfg.textColor, paddingY: cfg.paddingY, paddingX: cfg.paddingX, radius: cfg.radius, fontSize: cfg.fontSize, typography: cfg.typography, entrance: cfg.entrance, followSmoothness: cfg.followSmoothness, boxShadow: cfg.boxShadow, shadow: cfg.shadow, shadowBlur: cfg.shadowBlur, trailDots: cfg.trailDots, trailSize: cfg.trailSize, trailHeadColor: cfg.trailHeadColor, trailTailColor: cfg.trailTailColor, trailLag: cfg.trailLag, trailFade: cfg.trailFade, livePreview: cfg.livePreview})); } catch(e){}
+                        if (win2.EmjeMotionCursor && win2.EmjeMotionCursor.reInit) win2.EmjeMotionCursor.reInit(target);
+                    } catch(e){}
+                });
+            } catch(e){}
+        };
+        try {
+            if (window.elementor && window.elementor.settings && window.elementor.settings.page) {
+                window.elementor.settings.page.on('change', function(){ setTimeout(syncKit, 250); });
+            }
+        } catch(e){}
+        try {
+            if (window.elementor && window.elementor.channels && window.elementor.channels.data) {
+                window.elementor.channels.data.on('globals:colors:change', function(){ setTimeout(syncKit, 250); });
+                window.elementor.channels.data.on('globals:typography:change', function(){ setTimeout(syncKit, 250); });
+            }
+        } catch(e){}
     }
 
     function bindPreviewLoaded() {
@@ -703,7 +1012,7 @@
                                     targetC.removeAttribute('data-emje-hover-reveal');
                                 }
                             } catch(e){}
-                            try { targetC.setAttribute('data-emje-cursor', JSON.stringify({type: cfgNew.type, size: cfgNew.size, color: cfgNew.color, blendMode: cfgNew.blendMode, hoverScale: cfgNew.hoverScale, hideNative: cfgNew.hideNative, label: cfgNew.label, livePreview: cfgNew.livePreview})); } catch(e){}
+                            try { targetC.setAttribute('data-emje-cursor', JSON.stringify({type: cfgNew.type, size: cfgNew.size, color: cfgNew.color, blendMode: cfgNew.blendMode, hoverScale: cfgNew.hoverScale, hideNative: cfgNew.hideNative, label: cfgNew.label, bgColor: cfgNew.bgColor, textColor: cfgNew.textColor, paddingY: cfgNew.paddingY, paddingX: cfgNew.paddingX, radius: cfgNew.radius, fontSize: cfgNew.fontSize, typography: cfgNew.typography, entrance: cfgNew.entrance, followSmoothness: cfgNew.followSmoothness, boxShadow: cfgNew.boxShadow, shadow: cfgNew.shadow, shadowBlur: cfgNew.shadowBlur, trailDots: cfgNew.trailDots, trailSize: cfgNew.trailSize, trailHeadColor: cfgNew.trailHeadColor, trailTailColor: cfgNew.trailTailColor, trailLag: cfgNew.trailLag, trailFade: cfgNew.trailFade, livePreview: cfgNew.livePreview})); } catch(e){}
                             if (win2.EmjeMotionCursor && win2.EmjeMotionCursor.reInit) win2.EmjeMotionCursor.reInit(targetC);
                         }
                         return;
