@@ -1,0 +1,85 @@
+/* Emje Motion Editor styles — minimal, only if needed for panel hints */
+.emje-motion-editor-badge {
+    font-size: 10px;
+    padding: 2px 4px;
+    background: #9300e8;
+    color: #fff;
+    border-radius: 3px;
+}
+
+/* Tooltip for controls with description on the right of title — i icon above */
+.emje-control--has-tooltip .elementor-control-field-description {
+    display: none !important;
+}
+
+.emje-control--has-tooltip .elementor-control-title {
+    display: inline-flex !important;
+    align-items: center;
+    gap: 6px;
+}
+
+.emje-tooltip {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 14px;
+    height: 14px;
+    border: 1px solid #a4afb7;
+    border-radius: 50%;
+    color: #a4afb7;
+    font-size: 10px;
+    line-height: 1;
+    cursor: help;
+    flex-shrink: 0;
+}
+
+.emje-tooltip__icon {
+    font-style: normal;
+    font-weight: 600;
+    font-family: sans-serif;
+}
+
+.emje-tooltip__bubble {
+    visibility: hidden;
+    opacity: 0;
+    position: fixed;
+    background: #23282d;
+    color: #fff;
+    padding: 6px 8px;
+    border-radius: 4px;
+    font-size: 11px;
+    line-height: 1.4;
+    width: 180px;
+    max-width: 180px;
+    z-index: 9999;
+    transition: opacity 0.15s, visibility 0.15s;
+    pointer-events: none;
+    text-align: left;
+    white-space: normal;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    box-sizing: border-box;
+    word-wrap: break-word;
+}
+
+.emje-tooltip__bubble::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border-width: 5px;
+    border-style: solid;
+    border-color: #23282d transparent transparent transparent;
+}
+
+.emje-tooltip:hover .emje-tooltip__bubble,
+.emje-tooltip:focus-within .emje-tooltip__bubble {
+    visibility: visible;
+    opacity: 1;
+}
+
+/* Ensure panel allows tooltip overflow */
+#elementor-panel .elementor-control.emje-control--has-tooltip {
+    overflow: visible;
+}

@@ -1,0 +1,158 @@
+.emje-interactive-cursor {
+    position: relative;
+}
+
+.emje-cursor {
+    position: fixed;
+    top: 0;
+    left: 0;
+    pointer-events: none;
+    z-index: 9999;
+    will-change: transform;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.emje-cursor--hidden {
+    opacity: 0;
+}
+
+.emje-cursor__dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--emje-cursor-color, #000);
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.emje-cursor__ring {
+    width: var(--emje-cursor-size, 20px);
+    height: var(--emje-cursor-size, 20px);
+    border-radius: 50%;
+    border: 1.5px solid var(--emje-cursor-color, #000);
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.emje-cursor__label {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--emje-cursor-color, #000);
+    opacity: 0;
+    transition: opacity 0.2s ease;
+    white-space: nowrap;
+}
+
+.emje-cursor--hover .emje-cursor__label {
+    opacity: 1;
+}
+
+/* Text Follow — always visible pill/circle */
+.emje-cursor__follow {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--emje-follow-py, 28px) var(--emje-follow-px, 36px);
+    background: var(--emje-follow-bg, #fff);
+    border-radius: var(--emje-follow-radius, 50px);
+    /* box-shadow is set inline via JS (Elementor Box Shadow group) — fallback only */
+    box-shadow: var(--emje-follow-box-shadow, 0 8px 32px rgba(0, 0, 0, 0.12));
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    white-space: nowrap;
+    transform-origin: center center;
+    will-change: transform, opacity;
+}
+
+.emje-cursor__follow--no-shadow {
+    box-shadow: none !important;
+}
+
+.emje-cursor__label--follow {
+    opacity: 1;
+    font-size: var(--emje-follow-fs, 14px);
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    text-transform: none;
+    color: var(--emje-follow-text, #111);
+    line-height: 1;
+}
+
+.emje-cursor--difference {
+    mix-blend-mode: difference;
+}
+
+.emje-cursor--difference .emje-cursor__dot,
+.emje-cursor--difference .emje-cursor__ring {
+    background: #fff;
+    border-color: #fff;
+}
+
+.emje-cursor--difference .emje-cursor__label {
+    color: #fff;
+}
+
+.emje-cursor--difference .emje-cursor__follow {
+    background: #fff;
+}
+
+.emje-cursor--difference .emje-cursor__label--follow {
+    color: #000;
+}
+
+.emje-interactive-cursor--hide-native {
+    cursor: none;
+}
+
+.emje-interactive-cursor--hide-native a,
+.emje-interactive-cursor--hide-native button,
+.emje-interactive-cursor--hide-native .elementor-button {
+    cursor: none;
+}
+
+/* Comet Trail — chain of dots with gradient & decay */
+.emje-cursor--trail {
+    display: block;
+    /* no flex centering needed — dots are absolute fixed positions */
+}
+
+.emje-cursor__trail-dot {
+    position: fixed;
+    top: 0;
+    left: 0;
+    border-radius: 50%;
+    pointer-events: none;
+    will-change: transform, opacity;
+    transform: translate(-50%, -50%);
+    /* size & color set inline per dot via --emje-trail-size & background */
+}
+
+@media (hover: none), (pointer: coarse) {
+    .emje-cursor {
+        display: none !important;
+    }
+
+    .emje-cursor__trail-dot {
+        display: none !important;
+    }
+
+    .emje-interactive-cursor--hide-native,
+    .emje-interactive-cursor--hide-native a,
+    .emje-interactive-cursor--hide-native button {
+        cursor: auto !important;
+    }
+}

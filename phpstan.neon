@@ -1,0 +1,27 @@
+parameters:
+    level: 7
+
+    paths:
+        - src
+        - emje-motion.php
+
+    bootstrapFiles:
+        - vendor/autoload.php
+        - vendor/php-stubs/wordpress-stubs/wordpress-stubs.php
+
+    reportUnmatchedIgnoredErrors: false
+
+    ignoreErrors:
+        # Elementor is not stubbed — provided at runtime
+        - '#Elementor#'
+        # Missing typehints on Elementor $element/$args are intentional (mixed Element_Base)
+        - '#has parameter \$#'
+        - '#has no value type specified#'
+        # Plugin constants defined in emje-motion.php bootstrap
+        - '#Constant EMJE_MOTION#'
+        # SmoothScroll union type check
+        - '#Cannot call method#'
+        # Asset URL var tag (non-empty-string vs non-falsy-string)
+        - '#PHPDoc tag @var#'
+
+    tmpDir: .phpstan

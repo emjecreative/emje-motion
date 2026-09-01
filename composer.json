@@ -1,0 +1,49 @@
+{
+    "name": "emjecreative/emje-motion",
+    "description": "A lightweight motion toolkit for Elementor.",
+    "type": "wordpress-plugin",
+    "license": "GPL-2.0-or-later",
+
+	"keywords": [
+    	"wordpress",
+    	"elementor",
+    	"animation",
+    	"motion"
+	],
+
+    "homepage": "https://emjecreative.com",
+
+    "autoload": {
+        "psr-4": {
+            "EmjeCreative\\EmjeMotion\\": "src/"
+        }
+    },
+
+	"authors": [
+        {
+            "name": "Emje Creative",
+            "email": "creativeemje@gmail.com"
+        }
+    ],
+
+    "require": {
+		"php": "^8.2"
+	},
+
+    "minimum-stability": "stable",
+    "prefer-stable": true,
+
+	"require-dev": {
+        "php-stubs/wordpress-stubs": "^7.0",
+        "friendsofphp/php-cs-fixer": "^3.95",
+        "phpstan/phpstan": "^2.2"
+    },
+
+	"scripts": {
+    	"format": "php-cs-fixer fix",
+    	"format:check": "php-cs-fixer fix --dry-run",
+    	"analyse": "phpstan analyse",
+		"update-autoload": "composer dump-autoload"
+	}
+
+}
