@@ -14,6 +14,7 @@ use EmjeCreative\EmjeMotion\Modules\InteractionMotion\InteractionMotion;
 use EmjeCreative\EmjeMotion\Modules\InteractiveCursor\InteractiveCursor;
 use EmjeCreative\EmjeMotion\Modules\SmoothScroll\SmoothScroll;
 use EmjeCreative\EmjeMotion\Modules\TextMotion\TextMotion;
+use EmjeCreative\EmjeMotion\Updater\GitHubUpdater;
 
 /**
  * Core plugin bootstrap.
@@ -102,6 +103,15 @@ final class Plugin
                 $this->container->get(SettingsRepository::class), // @phpstan-ignore-line
             ),
         );
+
+        $this->container->set(
+            GitHubUpdater::class,
+            static fn (): GitHubUpdater => new GitHubUpdater(
+                EMJE_MOTION_FILE,
+                'emjecreative/emje-motion',
+                'emje-motion',
+            ),
+        );
     }
 
     /**
@@ -161,6 +171,11 @@ final class Plugin
         $admin = $this->container->get(AdminManager::class); // @phpstan-ignore-line
         if ($admin instanceof AdminManager) {
             $admin->register();
+        }
+
+        $updater = $this->container->get(GitHubUpdater::class); // @phpstan-ignore-line
+        if ($updater instanceof GitHubUpdater) {
+            $updater->register();
         }
     }
 

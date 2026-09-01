@@ -1,0 +1,84 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          coverage: none
+
+      - name: Install NPM deps
+        run: npm ci
+
+      - name: Build assets
+        run: npm run build
+
+      - name: Install Composer deps (no-dev)
+        run: composer install --no-dev --optimize-autoloader --no-progress --prefer-dist
+
+      - name: Get version from tag
+        id: version
+        run: echo "version=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
+
+      - name: Create plugin zip
+        run: |
+          mkdir -p build
+          ZIP="emje-motion.zip"
+          # Include only runtime files — exclude .git, node_modules, .github, etc.
+          zip -r "$ZIP" \
+            emje-motion.php \
+            src/ \
+            dist/ \
+            vendor/ \
+            languages/ \
+            README.md \
+            CHANGELOG.md \
+            -x "*.git*" "*.github*"
+
+          # Verify zip contents
+          unzip -l "$ZIP" | head -30
+          ls -lh "$ZIP"
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: emje-motion.zip
+          generate_release_notes: true
+          body: |
+            ## Emje Motion ${{ steps.version.outputs.version }}
+
+            ### Install
+            1. Download `emje-motion.zip` below
+            2. WordPress → Plugins → Add New → Upload Plugin → Choose File → Install Now
+
+            ### Update
+            If you already have v${{ steps.version.outputs.version }} installed via GitHub, go to **Dashboard → Updates → Check again** to update with 1 click.
+
+            ### Changelog
+            See [CHANGELOG.md](https://github.com/emjecreative/emje-motion/blob/main/CHANGELOG.md) for full details.
+
+            ### Requirements
+            - WordPress 6.7+
+            - Elementor 3.23+
+            - PHP 8.2+
+
