@@ -8,7 +8,7 @@
   },
   "scripts": {
     "dev": "vite",
-    "build": "vite build && node -e \"require('fs').copyFileSync('resources/js/editor.js','dist/js/editor.js'); require('fs').copyFileSync('resources/css/editor.css','dist/css/editor.css')\""
+    "build": "vite build && vite build --config vite.editor.config.mjs && node -e \"const fs=require('fs'); const src='resources/css/editor.css'; const dest='dist/css/editor.css'; if(fs.existsSync(src) && !fs.existsSync(dest)) fs.copyFileSync(src,dest)\""
   },
   "repository": {
     "type": "git",

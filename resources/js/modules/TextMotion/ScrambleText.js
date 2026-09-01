@@ -214,6 +214,18 @@ export default class ScrambleText extends Animation {
 	}
 
 	/**
+	 * Set progress directly (for scroll scrub).
+	 * @param {number} p 0..1
+	 */
+	setProgress(p) {
+		const clamped = Math.max(0, Math.min(1, p));
+		if (!this.characters.length) {
+			this.prepare();
+		}
+		this.renderFrame(clamped);
+	}
+
+	/**
 	 * Play the animation.
 	 */
 	play() {

@@ -54,7 +54,7 @@ export default class ElementManager {
 			}
 
 			const allowedAnimations = ['scramble-text', 'text-unfold', 'fill-reveal'];
-			const allowedTriggers = ['load', 'viewport', 'hover', 'page-load'];
+			const allowedTriggers = ['load', 'viewport', 'hover', 'scroll', 'page-load'];
 
 			if (config.animation && !allowedAnimations.includes(config.animation)) {
 				return null;

@@ -33,6 +33,34 @@ export default class TextUnfold extends Animation {
     }
 
     /**
+     * Set progress directly for scrub.
+     * @param {number} p
+     */
+    setProgress(p) {
+        const clamped = Math.max(0, Math.min(1, p));
+        if (!this.targets.length) {
+            this.prepare();
+            if (!this.targets.length) return;
+            gsap.set(this.targets, { display: 'inline-block', willChange: 'transform, opacity' });
+        }
+        // Lazily create a paused timeline for scrubbing
+        if (!this.timeline || this.timeline._emjeIsScrub !== true) {
+            if (this.timeline) this.timeline.kill();
+            this.timeline = gsap.timeline({ paused: true });
+            this.timeline._emjeIsScrub = true;
+            this.timeline.fromTo(
+                this.targets,
+                { yPercent: 120, opacity: 0 },
+                { yPercent: 0, opacity: 1, duration: 1, stagger: this.config.stagger ?? 0.04, ease: 'none' }
+            );
+        }
+        this.timeline.progress(clamped);
+        if (clamped >= 1) {
+            gsap.set(this.targets, { clearProps: 'willChange' });
+        }
+    }
+
+    /**
      * Play animation.
      */
     play() {

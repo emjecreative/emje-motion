@@ -62,6 +62,7 @@ final class Plugin
             ElementorManager::class,
             fn (): ElementorManager => new ElementorManager(
                 $this->container->get(ModuleLoader::class), // @phpstan-ignore-line
+                $this->container,
             ),
         );
 

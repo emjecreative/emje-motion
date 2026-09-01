@@ -93,13 +93,26 @@
         }
         bgOpacity = Math.max(0, Math.min(1, bgOpacity));
 
+        var fillStagger = parseFloat(get('emje_motion_fill_stagger', 0.15));
+        if (isNaN(fillStagger)) fillStagger = 0.15;
+        fillStagger = Math.max(0, Math.min(0.5, fillStagger));
+
         var animation = get('emje_motion_animation', 'scramble-text');
         if (['scramble-text', 'text-unfold', 'fill-reveal'].indexOf(animation) === -1) animation = 'scramble-text';
 
         var trigger = get('emje_motion_trigger', 'load');
-        if (['load', 'viewport', 'hover'].indexOf(trigger) === -1) trigger = 'load';
+        if (['load', 'viewport', 'hover', 'scroll'].indexOf(trigger) === -1) trigger = 'load';
 
         var ease = get('emje_motion_ease', 'power2.out');
+
+        // Play Once only for viewport, others always replay (UX)
+        var rawPlayOnce = get('emje_motion_play_once', null);
+        var playOnce;
+        if (trigger === 'viewport') {
+            playOnce = (rawPlayOnce === null ? '' : rawPlayOnce) === 'yes'; // default No for viewport
+        } else {
+            playOnce = false;
+        }
 
         return {
             animation: animation,
@@ -111,10 +124,11 @@
             delay: delay,
             ease: ease,
             trigger: trigger,
-            playOnce: get('emje_motion_play_once', 'yes') === 'yes',
+            playOnce: playOnce,
             splitBy: splitBy,
             stagger: stagger,
             fillBgOpacity: bgOpacity,
+            fillStagger: fillStagger,
             livePreview: get('emje_motion_live_preview', 'yes') === 'yes'
         };
     }

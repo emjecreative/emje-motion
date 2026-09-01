@@ -73,6 +73,93 @@ export default class MotionEngine {
                 animation._emjeObserver = observer;
                 break;
             }
+            case 'scroll': {
+                // Scrub: progress follows scroll manually — element enters bottom -> leaves top.
+                // Uses native scrollY + getBoundingClientRect, so it works with or without Lenis
+                // (no ScrollTrigger / scrollerProxy needed). Scroll up reverses, stop = pause.
+                try {
+                    // Prepare animation DOM first — preserve per-line for scrub stagger (rekomendasi diskalakan)
+                    if (typeof animation.prepare === 'function') {
+                        try { animation.prepare(); } catch (e) {}
+                    }
+                    if (typeof animation.setInitialState === 'function') {
+                        try { animation.setInitialState(); } catch (e) {}
+                    } else if (animation.dom && animation.dom.mask) {
+                        try { gsap.set(animation.dom.mask, { clipPath: 'inset(0 100% 0 0)' }); } catch (e) {}
+                    } else if (animation.masks && animation.masks.length) {
+                        try { gsap.set(animation.masks, { clipPath: 'inset(0 100% 0 0)' }); } catch (e) {}
+                    }
+
+                    // Compute scroll progress: 0 when element top enters viewport bottom,
+                    // 1 when element bottom exits viewport top.
+                    const computeProgress = () => {
+                        const rect = element.getBoundingClientRect();
+                        const vh = window.innerHeight || document.documentElement.clientHeight || 0;
+                        const elDocTop = rect.top + window.scrollY;
+                        const elDocBottom = rect.bottom + window.scrollY;
+                        const startScroll = elDocTop - vh;      // element top at viewport bottom
+                        const endScroll = elDocBottom;          // element bottom at viewport top
+                        const range = endScroll - startScroll;
+                        if (!(range > 0)) return 0;
+                        const p = (window.scrollY - startScroll) / range;
+                        return Math.max(0, Math.min(1, p));
+                    };
+
+                    let scrubRAF = null;
+                    let lastLogged = 0;
+                    const updateScrub = () => {
+                        scrubRAF = null;
+                        const p = computeProgress();
+                        if (typeof animation.setProgress === 'function') {
+                            try { animation.setProgress(p); } catch (e) {}
+                        } else if (animation.timeline && typeof animation.timeline.progress === 'function') {
+                            try { animation.timeline.progress(p); } catch (e) {}
+                        } else {
+                            const masks = animation.masks && animation.masks.length ? animation.masks : (animation.dom && animation.dom.mask ? [animation.dom.mask] : []);
+                            masks.forEach((m) => {
+                                try { gsap.set(m, { clipPath: `inset(0 ${(1 - p) * 100}% 0 0)` }); } catch (e) {}
+                            });
+                            if (typeof animation.renderFrame === 'function') {
+                                try { animation.renderFrame(p); } catch (e) {}
+                            }
+                        }
+                        // Debug (enable in console: window.__EMJE_SCRUB_DEBUG = true)
+                        try {
+                            if (window.__EMJE_SCRUB_DEBUG && Date.now() - lastLogged > 300) {
+                                lastLogged = Date.now();
+                                console.log('[EmjeMotion] scrub p=', p.toFixed(3), 'scrollY=', window.scrollY);
+                            }
+                        } catch (e) {}
+                    };
+                    const onScroll = () => {
+                        if (scrubRAF) return;
+                        scrubRAF = requestAnimationFrame(updateScrub);
+                    };
+
+                    window.addEventListener('scroll', onScroll, { passive: true });
+                    window.addEventListener('resize', onScroll);
+                    if (document.readyState !== 'complete') {
+                        window.addEventListener('load', onScroll);
+                    }
+                    // Lenis drives native scroll too, but listen directly for safety
+                    if (window.lenis && typeof window.lenis.on === 'function') {
+                        try { window.lenis.on('scroll', onScroll); } catch (e) {}
+                    }
+
+                    animation._emjeScrubCleanup = () => {
+                        window.removeEventListener('scroll', onScroll);
+                        window.removeEventListener('resize', onScroll);
+                        window.removeEventListener('load', onScroll);
+                        if (scrubRAF) { cancelAnimationFrame(scrubRAF); scrubRAF = null; }
+                    };
+
+                    // Initial sync
+                    updateScrub();
+                } catch (e) {
+                    playAnimation();
+                }
+                break;
+            }
             case 'load':
             case 'page-load':
             default:
@@ -111,6 +198,10 @@ export default class MotionEngine {
         if (instance) {
             if (instance._emjeObserver) {
                 try { instance._emjeObserver.disconnect(); } catch (e) {}
+            }
+            if (typeof instance._emjeScrubCleanup === 'function') {
+                try { instance._emjeScrubCleanup(); } catch (e) {}
+                instance._emjeScrubCleanup = null;
             }
             if (typeof instance.destroy === 'function') {
                 try { instance.destroy(); } catch (e) {}

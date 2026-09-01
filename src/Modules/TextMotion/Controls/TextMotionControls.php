@@ -202,6 +202,7 @@ final class TextMotionControls
                     'Controls how quickly random characters change. 1 = Normal speed.',
                     'emje-motion',
                 ),
+                'classes' => 'emje-control--has-tooltip',
                 'condition' => [
                     'emje_motion_enable' => 'yes',
                     'emje_motion_animation' => 'scramble-text',
@@ -263,6 +264,7 @@ final class TextMotionControls
                     'Delay between each word/character animation, in seconds.',
                     'emje-motion',
                 ),
+                'classes' => 'emje-control--has-tooltip',
                 'condition' => [
                     'emje_motion_enable' => 'yes',
                     'emje_motion_animation' => 'text-unfold',
@@ -312,6 +314,30 @@ final class TextMotionControls
                     'Opacity of the background text layer.',
                     'emje-motion',
                 ),
+                'classes' => 'emje-control--has-tooltip',
+                'condition' => [
+                    'emje_motion_enable' => 'yes',
+                    'emje_motion_animation' => 'fill-reveal',
+                ],
+                'frontend_available' => true,
+                'render_type' => 'none',
+            ],
+        );
+
+        $element->add_control(
+            'emje_motion_fill_stagger',
+            [
+                'label' => esc_html__('Line Stagger', 'emje-motion'),
+                'type' => Controls_Manager::NUMBER,
+                'default' => 0.15,
+                'min' => 0,
+                'max' => 0.5,
+                'step' => 0.01,
+                'description' => esc_html__(
+                    'Delay between lines. 0 = together, 0.15 = next line starts after 0.15s. For 25% overlap with 1s duration use 0.25.',
+                    'emje-motion',
+                ),
+                'classes' => 'emje-control--has-tooltip',
                 'condition' => [
                     'emje_motion_enable' => 'yes',
                     'emje_motion_animation' => 'fill-reveal',
@@ -351,6 +377,7 @@ final class TextMotionControls
                     'Total animation duration in seconds.',
                     'emje-motion',
                 ),
+                'classes' => 'emje-control--has-tooltip',
                 'condition' => [
                     'emje_motion_enable' => 'yes',
                 ],
@@ -371,6 +398,7 @@ final class TextMotionControls
                     'Delay before the animation starts, in seconds.',
                     'emje-motion',
                 ),
+                'classes' => 'emje-control--has-tooltip',
                 'condition' => [
                     'emje_motion_enable' => 'yes',
                 ],
@@ -398,6 +426,7 @@ final class TextMotionControls
                     'Controls the animation easing.',
                     'emje-motion',
                 ),
+                'classes' => 'emje-control--has-tooltip',
                 'condition' => [
                     'emje_motion_enable' => 'yes',
                 ],
@@ -432,6 +461,7 @@ final class TextMotionControls
                 'return_value' => 'yes',
                 'default' => 'yes',
                 'description' => esc_html__('Automatically replay animation when controls change.', 'emje-motion'),
+                'classes' => 'emje-control--has-tooltip',
                 'frontend_available' => true,
                 'render_type' => 'none',
                 'condition' => [
@@ -477,6 +507,7 @@ final class TextMotionControls
                     'load' => esc_html__('Page Load', 'emje-motion'),
                     'viewport' => esc_html__('Scroll Into View', 'emje-motion'),
                     'hover' => esc_html__('Hover', 'emje-motion'),
+                    'scroll' => esc_html__('On Scroll (Scrub)', 'emje-motion'),
                 ],
                 'condition' => [
                     'emje_motion_enable' => 'yes',
@@ -494,13 +525,15 @@ final class TextMotionControls
                 'label_on' => esc_html__('Yes', 'emje-motion'),
                 'label_off' => esc_html__('No', 'emje-motion'),
                 'return_value' => 'yes',
-                'default' => 'yes',
+                'default' => '',
                 'description' => esc_html__(
                     'Prevent the animation from replaying after it has completed.',
                     'emje-motion',
                 ),
+                'classes' => 'emje-control--has-tooltip',
                 'condition' => [
                     'emje_motion_enable' => 'yes',
+                    'emje_motion_trigger' => 'viewport',
                 ],
                 'frontend_available' => true,
                 'render_type' => 'none',

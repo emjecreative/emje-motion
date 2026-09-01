@@ -10,6 +10,11 @@ namespace EmjeCreative\EmjeMotion\Contracts;
 interface ModuleInterface
 {
     /**
+     * Get module ID.
+     */
+    public function getId(): string;
+
+    /**
      * Register the module.
      */
     public function register(): void;

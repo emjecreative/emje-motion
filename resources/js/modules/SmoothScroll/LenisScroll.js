@@ -70,6 +70,7 @@ export default class LenisScroll {
 
         document.documentElement.classList.add('lenis', 'lenis-smooth');
         this.isRunning = true;
+        try { window.lenis = this.lenis; window._emjeLenis = this.lenis; } catch (e) {}
 
         const raf = (time) => {
             if (!this.lenis || !this.isRunning) {

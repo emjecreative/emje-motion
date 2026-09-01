@@ -84,12 +84,10 @@ final class ModuleLoader
      */
     private function resolveModuleId(ModuleInterface $module): string
     {
-        if (method_exists($module, 'getId')) {
-            $id = $module->getId();
+        $id = $module->getId();
 
-            if (is_string($id) && $id !== '') {
-                return $id;
-            }
+        if ($id !== '') {
+            return $id;
         }
 
         return $module::class;

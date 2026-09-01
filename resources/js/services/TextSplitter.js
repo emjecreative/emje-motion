@@ -76,12 +76,58 @@ export default class TextSplitter {
     }
 
     /**
-     * Placeholder.
+     * Split by visual lines (wrap-aware).
+     * Wraps words into spans, groups by offsetTop, wraps each line into div.
      */
     splitLines() {
+        // Step 1: split into words first (re-uses walk but we need fresh)
+        this.walk(this.element, CLASSES.word, false);
 
-        // Coming later.
+        if (!this.targets.length) {
+            return;
+        }
 
+        // Force layout so getBoundingClientRect is accurate
+        // Group words by visual row (top)
+        const groups = [];
+        let currentGroup = [];
+        let lastTop = null;
+
+        this.targets.forEach((word) => {
+            const rect = word.getBoundingClientRect();
+            const top = rect.top;
+            if (lastTop === null || Math.abs(top - lastTop) < 2) {
+                currentGroup.push(word);
+            } else {
+                groups.push(currentGroup);
+                currentGroup = [word];
+            }
+            lastTop = top;
+        });
+        if (currentGroup.length) {
+            groups.push(currentGroup);
+        }
+
+        // Fallback: if all words on same line (single row) but we still want line wrapper
+        // Create line wrappers
+        const lineElements = [];
+        groups.forEach((group) => {
+            const lineEl = document.createElement('div');
+            lineEl.className = CLASSES.line;
+            // Move words into line element preserving order
+            // Need to insert lineEl at position of first word in group
+            const firstWord = group[0];
+            const parent = firstWord.parentNode;
+            // Insert lineEl before first word
+            parent.insertBefore(lineEl, firstWord);
+            group.forEach((w) => {
+                lineEl.appendChild(w);
+            });
+            lineElements.push(lineEl);
+        });
+
+        // Update targets to be line elements
+        this.targets = lineElements;
     }
 
 	/**

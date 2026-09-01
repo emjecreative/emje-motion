@@ -133,17 +133,30 @@ final class TextMotionFrontend
 
         $bgOpacity = max(0.0, min(1.0, $bgOpacity));
 
+        $fillStagger = isset($settings['emje_motion_fill_stagger'])
+            ? (float) $settings['emje_motion_fill_stagger']
+            : 0.15;
+        $fillStagger = max(0.0, min(0.5, $fillStagger));
+
         $animation = $settings['emje_motion_animation'] ?? '';
         if (! in_array($animation, [ 'scramble-text', 'text-unfold', 'fill-reveal' ], true)) {
             $animation = 'scramble-text';
         }
 
         $trigger = $settings['emje_motion_trigger'] ?? 'load';
-        if (! in_array($trigger, [ 'load', 'viewport', 'hover' ], true)) {
+        if (! in_array($trigger, [ 'load', 'viewport', 'hover', 'scroll' ], true)) {
             $trigger = 'load';
         }
 
         $ease = $settings['emje_motion_ease'] ?? 'power2.out';
+
+        // Play Once only relevant for viewport; others always replay
+        $rawPlayOnce = $settings['emje_motion_play_once'] ?? null;
+        if ($trigger === 'viewport') {
+            $playOnce = ($rawPlayOnce ?? '') === 'yes'; // default No for viewport (UX)
+        } else {
+            $playOnce = false;
+        }
 
         return [
             'animation' => $animation,
@@ -165,15 +178,15 @@ final class TextMotionFrontend
 
             'trigger' => $trigger,
 
-            'playOnce' => (
-                $settings['emje_motion_play_once'] ?? 'yes'
-            ) === 'yes',
+            'playOnce' => $playOnce,
 
             'splitBy' => $splitBy,
 
             'stagger' => $stagger,
 
             'fillBgOpacity' => $bgOpacity,
+
+            'fillStagger' => $fillStagger,
 
             'livePreview' => ($settings['emje_motion_live_preview'] ?? 'yes') === 'yes',
         ];

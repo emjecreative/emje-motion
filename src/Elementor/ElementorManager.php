@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace EmjeCreative\EmjeMotion\Elementor;
 
+use EmjeCreative\EmjeMotion\Core\Container;
 use EmjeCreative\EmjeMotion\Core\ModuleLoader;
 use EmjeCreative\EmjeMotion\Modules\HoverReveal\HoverReveal;
 use EmjeCreative\EmjeMotion\Modules\InteractionMotion\InteractionMotion;
@@ -18,9 +19,12 @@ final class ElementorManager
 {
     private ModuleLoader $loader;
 
-    public function __construct(ModuleLoader $loader)
+    private Container $container;
+
+    public function __construct(ModuleLoader $loader, Container $container)
     {
         $this->loader = $loader;
+        $this->container = $container;
     }
 
     /**
@@ -47,20 +51,20 @@ final class ElementorManager
      */
     private function registerModules(): void
     {
-        $textMotion = new TextMotion();
-        $this->loader->register($textMotion, $textMotion->getId());
+        $textMotion = $this->container->get(TextMotion::class);
+        $this->loader->register($textMotion, $textMotion->getId()); // @phpstan-ignore-line
 
-        $smoothScroll = new SmoothScroll();
-        $this->loader->register($smoothScroll, $smoothScroll->getId());
+        $smoothScroll = $this->container->get(SmoothScroll::class);
+        $this->loader->register($smoothScroll, $smoothScroll->getId()); // @phpstan-ignore-line
 
-        $hoverReveal = new HoverReveal();
-        $this->loader->register($hoverReveal, $hoverReveal->getId());
+        $hoverReveal = $this->container->get(HoverReveal::class);
+        $this->loader->register($hoverReveal, $hoverReveal->getId()); // @phpstan-ignore-line
 
-        $cursor = new InteractiveCursor();
-        $this->loader->register($cursor, $cursor->getId());
+        $cursor = $this->container->get(InteractiveCursor::class);
+        $this->loader->register($cursor, $cursor->getId()); // @phpstan-ignore-line
 
-        $interaction = new InteractionMotion();
-        $this->loader->register($interaction, $interaction->getId());
+        $interaction = $this->container->get(InteractionMotion::class);
+        $this->loader->register($interaction, $interaction->getId()); // @phpstan-ignore-line
 
         $this->loader->boot();
     }
