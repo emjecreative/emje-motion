@@ -192,7 +192,7 @@ final class GitHubUpdater
      */
     private function getReleaseInfo(): ?array
     {
-        $cached = get_transient(self::TRANSIENT_KEY);
+        $cached = $this->getCachedRelease();
         if (is_array($cached) && isset($cached['version'], $cached['download_url'])) {
             return $cached;
         }
@@ -274,9 +274,37 @@ final class GitHubUpdater
         ];
 
         $ttl = (defined('WP_DEBUG') && WP_DEBUG) ? self::CACHE_TTL_DEBUG : self::CACHE_TTL;
-        set_transient(self::TRANSIENT_KEY, $info, $ttl);
+        $this->setCachedRelease($info, $ttl);
 
         return $info;
+    }
+
+    /**
+     * Get cached release (handles multisite).
+     *
+     * @return mixed
+     */
+    private function getCachedRelease()
+    {
+        if (function_exists('is_multisite') && is_multisite()) {
+            $site = get_site_transient(self::TRANSIENT_KEY);
+            if (is_array($site)) {
+                return $site;
+            }
+        }
+
+        return get_transient(self::TRANSIENT_KEY);
+    }
+
+    /**
+     * Set cached release (handles multisite).
+     */
+    private function setCachedRelease(array $info, int $ttl): void
+    {
+        set_transient(self::TRANSIENT_KEY, $info, $ttl);
+        if (function_exists('is_multisite') && is_multisite()) {
+            set_site_transient(self::TRANSIENT_KEY, $info, $ttl);
+        }
     }
 
     /**

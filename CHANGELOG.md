@@ -3,6 +3,11 @@
 All notable changes to Emje Motion are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [1.0.4] - 2026-09-02
+
+### Fixed
+- **Updater** — fix multisite cache (site_transient + transient) so Check for Updates in About (revolt subsite) now correctly populates Network Admin → Updates → Plugins (Hostinger multisite). Bump to force refresh.
+
 ## [1.0.3] - 2026-09-02
 
 ### Changed

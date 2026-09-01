@@ -201,11 +201,14 @@ final class AdminManager
             wp_die(esc_html__('Insufficient permissions.', 'emje-motion'));
         }
 
-        // Clear cached update check (6h) and WordPress update transients.
+        // Clear cached update check (6h) for both single and multisite.
         delete_transient('emje_motion_update_check');
+        delete_site_transient('emje_motion_update_check');
+        // Clear WordPress update transients (network-wide in multisite).
         delete_site_transient('update_plugins');
-        // For multisite, also clear site-wide flag.
-        if (is_multisite()) {
+        delete_transient('update_plugins');
+        if (function_exists('is_multisite') && is_multisite()) {
+            // Ensure network cache is cleared for all sites.
             delete_site_transient('update_plugins');
         }
 
