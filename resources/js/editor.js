@@ -794,12 +794,65 @@
         } catch (e) {}
     }
 
+    function bindHeadingIcons() {
+        var logoUrl = (window.EmjeMotionConfig && window.EmjeMotionConfig.logoUrl) ? window.EmjeMotionConfig.logoUrl : (window.EMJE_MOTION_URL ? window.EMJE_MOTION_URL + 'assets/images/emje-motion-logo.svg' : 'assets/images/emje-motion-logo.svg');
+        var inject = function() {
+            var headings = document.querySelectorAll('#elementor-panel .elementor-panel__heading, #elementor-panel .elementor-panel-heading');
+            headings.forEach(function(h) {
+                var titleEl = h.querySelector('.elementor-panel-heading__title, .elementor-panel__heading-title, .elementor-panel-heading-title-wrapper, .elementor-panel__heading-title');
+                var text = (titleEl ? titleEl.textContent : h.textContent).trim();
+                var isText = text === 'Text Motion' || text.indexOf('Text Motion') === 0;
+                var isInter = text === 'Interaction Motion' || text.indexOf('Interaction Motion') === 0;
+                if (!isText && !isInter) return;
+                if (h.querySelector('.emje-panel-heading-icon')) return;
+                var img = document.createElement('img');
+                img.className = 'emje-panel-heading-icon';
+                img.src = logoUrl;
+                img.alt = '';
+                img.width = 16;
+                img.height = 16;
+                img.loading = 'eager';
+                img.decoding = 'async';
+                var target = titleEl || h;
+                // Ensure flex layout for icon + text
+                if (titleEl) {
+                    titleEl.style.display = 'inline-flex';
+                    titleEl.style.alignItems = 'center';
+                    titleEl.style.gap = '6px';
+                    // Prepend before text — keep arrow on far right (heading flex)
+                    var firstText = titleEl.firstChild;
+                    titleEl.insertBefore(img, firstText);
+                } else {
+                    h.insertBefore(img, h.firstChild);
+                }
+            });
+        };
+        var debounced = function() { clearTimeout(debounced._t); debounced._t = setTimeout(inject, 80); };
+        try {
+            if (window.elementor && window.elementor.hooks) {
+                window.elementor.hooks.addAction('panel/open_editor/container', debounced);
+                window.elementor.hooks.addAction('panel/open_editor/heading', debounced);
+                window.elementor.hooks.addAction('panel/open_editor/text-editor', debounced);
+            }
+        } catch (e) {}
+        try {
+            var panel = document.querySelector('#elementor-panel');
+            if (panel && typeof MutationObserver !== 'undefined') {
+                var obs = new MutationObserver(debounced);
+                obs.observe(panel, { childList: true, subtree: true });
+            }
+        } catch (e) {}
+        try { if (window.jQuery) window.jQuery(window).on('elementor:init', debounced); } catch (e) {}
+        debounced();
+    }
+
     function initBridge() {
         bindEditorChange();
         bindPreviewLoaded();
         bindTooltips();
         bindContainerGlobalsListener();
         bindKitChange();
+        bindHeadingIcons();
     }
 
     function bindContainerGlobalsListener() {

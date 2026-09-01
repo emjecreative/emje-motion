@@ -254,6 +254,20 @@ final class AssetsManager
     public function enqueueEditorAssets(): void
     {
         if (wp_script_is(self::EDITOR_SCRIPT, 'registered')) {
+            // Expose config for editor bridge (logo for heading icons).
+            wp_localize_script(
+                self::EDITOR_SCRIPT,
+                'EmjeMotionConfig',
+                [
+                    'logoUrl' => EMJE_MOTION_URL . 'assets/images/emje-motion-logo.svg',
+                ],
+            );
+            // Also expose EMJE_MOTION_URL as global for fallback.
+            wp_add_inline_script(
+                self::EDITOR_SCRIPT,
+                'window.EMJE_MOTION_URL = ' . wp_json_encode(EMJE_MOTION_URL) . ';',
+                'before',
+            );
             wp_enqueue_script(self::EDITOR_SCRIPT);
         }
 

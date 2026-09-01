@@ -60,15 +60,6 @@ final class TextMotionControls
             ],
         );
 
-        $element->add_control(
-            'emje_motion_brand_header',
-            [
-                'type' => Controls_Manager::RAW_HTML,
-                'raw' => '<div class="emje-brand-header"><img src="' . esc_url(EMJE_MOTION_URL . 'assets/images/emje-motion-logo.svg') . '" alt="" width="16" height="16" style="border-radius:3px;flex-shrink:0;" /><span>Emje Motion</span><span class="emje-brand-header__badge">Text Motion</span></div>',
-                'content_classes' => 'emje-brand-header-wrap',
-            ],
-        );
-
         $this->registerGeneralControls($element);
         $this->registerPreviewControls($element);
         $this->registerScrambleControls($element);

@@ -84,38 +84,20 @@
     overflow: visible;
 }
 
-/* Brand header for Text Motion & Interaction Motion */
-.emje-brand-header {
-    display: flex;
+/* Panel heading icon — injected via JS next to Text Motion / Interaction Motion title */
+.emje-panel-heading-icon {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    border-radius: 3px;
+    flex-shrink: 0;
+    vertical-align: middle;
+    object-fit: contain;
+}
+
+#elementor-panel .elementor-panel__heading .elementor-panel-heading__title,
+#elementor-panel .elementor-panel__heading-title {
+    display: inline-flex !important;
     align-items: center;
     gap: 6px;
-    font-size: 11px;
-    font-weight: 600;
-    letter-spacing: 0.02em;
-    color: #23282d;
-    background: #f6f7f7;
-    border: 1px solid #dcdcde;
-    border-radius: 4px;
-    padding: 6px 8px;
-    margin-bottom: 4px;
-}
-
-.emje-brand-header img {
-    display: block;
-}
-
-.emje-brand-header__badge {
-    margin-left: auto;
-    font-size: 9px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-    color: #1227e2;
-    background: #e6e8ff;
-    padding: 2px 5px;
-    border-radius: 3px;
-}
-
-#elementor-panel .elementor-control.emje-brand-header-wrap {
-    padding-bottom: 0;
 }
