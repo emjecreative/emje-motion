@@ -27,7 +27,7 @@ defined('ABSPATH') || exit;
 			<li><a href="https://github.com/emjecreative/emje-motion#readme" target="_blank" rel="noopener noreferrer"><?php echo esc_html__('Changelog', 'emje-motion'); ?></a></li>
 		</ul>
 		<p class="description">
-			<?php echo esc_html__('Requires WordPress 6.7+, Elementor 3.23+, PHP 8.2+. Animation engine: GSAP (Free) + Lenis (MIT) for Smooth Scroll.', 'emje-motion'); ?>
+			<?php echo esc_html__('Requires WordPress 6.7+, Elementor 3.23+, PHP 8.2+. Powered by Emje Motion high-performance engine.', 'emje-motion'); ?>
 		</p>
 	</div>
 </div>

@@ -233,7 +233,7 @@ final class AdminManager
             ],
             'smooth-scroll' => [
                 'label' => esc_html__('Smooth Scroll', 'emje-motion'),
-                'description' => esc_html__('Lenis-powered smooth scrolling for the entire site. Global module.', 'emje-motion'),
+                'description' => esc_html__('Buttery smooth scrolling for the entire site. Global module.', 'emje-motion'),
                 'status' => esc_html__('Available', 'emje-motion'),
                 'icon' => 'arrow-down-alt',
             ],

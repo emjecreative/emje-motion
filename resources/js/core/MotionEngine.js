@@ -141,9 +141,10 @@ export default class MotionEngine {
                     if (document.readyState !== 'complete') {
                         window.addEventListener('load', onScroll);
                     }
-                    // Lenis drives native scroll too, but listen directly for safety
-                    if (window.lenis && typeof window.lenis.on === 'function') {
-                        try { window.lenis.on('scroll', onScroll); } catch (e) {}
+                    // Emje smooth scroll drives native scroll too; support legacy window.lenis fallback
+                    const emjeLenis = window._emjeLenis || window.lenis;
+                    if (emjeLenis && typeof emjeLenis.on === 'function') {
+                        try { emjeLenis.on('scroll', onScroll); } catch (e) {}
                     }
 
                     animation._emjeScrubCleanup = () => {

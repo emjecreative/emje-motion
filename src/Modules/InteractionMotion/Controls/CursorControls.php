@@ -437,7 +437,7 @@ final class CursorControls
                     'size' => 0.35,
                     'unit' => '',
                 ],
-                'description' => esc_html__('How fast dots chase the one ahead. Lower = tighter, higher = longer tail (Kinetics default 0.35).', 'emje-motion'),
+                'description' => esc_html__('How fast dots chase the one ahead. Lower = tighter, higher = longer tail (default 0.35).', 'emje-motion'),
                 'classes' => 'emje-control--has-tooltip',
                 'condition' => [
                     'emje_interaction_enable' => 'yes',
