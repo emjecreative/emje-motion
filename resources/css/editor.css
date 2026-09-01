@@ -84,7 +84,7 @@
     overflow: visible;
 }
 
-/* Panel heading icon — injected via JS between title and arrow: [Text] [icon] [arrow] */
+/* Panel heading icon — injected via JS: [arrow] [icon] [Text Motion] */
 .emje-panel-heading-icon {
     display: inline-block;
     width: 16px;
@@ -93,8 +93,6 @@
     flex-shrink: 0;
     vertical-align: middle;
     object-fit: contain;
-    margin-left: 6px;
-    margin-right: auto;
 }
 
 #elementor-panel .elementor-panel__heading,
@@ -108,4 +106,6 @@
 #elementor-panel .elementor-panel__heading-title,
 #elementor-panel .elementor-panel-heading-title-wrapper {
     flex: 1 1 auto;
+    display: inline-flex;
+    align-items: center;
 }
