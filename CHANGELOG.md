@@ -3,6 +3,16 @@
 All notable changes to Emje Motion are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [1.0.1] - 2026-09-02
+
+### Changed
+- **Branding** — remove vendor names (GSAP/Lenis/Kinetics/Lerp) from Admin About, Settings and tooltip; Smoothness label whitelabel
+- **Editor** — add Emje Motion icon (assets/images/emje-motion-logo.svg 16px) to Text Motion & Interaction Motion section headings via JS (panel/open_editor hooks + MutationObserver, flex order arrow → icon → title)
+- **Smooth Scroll** — remove `window.lenis` exposure, keep `window._emjeLenis` only (MotionEngine fallback to `window._emjeLenis || window.lenis`)
+
+### Fixed
+- **Updater** — GitHub Releases updater (Update URI, pre_set_site_transient_update_plugins 6h cache) now public repo
+
 ## [1.0.0] - 2026-09-02
 
 ### Added
