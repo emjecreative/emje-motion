@@ -93,6 +93,7 @@
     flex-shrink: 0;
     vertical-align: middle;
     object-fit: contain;
+    order: 1;
 }
 
 #elementor-panel .elementor-panel__heading,
@@ -100,6 +101,7 @@
     display: flex !important;
     align-items: center;
     gap: 6px;
+    flex-direction: row;
 }
 
 #elementor-panel .elementor-panel__heading .elementor-panel-heading__title,
@@ -108,4 +110,11 @@
     flex: 1 1 auto;
     display: inline-flex;
     align-items: center;
+    order: 2;
+}
+
+#elementor-panel .elementor-panel__heading .elementor-panel__heading__toggle,
+#elementor-panel .elementor-panel__heading i,
+#elementor-panel .elementor-panel__heading .eicon {
+    order: 0;
 }

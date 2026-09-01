@@ -813,26 +813,22 @@
                 img.height = 16;
                 img.loading = 'eager';
                 img.decoding = 'async';
-                // Place icon after arrow on left: [arrow] [icon] [Text Motion]
+                // Place icon right after arrow: [arrow] [icon] [Text] — enforce visual order via flex order
                 var arrow = h.querySelector('.elementor-panel__heading__toggle, .elementor-panel-heading__toggle, .eicon-chevron-down, .eicon-chevron-up, .eicon, i');
-                try { h.style.display = 'flex'; h.style.alignItems = 'center'; h.style.gap = '6px'; } catch (e) {}
-                if (arrow && arrow.parentNode === h && titleEl) {
-                    // Insert icon right after arrow, before title
-                    if (arrow.nextSibling) {
-                        h.insertBefore(img, arrow.nextSibling);
-                    } else {
-                        h.appendChild(img);
-                    }
-                    // Ensure order [arrow][icon][title] even if title was before
-                    try { if (h.contains(titleEl)) h.appendChild(titleEl); } catch (e) {}
-                } else if (titleEl && titleEl.parentNode === h) {
-                    // Fallback: insert before title (still between arrow and text if arrow is pseudo)
-                    h.insertBefore(img, titleEl);
-                } else if (arrow && arrow.parentNode === h) {
-                    arrow.parentNode.insertBefore(img, arrow.nextSibling);
-                } else {
-                    h.insertBefore(img, h.firstChild);
-                }
+                try {
+                    h.style.display = 'flex';
+                    h.style.alignItems = 'center';
+                    h.style.gap = '6px';
+                } catch (e) {}
+                // Append icon to heading (DOM position irrelevant — CSS order fixes visual)
+                h.appendChild(img);
+                try {
+                    if (arrow) { arrow.style.order = '0'; }
+                    img.style.order = '1';
+                    if (titleEl) { titleEl.style.order = '2'; }
+                    // If arrow is not a direct child, ensure heading order still works
+                    h.style.flexDirection = 'row';
+                } catch (e) {}
             });
         };
         var debounced = function() { clearTimeout(debounced._t); debounced._t = setTimeout(inject, 80); };
