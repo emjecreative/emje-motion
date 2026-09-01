@@ -813,17 +813,18 @@
                 img.height = 16;
                 img.loading = 'eager';
                 img.decoding = 'async';
-                var target = titleEl || h;
-                // Ensure flex layout for icon + text
-                if (titleEl) {
-                    titleEl.style.display = 'inline-flex';
-                    titleEl.style.alignItems = 'center';
-                    titleEl.style.gap = '6px';
-                    // Prepend before text — keep arrow on far right (heading flex)
-                    var firstText = titleEl.firstChild;
-                    titleEl.insertBefore(img, firstText);
+                // Place icon between text and arrow: [Text Motion] [icon] [arrow]
+                var arrow = h.querySelector('.elementor-panel__heading__toggle, .elementor-panel-heading__toggle, .eicon-chevron-down, .eicon-chevron-up, .eicon, i');
+                // Try to keep heading flex and push icon to middle
+                try { h.style.display = 'flex'; h.style.alignItems = 'center'; h.style.gap = '6px'; } catch (e) {}
+                if (arrow && arrow.parentNode === h) {
+                    h.insertBefore(img, arrow);
+                } else if (titleEl && titleEl.nextSibling) {
+                    titleEl.parentNode.insertBefore(img, titleEl.nextSibling);
+                } else if (titleEl) {
+                    titleEl.parentNode.appendChild(img);
                 } else {
-                    h.insertBefore(img, h.firstChild);
+                    h.appendChild(img);
                 }
             });
         };

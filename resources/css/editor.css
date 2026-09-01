@@ -84,7 +84,7 @@
     overflow: visible;
 }
 
-/* Panel heading icon — injected via JS next to Text Motion / Interaction Motion title */
+/* Panel heading icon — injected via JS between title and arrow: [Text] [icon] [arrow] */
 .emje-panel-heading-icon {
     display: inline-block;
     width: 16px;
@@ -93,11 +93,19 @@
     flex-shrink: 0;
     vertical-align: middle;
     object-fit: contain;
+    margin-left: 6px;
+    margin-right: auto;
+}
+
+#elementor-panel .elementor-panel__heading,
+#elementor-panel .elementor-panel-heading {
+    display: flex !important;
+    align-items: center;
+    gap: 6px;
 }
 
 #elementor-panel .elementor-panel__heading .elementor-panel-heading__title,
-#elementor-panel .elementor-panel__heading-title {
-    display: inline-flex !important;
-    align-items: center;
-    gap: 6px;
+#elementor-panel .elementor-panel__heading-title,
+#elementor-panel .elementor-panel-heading-title-wrapper {
+    flex: 1 1 auto;
 }
