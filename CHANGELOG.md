@@ -3,6 +3,11 @@
 All notable changes to Emje Motion are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [1.0.2] - 2026-09-02
+
+### Added
+- **About** — Check for Updates button (English, no GitHub mention) — clears 6h cache and WordPress update transient, forces immediate check; works even when wp-cron loopback 400 (Hostinger multisite). Auto update via cron still works without clicking.
+
 ## [1.0.1] - 2026-09-02
 
 ### Changed

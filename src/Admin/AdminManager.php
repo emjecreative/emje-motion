@@ -110,6 +110,10 @@ final class AdminManager
         if ($action === 'save_settings') {
             $this->handleSaveSettings();
         }
+
+        if ($action === 'check_updates') {
+            $this->handleCheckUpdates();
+        }
     }
 
     private function handleSaveModules(): void
@@ -179,6 +183,61 @@ final class AdminManager
             esc_html__('Settings saved.', 'emje-motion'),
             'updated',
         );
+
+        set_transient('settings_errors', get_settings_errors(), 30);
+    }
+
+    private function handleCheckUpdates(): void
+    {
+        if (! isset($_POST['_wpnonce']) || ! wp_verify_nonce(sanitize_text_field((string) $_POST['_wpnonce']), 'emje_motion_check_updates')) {
+            wp_die(esc_html__('Security check failed.', 'emje-motion'));
+        }
+
+        if (! current_user_can(self::CAPABILITY)) {
+            wp_die(esc_html__('Insufficient permissions.', 'emje-motion'));
+        }
+
+        // Clear cached update check (6h) and WordPress update transients.
+        delete_transient('emje_motion_update_check');
+        delete_site_transient('update_plugins');
+        // For multisite, also clear site-wide flag.
+        if (is_multisite()) {
+            delete_site_transient('update_plugins');
+        }
+
+        // Force WordPress to re-check (triggers pre_set_site_transient_update_plugins via our updater).
+        wp_update_plugins();
+
+        // Check if an update is now available by inspecting the transient after force.
+        $updates = get_site_transient('update_plugins');
+        $hasUpdate = false;
+        $pluginFile = plugin_basename(EMJE_MOTION_FILE);
+
+        if (is_object($updates) && isset($updates->response) && is_array($updates->response) && isset($updates->response[$pluginFile])) {
+            $hasUpdate = true;
+        }
+
+        if ($hasUpdate) {
+            $updatesUrl = is_network_admin() ? network_admin_url('update-core.php') : admin_url('update-core.php');
+            add_settings_error(
+                'emje_motion_check_updates',
+                'emje_motion_update_available',
+                sprintf(
+                    /* translators: %s: updates page URL */
+                    esc_html__('Update available. Go to %s to update.', 'emje-motion'),
+                    '<a href="' . esc_url($updatesUrl) . '">' . esc_html__('Updates', 'emje-motion') . '</a>',
+                ),
+                'updated',
+            );
+        } else {
+            // Check if remote check actually ran (if updater still cached with no update, it's up to date).
+            add_settings_error(
+                'emje_motion_check_updates',
+                'emje_motion_up_to_date',
+                esc_html__("You're up to date.", 'emje-motion'),
+                'updated',
+            );
+        }
 
         set_transient('settings_errors', get_settings_errors(), 30);
     }

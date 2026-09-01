@@ -9,6 +9,8 @@ declare(strict_types=1);
  */
 
 defined('ABSPATH') || exit;
+
+settings_errors('emje_motion_check_updates');
 ?>
 <div class="wrap emje-motion-admin">
 	<h1><?php echo esc_html__('Emje Motion — About', 'emje-motion'); ?></h1>
@@ -29,5 +31,15 @@ defined('ABSPATH') || exit;
 		<p class="description">
 			<?php echo esc_html__('Requires WordPress 6.7+, Elementor 3.23+, PHP 8.2+. Powered by Emje Motion high-performance engine.', 'emje-motion'); ?>
 		</p>
+	</div>
+
+	<div style="background:#fff;border:1px solid #ccd0d4;border-radius:8px;padding:16px;max-width:720px;margin-top:16px;">
+		<h2 style="margin:0 0 8px 0;font-size:14px;"><?php echo esc_html__('Updates', 'emje-motion'); ?></h2>
+		<p class="description" style="margin:0 0 12px 0;"><?php echo esc_html__('Check if a newer version is available.', 'emje-motion'); ?></p>
+		<form method="post" action="">
+			<?php wp_nonce_field('emje_motion_check_updates'); ?>
+			<input type="hidden" name="emje_motion_action" value="check_updates" />
+			<button type="submit" class="button button-primary"><?php echo esc_html__('Check for Updates', 'emje-motion'); ?></button>
+		</form>
 	</div>
 </div>
