@@ -1,6 +1,6 @@
 {
   "name": "emje-motion",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "A lightweight motion toolkit for Elementor.",
   "main": "index.js",
   "directories": {

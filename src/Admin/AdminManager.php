@@ -84,7 +84,11 @@ final class AdminManager
             return;
         }
 
-        // Minimal inline styles for overview cards; no external file needed for v1.
+        $css = EMJE_MOTION_URL . 'assets/css/admin.css';
+        $path = EMJE_MOTION_PATH . 'assets/css/admin.css';
+        $ver = file_exists($path) ? (string) filemtime($path) : EMJE_MOTION_VERSION;
+
+        wp_enqueue_style('emje-motion-admin', $css, [], $ver);
     }
 
     /**
@@ -286,21 +290,21 @@ final class AdminManager
         return [
             'text-motion' => [
                 'label' => esc_html__('Text Motion', 'emje-motion'),
-                'description' => esc_html__('Scramble, Unfold and Fill Reveal animations for Heading and Text Editor widgets.', 'emje-motion'),
+                'description' => esc_html__('Scramble, Unfold & Fill Reveal for Heading & Text Editor. Live preview in editor.', 'emje-motion'),
                 'status' => esc_html__('Available', 'emje-motion'),
                 'icon' => 'editor-textcolor',
             ],
             'smooth-scroll' => [
                 'label' => esc_html__('Smooth Scroll', 'emje-motion'),
-                'description' => esc_html__('Buttery smooth scrolling for the entire site. Global module.', 'emje-motion'),
+                'description' => esc_html__('Buttery smooth scrolling — site-wide, zero-jank, native feel. Global module.', 'emje-motion'),
                 'status' => esc_html__('Available', 'emje-motion'),
-                'icon' => 'arrow-down-alt',
+                'icon' => 'performance',
             ],
             'interaction-motion' => [
                 'label' => esc_html__('Interaction Motion', 'emje-motion'),
-                'description' => esc_html__('Hover Reveal and Interactive Cursor for Container — 1 effect per Container (like Text Motion).', 'emje-motion'),
+                'description' => esc_html__('Hover Reveal & Interactive Cursor for Container — one effect per Container.', 'emje-motion'),
                 'status' => esc_html__('Available', 'emje-motion'),
-                'icon' => 'admin-customizer',
+                'icon' => 'art',
             ],
         ];
     }

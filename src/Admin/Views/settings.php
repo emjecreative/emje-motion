@@ -11,80 +11,109 @@ declare(strict_types=1);
 defined('ABSPATH') || exit;
 
 settings_errors('emje_motion_settings');
+
+$version = defined('EMJE_MOTION_VERSION') ? EMJE_MOTION_VERSION : '1.0.2';
 ?>
 <div class="wrap emje-motion-admin">
-	<h1><?php echo esc_html__('Emje Motion — Settings', 'emje-motion'); ?></h1>
+	<div class="emje-admin-header">
+		<img class="emje-admin-header__logo" src="<?php echo esc_url(EMJE_MOTION_URL . 'assets/images/emje-motion-logo.svg'); ?>" alt="" />
+		<div>
+			<div class="emje-admin-header__title">Emje Motion <span>v<?php echo esc_html($version); ?></span></div>
+			<div class="emje-admin-header__subtitle"><?php echo esc_html__('Motion that feels native to Elementor', 'emje-motion'); ?></div>
+		</div>
+		<div class="emje-admin-header__nav">
+			<a href="<?php echo esc_url(admin_url('admin.php?page=emje-motion')); ?>"><?php echo esc_html__('Overview', 'emje-motion'); ?></a>
+			<a class="is-active" href="<?php echo esc_url(admin_url('admin.php?page=emje-motion-settings')); ?>"><?php echo esc_html__('Settings', 'emje-motion'); ?></a>
+			<a href="<?php echo esc_url(admin_url('admin.php?page=emje-motion-about')); ?>"><?php echo esc_html__('About', 'emje-motion'); ?></a>
+		</div>
+	</div>
 
 	<form method="post" action="">
 		<?php wp_nonce_field('emje_motion_save_settings'); ?>
 		<input type="hidden" name="emje_motion_action" value="save_settings" />
 
-		<table class="form-table" role="presentation">
-			<tbody>
-				<tr>
-					<th scope="row"><?php echo esc_html__('Respect Reduced Motion', 'emje-motion'); ?></th>
-					<td>
-						<label>
-							<input type="checkbox" name="respect_reduced_motion" value="1" <?php checked(! empty($settings['respect_reduced_motion'])); ?> />
-							<?php echo esc_html__('Disable animations when user prefers reduced motion', 'emje-motion'); ?>
-						</label>
-						<p class="description"><?php echo esc_html__('When enabled, all motion is skipped if the OS/browser reports prefers-reduced-motion: reduce.', 'emje-motion'); ?></p>
-					</td>
-				</tr>
-				<tr>
-					<th scope="row"><?php echo esc_html__('Disable on Mobile', 'emje-motion'); ?></th>
-					<td>
-						<label>
-							<input type="checkbox" name="disable_on_mobile" value="1" <?php checked(! empty($settings['disable_on_mobile'])); ?> />
-							<?php echo esc_html__('Disable Hover Reveal and Interactive Cursor on touch devices', 'emje-motion'); ?>
-						</label>
-						<p class="description"><?php echo esc_html__('Also used as default for Smooth Scroll mobile toggle.', 'emje-motion'); ?></p>
-					</td>
-				</tr>
-				<tr>
-					<th scope="row"><?php echo esc_html__('Debug Mode', 'emje-motion'); ?></th>
-					<td>
-						<label>
-							<input type="checkbox" name="debug_mode" value="1" <?php checked(! empty($settings['debug_mode'])); ?> />
-							<?php echo esc_html__('Enable WP_DEBUG logging for module failures', 'emje-motion'); ?>
-						</label>
-						<p class="description"><?php echo esc_html__('Logs to error_log when WP_DEBUG is true. See ModuleLoader.', 'emje-motion'); ?></p>
-					</td>
-				</tr>
-			</tbody>
-		</table>
+		<div class="emje-card emje-admin-section">
+			<h2 style="margin:0 0 12px 0;font-size:15px;font-weight:700;color:#111827;"><?php echo esc_html__('Behavior', 'emje-motion'); ?></h2>
+			<div class="emje-setting-row">
+				<div class="emje-setting-row__left">
+					<div class="emje-setting-row__label"><?php echo esc_html__('Respect Reduced Motion', 'emje-motion'); ?></div>
+					<div class="emje-setting-row__desc"><?php echo esc_html__('Honors your system preference. Motion auto-skips if the user prefers less animation.', 'emje-motion'); ?></div>
+				</div>
+				<div class="emje-setting-row__control">
+					<label class="emje-switch">
+						<input type="checkbox" name="respect_reduced_motion" value="1" <?php checked(! empty($settings['respect_reduced_motion'])); ?> />
+						<span class="emje-switch__track"><span class="emje-switch__thumb"></span></span>
+					</label>
+				</div>
+			</div>
+			<div class="emje-setting-row">
+				<div class="emje-setting-row__left">
+					<div class="emje-setting-row__label"><?php echo esc_html__('Disable on Mobile', 'emje-motion'); ?></div>
+					<div class="emje-setting-row__desc"><?php echo esc_html__('Disable Hover Reveal and Interactive Cursor on touch devices.', 'emje-motion'); ?></div>
+				</div>
+				<div class="emje-setting-row__control">
+					<label class="emje-switch">
+						<input type="checkbox" name="disable_on_mobile" value="1" <?php checked(! empty($settings['disable_on_mobile'])); ?> />
+						<span class="emje-switch__track"><span class="emje-switch__thumb"></span></span>
+					</label>
+				</div>
+			</div>
+			<div class="emje-setting-row">
+				<div class="emje-setting-row__left">
+					<div class="emje-setting-row__label"><?php echo esc_html__('Debug Mode', 'emje-motion'); ?></div>
+					<div class="emje-setting-row__desc"><?php echo esc_html__('Logs to error_log when WP_DEBUG is true.', 'emje-motion'); ?></div>
+				</div>
+				<div class="emje-setting-row__control">
+					<label class="emje-switch">
+						<input type="checkbox" name="debug_mode" value="1" <?php checked(! empty($settings['debug_mode'])); ?> />
+						<span class="emje-switch__track"><span class="emje-switch__thumb"></span></span>
+					</label>
+				</div>
+			</div>
+		</div>
 
-		<h2><?php echo esc_html__('Smooth Scroll', 'emje-motion'); ?></h2>
-		<p class="description"><?php echo esc_html__('Global smooth scroll. Enabled via Overview → Smooth Scroll toggle. Smoothness controls fluidity, Wheel Multiplier controls scroll distance.', 'emje-motion'); ?></p>
+		<div class="emje-card emje-admin-section">
+			<div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;">
+				<h2 style="margin:0;font-size:15px;font-weight:700;color:#111827;"><?php echo esc_html__('Smooth Scroll', 'emje-motion'); ?></h2>
+				<span style="font-size:11px;font-weight:600;background:#F2F4F7;border:1px solid #E5E7EB;color:#344054;padding:2px 6px;border-radius:999px;"><?php echo esc_html__('Global', 'emje-motion'); ?></span>
+			</div>
+			<p class="description" style="margin:0 0 12px 0;color:#667085;font-size:12px;"><?php echo esc_html__('Global smooth scroll. Enabled via Overview → Smooth Scroll toggle.', 'emje-motion'); ?></p>
+			<div class="emje-setting-row">
+				<div class="emje-setting-row__left">
+					<div class="emje-setting-row__label"><?php echo esc_html__('Smoothness', 'emje-motion'); ?></div>
+					<div class="emje-setting-row__desc"><?php echo esc_html__('Lower is smoother. Range 0.05–0.15, default 0.055.', 'emje-motion'); ?></div>
+				</div>
+				<div class="emje-setting-row__control">
+					<input class="emje-slider" type="range" name="smooth_scroll_lerp" value="<?php echo esc_attr((string) ($settings['smooth_scroll_lerp'] ?? 0.055)); ?>" min="0.05" max="0.15" step="0.005" oninput="this.nextElementSibling.textContent=this.value" />
+					<span class="emje-value-bubble"><?php echo esc_html((string) ($settings['smooth_scroll_lerp'] ?? 0.055)); ?></span>
+				</div>
+			</div>
+			<div class="emje-setting-row">
+				<div class="emje-setting-row__left">
+					<div class="emje-setting-row__label"><?php echo esc_html__('Wheel Multiplier', 'emje-motion'); ?></div>
+					<div class="emje-setting-row__desc"><?php echo esc_html__('Controls scroll distance per tick. Range 0.8–1.5, default 1.0.', 'emje-motion'); ?></div>
+				</div>
+				<div class="emje-setting-row__control">
+					<input class="emje-slider" type="range" name="smooth_scroll_wheel_multiplier" value="<?php echo esc_attr((string) ($settings['smooth_scroll_wheel_multiplier'] ?? 1.0)); ?>" min="0.8" max="1.5" step="0.1" oninput="this.nextElementSibling.textContent=this.value" />
+					<span class="emje-value-bubble"><?php echo esc_html((string) ($settings['smooth_scroll_wheel_multiplier'] ?? 1.0)); ?></span>
+				</div>
+			</div>
+		</div>
 
-		<table class="form-table" role="presentation">
-			<tbody>
-				<tr>
-					<th scope="row"><?php echo esc_html__('Smoothness', 'emje-motion'); ?></th>
-					<td>
-						<input type="number" name="smooth_scroll_lerp" value="<?php echo esc_attr((string) ($settings['smooth_scroll_lerp'] ?? 0.055)); ?>" min="0.05" max="0.15" step="0.005" />
-						<p class="description"><?php echo esc_html__('Range 0.05–0.15, default 0.055. Lower is smoother.', 'emje-motion'); ?></p>
-					</td>
-				</tr>
-				<tr>
-					<th scope="row"><?php echo esc_html__('Wheel Multiplier', 'emje-motion'); ?></th>
-					<td>
-						<input type="number" name="smooth_scroll_wheel_multiplier" value="<?php echo esc_attr((string) ($settings['smooth_scroll_wheel_multiplier'] ?? 1.0)); ?>" min="0.8" max="1.5" step="0.1" />
-						<p class="description"><?php echo esc_html__('Range 0.8–1.5, default 1.0. Controls scroll distance per wheel tick.', 'emje-motion'); ?></p>
-					</td>
-				</tr>
-			</tbody>
-		</table>
-
-		<p>
-			<button type="submit" class="button button-primary"><?php echo esc_html__('Save Settings', 'emje-motion'); ?></button>
+		<p style="margin-top:16px;">
+			<button type="submit" class="button emje-btn-primary"><?php echo esc_html__('Save Settings', 'emje-motion'); ?></button>
 		</p>
 	</form>
 
-	<hr />
-
-	<h2><?php echo esc_html__('Performance', 'emje-motion'); ?></h2>
-	<p class="description">
-		<?php echo esc_html__('Assets are loaded conditionally: only on pages where Elementor data contains emje_motion_enable. Use the filter emje_motion_should_load_assets to force loading for popups or archives.', 'emje-motion'); ?>
-	</p>
+	<div class="emje-card" style="background:#F8FAFF;border-color:#DCE4FF;margin-top:16px;">
+		<div style="display:flex;gap:10px;align-items:center;">
+			<span class="dashicons dashicons-info" style="color:#1227E2;"></span>
+			<div>
+				<div style="font-weight:600;color:#111827;font-size:13px;"><?php echo esc_html__('Performance', 'emje-motion'); ?></div>
+				<p class="description" style="margin:2px 0 0 0;color:#667085;font-size:12px;">
+					<?php echo esc_html__('Assets load only where used — on pages with motion enabled. Use filter emje_motion_should_load_assets for popups or archives.', 'emje-motion'); ?>
+				</p>
+			</div>
+		</div>
+	</div>
 </div>

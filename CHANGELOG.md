@@ -3,6 +3,11 @@
 All notable changes to Emje Motion are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [1.0.3] - 2026-09-02
+
+### Changed
+- **Admin** — premium minimal dashboard: header gradient #1227E2 + nav pills (Overview/Settings/About), card 12px + shadow, switch 44x24 animated (track #E5E7EB → #1227E2), Overview summary 3 Modules • Active, Settings 2-card layout with range slider + bubble value, About hero #1227E2 + link grid 2x2. No onboarding. Copy premium minimal: Motion that feels native to Elementor.
+
 ## [1.0.2] - 2026-09-02
 
 ### Added
