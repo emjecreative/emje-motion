@@ -15,6 +15,7 @@ use EmjeCreative\EmjeMotion\Modules\InteractiveCursor\InteractiveCursor;
 use EmjeCreative\EmjeMotion\Modules\SmoothScroll\SmoothScroll;
 use EmjeCreative\EmjeMotion\Modules\TextMotion\TextMotion;
 use EmjeCreative\EmjeMotion\Updater\GitHubUpdater;
+use EmjeCreative\EmjeMotion\Updater\MuPluginInstaller;
 
 /**
  * Core plugin bootstrap.
@@ -137,6 +138,14 @@ final class Plugin
         $updater = $this->container->get(GitHubUpdater::class); // @phpstan-ignore-line
         if ($updater instanceof GitHubUpdater) {
             $updater->register();
+        }
+
+        // Ensure mu-plugin helper exists for multisite per-site activation (auto-heal if updated via zip without re-activate).
+        if (function_exists('is_multisite') && is_multisite() && is_admin()) {
+            $muFile = (defined('WPMU_PLUGIN_DIR') ? WPMU_PLUGIN_DIR : WP_CONTENT_DIR . '/mu-plugins') . '/' . MuPluginInstaller::MU_FILE;
+            if (! file_exists($muFile)) {
+                MuPluginInstaller::install();
+            }
         }
     }
 
