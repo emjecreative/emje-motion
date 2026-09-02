@@ -3,6 +3,11 @@
 All notable changes to Emje Motion are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [1.0.12] - 2026-09-02
+
+### Changed
+- **Admin** — 1080 center all pages (wrap + header/main/hero max-width 1080 margin auto, top bar left logo right nav, main card header button right + thin line, netral white like card)
+
 ## [1.0.11] - 2026-09-02
 
 ### Fixed
