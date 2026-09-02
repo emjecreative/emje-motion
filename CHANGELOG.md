@@ -3,6 +3,11 @@
 All notable changes to Emje Motion are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [1.0.5] - 2026-09-02
+
+### Fixed
+- **Release** — include `assets/` (admin.css + logo.svg) in `emje-motion.zip` — dashboard was unstyled live (404) because workflow omitted `assets/`; local worked via git clone. Fix `release.yml` to zip `assets/`.
+
 ## [1.0.4] - 2026-09-02
 
 ### Fixed

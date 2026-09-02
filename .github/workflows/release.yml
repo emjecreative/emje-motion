@@ -51,6 +51,7 @@ jobs:
             dist/ \
             vendor/ \
             languages/ \
+            assets/ \
             README.md \
             CHANGELOG.md \
             -x "*.git*" "*.github*"
