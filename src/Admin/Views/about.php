@@ -28,14 +28,19 @@ $isNetwork = is_network_admin();
 		</div>
 	</div>
 
-	<div class="emje-hero">
-		<img class="emje-hero__logo" src="<?php echo esc_url(EMJE_MOTION_URL . 'assets/images/emje-motion-logo.svg'); ?>" alt="" />
-		<div class="emje-hero__title"><?php echo esc_html__('Lightweight motion toolkit for Elementor', 'emje-motion'); ?></div>
-		<p class="emje-hero__subtitle"><?php echo esc_html__('Scramble, Unfold & Fill Reveal. Hover Reveal & Interactive Cursor. Buttery smooth scroll — assets load only where used.', 'emje-motion'); ?></p>
-		<div class="emje-hero__pill">v<?php echo esc_html($version); ?> • <?php echo esc_html__('WordPress 6.7+ • Elementor 3.23+ • PHP 8.2+', 'emje-motion'); ?></div>
-	</div>
-
-	<div class="emje-links">
+	<div class="emje-main">
+		<div class="emje-main__header">
+			<div class="emje-main__title"><span class="dashicons dashicons-info" style="color:#1227E2;"></span> <?php echo esc_html__('About', 'emje-motion'); ?></div>
+			<span style="font-size:11px;font-weight:600;background:#F2F4FF;border:1px solid #DCE4FF;color:#1227E2;padding:2px 8px;border-radius:999px;">v<?php echo esc_html($version); ?></span>
+		</div>
+		<div class="emje-main__content">
+			<div style="text-align:center;padding:8px 0 12px 0;">
+				<img src="<?php echo esc_url(EMJE_MOTION_URL . 'assets/images/emje-motion-logo.svg'); ?>" alt="" style="width:40px;height:40px;border-radius:8px;border:1px solid #E5E7EB;padding:6px;background:#F9FAFB;" />
+				<div style="font-size:16px;font-weight:700;margin:8px 0 4px 0;color:#111827;"><?php echo esc_html__('Lightweight motion toolkit for Elementor', 'emje-motion'); ?></div>
+				<p style="color:#667085;font-size:12px;margin:0;max-width:520px;margin-left:auto;margin-right:auto;"><?php echo esc_html__('Scramble, Unfold & Fill Reveal. Hover Reveal & Interactive Cursor. Buttery smooth scroll — assets load only where used.', 'emje-motion'); ?></p>
+				<div style="display:inline-flex;gap:6px;background:#F2F4FF;border:1px solid #DCE4FF;color:#1227E2;padding:4px 10px;border-radius:999px;font-size:11px;font-weight:600;margin-top:8px;">v<?php echo esc_html($version); ?> • <?php echo esc_html__('WordPress 6.7+ • Elementor 3.23+ • PHP 8.2+', 'emje-motion'); ?></div>
+			</div>
+			<div class="emje-links">
 		<a href="https://emjecreative.com" target="_blank" rel="noopener noreferrer">
 			<span class="emje-links__icon"><span class="dashicons dashicons-admin-site-alt3"></span></span>
 			<span><span class="emje-links__title"><?php echo esc_html__('Website', 'emje-motion'); ?></span><br><span class="emje-links__url">emjecreative.com</span></span>
@@ -56,18 +61,19 @@ $isNetwork = is_network_admin();
 			<span><span class="emje-links__title"><?php echo esc_html__('Changelog', 'emje-motion'); ?></span><br><span class="emje-links__url">WHAT'S NEW</span></span>
 			<span class="dashicons dashicons-arrow-right-alt2" style="margin-left:auto;color:#667085;"></span>
 		</a>
-	</div>
-
-	<div class="emje-card" style="margin-top:16px;">
-		<h2 style="margin:0 0 8px 0;font-size:14px;font-weight:700;color:#111827;"><?php echo esc_html__('Updates', 'emje-motion'); ?></h2>
-		<p class="description" style="margin:0 0 12px 0;color:#667085;font-size:12px;"><?php echo esc_html__('Check if a newer version is available.', 'emje-motion'); ?></p>
-		<form method="post" action="">
-			<?php wp_nonce_field('emje_motion_check_updates'); ?>
-			<input type="hidden" name="emje_motion_action" value="check_updates" />
-			<button type="submit" class="button emje-btn-primary"><?php echo esc_html__('Check for Updates', 'emje-motion'); ?></button>
-		</form>
-		<?php if (is_multisite()) : ?>
-			<p class="description" style="margin:8px 0 0 0;color:#667085;font-size:11px;"><?php echo esc_html__('On multisite, Network Activate is recommended. When activated per site, check for updates from that site’s dashboard.', 'emje-motion'); ?></p>
-		<?php endif; ?>
+			</div>
+			<div style="margin-top:16px;padding-top:16px;border-top:1px solid #E5E7EB;">
+				<h2 style="margin:0 0 8px 0;font-size:14px;font-weight:700;color:#111827;"><?php echo esc_html__('Updates', 'emje-motion'); ?></h2>
+				<p class="description" style="margin:0 0 12px 0;color:#667085;font-size:12px;"><?php echo esc_html__('Check if a newer version is available.', 'emje-motion'); ?></p>
+				<form method="post" action="">
+					<?php wp_nonce_field('emje_motion_check_updates'); ?>
+					<input type="hidden" name="emje_motion_action" value="check_updates" />
+					<button type="submit" class="button emje-btn-primary"><?php echo esc_html__('Check for Updates', 'emje-motion'); ?></button>
+				</form>
+				<?php if (is_multisite()) : ?>
+					<p class="description" style="margin:8px 0 0 0;color:#667085;font-size:11px;"><?php echo esc_html__('On multisite, Network Activate is recommended. When activated per site, check for updates from that site’s dashboard.', 'emje-motion'); ?></p>
+				<?php endif; ?>
+			</div>
+		</div>
 	</div>
 </div>

@@ -32,8 +32,14 @@ $version = defined('EMJE_MOTION_VERSION') ? EMJE_MOTION_VERSION : '1.0.2';
 		<?php wp_nonce_field('emje_motion_save_settings'); ?>
 		<input type="hidden" name="emje_motion_action" value="save_settings" />
 
-		<div class="emje-card emje-admin-section">
-			<h2 style="margin:0 0 12px 0;font-size:15px;font-weight:700;color:#111827;"><?php echo esc_html__('Behavior', 'emje-motion'); ?></h2>
+		<div class="emje-main">
+			<div class="emje-main__header">
+				<div class="emje-main__title"><span class="dashicons dashicons-admin-generic"></span> <?php echo esc_html__('Settings', 'emje-motion'); ?></div>
+				<button type="submit" class="button emje-btn-primary"><?php echo esc_html__('Save Settings', 'emje-motion'); ?></button>
+			</div>
+			<div class="emje-main__content">
+				<div class="emje-card" style="box-shadow:none;border:none;padding:0;">
+					<h2 style="margin:0 0 12px 0;font-size:14px;font-weight:700;color:#111827;"><?php echo esc_html__('Behavior', 'emje-motion'); ?></h2>
 			<div class="emje-setting-row">
 				<div class="emje-setting-row__left">
 					<div class="emje-setting-row__label"><?php echo esc_html__('Respect Reduced Motion', 'emje-motion'); ?></div>
@@ -72,11 +78,12 @@ $version = defined('EMJE_MOTION_VERSION') ? EMJE_MOTION_VERSION : '1.0.2';
 			</div>
 		</div>
 
-		<div class="emje-card emje-admin-section">
-			<div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;">
-				<h2 style="margin:0;font-size:15px;font-weight:700;color:#111827;"><?php echo esc_html__('Smooth Scroll', 'emje-motion'); ?></h2>
-				<span style="font-size:11px;font-weight:600;background:#F2F4F7;border:1px solid #E5E7EB;color:#344054;padding:2px 6px;border-radius:999px;"><?php echo esc_html__('Global', 'emje-motion'); ?></span>
-			</div>
+				</div>
+				<div class="emje-card" style="box-shadow:none;border:none;padding:0;margin-top:16px;border-top:1px solid #E5E7EB;padding-top:16px;">
+					<div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;">
+						<h2 style="margin:0;font-size:14px;font-weight:700;color:#111827;"><?php echo esc_html__('Smooth Scroll', 'emje-motion'); ?></h2>
+						<span style="font-size:11px;font-weight:600;background:#F2F4F7;border:1px solid #E5E7EB;color:#344054;padding:2px 6px;border-radius:999px;"><?php echo esc_html__('Global', 'emje-motion'); ?></span>
+					</div>
 			<p class="description" style="margin:0 0 12px 0;color:#667085;font-size:12px;"><?php echo esc_html__('Global smooth scroll. Enabled via Overview → Smooth Scroll toggle.', 'emje-motion'); ?></p>
 			<div class="emje-setting-row">
 				<div class="emje-setting-row__left">
@@ -100,9 +107,8 @@ $version = defined('EMJE_MOTION_VERSION') ? EMJE_MOTION_VERSION : '1.0.2';
 			</div>
 		</div>
 
-		<p style="margin-top:16px;">
-			<button type="submit" class="button emje-btn-primary"><?php echo esc_html__('Save Settings', 'emje-motion'); ?></button>
-		</p>
+			</div>
+		</div>
 	</form>
 
 	<div class="emje-card" style="background:#F8FAFF;border-color:#DCE4FF;margin-top:16px;">

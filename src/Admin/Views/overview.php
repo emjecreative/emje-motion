@@ -31,45 +31,43 @@ $version = defined('EMJE_MOTION_VERSION') ? EMJE_MOTION_VERSION : '1.0.2';
 		</div>
 	</div>
 
-	<p class="emje-admin-summary">
-		<span class="emje-admin-summary__dot"></span> <strong><?php echo esc_html(sprintf(__('%d Modules', 'emje-motion'), $totalCount)); ?></strong>
-		<span>•</span> <span><?php echo esc_html(sprintf(__('%d Active', 'emje-motion'), $activeCount)); ?></span>
-		<span>•</span> <span><?php echo esc_html__('Assets load only where used', 'emje-motion'); ?></span>
-	</p>
-	<p class="description" style="margin:0 0 12px 0;color:#667085;font-size:12px;"><?php echo esc_html__('Enable only what you need. Assets load only where used.', 'emje-motion'); ?></p>
-
 	<form method="post" action="">
 		<?php wp_nonce_field('emje_motion_save_modules'); ?>
 		<input type="hidden" name="emje_motion_action" value="save_modules" />
 
-		<div class="emje-grid">
-			<?php foreach ($definitions as $id => $def) : ?>
-				<?php
-                $isEnabled = ! empty($modules[$id]);
-			    $inputName = 'module_' . str_replace('-', '_', $id);
-			    ?>
-				<div class="emje-card <?php echo $isEnabled ? 'emje-card--top' : ''; ?>">
-					<div class="emje-card__head">
-						<div class="emje-card__icon"><span class="dashicons dashicons-<?php echo esc_attr($def['icon']); ?>"></span></div>
-						<div class="emje-card__label"><?php echo esc_html($def['label']); ?></div>
-						<span class="emje-badge <?php echo $isEnabled ? 'emje-badge--on' : 'emje-badge--off'; ?>">
-							<span class="emje-badge__dot"></span> <?php echo $isEnabled ? esc_html__('Enabled', 'emje-motion') : esc_html__('Disabled', 'emje-motion'); ?>
-						</span>
-					</div>
-					<p class="emje-card__desc"><?php echo esc_html($def['description']); ?></p>
-					<div style="display:flex;align-items:center;justify-content:space-between;margin-top:12px;">
-						<span style="font-size:12px;color:#667085;font-weight:500;"><?php echo esc_html__('Enable module', 'emje-motion'); ?></span>
-						<label class="emje-switch">
-							<input type="checkbox" name="<?php echo esc_attr($inputName); ?>" value="1" <?php checked($isEnabled); ?> />
-							<span class="emje-switch__track"><span class="emje-switch__thumb"></span></span>
-						</label>
-					</div>
+		<div class="emje-main">
+			<div class="emje-main__header">
+				<div class="emje-main__title"><span class="dashicons dashicons-admin-generic" style="color:#1227E2;"></span> <?php echo esc_html__('Modules', 'emje-motion'); ?> <span style="font-weight:500;color:#667085;font-size:12px;margin-left:6px;"><?php echo esc_html(sprintf(__('%d Active / %d Total', 'emje-motion'), $activeCount, $totalCount)); ?></span></div>
+				<button type="submit" class="button emje-btn-primary"><?php echo esc_html__('Save Modules', 'emje-motion'); ?></button>
+			</div>
+			<div class="emje-main__content">
+				<p class="description" style="margin:0 0 12px 0;color:#667085;font-size:12px;"><?php echo esc_html__('Enable only what you need. Assets load only where used.', 'emje-motion'); ?></p>
+				<div class="emje-grid">
+					<?php foreach ($definitions as $id => $def) : ?>
+						<?php
+                        $isEnabled = ! empty($modules[$id]);
+					    $inputName = 'module_' . str_replace('-', '_', $id);
+					    ?>
+						<div class="emje-card <?php echo $isEnabled ? 'emje-card--top' : ''; ?>">
+							<div class="emje-card__head">
+								<div class="emje-card__icon"><span class="dashicons dashicons-<?php echo esc_attr($def['icon']); ?>"></span></div>
+								<div class="emje-card__label"><?php echo esc_html($def['label']); ?></div>
+								<span class="emje-badge <?php echo $isEnabled ? 'emje-badge--on' : 'emje-badge--off'; ?>">
+									<span class="emje-badge__dot"></span> <?php echo $isEnabled ? esc_html__('Enabled', 'emje-motion') : esc_html__('Disabled', 'emje-motion'); ?>
+								</span>
+							</div>
+							<p class="emje-card__desc"><?php echo esc_html($def['description']); ?></p>
+							<div style="display:flex;align-items:center;justify-content:space-between;margin-top:12px;">
+								<span style="font-size:12px;color:#667085;font-weight:500;"><?php echo esc_html__('Enable module', 'emje-motion'); ?></span>
+								<label class="emje-switch">
+									<input type="checkbox" name="<?php echo esc_attr($inputName); ?>" value="1" <?php checked($isEnabled); ?> />
+									<span class="emje-switch__track"><span class="emje-switch__thumb"></span></span>
+								</label>
+							</div>
+						</div>
+					<?php endforeach; ?>
 				</div>
-			<?php endforeach; ?>
+			</div>
 		</div>
-
-		<p style="margin-top:16px;">
-			<button type="submit" class="button emje-btn-primary"><?php echo esc_html__('Save Modules', 'emje-motion'); ?></button>
-		</p>
 	</form>
 </div>
