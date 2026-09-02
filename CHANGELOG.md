@@ -3,6 +3,11 @@
 All notable changes to Emje Motion are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [1.0.10] - 2026-09-02
+
+### Fixed
+- **Admin** — sidebar menu icon padding: viewBox expanded to -20 -15 279 280 (16px effective in 20px container) and dynamic base64 via file_get_contents so dashboard icon no longer oversized.
+
 ## [1.0.9] - 2026-09-02
 
 ### Changed

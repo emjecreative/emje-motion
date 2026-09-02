@@ -35,13 +35,15 @@ final class AdminManager
      */
     public function registerMenu(): void
     {
+        $iconSvg = @file_get_contents(EMJE_MOTION_PATH . 'assets/images/emje-motion-dashboard-logo.svg');
+        $icon = $iconSvg !== false && $iconSvg !== '' ? 'data:image/svg+xml;base64,' . base64_encode($iconSvg) : 'dashicons-art';
         add_menu_page(
             esc_html__('Emje Motion', 'emje-motion'),
             esc_html__('Emje Motion', 'emje-motion'),
             self::CAPABILITY,
             self::MENU_SLUG,
             [$this, 'renderOverview'],
-            'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjM5IiBoZWlnaHQ9IjI1MCIgdmlld0JveD0iMCAwIDIzOSAyNTAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxwYXRoIGQ9Ik0wIDBMNjIuNSAzMS4yNVYxODcuNUwwIDE1Ni4yNVYwWiIgZmlsbD0id2hpdGUiLz4KPHBhdGggZD0iTTg4LjE0MSAwTDE1MC42NDEgMzEuMjVWMTg3LjVMODguMTQxIDE1Ni4yNVYwWiIgZmlsbD0id2hpdGUiLz4KPHBhdGggZD0iTTE3Ni4yODIgMEwyMzguNzgyIDMxLjI1VjIxOC43NUwxNzYuMjgyIDI1MFYwWiIgZmlsbD0id2hpdGUiLz4KPC9zdmc+Cg==',
+            $icon,
             58,
         );
 
