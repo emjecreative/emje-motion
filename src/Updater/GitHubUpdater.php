@@ -39,8 +39,60 @@ final class GitHubUpdater
     public function register(): void
     {
         add_filter('pre_set_site_transient_update_plugins', [ $this, 'checkUpdate' ]);
+        // Also handle regular transient for single-site contexts.
+        add_filter('pre_set_transient_update_plugins', [ $this, 'checkUpdate' ]);
+        // Merge existing response so per-site inject survives Network Admin rebuild (multisite).
+        add_filter('site_transient_update_plugins', [ $this, 'mergeUpdate' ]);
         add_filter('plugins_api', [ $this, 'pluginInfo' ], 10, 3);
         add_filter('upgrader_source_selection', [ $this, 'fixSource' ], 10, 4);
+    }
+
+    /**
+     * Merge our update into already-built transient (prevents Network Admin overwrite).
+     *
+     * @param mixed $value
+     * @return mixed
+     */
+    public function mergeUpdate($value)
+    {
+        if (! is_object($value)) {
+            return $value;
+        }
+
+        /** @phpstan-ignore property.notFound */
+        if (! isset($value->response) || ! is_array($value->response)) {
+            return $value;
+        }
+
+        $pluginBasename = plugin_basename($this->pluginFile);
+        /** @phpstan-ignore property.notFound */
+        if (isset($value->response[$pluginBasename])) {
+            return $value;
+        }
+
+        $release = $this->getReleaseInfo();
+        if ($release === null) {
+            return $value;
+        }
+
+        $remoteVersion = $release['version'];
+        $currentVersion = defined('EMJE_MOTION_VERSION') ? EMJE_MOTION_VERSION : '0.0.0';
+
+        if (version_compare($remoteVersion, $currentVersion, '>')) {
+            /** @phpstan-ignore property.notFound */
+            $value->response[$pluginBasename] = (object) [
+                'slug' => $this->slug,
+                'plugin' => $pluginBasename,
+                'new_version' => $remoteVersion,
+                'package' => $release['download_url'],
+                'url' => 'https://github.com/' . $this->repo,
+                'tested' => '6.8',
+                'requires' => '6.7',
+                'requires_php' => '8.2',
+            ];
+        }
+
+        return $value;
     }
 
     /**

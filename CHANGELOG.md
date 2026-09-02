@@ -3,6 +3,11 @@
 All notable changes to Emje Motion are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [1.0.6] - 2026-09-02
+
+### Fixed
+- **Updater** — register updater in all contexts (including wp-cron) and add site_transient_update_plugins merge so per-site Activate in multisite now shows update in both subsite and Network Admin. Add About note: Network Activate recommended.
+
 ## [1.0.5] - 2026-09-02
 
 ### Fixed

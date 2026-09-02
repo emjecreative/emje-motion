@@ -128,6 +128,16 @@ final class Plugin
     private function registerHooks(): void
     {
         add_action('plugins_loaded', [ $this, 'onPluginsLoaded' ]);
+        // Updater must run in all contexts (including wp-cron, not just is_admin) for multisite per-site activation.
+        $this->registerUpdater();
+    }
+
+    private function registerUpdater(): void
+    {
+        $updater = $this->container->get(GitHubUpdater::class); // @phpstan-ignore-line
+        if ($updater instanceof GitHubUpdater) {
+            $updater->register();
+        }
     }
 
     /**
@@ -171,11 +181,6 @@ final class Plugin
         $admin = $this->container->get(AdminManager::class); // @phpstan-ignore-line
         if ($admin instanceof AdminManager) {
             $admin->register();
-        }
-
-        $updater = $this->container->get(GitHubUpdater::class); // @phpstan-ignore-line
-        if ($updater instanceof GitHubUpdater) {
-            $updater->register();
         }
     }
 

@@ -66,5 +66,8 @@ $isNetwork = is_network_admin();
 			<input type="hidden" name="emje_motion_action" value="check_updates" />
 			<button type="submit" class="button emje-btn-primary"><?php echo esc_html__('Check for Updates', 'emje-motion'); ?></button>
 		</form>
+		<?php if (is_multisite()) : ?>
+			<p class="description" style="margin:8px 0 0 0;color:#667085;font-size:11px;"><?php echo esc_html__('On multisite, Network Activate is recommended. When activated per site, check for updates from that site’s dashboard.', 'emje-motion'); ?></p>
+		<?php endif; ?>
 	</div>
 </div>
