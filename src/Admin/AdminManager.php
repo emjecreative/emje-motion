@@ -41,7 +41,7 @@ final class AdminManager
             self::CAPABILITY,
             self::MENU_SLUG,
             [$this, 'renderOverview'],
-            'dashicons-controls-play',
+            'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjM5IiBoZWlnaHQ9IjI1MCIgdmlld0JveD0iMCAwIDIzOSAyNTAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxwYXRoIGQ9Ik0wIDBMNjIuNSAzMS4yNVYxODcuNUwwIDE1Ni4yNVYwWiIgZmlsbD0id2hpdGUiLz4KPHBhdGggZD0iTTg4LjE0MSAwTDE1MC42NDEgMzEuMjVWMTg3LjVMODguMTQxIDE1Ni4yNVYwWiIgZmlsbD0id2hpdGUiLz4KPHBhdGggZD0iTTE3Ni4yODIgMEwyMzguNzgyIDMxLjI1VjIxOC43NUwxNzYuMjgyIDI1MFYwWiIgZmlsbD0id2hpdGUiLz4KPC9zdmc+Cg==',
             58,
         );
 

@@ -3,6 +3,11 @@
 All notable changes to Emje Motion are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [1.0.9] - 2026-09-02
+
+### Changed
+- **Admin** — replace WP dashicons-controls-play menu icon with emje-motion-dashboard-logo.svg (assets/images/emje-motion-dashboard-logo.svg, data:image/svg+xml).
+
 ## [1.0.8] - 2026-09-02
 
 ### Added
