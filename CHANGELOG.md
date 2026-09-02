@@ -3,6 +3,11 @@
 All notable changes to Emje Motion are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [1.0.8] - 2026-09-02
+
+### Added
+- **Updater** — auto-install mu-plugin helper (`wp-content/mu-plugins/emje-motion-updater.php`) on Activate (multisite) so per-site Activate still shows update in Network Admin → Updates without forcing Network Activate. Auto-removed when deactivated everywhere.
+
 ## [1.0.7] - 2026-09-02
 
 ### Fixed

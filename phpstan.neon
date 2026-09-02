@@ -5,6 +5,9 @@ parameters:
         - src
         - emje-motion.php
 
+    excludePaths:
+        - src/Updater/stub
+
     bootstrapFiles:
         - vendor/autoload.php
         - vendor/php-stubs/wordpress-stubs/wordpress-stubs.php
@@ -19,11 +22,15 @@ parameters:
         - '#has no value type specified#'
         # Plugin constants defined in emje-motion.php bootstrap
         - '#Constant EMJE_MOTION#'
+        - '#Constant WPMU_PLUGIN_DIR#'
+        - '#Constant WP_CONTENT_DIR#'
+        - '#Constant WP_PLUGIN_DIR#'
         # SmoothScroll union type check
         - '#Cannot call method#'
         # Asset URL var tag (non-empty-string vs non-falsy-string)
         - '#PHPDoc tag @var#'
         # GitHubUpdater returns array shape - cached transient is mixed
         - '#should return array\{version: string#'
+        - '#alreadyNarrowedType#'
 
     tmpDir: .phpstan
