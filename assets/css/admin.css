@@ -9,7 +9,9 @@
   --emje-radius:12px;
   --emje-shadow:0 1px 3px rgba(16,24,40,.08),0 8px 24px rgba(18,39,226,.07);
 }
-.emje-motion-admin.wrap{max-width:1080px}
+.emje-motion-admin.wrap{max-width:1080px;margin:0 auto}
+body.toplevel_page_emje-motion #wpcontent, body.emje-motion_page_emje-motion-settings #wpcontent, body.emje-motion_page_emje-motion-about #wpcontent{padding-right:20px}
+.emje-motion-admin .emje-admin-header, .emje-motion-admin .emje-main, .emje-motion-admin .emje-hero, .emje-motion-admin .emje-links, .emje-motion-admin .emje-admin-summary{max-width:1080px;margin-left:auto;margin-right:auto}
 .emje-admin-header{
   background:#fff;
   color:var(--emje-text);
