@@ -3,6 +3,11 @@
 All notable changes to Emje Motion are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [1.0.7] - 2026-09-02
+
+### Fixed
+- **Admin** — hide Elementor nag banner (Want to shape the future) on Emje Motion pages only via CSS + JS (keeps our own notices); enqueue assets/js/admin.js.
+
 ## [1.0.6] - 2026-09-02
 
 ### Fixed

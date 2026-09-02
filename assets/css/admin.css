@@ -112,3 +112,24 @@
 .emje-links__icon{width:36px;height:36px;border-radius:8px;background:var(--emje-soft);display:flex;align-items:center;justify-content:center;color:var(--emje);flex-shrink:0}
 .emje-links__title{font-weight:600;font-size:13px}
 .emje-links__url{font-size:11px;color:var(--emje-muted)}
+/* Hide Elementor admin nags on Emje Motion pages only — keep our own settings_errors */
+body.toplevel_page_emje-motion .elementor-message,
+body.emje-motion_page_emje-motion-settings .elementor-message,
+body.emje-motion_page_emje-motion-about .elementor-message,
+body.toplevel_page_emje-motion .e-notice,
+body.emje-motion_page_emje-motion-settings .e-notice,
+body.emje-motion_page_emje-motion-about .e-notice,
+body.toplevel_page_emje-motion .notice.elementor-notice,
+body.emje-motion_page_emje-motion-settings .notice.elementor-notice,
+body.emje-motion_page_emje-motion-about .notice.elementor-notice,
+body.toplevel_page_emje-motion div[data-elementor-message],
+body.emje-motion_page_emje-motion-settings div[data-elementor-message],
+body.emje-motion_page_emje-motion-about div[data-elementor-message],
+body.toplevel_page_emje-motion .notice:has(.elementor-message),
+body.emje-motion_page_emje-motion-settings .notice:has(.elementor-message),
+body.emje-motion_page_emje-motion-about .notice:has(.elementor-message),
+body.toplevel_page_emje-motion .notice:has(.e-notice),
+body.emje-motion_page_emje-motion-settings .notice:has(.e-notice),
+body.emje-motion_page_emje-motion-about .notice:has(.e-notice){
+  display:none !important;
+}

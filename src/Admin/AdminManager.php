@@ -89,6 +89,13 @@ final class AdminManager
         $ver = file_exists($path) ? (string) filemtime($path) : EMJE_MOTION_VERSION;
 
         wp_enqueue_style('emje-motion-admin', $css, [], $ver);
+
+        $js = EMJE_MOTION_URL . 'assets/js/admin.js';
+        $jsPath = EMJE_MOTION_PATH . 'assets/js/admin.js';
+        $jsVer = file_exists($jsPath) ? (string) filemtime($jsPath) : EMJE_MOTION_VERSION;
+        if (file_exists($jsPath)) {
+            wp_enqueue_script('emje-motion-admin', $js, [], $jsVer, true);
+        }
     }
 
     /**
