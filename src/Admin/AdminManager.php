@@ -186,12 +186,26 @@ final class AdminManager
             wp_die(esc_html__('Insufficient permissions.', 'emje-motion'));
         }
 
+        $modules = $this->settings->getModules();
+        $isSmoothEnabled = ! empty($modules['smooth-scroll']);
+        $currentSettings = $this->settings->getSettings();
+        // Reset to default when disabled (Opsi A hide total)
+        if ($isSmoothEnabled) {
+            $lerp = isset($_POST['smooth_scroll_lerp']) ? (float) $_POST['smooth_scroll_lerp'] : 0.075;
+            $wheel = isset($_POST['smooth_scroll_wheel_multiplier']) ? (float) $_POST['smooth_scroll_wheel_multiplier'] : 1.2;
+            $disableSmooth = isset($_POST['disable_smooth_on_mobile']) && $_POST['disable_smooth_on_mobile'] === '1';
+        } else {
+            $lerp = 0.075;
+            $wheel = 1.2;
+            $disableSmooth = $currentSettings['disable_smooth_on_mobile'] ?? true;
+        }
+
         $settings = [
             'respect_reduced_motion' => isset($_POST['respect_reduced_motion']) && $_POST['respect_reduced_motion'] === '1',
-            'disable_on_mobile' => isset($_POST['disable_on_mobile']) && $_POST['disable_on_mobile'] === '1',
-            'debug_mode' => isset($_POST['debug_mode']) && $_POST['debug_mode'] === '1',
-            'smooth_scroll_lerp' => isset($_POST['smooth_scroll_lerp']) ? (float) $_POST['smooth_scroll_lerp'] : 0.055,
-            'smooth_scroll_wheel_multiplier' => isset($_POST['smooth_scroll_wheel_multiplier']) ? (float) $_POST['smooth_scroll_wheel_multiplier'] : 1.0,
+            'disable_interaction_on_mobile' => isset($_POST['disable_interaction_on_mobile']) && $_POST['disable_interaction_on_mobile'] === '1',
+            'disable_smooth_on_mobile' => $disableSmooth,
+            'smooth_scroll_lerp' => $lerp,
+            'smooth_scroll_wheel_multiplier' => $wheel,
         ];
 
         $this->settings->saveSettings($settings);
@@ -283,6 +297,7 @@ final class AdminManager
         }
 
         $settings = $this->settings->getSettings();
+        $modules = $this->settings->getModules();
 
         include EMJE_MOTION_PATH . 'src/Admin/Views/settings.php';
     }
@@ -294,6 +309,17 @@ final class AdminManager
         }
 
         $version = defined('EMJE_MOTION_VERSION') ? EMJE_MOTION_VERSION : '1.0.0';
+        $wpVersion = get_bloginfo('version');
+        $phpVersion = PHP_VERSION;
+        $elementorVersion = defined('ELEMENTOR_VERSION') ? (string) ELEMENTOR_VERSION : '';
+
+        if ($elementorVersion === '' && function_exists('get_plugin_data')) {
+            $elementorFile = WP_PLUGIN_DIR . '/elementor/elementor.php';
+            if (file_exists($elementorFile)) {
+                $data = get_plugin_data($elementorFile, false, false);
+                $elementorVersion = $data['Version'];
+            }
+        }
 
         include EMJE_MOTION_PATH . 'src/Admin/Views/about.php';
     }

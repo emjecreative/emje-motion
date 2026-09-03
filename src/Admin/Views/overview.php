@@ -33,7 +33,7 @@ $version = defined('EMJE_MOTION_VERSION') ? EMJE_MOTION_VERSION : '1.0.2';
 		<nav class="emje-admin-header__nav" aria-label="<?php echo esc_attr__('Primary', 'emje-motion'); ?>">
 			<a class="is-active" aria-current="page" href="<?php echo esc_url(admin_url('admin.php?page=emje-motion')); ?>"><i class="ph-duotone ph-squares-four" aria-hidden="true"></i> <?php echo esc_html__('Overview', 'emje-motion'); ?></a>
 			<a href="<?php echo esc_url(admin_url('admin.php?page=emje-motion-settings')); ?>"><i class="ph-duotone ph-gear" aria-hidden="true"></i> <?php echo esc_html__('Settings', 'emje-motion'); ?></a>
-			<a href="<?php echo esc_url(admin_url('admin.php?page=emje-motion-about')); ?>"><i class="ph-duotone ph-info" aria-hidden="true"></i> <?php echo esc_html__('About', 'emje-motion'); ?></a>
+			<a href="<?php echo esc_url(admin_url('admin.php?page=emje-motion-about')); ?>"><i class="ph-duotone ph-article" aria-hidden="true"></i> <?php echo esc_html__('About', 'emje-motion'); ?></a>
 		</nav>
 		<button type="button" class="emje-admin-header__toggle" aria-expanded="false" aria-controls="emjeAdminDropdown" aria-label="<?php echo esc_attr__('Toggle navigation', 'emje-motion'); ?>">
 			<i class="ph-duotone ph-list" aria-hidden="true"></i>
@@ -41,7 +41,7 @@ $version = defined('EMJE_MOTION_VERSION') ? EMJE_MOTION_VERSION : '1.0.2';
 		<nav class="emje-admin-header__dropdown" id="emjeAdminDropdown" aria-label="<?php echo esc_attr__('Mobile navigation', 'emje-motion'); ?>">
 			<a class="is-active" aria-current="page" href="<?php echo esc_url(admin_url('admin.php?page=emje-motion')); ?>"><i class="ph-duotone ph-squares-four" aria-hidden="true"></i> <?php echo esc_html__('Overview', 'emje-motion'); ?></a>
 			<a href="<?php echo esc_url(admin_url('admin.php?page=emje-motion-settings')); ?>"><i class="ph-duotone ph-gear" aria-hidden="true"></i> <?php echo esc_html__('Settings', 'emje-motion'); ?></a>
-			<a href="<?php echo esc_url(admin_url('admin.php?page=emje-motion-about')); ?>"><i class="ph-duotone ph-info" aria-hidden="true"></i> <?php echo esc_html__('About', 'emje-motion'); ?></a>
+			<a href="<?php echo esc_url(admin_url('admin.php?page=emje-motion-about')); ?>"><i class="ph-duotone ph-article" aria-hidden="true"></i> <?php echo esc_html__('About', 'emje-motion'); ?></a>
 		</nav>
 	</div>
 </header>
