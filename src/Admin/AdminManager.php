@@ -86,6 +86,12 @@ final class AdminManager
             return;
         }
 
+        // Phosphor Icons — Duotone (Opsi A)
+        wp_enqueue_style('phosphor-icons-duotone', 'https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/duotone/style.css', [], '2.1.1');
+
+        // Geist — Google Fonts (hanya dashboard Emje Motion, CDN)
+        wp_enqueue_style('geist-font', 'https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&display=swap', [], null);
+
         $css = EMJE_MOTION_URL . 'assets/css/admin.css';
         $path = EMJE_MOTION_PATH . 'assets/css/admin.css';
         $ver = file_exists($path) ? (string) filemtime($path) : EMJE_MOTION_VERSION;
@@ -163,7 +169,7 @@ final class AdminManager
         add_settings_error(
             'emje_motion_modules',
             'emje_motion_modules_saved',
-            esc_html__('Modules updated.', 'emje-motion'),
+            esc_html__('Features saved.', 'emje-motion'),
             'updated',
         );
 
@@ -240,7 +246,7 @@ final class AdminManager
                 'emje_motion_update_available',
                 sprintf(
                     /* translators: %s: updates page URL */
-                    esc_html__('Update available. Go to %s to update.', 'emje-motion'),
+                    esc_html__('Update available — open %s.', 'emje-motion'),
                     '<a href="' . esc_url($updatesUrl) . '">' . esc_html__('Updates', 'emje-motion') . '</a>',
                 ),
                 'updated',
@@ -304,19 +310,19 @@ final class AdminManager
                 'label' => esc_html__('Text Motion', 'emje-motion'),
                 'description' => esc_html__('Scramble, Unfold & Fill Reveal for Heading & Text Editor. Live preview in editor.', 'emje-motion'),
                 'status' => esc_html__('Available', 'emje-motion'),
-                'icon' => 'editor-textcolor',
+                'icon' => 'text-t',
             ],
             'smooth-scroll' => [
                 'label' => esc_html__('Smooth Scroll', 'emje-motion'),
                 'description' => esc_html__('Buttery smooth scrolling — site-wide, zero-jank, native feel. Global module.', 'emje-motion'),
                 'status' => esc_html__('Available', 'emje-motion'),
-                'icon' => 'performance',
+                'icon' => 'mouse-simple',
             ],
             'interaction-motion' => [
                 'label' => esc_html__('Interaction Motion', 'emje-motion'),
                 'description' => esc_html__('Hover Reveal & Interactive Cursor for Container — one effect per Container.', 'emje-motion'),
                 'status' => esc_html__('Available', 'emje-motion'),
-                'icon' => 'art',
+                'icon' => 'cursor-click',
             ],
         ];
     }

@@ -14,19 +14,28 @@ settings_errors('emje_motion_settings');
 
 $version = defined('EMJE_MOTION_VERSION') ? EMJE_MOTION_VERSION : '1.0.11';
 ?>
-<div class="wrap emje-motion-admin">
-	<div class="emje-admin-header">
-		<img class="emje-admin-header__logo" src="<?php echo esc_url(EMJE_MOTION_URL . 'assets/images/emje-motion-logo.svg'); ?>" alt="" />
-		<div>
-			<div class="emje-admin-header__title">Emje Motion <span>v<?php echo esc_html($version); ?></span></div>
-			<div class="emje-admin-header__subtitle"><?php echo esc_html__('Motion that feels native to Elementor', 'emje-motion'); ?></div>
-		</div>
-		<div class="emje-admin-header__nav">
-			<a href="<?php echo esc_url(admin_url('admin.php?page=emje-motion')); ?>"><?php echo esc_html__('Overview', 'emje-motion'); ?></a>
-			<a class="is-active" href="<?php echo esc_url(admin_url('admin.php?page=emje-motion-settings')); ?>"><?php echo esc_html__('Settings', 'emje-motion'); ?></a>
-			<a href="<?php echo esc_url(admin_url('admin.php?page=emje-motion-about')); ?>"><?php echo esc_html__('About', 'emje-motion'); ?></a>
-		</div>
+<header class="emje-admin-header" id="emjeAdminHeader">
+	<div class="emje-admin-header__inner">
+		<a class="emje-admin-header__brand" href="<?php echo esc_url(admin_url('admin.php?page=emje-motion')); ?>" aria-label="<?php echo esc_attr__('Emje Motion Overview', 'emje-motion'); ?>">
+			<img class="emje-admin-header__logo" src="<?php echo esc_url(EMJE_MOTION_URL . 'assets/images/emje-motion-dashboard-logo-blue.svg'); ?>" alt="Emje Motion" />
+			<span class="emje-admin-header__title">Emje Motion</span>
+		</a>
+		<nav class="emje-admin-header__nav" aria-label="<?php echo esc_attr__('Primary', 'emje-motion'); ?>">
+			<a href="<?php echo esc_url(admin_url('admin.php?page=emje-motion')); ?>"><i class="ph-duotone ph-squares-four" aria-hidden="true"></i> <?php echo esc_html__('Overview', 'emje-motion'); ?></a>
+			<a class="is-active" aria-current="page" href="<?php echo esc_url(admin_url('admin.php?page=emje-motion-settings')); ?>"><i class="ph-duotone ph-gear" aria-hidden="true"></i> <?php echo esc_html__('Settings', 'emje-motion'); ?></a>
+			<a href="<?php echo esc_url(admin_url('admin.php?page=emje-motion-about')); ?>"><i class="ph-duotone ph-info" aria-hidden="true"></i> <?php echo esc_html__('About', 'emje-motion'); ?></a>
+		</nav>
+		<button type="button" class="emje-admin-header__toggle" aria-expanded="false" aria-controls="emjeAdminDropdown" aria-label="<?php echo esc_attr__('Toggle navigation', 'emje-motion'); ?>">
+			<i class="ph-duotone ph-list" aria-hidden="true"></i>
+		</button>
+		<nav class="emje-admin-header__dropdown" id="emjeAdminDropdown" aria-label="<?php echo esc_attr__('Mobile navigation', 'emje-motion'); ?>">
+			<a href="<?php echo esc_url(admin_url('admin.php?page=emje-motion')); ?>"><i class="ph-duotone ph-squares-four" aria-hidden="true"></i> <?php echo esc_html__('Overview', 'emje-motion'); ?></a>
+			<a class="is-active" aria-current="page" href="<?php echo esc_url(admin_url('admin.php?page=emje-motion-settings')); ?>"><i class="ph-duotone ph-gear" aria-hidden="true"></i> <?php echo esc_html__('Settings', 'emje-motion'); ?></a>
+			<a href="<?php echo esc_url(admin_url('admin.php?page=emje-motion-about')); ?>"><i class="ph-duotone ph-info" aria-hidden="true"></i> <?php echo esc_html__('About', 'emje-motion'); ?></a>
+		</nav>
 	</div>
+</header>
+<div class="wrap emje-motion-admin">
 
 	<form method="post" action="">
 		<?php wp_nonce_field('emje_motion_save_settings'); ?>
@@ -34,7 +43,7 @@ $version = defined('EMJE_MOTION_VERSION') ? EMJE_MOTION_VERSION : '1.0.11';
 
 		<div class="emje-main">
 			<div class="emje-main__header">
-				<div class="emje-main__title"><span class="dashicons dashicons-admin-generic"></span> <?php echo esc_html__('Settings', 'emje-motion'); ?></div>
+				<div class="emje-main__title"><i class="ph-duotone ph-gear"></i> <?php echo esc_html__('Settings', 'emje-motion'); ?></div>
 				<button type="submit" class="button emje-btn-primary"><?php echo esc_html__('Save Settings', 'emje-motion'); ?></button>
 			</div>
 			<div class="emje-main__content">
@@ -108,7 +117,7 @@ $version = defined('EMJE_MOTION_VERSION') ? EMJE_MOTION_VERSION : '1.0.11';
 
 				<div class="emje-card" style="background:#F8FAFF;border-color:#DCE4FF;margin-top:16px;">
 					<div style="display:flex;gap:10px;align-items:center;">
-						<span class="dashicons dashicons-info" style="color:#1227E2;"></span>
+						<i class="ph-duotone ph-info" style="color:#1227E2;"></i>
 						<div>
 							<div style="font-weight:600;color:#111827;font-size:13px;"><?php echo esc_html__('Performance', 'emje-motion'); ?></div>
 							<p class="description" style="margin:2px 0 0 0;color:#667085;font-size:12px;">

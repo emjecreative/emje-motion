@@ -14,23 +14,32 @@ settings_errors('emje_motion_check_updates');
 
 $isNetwork = is_network_admin();
 ?>
-<div class="wrap emje-motion-admin">
-	<div class="emje-admin-header">
-		<img class="emje-admin-header__logo" src="<?php echo esc_url(EMJE_MOTION_URL . 'assets/images/emje-motion-logo.svg'); ?>" alt="" />
-		<div>
-			<div class="emje-admin-header__title">Emje Motion <span>v<?php echo esc_html($version); ?></span></div>
-			<div class="emje-admin-header__subtitle"><?php echo esc_html__('Motion that feels native to Elementor', 'emje-motion'); ?></div>
-		</div>
-		<div class="emje-admin-header__nav">
-			<a href="<?php echo esc_url(admin_url('admin.php?page=emje-motion')); ?>"><?php echo esc_html__('Overview', 'emje-motion'); ?></a>
-			<a href="<?php echo esc_url(admin_url('admin.php?page=emje-motion-settings')); ?>"><?php echo esc_html__('Settings', 'emje-motion'); ?></a>
-			<a class="is-active" href="<?php echo esc_url(admin_url('admin.php?page=emje-motion-about')); ?>"><?php echo esc_html__('About', 'emje-motion'); ?></a>
-		</div>
+<header class="emje-admin-header" id="emjeAdminHeader">
+	<div class="emje-admin-header__inner">
+		<a class="emje-admin-header__brand" href="<?php echo esc_url(admin_url('admin.php?page=emje-motion')); ?>" aria-label="<?php echo esc_attr__('Emje Motion Overview', 'emje-motion'); ?>">
+			<img class="emje-admin-header__logo" src="<?php echo esc_url(EMJE_MOTION_URL . 'assets/images/emje-motion-dashboard-logo-blue.svg'); ?>" alt="Emje Motion" />
+			<span class="emje-admin-header__title">Emje Motion</span>
+		</a>
+		<nav class="emje-admin-header__nav" aria-label="<?php echo esc_attr__('Primary', 'emje-motion'); ?>">
+			<a href="<?php echo esc_url(admin_url('admin.php?page=emje-motion')); ?>"><i class="ph-duotone ph-squares-four" aria-hidden="true"></i> <?php echo esc_html__('Overview', 'emje-motion'); ?></a>
+			<a href="<?php echo esc_url(admin_url('admin.php?page=emje-motion-settings')); ?>"><i class="ph-duotone ph-gear" aria-hidden="true"></i> <?php echo esc_html__('Settings', 'emje-motion'); ?></a>
+			<a class="is-active" aria-current="page" href="<?php echo esc_url(admin_url('admin.php?page=emje-motion-about')); ?>"><i class="ph-duotone ph-info" aria-hidden="true"></i> <?php echo esc_html__('About', 'emje-motion'); ?></a>
+		</nav>
+		<button type="button" class="emje-admin-header__toggle" aria-expanded="false" aria-controls="emjeAdminDropdown" aria-label="<?php echo esc_attr__('Toggle navigation', 'emje-motion'); ?>">
+			<i class="ph-duotone ph-list" aria-hidden="true"></i>
+		</button>
+		<nav class="emje-admin-header__dropdown" id="emjeAdminDropdown" aria-label="<?php echo esc_attr__('Mobile navigation', 'emje-motion'); ?>">
+			<a href="<?php echo esc_url(admin_url('admin.php?page=emje-motion')); ?>"><i class="ph-duotone ph-squares-four" aria-hidden="true"></i> <?php echo esc_html__('Overview', 'emje-motion'); ?></a>
+			<a href="<?php echo esc_url(admin_url('admin.php?page=emje-motion-settings')); ?>"><i class="ph-duotone ph-gear" aria-hidden="true"></i> <?php echo esc_html__('Settings', 'emje-motion'); ?></a>
+			<a class="is-active" aria-current="page" href="<?php echo esc_url(admin_url('admin.php?page=emje-motion-about')); ?>"><i class="ph-duotone ph-info" aria-hidden="true"></i> <?php echo esc_html__('About', 'emje-motion'); ?></a>
+		</nav>
 	</div>
+</header>
+<div class="wrap emje-motion-admin">
 
 	<div class="emje-main">
 		<div class="emje-main__header">
-			<div class="emje-main__title"><span class="dashicons dashicons-info" style="color:#1227E2;"></span> <?php echo esc_html__('About', 'emje-motion'); ?></div>
+			<div class="emje-main__title"><i class="ph-duotone ph-info" style="color:#1227E2;"></i> <?php echo esc_html__('About', 'emje-motion'); ?></div>
 			<span style="font-size:11px;font-weight:600;background:#F2F4FF;border:1px solid #DCE4FF;color:#1227E2;padding:2px 8px;border-radius:999px;">v<?php echo esc_html($version); ?></span>
 		</div>
 		<div class="emje-main__content">
@@ -42,24 +51,24 @@ $isNetwork = is_network_admin();
 			</div>
 			<div class="emje-links">
 		<a href="https://emjecreative.com" target="_blank" rel="noopener noreferrer">
-			<span class="emje-links__icon"><span class="dashicons dashicons-admin-site-alt3"></span></span>
+			<span class="emje-links__icon"><i class="ph-duotone ph-globe"></i></span>
 			<span><span class="emje-links__title"><?php echo esc_html__('Website', 'emje-motion'); ?></span><br><span class="emje-links__url">emjecreative.com</span></span>
-			<span class="dashicons dashicons-arrow-right-alt2" style="margin-left:auto;color:#667085;"></span>
+			<i class="ph-duotone ph-caret-right" style="margin-left:auto;color:#667085;"></i>
 		</a>
 		<a href="https://github.com/emjecreative/emje-motion" target="_blank" rel="noopener noreferrer">
-			<span class="emje-links__icon"><span class="dashicons dashicons-media-document"></span></span>
+			<span class="emje-links__icon"><i class="ph-duotone ph-book-open"></i></span>
 			<span><span class="emje-links__title"><?php echo esc_html__('Documentation', 'emje-motion'); ?></span><br><span class="emje-links__url">GitHub README</span></span>
-			<span class="dashicons dashicons-arrow-right-alt2" style="margin-left:auto;color:#667085;"></span>
+			<i class="ph-duotone ph-caret-right" style="margin-left:auto;color:#667085;"></i>
 		</a>
 		<a href="https://github.com/emjecreative/emje-motion/issues" target="_blank" rel="noopener noreferrer">
-			<span class="emje-links__icon"><span class="dashicons dashicons-sos"></span></span>
+			<span class="emje-links__icon"><i class="ph-duotone ph-lifebuoy"></i></span>
 			<span><span class="emje-links__title"><?php echo esc_html__('Support', 'emje-motion'); ?></span><br><span class="emje-links__url">GitHub Issues</span></span>
-			<span class="dashicons dashicons-arrow-right-alt2" style="margin-left:auto;color:#667085;"></span>
+			<i class="ph-duotone ph-caret-right" style="margin-left:auto;color:#667085;"></i>
 		</a>
 		<a href="https://github.com/emjecreative/emje-motion#readme" target="_blank" rel="noopener noreferrer">
-			<span class="emje-links__icon"><span class="dashicons dashicons-update"></span></span>
+			<span class="emje-links__icon"><i class="ph-duotone ph-clock-counter-clockwise"></i></span>
 			<span><span class="emje-links__title"><?php echo esc_html__('Changelog', 'emje-motion'); ?></span><br><span class="emje-links__url">WHAT'S NEW</span></span>
-			<span class="dashicons dashicons-arrow-right-alt2" style="margin-left:auto;color:#667085;"></span>
+			<i class="ph-duotone ph-caret-right" style="margin-left:auto;color:#667085;"></i>
 		</a>
 			</div>
 			<div style="margin-top:16px;padding-top:16px;border-top:1px solid #E5E7EB;">
