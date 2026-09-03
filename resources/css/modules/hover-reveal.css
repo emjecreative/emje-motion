@@ -35,22 +35,13 @@
     clip-path: inset(0 0 0 0);
 }
 
-@media (hover: none), (pointer: coarse) {
-    .emje-hover-reveal__image {
-        display: none !important;
-    }
-}
-
-/* Mobile fallback: show image statically below container */
-@media (hover: none) {
-    .emje-hover-reveal--mobile-fallback .emje-hover-reveal__fallback {
-        display: block !important;
-        margin-top: 12px;
-    }
-}
-
 .emje-hover-reveal__fallback {
     display: none;
+}
+
+.emje-hover-reveal--mobile-fallback .emje-hover-reveal__fallback {
+    display: block;
+    margin-top: 12px;
 }
 
 .emje-hover-reveal__fallback img {

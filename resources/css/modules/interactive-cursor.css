@@ -141,18 +141,4 @@
     /* size & color set inline per dot via --emje-trail-size & background */
 }
 
-@media (hover: none), (pointer: coarse) {
-    .emje-cursor {
-        display: none !important;
-    }
-
-    .emje-cursor__trail-dot {
-        display: none !important;
-    }
-
-    .emje-interactive-cursor--hide-native,
-    .emje-interactive-cursor--hide-native a,
-    .emje-interactive-cursor--hide-native button {
-        cursor: auto !important;
-    }
-}
+/* Mobile visibility now controlled by JS config.disableOnMobile — no hard CSS hide */

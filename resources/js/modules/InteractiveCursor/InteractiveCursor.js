@@ -34,6 +34,7 @@ export default class InteractiveCursor {
             trailTailColor: config.trailTailColor ?? '#FF4D5A',
             trailLag: config.trailLag ?? 0.35,
             trailFade: config.trailFade ?? true,
+            disableOnMobile: config.disableOnMobile ?? true,
         };
         // migrate legacy dot/ring
         if (this.config.type === 'dot' || this.config.type === 'ring') {
@@ -92,8 +93,9 @@ export default class InteractiveCursor {
             if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
                 return false;
             }
-            if (window.matchMedia('(hover: none)').matches
-                || window.matchMedia('(pointer: coarse)').matches) {
+            const disableOnMobile = this.config.disableOnMobile ?? true;
+            if (disableOnMobile && (window.matchMedia('(hover: none)').matches
+                || window.matchMedia('(pointer: coarse)').matches)) {
                 return false;
             }
         }

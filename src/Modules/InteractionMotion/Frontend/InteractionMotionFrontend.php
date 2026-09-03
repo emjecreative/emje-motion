@@ -15,11 +15,13 @@ final class InteractionMotionFrontend
 {
     private ColorResolver $colorResolver;
     private SliderResolver $sliderResolver;
+    private \EmjeCreative\EmjeMotion\Admin\SettingsRepository $settings;
 
-    public function __construct()
+    public function __construct(?\EmjeCreative\EmjeMotion\Admin\SettingsRepository $settings = null)
     {
         $this->colorResolver = new ColorResolver();
         $this->sliderResolver = new SliderResolver();
+        $this->settings = $settings ?? new \EmjeCreative\EmjeMotion\Admin\SettingsRepository();
     }
 
     /**
@@ -63,10 +65,7 @@ final class InteractionMotionFrontend
                     }
                 }
             }
-        } catch (\Throwable $e) {
-            if (defined('WP_DEBUG') && WP_DEBUG) {
-                error_log('[Emje Motion] InteractionMotionFrontend beforeRender globals merge failed: ' . $e->getMessage());
-            }
+        } catch (\Throwable $e) { // phpcs:ignore Generic.CodeAnalysis.EmptyStatement.DetectedCatch -- logs removed, recreate locally if needed
         }
 
         // New unified controls
@@ -160,6 +159,8 @@ final class InteractionMotionFrontend
                 $imageSize = 'medium';
             }
 
+            $globalSettings = $this->settings->getSettings();
+
             return [
                 'imageUrl' => esc_url_raw($imageUrl),
                 'imageSize' => $imageSize,
@@ -172,6 +173,7 @@ final class InteractionMotionFrontend
                 'offsetY' => $offsetY,
                 'rotate' => $rotate,
                 'rotateHover' => $rotateHover,
+                'disableOnMobile' => ! empty($globalSettings['disable_interaction_on_mobile']),
             ];
         }
 
@@ -210,6 +212,8 @@ final class InteractionMotionFrontend
             $imageSize = 'medium';
         }
 
+        $globalSettingsLegacy = $this->settings->getSettings();
+
         return [
             'imageUrl' => esc_url_raw($imageUrl),
             'imageSize' => $imageSize,
@@ -222,6 +226,7 @@ final class InteractionMotionFrontend
             'offsetY' => 0,
             'rotate' => 0,
             'rotateHover' => 15,
+            'disableOnMobile' => ! empty($globalSettingsLegacy['disable_interaction_on_mobile']),
         ];
     }
 
@@ -361,6 +366,8 @@ final class InteractionMotionFrontend
             $followSmoothness = max(0.05, min(0.6, $followSmoothness));
             $boxShadow = $this->resolveBoxShadow($settings, 'emje_interaction_cursor_box_shadow', '0px 8px 32px 0px rgba(0, 0, 0, 0.12)');
 
+            $globalSettingsCursor = $this->settings->getSettings();
+
             return [
                 'type' => $type,
                 'size' => $size,
@@ -390,6 +397,7 @@ final class InteractionMotionFrontend
                 'shadow' => $boxShadow !== 'none',
                 'shadowBlur' => 32,
                 'livePreview' => $livePreview,
+                'disableOnMobile' => ! empty($globalSettingsCursor['disable_interaction_on_mobile']),
             ];
         }
 
@@ -420,6 +428,8 @@ final class InteractionMotionFrontend
             $type = 'text-follow';
         }
         $hoverScale = max(1.2, min(2.0, $hoverScale));
+
+        $globalSettingsLegacyCursor = $this->settings->getSettings();
 
         return [
             'type' => $type,
@@ -458,6 +468,7 @@ final class InteractionMotionFrontend
             'trailLag' => 0.35,
             'trailFade' => true,
             'livePreview' => $livePreview,
+            'disableOnMobile' => ! empty($globalSettingsLegacyCursor['disable_interaction_on_mobile']),
         ];
     }
 

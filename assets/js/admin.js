@@ -38,17 +38,33 @@
       btn.setAttribute('aria-disabled', dirty ? 'false' : 'true');
       btn.title = dirty ? '' : 'No changes to save';
     }
-    // progressive enhancement: disable by default
-    btn.disabled = true;
-    btn.setAttribute('aria-disabled','true');
-    btn.title = 'No changes to save';
     Array.prototype.forEach.call(checks, function(c){ c.addEventListener('change', update); });
-    // also watch via Mutation? simple polling for safety
+    update();
+  }
+  function initSettingsDirty(){
+    var btn = document.getElementById('emjeSaveSettingsBtn');
+    var form = btn ? btn.closest('form') : null;
+    if(!btn || !form) return;
+    var checks = form.querySelectorAll('input[type="checkbox"]');
+    var ranges = form.querySelectorAll('input[type="range"]');
+    if(!checks.length && !ranges.length) return;
+    var initialChecks = Array.prototype.map.call(checks, function(c){ return c.checked; });
+    var initialRanges = Array.prototype.map.call(ranges, function(r){ return r.value; });
+    function update(){
+      var dirtyChecks = Array.prototype.some.call(checks, function(c,i){ return c.checked !== initialChecks[i]; });
+      var dirtyRanges = Array.prototype.some.call(ranges, function(r,i){ return r.value !== initialRanges[i]; });
+      var dirty = dirtyChecks || dirtyRanges;
+      btn.disabled = !dirty;
+      btn.setAttribute('aria-disabled', dirty ? 'false' : 'true');
+      btn.title = dirty ? '' : 'No changes to save';
+    }
+    Array.prototype.forEach.call(checks, function(c){ c.addEventListener('change', update); });
+    Array.prototype.forEach.call(ranges, function(r){ r.addEventListener('input', update); r.addEventListener('change', update); });
     update();
   }
   if(document.readyState === 'loading'){
-    document.addEventListener('DOMContentLoaded', function(){ initHeader(); initOverviewDirty(); });
-  } else { initHeader(); initOverviewDirty(); }
+    document.addEventListener('DOMContentLoaded', function(){ initHeader(); initOverviewDirty(); initSettingsDirty(); });
+  } else { initHeader(); initOverviewDirty(); initSettingsDirty(); }
 
   function initToasts(){
     var notices = document.querySelectorAll('body.toplevel_page_emje-motion .notice.is-dismissible, body.emje-motion_page_emje-motion-settings .notice.is-dismissible, body.emje-motion_page_emje-motion-about .notice.is-dismissible, body.toplevel_page_emje-motion .notice.notice-success, body.emje-motion_page_emje-motion-settings .notice.notice-success, body.emje-motion_page_emje-motion-about .notice.notice-success');

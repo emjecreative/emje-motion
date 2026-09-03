@@ -7,6 +7,8 @@ export default class HoverReveal {
     constructor(container, config) {
         this.container = container;
         this.config = config;
+        // default true for backward compat (legacy configs without key)
+        if (this.config.disableOnMobile === undefined) this.config.disableOnMobile = true;
         this.imageEl = null;
         this.fallbackEl = null;
         this.xTo = null;
@@ -36,8 +38,8 @@ export default class HoverReveal {
             if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
                 return false;
             }
-            if (window.matchMedia('(hover: none)').matches
-                || window.matchMedia('(pointer: coarse)').matches) {
+            if (this.config.disableOnMobile && (window.matchMedia('(hover: none)').matches
+                || window.matchMedia('(pointer: coarse)').matches)) {
                 return false;
             }
         }

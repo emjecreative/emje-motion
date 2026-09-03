@@ -50,10 +50,10 @@ final class SettingsRepository
      */
     private const DEFAULT_SETTINGS = [
         'respect_reduced_motion' => true,
-        'disable_on_mobile' => true,
-        'debug_mode' => false,
-        'smooth_scroll_lerp' => 0.055,
-        'smooth_scroll_wheel_multiplier' => 1.0,
+        'disable_interaction_on_mobile' => true,
+        'disable_smooth_on_mobile' => true,
+        'smooth_scroll_lerp' => 0.075,
+        'smooth_scroll_wheel_multiplier' => 1.2,
     ];
 
     /**
@@ -125,6 +125,14 @@ final class SettingsRepository
             $stored = [];
         }
 
+        // Legacy fallback: single disable_on_mobile → split into two
+        if (! array_key_exists('disable_interaction_on_mobile', $stored) && array_key_exists('disable_on_mobile', $stored)) {
+            $stored['disable_interaction_on_mobile'] = (bool) $stored['disable_on_mobile'];
+        }
+        if (! array_key_exists('disable_smooth_on_mobile', $stored) && array_key_exists('disable_on_mobile', $stored)) {
+            $stored['disable_smooth_on_mobile'] = (bool) $stored['disable_on_mobile'];
+        }
+
         return array_merge(self::DEFAULT_SETTINGS, $stored);
     }
 
@@ -145,8 +153,8 @@ final class SettingsRepository
 
         $sanitized = [
             'respect_reduced_motion' => isset($settings['respect_reduced_motion']) ? (bool) $settings['respect_reduced_motion'] : $current['respect_reduced_motion'],
-            'disable_on_mobile' => isset($settings['disable_on_mobile']) ? (bool) $settings['disable_on_mobile'] : $current['disable_on_mobile'],
-            'debug_mode' => isset($settings['debug_mode']) ? (bool) $settings['debug_mode'] : $current['debug_mode'],
+            'disable_interaction_on_mobile' => isset($settings['disable_interaction_on_mobile']) ? (bool) $settings['disable_interaction_on_mobile'] : $current['disable_interaction_on_mobile'],
+            'disable_smooth_on_mobile' => isset($settings['disable_smooth_on_mobile']) ? (bool) $settings['disable_smooth_on_mobile'] : $current['disable_smooth_on_mobile'],
             'smooth_scroll_lerp' => $lerp,
             'smooth_scroll_wheel_multiplier' => $wheel,
         ];

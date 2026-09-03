@@ -65,16 +65,7 @@ final class ModuleLoader
 
             try {
                 $module->register();
-            } catch (\Throwable $e) {
-                if (defined('WP_DEBUG') && WP_DEBUG) {
-                    error_log(
-                        sprintf(
-                            '[Emje Motion] Failed to register module %s: %s',
-                            $module::class,
-                            $e->getMessage(),
-                        ),
-                    );
-                }
+            } catch (\Throwable $e) { // phpcs:ignore Generic.CodeAnalysis.EmptyStatement.DetectedCatch -- logs removed, recreate locally if needed
             }
         }
     }
