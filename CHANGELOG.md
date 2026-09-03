@@ -3,6 +3,15 @@
 All notable changes to Emje Motion are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [1.0.14] - 2026-09-03
+
+### Changed
+- **About** — Opsi B polish: hero card (20px title, 1-line desc), About card links-only 4-across, System Status with live WP/PHP/Elementor versions, Updates header with right-aligned button, icon ph-info → ph-article, copy Read Guide/Get Help (no GitHub mention)
+- **Settings** — split disable_on_mobile into disable_interaction_on_mobile + disable_smooth_on_mobile (legacy fallback), Smooth Scroll defaults lerp 0.075 / wheel 1.2, JS-driven mobile guard (drop hard CSS hide)
+
+### Fixed
+- **Security** — allow-list characterSet/revealOrder/ease in TextMotionFrontend, gate mu-plugin install behind activate_plugins, GitHub updater package host allow-list (https + github.com/objects/codeload/api)
+
 ## [1.0.13] - 2026-09-03
 
 ### Changed
