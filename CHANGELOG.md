@@ -3,6 +3,18 @@
 All notable changes to Emje Motion are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [1.0.13] - 2026-09-03
+
+### Changed
+- **Admin** — header system: sticky blur full-width (inner 1080) + hamburger Duotone, Geist font (400/500/600), logo blue 3-pilar, 16px inner padding, no subtitle/divider
+- **Overview** — Features/Save Changes + A+D hybrid status (No features active / All active / 2 of 3 active), icon circle 42px, divider, badge left, no Enable module text/dot
+- **Overview** — card hover 1px blue, main 16px radius, SaveChanges dirty check (disabled by PHP + noscript, enabled .92), toast center top green 8px .32s spring 3s wrapper fix
+
+### Added
+- **Icons** — migrate Dashicons → Phosphor Duotone (text-t / mouse-simple / cursor-click, squares-four / gear / info), dashboard-logo-blue.svg variant
+- **Font** — Geist via Google Fonts CDN (dashboard only)
+- **Toast** — fixed center top hijau WP familiar, auto 3s, X duotone centered, negative margin fix, translate3d spring
+
 ## [1.0.12] - 2026-09-02
 
 ### Changed
