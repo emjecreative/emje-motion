@@ -149,6 +149,17 @@ final class TextMotionFrontend
         }
 
         $ease = $settings['emje_motion_ease'] ?? 'power2.out';
+        if (! in_array($ease, [
+            'none',
+            'power1.out',
+            'power2.out',
+            'power3.out',
+            'power4.out',
+            'back.out(1.7)',
+            'elastic.out(1, 0.3)',
+        ], true)) {
+            $ease = 'power2.out';
+        }
 
         // Play Once only relevant for viewport; others always replay
         $rawPlayOnce = $settings['emje_motion_play_once'] ?? null;
@@ -158,15 +169,24 @@ final class TextMotionFrontend
             $playOnce = false;
         }
 
+        $characterSet = $settings['emje_motion_scramble_character_set'] ?? 'letters-numbers';
+        if (! in_array($characterSet, ['letters', 'numbers', 'letters-numbers', 'symbols', 'custom'], true)) {
+            $characterSet = 'letters-numbers';
+        }
+
+        $revealOrder = $settings['emje_motion_scramble_reveal_order'] ?? 'left-to-right';
+        if (! in_array($revealOrder, ['left-to-right', 'right-to-left', 'center-out', 'random'], true)) {
+            $revealOrder = 'left-to-right';
+        }
+
         return [
             'animation' => $animation,
 
-            'characterSet' => $settings['emje_motion_scramble_character_set'] ?? 'letters-numbers',
+            'characterSet' => $characterSet,
 
             'customCharacters' => $customCharacters,
 
-            'revealOrder' => $settings['emje_motion_scramble_reveal_order']
-                ?? 'left-to-right',
+            'revealOrder' => $revealOrder,
 
             'scrambleSpeed' => $scrambleSpeed,
 

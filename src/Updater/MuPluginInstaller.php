@@ -17,6 +17,11 @@ final class MuPluginInstaller
             return;
         }
 
+        // Only admin users with plugin activation capability may trigger the file write.
+        if (! current_user_can('activate_plugins')) {
+            return;
+        }
+
         $muDir = defined('WPMU_PLUGIN_DIR') ? WPMU_PLUGIN_DIR : WP_CONTENT_DIR . '/mu-plugins';
         $target = rtrim($muDir, '/\\') . '/' . self::MU_FILE;
         $source = dirname(__DIR__) . '/Updater/stub/mu-emje-motion-updater.php';

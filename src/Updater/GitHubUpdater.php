@@ -309,7 +309,8 @@ final class GitHubUpdater
             $downloadUrl = isset($data['zipball_url']) && is_string($data['zipball_url']) ? $data['zipball_url'] : '';
         }
 
-        if ($downloadUrl === '') {
+        // Only allow GitHub-hosted download URLs (asset, codeload, or release redirect).
+        if ($downloadUrl === '' || ! $this->isAllowedDownloadHost($downloadUrl)) {
             return null;
         }
 
@@ -329,6 +330,30 @@ final class GitHubUpdater
         $this->setCachedRelease($info, $ttl);
 
         return $info;
+    }
+
+    /**
+     * Whether a download URL is hosted on an allowed GitHub host (prevents arbitrary package URLs).
+     */
+    private function isAllowedDownloadHost(string $url): bool
+    {
+        $host = (string) parse_url($url, PHP_URL_HOST);
+        $scheme = (string) parse_url($url, PHP_URL_SCHEME);
+
+        if ($scheme !== 'https') {
+            return false;
+        }
+
+        return in_array(
+            strtolower($host),
+            [
+                'github.com',
+                'objects.githubusercontent.com',
+                'codeload.github.com',
+                'api.github.com',
+            ],
+            true,
+        );
     }
 
     /**
