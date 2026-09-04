@@ -123,6 +123,20 @@ if (! function_exists('emje_motion_mu_get_release')) {
     }
 }
 
+if (! function_exists('emje_motion_mu_get_icons')) {
+    function emje_motion_mu_get_icons(): array
+    {
+        $base = function_exists('plugins_url') ? plugins_url('emje-motion/') : '';
+        if ($base === '') {
+            $base = defined('WP_PLUGIN_URL') ? rtrim((string) WP_PLUGIN_URL, '/') . '/emje-motion/' : '';
+        }
+
+        return [
+            'svg' => $base !== '' ? $base . 'assets/images/emje-motion-logo.svg' : '',
+        ];
+    }
+}
+
 if (! function_exists('emje_motion_mu_check_update')) {
     function emje_motion_mu_check_update($transient)
     {
@@ -142,6 +156,8 @@ if (! function_exists('emje_motion_mu_check_update')) {
                 $storedVersion = is_object($stored) && isset($stored->new_version) ? (string) $stored->new_version : '';
                 if ($storedVersion !== '' && version_compare($storedVersion, $currentVersion, '<=')) {
                     unset($transient->response[$pluginFile]);
+                } elseif (is_object($stored) && empty($stored->icons)) {
+                    $transient->response[$pluginFile]->icons = emje_motion_mu_get_icons();
                 }
             }
             return $transient;
@@ -157,6 +173,7 @@ if (! function_exists('emje_motion_mu_check_update')) {
                 'tested' => '6.8',
                 'requires' => '6.7',
                 'requires_php' => '8.2',
+                'icons' => emje_motion_mu_get_icons(),
             ];
         } else {
             unset($transient->response[$pluginFile]);
@@ -189,6 +206,11 @@ if (! function_exists('emje_motion_mu_merge_update')) {
                 return $value;
             }
 
+            // Sembuhkan entry tanpa icon di tempat (cache sebelum dukungan icon).
+            if (is_object($value->response[$pluginFile]) && empty($value->response[$pluginFile]->icons)) {
+                $value->response[$pluginFile]->icons = emje_motion_mu_get_icons();
+            }
+
             return $value;
         }
         $release = emje_motion_mu_get_release();
@@ -205,6 +227,7 @@ if (! function_exists('emje_motion_mu_merge_update')) {
                 'tested' => '6.8',
                 'requires' => '6.7',
                 'requires_php' => '8.2',
+                'icons' => emje_motion_mu_get_icons(),
             ];
         } else {
             unset($value->response[$pluginFile]);
@@ -236,6 +259,7 @@ if (! function_exists('emje_motion_mu_plugin_info')) {
             'tested' => '6.8',
             'requires_php' => '8.2',
             'last_updated' => $release['published_at'],
+            'icons' => emje_motion_mu_get_icons(),
             'sections' => [
                 'description' => 'A lightweight motion toolkit for Elementor — Text Motion, Smooth Scroll, Interaction Motion.',
                 'changelog' => '<pre style="white-space:pre-wrap;">' . esc_html($release['body']) . '</pre>',

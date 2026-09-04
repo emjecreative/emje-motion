@@ -3,6 +3,11 @@
 All notable changes to Emje Motion are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [1.0.17] - 2026-09-04
+
+### Added
+- **Updater** — logo biru di Dashboard → Updates → Plugins dan modal View details: transient `update_plugins` + `plugins_api` kini kirim `icons.svg` (local `assets/images/emje-motion-logo.svg`), entry cache lama tanpa icon disembuhkan di tempat. Mirror di `mu-emje-motion-updater.php` untuk multisite.
+
 ## [1.0.16] - 2026-09-04
 
 ### Fixed

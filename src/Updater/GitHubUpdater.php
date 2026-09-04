@@ -132,6 +132,14 @@ final class GitHubUpdater
                 return $value;
             }
 
+            // Heal icon-less entries in place (cached before icons support).
+            /** @phpstan-ignore property.notFound */
+            $existing = $value->response[$pluginBasename];
+            if (is_object($existing) && empty($existing->icons)) {
+                /** @phpstan-ignore property.notFound */
+                $value->response[$pluginBasename]->icons = $this->getIcons();
+            }
+
             return $value;
         }
 
@@ -153,6 +161,7 @@ final class GitHubUpdater
                 'tested' => '6.8',
                 'requires' => '6.7',
                 'requires_php' => '8.2',
+                'icons' => $this->getIcons(),
             ];
         } else {
             // Remote is not newer — ensure no stale entry lingers.
@@ -197,6 +206,9 @@ final class GitHubUpdater
                 if ($storedVersion !== '' && version_compare($storedVersion, (string) $currentVersion, '<=')) {
                     /** @phpstan-ignore property.notFound */
                     unset($transient->response[$pluginBasename]);
+                } elseif (is_object($stored) && empty($stored->icons)) {
+                    /** @phpstan-ignore property.notFound */
+                    $transient->response[$pluginBasename]->icons = $this->getIcons();
                 }
             }
 
@@ -216,6 +228,7 @@ final class GitHubUpdater
                 'tested' => '6.8',
                 'requires' => '6.7',
                 'requires_php' => '8.2',
+                'icons' => $this->getIcons(),
             ];
         } else {
             /** @phpstan-ignore property.notFound */
@@ -263,6 +276,7 @@ final class GitHubUpdater
             'tested' => '6.8',
             'requires_php' => '8.2',
             'last_updated' => $release['published_at'],
+            'icons' => $this->getIcons(),
             'sections' => [
                 'description' => 'A lightweight motion toolkit for Elementor — Text Motion, Smooth Scroll, Interaction Motion (Hover Reveal & Interactive Cursor).',
                 'changelog' => $changelog,
@@ -414,6 +428,22 @@ final class GitHubUpdater
         $this->setCachedRelease($info, $ttl);
 
         return $info;
+    }
+
+    /**
+     * Plugin icon for Dashboard → Updates list and View details modal.
+     *
+     * Single SVG (existing blue logo, local URL so it works offline/intranet).
+     *
+     * @return array{svg: string}
+     */
+    private function getIcons(): array
+    {
+        $base = defined('EMJE_MOTION_URL') ? (string) EMJE_MOTION_URL : '';
+
+        return [
+            'svg' => $base !== '' ? $base . 'assets/images/emje-motion-logo.svg' : '',
+        ];
     }
 
     /**
