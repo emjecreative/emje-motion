@@ -443,6 +443,41 @@ add_filter('site_transient_update_plugins', 'emje_motion_mu_merge_update');
 add_filter('transient_update_plugins', 'emje_motion_mu_merge_update');
 add_filter('plugins_api', 'emje_motion_mu_plugin_info', 10, 3);
 add_filter('upgrader_source_selection', 'emje_motion_mu_fix_source', 10, 4);
+add_filter('upgrader_package_options', 'emje_motion_mu_guard_package');
+
+if (! function_exists('emje_motion_mu_guard_package')) {
+    // Tolak arsip source (zipball/tarball): isinya repo mentah tanpa
+    // vendor/ dan dist/ — update seperti itu melahirkan "zombie".
+    function emje_motion_mu_guard_package($options)
+    {
+        if (! is_array($options)) {
+            return $options;
+        }
+        $extra = isset($options['hook_extra']) && is_array($options['hook_extra']) ? $options['hook_extra'] : [];
+        $target = 'emje-motion/emje-motion.php';
+
+        $isOurs = false;
+        if (isset($extra['plugin']) && $extra['plugin'] === $target) {
+            $isOurs = true;
+        } elseif (isset($extra['plugins']) && is_array($extra['plugins']) && in_array($target, $extra['plugins'], true)) {
+            $isOurs = true;
+        }
+
+        if (! $isOurs) {
+            return $options;
+        }
+
+        $package = isset($options['package']) && is_string($options['package']) ? $options['package'] : '';
+        if ($package !== '' && (str_contains($package, '/zipball/') || str_contains($package, '/tarball/'))) {
+            return new WP_Error(
+                'emje_motion_zipball',
+                __('Emje Motion update rejected: source archive has no built files. Please update from the release asset (emje-motion-x.y.z.zip), or reinstall manually from the latest release.', 'emje-motion'),
+            );
+        }
+
+        return $options;
+    }
+}
 
 if (! function_exists('emje_motion_mu_after_upgrade')) {
     function emje_motion_mu_after_upgrade($upgrader = null, $hookExtra = null)

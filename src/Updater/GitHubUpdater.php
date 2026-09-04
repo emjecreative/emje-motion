@@ -46,7 +46,46 @@ final class GitHubUpdater
         add_filter('transient_update_plugins', [ $this, 'mergeUpdate' ]);
         add_filter('plugins_api', [ $this, 'pluginInfo' ], 10, 3);
         add_filter('upgrader_source_selection', [ $this, 'fixSource' ], 10, 4);
+        add_filter('upgrader_package_options', [ $this, 'guardPackage' ]);
         add_action('upgrader_process_complete', [ $this, 'afterUpgrade' ], 10, 2);
+    }
+
+    /**
+     * Refuse source-code archives (zipball/tarball) for our plugin.
+     *
+     * They contain the raw repo without vendor/ and dist/, which installs
+     * a "zombie": correct version header, but no code actually boots —
+     * leaving a stale update banner and a dead details modal behind.
+     * Only the release asset (emje-motion-x.y.z.zip) may proceed.
+     *
+     * @param array<string, mixed> $options
+     * @return array<string, mixed>|\WP_Error
+     */
+    public function guardPackage(array $options)
+    {
+        $extra = isset($options['hook_extra']) && is_array($options['hook_extra']) ? $options['hook_extra'] : [];
+        $pluginBasename = plugin_basename($this->pluginFile);
+
+        $isOurs = false;
+        if (isset($extra['plugin']) && $extra['plugin'] === $pluginBasename) {
+            $isOurs = true;
+        } elseif (isset($extra['plugins']) && is_array($extra['plugins']) && in_array($pluginBasename, $extra['plugins'], true)) {
+            $isOurs = true;
+        }
+
+        if (! $isOurs) {
+            return $options;
+        }
+
+        $package = isset($options['package']) && is_string($options['package']) ? $options['package'] : '';
+        if ($package !== '' && (str_contains($package, '/zipball/') || str_contains($package, '/tarball/'))) {
+            return new \WP_Error(
+                'emje_motion_zipball',
+                __('Emje Motion update rejected: source archive has no built files. Please update from the release asset (emje-motion-x.y.z.zip), or reinstall manually from the latest release.', 'emje-motion'),
+            );
+        }
+
+        return $options;
     }
 
     /**
