@@ -3,6 +3,11 @@
 All notable changes to Emje Motion are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [1.0.21] - 2026-09-05
+
+### Fixed
+- **Release** — zip rilis kini punya wrapper folder tunggal `emje-motion/` (fix `Filesystem error. A directory could not be read.` saat upload via Network Admin); `languages/` kosong tidak lagi ikut di-zip; workflow gagal cepat kalau `emje-motion/emje-motion.php` tidak ada di zip
+
 ## [1.0.20] - 2026-09-04
 
 ### Changed

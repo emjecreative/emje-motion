@@ -42,23 +42,32 @@ jobs:
 
       - name: Create plugin zip
         run: |
-          mkdir -p build
+          STAGE="build/emje-motion"
+          rm -rf "$STAGE"
+          mkdir -p "$STAGE"
+          # Stage only runtime files inside a single top-level folder (required by WP Plugin_Upgrader)
+          cp emje-motion.php README.md CHANGELOG.md "$STAGE/"
+          cp -r src dist assets vendor "$STAGE/"
+          # Only include languages/ if it actually contains files (empty dir breaks WP installer)
+          if ls languages/* 1>/dev/null 2>&1; then
+            cp -r languages "$STAGE/"
+          fi
+
           ZIP="emje-motion-${{ steps.version.outputs.version }}.zip"
-          # Include only runtime files — exclude .git, node_modules, .github, etc.
-          zip -r "$ZIP" \
-            emje-motion.php \
-            src/ \
-            dist/ \
-            vendor/ \
-            languages/ \
-            assets/ \
-            README.md \
-            CHANGELOG.md \
-            -x "*.git*" "*.github*"
+          rm -f "$ZIP" "build/$ZIP"
+          cd build
+          zip -r "../$ZIP" emje-motion
+          cd ..
 
           # Verify zip contents
-          unzip -l "$ZIP" | head -30
+          unzip -l "$ZIP" | head -40
           ls -lh "$ZIP"
+
+          # Fail fast if the wrapper folder is missing
+          if ! unzip -l "$ZIP" | grep -q "emje-motion/emje-motion.php"; then
+            echo "::error::Zip is missing emje-motion/emje-motion.php wrapper folder"
+            exit 1
+          fi
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
