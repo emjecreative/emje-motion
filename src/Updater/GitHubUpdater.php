@@ -262,7 +262,7 @@ final class GitHubUpdater
             return $result;
         }
 
-        $changelog = $this->getChangelogSection($release['body']);
+        $changelog = $this->getChangelogSection($release['body'], $release['version']);
 
         return (object) [
             'name' => 'Emje Motion',
@@ -513,30 +513,147 @@ final class GitHubUpdater
     }
 
     /**
-     * Build changelog section for plugins_api.
+     * Build changelog section for plugins_api (View details modal).
+     *
+     * Shows the latest version section only, rendered as clean HTML —
+     * no raw markdown, no giant scroll box. Older history lives on GitHub.
      */
-    private function getChangelogSection(string $releaseBody): string
+    private function getChangelogSection(string $releaseBody, string $releaseVersion): string
     {
-        // Try to read local CHANGELOG.md for richer history.
         $changelogPath = defined('EMJE_MOTION_PATH') ? EMJE_MOTION_PATH . 'CHANGELOG.md' : '';
 
         if ($changelogPath !== '' && file_exists($changelogPath)) {
             $content = file_get_contents($changelogPath);
             if (is_string($content) && $content !== '') {
-                // Convert markdown-ish to html for modal.
-                $html = '<pre style="white-space:pre-wrap;word-wrap:break-word;">' . esc_html($content) . '</pre>';
-                if ($releaseBody !== '') {
-                    $html .= '<h4>Latest Release</h4><pre style="white-space:pre-wrap;">' . esc_html($releaseBody) . '</pre>';
+                $section = $this->extractChangelogSection($content, $releaseVersion);
+                if ($section !== '') {
+                    return $this->renderMarkdownSnippet($section)
+                        . '<p><a href="https://github.com/' . esc_html($this->repo) . '/blob/main/CHANGELOG.md">Full changelog on GitHub &raquo;</a></p>';
                 }
-
-                return $html;
             }
         }
 
         if ($releaseBody !== '') {
-            return '<pre style="white-space:pre-wrap;">' . esc_html($releaseBody) . '</pre>';
+            return $this->renderMarkdownSnippet($releaseBody);
         }
 
         return '<p>See <a href="https://github.com/' . esc_html($this->repo) . '/releases">GitHub Releases</a> for changelog.</p>';
+    }
+
+    /**
+     * Extract one `## [version]` section from CHANGELOG.md (latest first).
+     *
+     * Prefers the section matching the remote release version so the modal
+     * always describes the version being offered; falls back to the newest
+     * section when the exact one is not found (e.g. unreleased tag).
+     */
+    private function extractChangelogSection(string $content, string $version): string
+    {
+        $content = (string) preg_replace("/\r\n?/", "\n", $content);
+
+        $sections = [];
+        $currentTitle = '';
+        $currentBody = [];
+        foreach (explode("\n", $content) as $line) {
+            if (preg_match('/^##\s+\[(.+?)\]/', $line, $m)) {
+                if ($currentTitle !== '') {
+                    $sections[$currentTitle] = implode("\n", $currentBody);
+                }
+                $currentTitle = trim((string) $m[1]);
+                $currentBody = [];
+                continue;
+            }
+            if ($currentTitle !== '') {
+                $currentBody[] = $line;
+            }
+        }
+        if ($currentTitle !== '') {
+            $sections[$currentTitle] = implode("\n", $currentBody);
+        }
+
+        if ($version !== '' && isset($sections[$version])) {
+            return trim($sections[$version]);
+        }
+
+        $first = reset($sections);
+
+        return is_string($first) ? trim($first) : '';
+    }
+
+    /**
+     * Render a small markdown subset to safe HTML for the modal.
+     *
+     * Supported: `###` headings, `- ` bullets, `**bold**`, `` `code` ``,
+     * `[text](https://url)` links, plain paragraphs. Everything is escaped
+     * first; only the generated tags below ever reach the browser.
+     */
+    private function renderMarkdownSnippet(string $markdown): string
+    {
+        $text = esc_html($markdown);
+
+        // Protect `code` spans from further transforms.
+        $codes = [];
+        $text = (string) preg_replace_callback(
+            '/`([^`\n]+)`/',
+            static function (array $m) use (&$codes): string {
+                $codes[] = '<code>' . $m[1] . '</code>';
+
+                return "\x01CODE" . (count($codes) - 1) . "\x01";
+            },
+            $text,
+        );
+
+        $blocks = [];
+        $list = [];
+
+        foreach (explode("\n", $text) as $line) {
+            $trimmed = trim($line);
+            if ($trimmed === '') {
+                if ($list !== []) {
+                    $blocks[] = '<ul><li>' . implode('</li><li>', $list) . '</li></ul>';
+                    $list = [];
+                }
+                continue;
+            }
+            if (str_starts_with($trimmed, '### ')) {
+                if ($list !== []) {
+                    $blocks[] = '<ul><li>' . implode('</li><li>', $list) . '</li></ul>';
+                    $list = [];
+                }
+                $blocks[] = '<h4>' . substr($trimmed, 4) . '</h4>';
+                continue;
+            }
+            if (str_starts_with($trimmed, '- ')) {
+                $list[] = substr($trimmed, 2);
+                continue;
+            }
+            if ($list !== []) {
+                $blocks[] = '<ul><li>' . implode('</li><li>', $list) . '</li></ul>';
+                $list = [];
+            }
+            $blocks[] = '<p>' . $trimmed . '</p>';
+        }
+        if ($list !== []) {
+            $blocks[] = '<ul><li>' . implode('</li><li>', $list) . '</li></ul>';
+        }
+
+        $html = implode('', $blocks);
+
+        // Inline **bold** and [text](https://url) on escaped text.
+        $html = (string) preg_replace('/\*\*([^*]+)\*\*/', '<strong>$1</strong>', $html);
+        $html = (string) preg_replace_callback(
+            '/\[([^\]]+)\]\((https?:\/\/[^)\s]+)\)/',
+            static function (array $m): string {
+                return '<a href="' . $m[2] . '">' . $m[1] . '</a>';
+            },
+            $html,
+        );
+
+        // Restore protected code spans.
+        foreach ($codes as $i => $code) {
+            $html = str_replace("\x01CODE" . $i . "\x01", $code, $html);
+        }
+
+        return $html;
     }
 }

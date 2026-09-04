@@ -3,6 +3,12 @@
 All notable changes to Emje Motion are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [1.0.22] - 2026-09-05
+
+### Changed
+- **Modal** — tab Changelog di View details kini HTML rapi (1 versi terbaru saja + link full changelog), bukan markdown mentah dalam `<pre>`; mirror di mu stub untuk Network Admin
+- **Updater** — helper mu anti-basi: sync berdasar isi (bukan `filemtime`), refresh diri sendiri tepat setelah plugin di-update (termasuk update via Network Admin), heal tiap admin load
+
 ## [1.0.21] - 2026-09-05
 
 ### Fixed

@@ -44,16 +44,39 @@ final class MuPluginInstaller
             return;
         }
 
-        // Only copy if not exists or source is newer.
+        // Sync when content differs (normalized) so stub updates always propagate.
+        // filemtime alone is unreliable: copy() stamps "now", freezing future syncs.
         $shouldCopy = true;
         if (file_exists($target)) {
-            $shouldCopy = filemtime($source) > filemtime($target);
+            $shouldCopy = self::isSourceNewer($source, $target);
         }
 
         if ($shouldCopy) {
             // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_copy --mu install
             @copy($source, $target);
         }
+    }
+
+    /**
+     * Whether the source stub differs from the installed mu file.
+     *
+     * Compares normalized contents (not filemtime) so every stub change —
+     * icons, tested version, heal logic — propagates on next admin load.
+     */
+    private static function isSourceNewer(string $source, string $target): bool
+    {
+        // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_file_get_contents -- mu sync check
+        $src = @file_get_contents($source);
+        // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_file_get_contents -- mu sync check
+        $dst = @file_get_contents($target);
+
+        if (is_string($src) && is_string($dst)) {
+            $normalize = static fn (string $s): string => str_replace(["\r\n", "\r"], "\n", $s);
+
+            return $normalize($src) !== $normalize($dst);
+        }
+
+        return filemtime($source) > filemtime($target);
     }
 
     public static function uninstall(): void

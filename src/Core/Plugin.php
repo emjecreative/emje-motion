@@ -140,12 +140,11 @@ final class Plugin
             $updater->register();
         }
 
-        // Ensure mu-plugin helper exists for multisite per-site activation (auto-heal if updated via zip without re-activate).
+        // Sync mu-plugin helper on every admin load (not just when missing):
+        // updates via Network Admin never re-run Activate, so a stale helper
+        // would otherwise freeze there forever. install() no-ops when in sync.
         if (function_exists('is_multisite') && is_multisite() && is_admin()) {
-            $muFile = (defined('WPMU_PLUGIN_DIR') ? WPMU_PLUGIN_DIR : WP_CONTENT_DIR . '/mu-plugins') . '/' . MuPluginInstaller::MU_FILE;
-            if (! file_exists($muFile)) {
-                MuPluginInstaller::install();
-            }
+            MuPluginInstaller::install();
         }
     }
 

@@ -275,9 +275,134 @@ if (! function_exists('emje_motion_mu_plugin_info')) {
             'icons' => emje_motion_mu_get_icons(),
             'sections' => [
                 'description' => 'Beautiful motion for your website.',
-                'changelog' => '<pre style="white-space:pre-wrap;">' . esc_html($release['body']) . '</pre>',
+                'changelog' => emje_motion_mu_changelog_section($release['body'], $release['version']),
             ],
         ];
+    }
+}
+
+if (! function_exists('emje_motion_mu_changelog_section')) {
+    function emje_motion_mu_changelog_section(string $releaseBody, string $releaseVersion): string
+    {
+        $file = WP_PLUGIN_DIR . '/emje-motion/CHANGELOG.md';
+        if (file_exists($file)) {
+            $content = file_get_contents($file);
+            if (is_string($content) && $content !== '') {
+                $section = emje_motion_mu_extract_section($content, $releaseVersion);
+                if ($section !== '') {
+                    return emje_motion_mu_render_markdown($section)
+                        . '<p><a href="https://github.com/emjecreative/emje-motion/blob/main/CHANGELOG.md">Full changelog on GitHub &raquo;</a></p>';
+                }
+            }
+        }
+
+        if ($releaseBody !== '') {
+            return emje_motion_mu_render_markdown($releaseBody);
+        }
+
+        return '<p>See <a href="https://github.com/emjecreative/emje-motion/releases">GitHub Releases</a> for changelog.</p>';
+    }
+}
+
+if (! function_exists('emje_motion_mu_extract_section')) {
+    function emje_motion_mu_extract_section(string $content, string $version): string
+    {
+        $content = (string) preg_replace("/\r\n?/", "\n", $content);
+
+        $sections = [];
+        $currentTitle = '';
+        $currentBody = [];
+        foreach (explode("\n", $content) as $line) {
+            if (preg_match('/^##\s+\[(.+?)\]/', $line, $m)) {
+                if ($currentTitle !== '') {
+                    $sections[$currentTitle] = implode("\n", $currentBody);
+                }
+                $currentTitle = trim((string) $m[1]);
+                $currentBody = [];
+                continue;
+            }
+            if ($currentTitle !== '') {
+                $currentBody[] = $line;
+            }
+        }
+        if ($currentTitle !== '') {
+            $sections[$currentTitle] = implode("\n", $currentBody);
+        }
+
+        if ($version !== '' && isset($sections[$version])) {
+            return trim($sections[$version]);
+        }
+
+        $first = reset($sections);
+
+        return is_string($first) ? trim($first) : '';
+    }
+}
+
+if (! function_exists('emje_motion_mu_render_markdown')) {
+    function emje_motion_mu_render_markdown(string $markdown): string
+    {
+        $text = esc_html($markdown);
+
+        $codes = [];
+        $text = (string) preg_replace_callback(
+            '/`([^`\n]+)`/',
+            static function ($m) use (&$codes) {
+                $codes[] = '<code>' . $m[1] . '</code>';
+
+                return "\x01CODE" . (count($codes) - 1) . "\x01";
+            },
+            $text,
+        );
+
+        $blocks = [];
+        $list = [];
+        foreach (explode("\n", $text) as $line) {
+            $trimmed = trim($line);
+            if ($trimmed === '') {
+                if ($list !== []) {
+                    $blocks[] = '<ul><li>' . implode('</li><li>', $list) . '</li></ul>';
+                    $list = [];
+                }
+                continue;
+            }
+            if (str_starts_with($trimmed, '### ')) {
+                if ($list !== []) {
+                    $blocks[] = '<ul><li>' . implode('</li><li>', $list) . '</li></ul>';
+                    $list = [];
+                }
+                $blocks[] = '<h4>' . substr($trimmed, 4) . '</h4>';
+                continue;
+            }
+            if (str_starts_with($trimmed, '- ')) {
+                $list[] = substr($trimmed, 2);
+                continue;
+            }
+            if ($list !== []) {
+                $blocks[] = '<ul><li>' . implode('</li><li>', $list) . '</li></ul>';
+                $list = [];
+            }
+            $blocks[] = '<p>' . $trimmed . '</p>';
+        }
+        if ($list !== []) {
+            $blocks[] = '<ul><li>' . implode('</li><li>', $list) . '</li></ul>';
+        }
+
+        $html = implode('', $blocks);
+        $html = (string) preg_replace('/\*\*([^*]+)\*\*/', '<strong>$1</strong>', $html);
+        $html = (string) preg_replace_callback(
+            '/\[([^\]]+)\]\((https?:\/\/[^)\s]+)\)/',
+            static function ($m) {
+                return '<a href="' . $m[2] . '">' . $m[1] . '</a>';
+            },
+            $html,
+        );
+
+        foreach ($codes as $i => $code) {
+            $html = str_replace("\x01CODE" . $i . "\x01", $code, $html);
+        }
+
+        return $html;
     }
 }
 
@@ -338,6 +463,7 @@ if (! function_exists('emje_motion_mu_after_upgrade')) {
         if (! $updated) {
             return;
         }
+        emje_motion_mu_self_refresh();
         delete_transient('emje_motion_update_check');
         delete_site_transient('emje_motion_update_check');
         delete_site_transient('update_plugins');
@@ -345,3 +471,34 @@ if (! function_exists('emje_motion_mu_after_upgrade')) {
     }
 }
 add_action('upgrader_process_complete', 'emje_motion_mu_after_upgrade', 10, 2);
+
+if (! function_exists('emje_motion_mu_self_refresh')) {
+    // Refresh this helper from the freshly updated plugin source.
+    // The mu context loads even in Network Admin (where per-site plugins
+    // don't), so updates performed there still refresh the helper.
+    function emje_motion_mu_self_refresh(): void
+    {
+        $muDir = defined('WPMU_PLUGIN_DIR') ? WPMU_PLUGIN_DIR : WP_CONTENT_DIR . '/mu-plugins';
+        $target = rtrim($muDir, '/\\') . '/emje-motion-updater.php';
+        $source = WP_PLUGIN_DIR . '/emje-motion/src/Updater/stub/mu-emje-motion-updater.php';
+
+        if (! file_exists($source) || ! is_dir($muDir) || ! is_writable($muDir)) {
+            return;
+        }
+
+        $src = @file_get_contents($source);
+        $dst = file_exists($target) ? @file_get_contents($target) : false;
+
+        if (! is_string($src)) {
+            return;
+        }
+
+        $normalize = static function ($s) {
+            return str_replace(["\r\n", "\r"], "\n", (string) $s);
+        };
+
+        if (! is_string($dst) || $normalize($src) !== $normalize($dst)) {
+            @copy($source, $target);
+        }
+    }
+}
