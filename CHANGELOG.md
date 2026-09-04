@@ -3,6 +3,11 @@
 All notable changes to Emje Motion are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [1.0.15] - 2026-09-03
+
+### Changed
+- **About** — Check for Updates result moved from top toast to persistent inline notice left of the button (blue info when update available, green success when up to date, dismiss only via X, no auto-hide)
+
 ## [1.0.14] - 2026-09-03
 
 ### Changed
