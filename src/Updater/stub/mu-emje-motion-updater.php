@@ -261,7 +261,7 @@ if (! function_exists('emje_motion_mu_plugin_info')) {
             'last_updated' => $release['published_at'],
             'icons' => emje_motion_mu_get_icons(),
             'sections' => [
-                'description' => 'A lightweight motion toolkit for Elementor — Text Motion, Smooth Scroll, Interaction Motion.',
+                'description' => 'Beautiful motion for your website.',
                 'changelog' => '<pre style="white-space:pre-wrap;">' . esc_html($release['body']) . '</pre>',
             ],
         ];

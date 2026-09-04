@@ -39,8 +39,8 @@ defined('ABSPATH') || exit;
 <div class="wrap emje-motion-admin">
 
 	<div class="emje-card emje-about-hero-card">
-		<div class="emje-about-hero__title"><?php echo esc_html__('Lightweight motion toolkit for Elementor', 'emje-motion'); ?></div>
-		<p class="emje-about-hero__desc"><?php echo esc_html__('Scramble, Unfold & Fill Reveal. Hover Reveal & Interactive Cursor. Buttery smooth scroll — assets load only where used.', 'emje-motion'); ?></p>
+		<div class="emje-about-hero__title"><?php echo esc_html__('Beautiful motion for your website.', 'emje-motion'); ?></div>
+		<p class="emje-about-hero__desc"><?php echo esc_html__('Give your pages movement with a purpose — simple controls, visitors who stay.', 'emje-motion'); ?></p>
 	</div>
 
 	<div class="emje-main">
@@ -86,7 +86,7 @@ defined('ABSPATH') || exit;
 					<div class="emje-main__icon"><i class="ph-duotone ph-pulse"></i></div>
 					<div class="emje-about-header__text">
 						<div class="emje-main__title"><?php echo esc_html__('System Status', 'emje-motion'); ?></div>
-						<div class="emje-main__subtitle"><?php echo esc_html__('Current environment — useful when asking for support.', 'emje-motion'); ?></div>
+						<div class="emje-main__subtitle"><?php echo esc_html__('What’s running under the hood.', 'emje-motion'); ?></div>
 					</div>
 				</div>
 			</div>
@@ -159,11 +159,6 @@ defined('ABSPATH') || exit;
 					<button type="submit" class="button emje-btn-primary"><?php echo esc_html__('Check for Updates', 'emje-motion'); ?></button>
 				</form>
 			</div>
-			<?php if (is_multisite()) : ?>
-				<div class="emje-about-updates__body">
-					<p class="emje-about-updates__note"><?php echo esc_html__('On multisite, Network Activate is recommended. When activated per site, check for updates from that site’s dashboard.', 'emje-motion'); ?></p>
-				</div>
-			<?php endif; ?>
 		</div>
 	</div>
 

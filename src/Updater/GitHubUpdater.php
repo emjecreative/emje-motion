@@ -278,7 +278,7 @@ final class GitHubUpdater
             'last_updated' => $release['published_at'],
             'icons' => $this->getIcons(),
             'sections' => [
-                'description' => 'A lightweight motion toolkit for Elementor — Text Motion, Smooth Scroll, Interaction Motion (Hover Reveal & Interactive Cursor).',
+                'description' => 'Beautiful motion for your website.',
                 'changelog' => $changelog,
             ],
         ];

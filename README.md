@@ -1,6 +1,8 @@
 # Emje Motion
 
-A lightweight motion toolkit for Elementor — extend existing widgets with modern motion effects without adding custom widgets.
+Beautiful motion for your website.
+
+Emje Motion gives your pages movement with a purpose — every animation earns its place. Simple controls, visitors who stay.
 
 ## Features
 

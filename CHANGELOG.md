@@ -3,6 +3,11 @@
 All notable changes to Emje Motion are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [1.0.19] - 2026-09-04
+
+### Changed
+- **Copy** — new tagline "Beautiful motion for your website." everywhere (plugin header, About hero, README, update modal): timeless, no performance claims, no feature names. About hero desc: "Give your pages movement with a purpose — simple controls, visitors who stay."
+
 ## [1.0.18] - 2026-09-04
 
 ### Changed
