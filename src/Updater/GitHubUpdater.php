@@ -43,12 +43,60 @@ final class GitHubUpdater
         add_filter('pre_set_transient_update_plugins', [ $this, 'checkUpdate' ]);
         // Merge existing response so per-site inject survives Network Admin rebuild (multisite).
         add_filter('site_transient_update_plugins', [ $this, 'mergeUpdate' ]);
+        add_filter('transient_update_plugins', [ $this, 'mergeUpdate' ]);
         add_filter('plugins_api', [ $this, 'pluginInfo' ], 10, 3);
         add_filter('upgrader_source_selection', [ $this, 'fixSource' ], 10, 4);
+        add_action('upgrader_process_complete', [ $this, 'afterUpgrade' ], 10, 2);
+    }
+
+    /**
+     * Clear stale update data right after our plugin is updated.
+     *
+     * WordPress keeps `update_plugins` transient for ~12h. Without this,
+     * the "There is a new version..." banner survives the update until
+     * the next cron check, even when remote == installed version.
+     *
+     * @param mixed $upgrader
+     * @param mixed $hookExtra
+     */
+    public function afterUpgrade($upgrader = null, $hookExtra = null): void
+    {
+        $pluginBasename = plugin_basename($this->pluginFile);
+        $updated = false;
+
+        if (is_array($hookExtra)) {
+            if (isset($hookExtra['plugin']) && $hookExtra['plugin'] === $pluginBasename) {
+                $updated = true;
+            }
+            if (isset($hookExtra['plugins']) && is_array($hookExtra['plugins']) && in_array($pluginBasename, $hookExtra['plugins'], true)) {
+                $updated = true;
+            }
+            // Plugin install action (upload zip) also passes destination_name.
+            if (isset($hookExtra['action'], $hookExtra['type']) && $hookExtra['action'] === 'install' && $hookExtra['type'] === 'plugin') {
+                $updated = true;
+            }
+        }
+
+        if (! $updated) {
+            return;
+        }
+
+        delete_transient(self::TRANSIENT_KEY);
+        if (function_exists('delete_site_transient')) {
+            delete_site_transient(self::TRANSIENT_KEY);
+            // Force WordPress to rebuild update_plugins on next load
+            // so checkUpdate re-runs with the new local version.
+            delete_site_transient('update_plugins');
+        }
+        delete_transient('update_plugins');
     }
 
     /**
      * Merge our update into already-built transient (prevents Network Admin overwrite).
+     *
+     * Also prunes stale entries: if WordPress still remembers "new 1.0.13"
+     * but installed version is already >= that, remove it so the banner
+     * disappears immediately without waiting for cron.
      *
      * @param mixed $value
      * @return mixed
@@ -65,8 +113,25 @@ final class GitHubUpdater
         }
 
         $pluginBasename = plugin_basename($this->pluginFile);
+        $currentVersion = defined('EMJE_MOTION_VERSION') ? EMJE_MOTION_VERSION : '0.0.0';
+
         /** @phpstan-ignore property.notFound */
         if (isset($value->response[$pluginBasename])) {
+            // Prune instantly without API call when stored version is no longer newer.
+            $stored = $value->response[$pluginBasename];
+            $storedVersion = '';
+            if (is_object($stored) && isset($stored->new_version) && is_string($stored->new_version)) {
+                $storedVersion = $stored->new_version;
+            } elseif (is_array($stored) && isset($stored['new_version']) && is_string($stored['new_version'])) {
+                $storedVersion = $stored['new_version'];
+            }
+            if ($storedVersion !== '' && version_compare($storedVersion, (string) $currentVersion, '<=')) {
+                /** @phpstan-ignore property.notFound */
+                unset($value->response[$pluginBasename]);
+
+                return $value;
+            }
+
             return $value;
         }
 
@@ -76,7 +141,6 @@ final class GitHubUpdater
         }
 
         $remoteVersion = $release['version'];
-        $currentVersion = defined('EMJE_MOTION_VERSION') ? EMJE_MOTION_VERSION : '0.0.0';
 
         if (version_compare($remoteVersion, $currentVersion, '>')) {
             /** @phpstan-ignore property.notFound */
@@ -90,6 +154,10 @@ final class GitHubUpdater
                 'requires' => '6.7',
                 'requires_php' => '8.2',
             ];
+        } else {
+            // Remote is not newer — ensure no stale entry lingers.
+            /** @phpstan-ignore property.notFound */
+            unset($value->response[$pluginBasename]);
         }
 
         return $value;
@@ -97,6 +165,8 @@ final class GitHubUpdater
 
     /**
      * Inject update info into site transient.
+     *
+     * Also removes our entry when remote is no longer newer (stale banner fix).
      *
      * @param mixed $transient
      * @return mixed
@@ -113,18 +183,29 @@ final class GitHubUpdater
             $transient->response = [];
         }
 
+        $pluginBasename = plugin_basename($this->pluginFile);
+        $currentVersion = defined('EMJE_MOTION_VERSION') ? EMJE_MOTION_VERSION : '0.0.0';
+
         $release = $this->getReleaseInfo();
 
         if ($release === null) {
+            // API failed — still prune if stored entry is clearly stale.
+            /** @phpstan-ignore property.notFound */
+            if (isset($transient->response[$pluginBasename])) {
+                $stored = $transient->response[$pluginBasename];
+                $storedVersion = is_object($stored) && isset($stored->new_version) ? (string) $stored->new_version : '';
+                if ($storedVersion !== '' && version_compare($storedVersion, (string) $currentVersion, '<=')) {
+                    /** @phpstan-ignore property.notFound */
+                    unset($transient->response[$pluginBasename]);
+                }
+            }
+
             return $transient;
         }
 
         $remoteVersion = $release['version'];
-        $currentVersion = defined('EMJE_MOTION_VERSION') ? EMJE_MOTION_VERSION : '0.0.0';
 
         if (version_compare($remoteVersion, $currentVersion, '>')) {
-            $pluginBasename = plugin_basename($this->pluginFile);
-
             /** @phpstan-ignore property.notFound */
             $transient->response[$pluginBasename] = (object) [
                 'slug' => $this->slug,
@@ -136,6 +217,9 @@ final class GitHubUpdater
                 'requires' => '6.7',
                 'requires_php' => '8.2',
             ];
+        } else {
+            /** @phpstan-ignore property.notFound */
+            unset($transient->response[$pluginBasename]);
         }
 
         return $transient;

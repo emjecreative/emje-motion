@@ -3,6 +3,11 @@
 All notable changes to Emje Motion are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [1.0.16] - 2026-09-04
+
+### Fixed
+- **Updater** — banner "There is a new version..." no longer sticks after update (e.g. 1.0.13 → still shows 1.0.13): `mergeUpdate` now prunes instantly when stored `new_version <= installed` without API call, `checkUpdate` unsets when remote <= local, `upgrader_process_complete` clears `emje_motion_update_check` + `update_plugins` right after update. Same fix mirrored in `mu-emje-motion-updater.php` for multisite per-site Activate.
+
 ## [1.0.15] - 2026-09-03
 
 ### Changed

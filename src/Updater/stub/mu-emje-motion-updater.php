@@ -132,14 +132,22 @@ if (! function_exists('emje_motion_mu_check_update')) {
         if (! isset($transient->response) || ! is_array($transient->response)) {
             $transient->response = [];
         }
+        $pluginFile = 'emje-motion/emje-motion.php';
+        $currentVersion = emje_motion_mu_get_version();
         $release = emje_motion_mu_get_release();
         if ($release === null) {
+            // API gagal — tetap hapus banner basi kalau versinya sudah tidak lebih baru.
+            if (isset($transient->response[$pluginFile])) {
+                $stored = $transient->response[$pluginFile];
+                $storedVersion = is_object($stored) && isset($stored->new_version) ? (string) $stored->new_version : '';
+                if ($storedVersion !== '' && version_compare($storedVersion, $currentVersion, '<=')) {
+                    unset($transient->response[$pluginFile]);
+                }
+            }
             return $transient;
         }
         $remoteVersion = $release['version'];
-        $currentVersion = emje_motion_mu_get_version();
         if (version_compare($remoteVersion, $currentVersion, '>')) {
-            $pluginFile = 'emje-motion/emje-motion.php';
             $transient->response[$pluginFile] = (object) [
                 'slug' => 'emje-motion',
                 'plugin' => $pluginFile,
@@ -150,6 +158,8 @@ if (! function_exists('emje_motion_mu_check_update')) {
                 'requires' => '6.7',
                 'requires_php' => '8.2',
             ];
+        } else {
+            unset($transient->response[$pluginFile]);
         }
 
         return $transient;
@@ -163,14 +173,29 @@ if (! function_exists('emje_motion_mu_merge_update')) {
             return $value;
         }
         $pluginFile = 'emje-motion/emje-motion.php';
+        $currentVersion = emje_motion_mu_get_version();
         if (isset($value->response[$pluginFile])) {
+            // Hapus langsung tanpa API call kalau versi tersimpan sudah tidak lebih baru.
+            $stored = $value->response[$pluginFile];
+            $storedVersion = '';
+            if (is_object($stored) && isset($stored->new_version)) {
+                $storedVersion = (string) $stored->new_version;
+            } elseif (is_array($stored) && isset($stored['new_version'])) {
+                $storedVersion = (string) $stored['new_version'];
+            }
+            if ($storedVersion !== '' && version_compare($storedVersion, $currentVersion, '<=')) {
+                unset($value->response[$pluginFile]);
+
+                return $value;
+            }
+
             return $value;
         }
         $release = emje_motion_mu_get_release();
         if ($release === null) {
             return $value;
         }
-        if (version_compare($release['version'], emje_motion_mu_get_version(), '>')) {
+        if (version_compare($release['version'], $currentVersion, '>')) {
             $value->response[$pluginFile] = (object) [
                 'slug' => 'emje-motion',
                 'plugin' => $pluginFile,
@@ -181,6 +206,8 @@ if (! function_exists('emje_motion_mu_merge_update')) {
                 'requires' => '6.7',
                 'requires_php' => '8.2',
             ];
+        } else {
+            unset($value->response[$pluginFile]);
         }
 
         return $value;
@@ -251,5 +278,33 @@ if (! function_exists('emje_motion_mu_fix_source')) {
 add_filter('pre_set_site_transient_update_plugins', 'emje_motion_mu_check_update');
 add_filter('pre_set_transient_update_plugins', 'emje_motion_mu_check_update');
 add_filter('site_transient_update_plugins', 'emje_motion_mu_merge_update');
+add_filter('transient_update_plugins', 'emje_motion_mu_merge_update');
 add_filter('plugins_api', 'emje_motion_mu_plugin_info', 10, 3);
 add_filter('upgrader_source_selection', 'emje_motion_mu_fix_source', 10, 4);
+
+if (! function_exists('emje_motion_mu_after_upgrade')) {
+    function emje_motion_mu_after_upgrade($upgrader = null, $hookExtra = null)
+    {
+        $target = 'emje-motion/emje-motion.php';
+        $updated = false;
+        if (is_array($hookExtra)) {
+            if (isset($hookExtra['plugin']) && $hookExtra['plugin'] === $target) {
+                $updated = true;
+            }
+            if (isset($hookExtra['plugins']) && is_array($hookExtra['plugins']) && in_array($target, $hookExtra['plugins'], true)) {
+                $updated = true;
+            }
+            if (isset($hookExtra['action'], $hookExtra['type']) && $hookExtra['action'] === 'install' && $hookExtra['type'] === 'plugin') {
+                $updated = true;
+            }
+        }
+        if (! $updated) {
+            return;
+        }
+        delete_transient('emje_motion_update_check');
+        delete_site_transient('emje_motion_update_check');
+        delete_site_transient('update_plugins');
+        delete_transient('update_plugins');
+    }
+}
+add_action('upgrader_process_complete', 'emje_motion_mu_after_upgrade', 10, 2);
