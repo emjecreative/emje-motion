@@ -225,10 +225,24 @@ body.admin-bar .emje-admin-header{ top:32px; }
 .emje-about-updates__form{display:flex;align-items:center;gap:10px;flex-shrink:0;margin-left:auto}
 .emje-about-updates__body{padding:0 16px 16px}
 .emje-about-updates__note{margin:0;color:var(--emje-muted);font-size:11px;line-height:1.5}
+/* Inline updates result — left of Check button, persistent until X clicked (no toast, no timer) */
+.emje-updates-inline{display:inline-flex;align-items:center;gap:8px;padding:7px 8px 7px 12px;border-radius:8px;font-size:12px;font-weight:500;line-height:1.4;white-space:nowrap}
+.emje-updates-inline .ph-duotone{font-size:16px;flex-shrink:0}
+.emje-updates-inline--info{background:#EFF6FF;border:1px solid #BFDBFE;color:var(--emje)}
+.emje-updates-inline--info .ph-duotone{color:var(--emje)}
+.emje-updates-inline--info a{color:var(--emje);font-weight:600}
+.emje-updates-inline--success{background:#f0fdf4;border:1px solid #bbf7d0;color:#0f5132}
+.emje-updates-inline--success .ph-duotone{color:#00a32a}
+.emje-updates-inline__text a{text-decoration:underline;text-underline-offset:2px}
+.emje-updates-inline__dismiss{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;min-width:24px;padding:0;border:none;background:transparent;color:inherit;border-radius:6px;cursor:pointer;flex-shrink:0;opacity:.7;transition:opacity .15s,background .15s}
+.emje-updates-inline__dismiss:hover{opacity:1;background:rgba(0,0,0,.06)}
+.emje-updates-inline__dismiss:focus-visible{outline:2px solid currentColor;outline-offset:1px}
+.emje-updates-inline__dismiss .ph-duotone{font-size:14px}
 @media (max-width:640px){
   .emje-about-card__header{flex-wrap:wrap;gap:12px}
-  .emje-about-card__header .emje-about-updates__form{width:100%;margin-left:0}
+  .emje-about-card__header .emje-about-updates__form{width:100%;margin-left:0;flex-wrap:wrap}
   .emje-about-card__header .emje-about-updates__form .button{width:100%;justify-content:center}
+  .emje-about-card__header .emje-updates-inline{width:100%;white-space:normal}
 }
 @keyframes emjeToastIn{from{opacity:0;transform:translate3d(-50%,-10px,0)} to{opacity:1;transform:translate3d(-50%,0,0)}}
 @keyframes emjeToastInMobile{from{opacity:0;transform:translate3d(0,-10px,0)} to{opacity:1;transform:translate3d(0,0,0)}}

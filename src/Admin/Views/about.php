@@ -9,11 +9,11 @@ declare(strict_types=1);
  * @var string $wpVersion
  * @var string $phpVersion
  * @var string $elementorVersion
+ * @var 'available'|'current'|null $updatesResult
+ * @var string $updatesUrl
  */
 
 defined('ABSPATH') || exit;
-
-settings_errors('emje_motion_check_updates');
 ?>
 <header class="emje-admin-header" id="emjeAdminHeader">
 	<div class="emje-admin-header__inner">
@@ -124,6 +124,38 @@ settings_errors('emje_motion_check_updates');
 				<form method="post" action="" class="emje-about-updates__form">
 					<?php wp_nonce_field('emje_motion_check_updates'); ?>
 					<input type="hidden" name="emje_motion_action" value="check_updates" />
+					<?php if ($updatesResult === 'available') : ?>
+						<span class="emje-updates-inline emje-updates-inline--info" role="status">
+							<i class="ph-duotone ph-download-simple" aria-hidden="true"></i>
+							<span class="emje-updates-inline__text">
+								<?php
+                                echo wp_kses(
+                                    sprintf(
+                                        /* translators: %s: updates page URL */
+                                        __('Update available — open %s.', 'emje-motion'),
+                                        '<a href="' . esc_url($updatesUrl) . '">' . esc_html__('Updates', 'emje-motion') . '</a>',
+                                    ),
+                                    [
+                                        'a' => [
+                                            'href' => [],
+                                        ],
+                                    ],
+                                );
+					    ?>
+							</span>
+							<button type="button" class="emje-updates-inline__dismiss" aria-label="<?php echo esc_attr__('Dismiss', 'emje-motion'); ?>">
+								<i class="ph-duotone ph-x" aria-hidden="true"></i>
+							</button>
+						</span>
+					<?php elseif ($updatesResult === 'current') : ?>
+						<span class="emje-updates-inline emje-updates-inline--success" role="status">
+							<i class="ph-duotone ph-check-circle" aria-hidden="true"></i>
+							<span class="emje-updates-inline__text"><?php echo esc_html__("You're up to date.", 'emje-motion'); ?></span>
+							<button type="button" class="emje-updates-inline__dismiss" aria-label="<?php echo esc_attr__('Dismiss', 'emje-motion'); ?>">
+								<i class="ph-duotone ph-x" aria-hidden="true"></i>
+							</button>
+						</span>
+					<?php endif; ?>
 					<button type="submit" class="button emje-btn-primary"><?php echo esc_html__('Check for Updates', 'emje-motion'); ?></button>
 				</form>
 			</div>

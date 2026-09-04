@@ -62,9 +62,20 @@
     Array.prototype.forEach.call(ranges, function(r){ r.addEventListener('input', update); r.addEventListener('change', update); });
     update();
   }
+  function initUpdatesInline(){
+    // Inline Check-for-Updates result: persistent until X is clicked (no timer, no toast).
+    var items = document.querySelectorAll('.emje-updates-inline');
+    items.forEach(function(item){
+      var btn = item.querySelector('.emje-updates-inline__dismiss');
+      if(!btn) return;
+      btn.addEventListener('click', function(){
+        if(item.parentNode) item.parentNode.removeChild(item);
+      });
+    });
+  }
   if(document.readyState === 'loading'){
-    document.addEventListener('DOMContentLoaded', function(){ initHeader(); initOverviewDirty(); initSettingsDirty(); });
-  } else { initHeader(); initOverviewDirty(); initSettingsDirty(); }
+    document.addEventListener('DOMContentLoaded', function(){ initHeader(); initOverviewDirty(); initSettingsDirty(); initUpdatesInline(); });
+  } else { initHeader(); initOverviewDirty(); initSettingsDirty(); initUpdatesInline(); }
 
   function initToasts(){
     var notices = document.querySelectorAll('body.toplevel_page_emje-motion .notice.is-dismissible, body.emje-motion_page_emje-motion-settings .notice.is-dismissible, body.emje-motion_page_emje-motion-about .notice.is-dismissible, body.toplevel_page_emje-motion .notice.notice-success, body.emje-motion_page_emje-motion-settings .notice.notice-success, body.emje-motion_page_emje-motion-about .notice.notice-success');

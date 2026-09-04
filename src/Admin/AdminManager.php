@@ -15,6 +15,20 @@ final class AdminManager
 
     private SettingsRepository $settings;
 
+    /**
+     * Result of the latest Check for Updates in this request.
+     *
+     * 'available' when a newer version exists, 'current' when up to date, null when no check ran.
+     *
+     * @var 'available'|'current'|null
+     */
+    private ?string $checkUpdatesResult = null;
+
+    /**
+     * URL to the WordPress Updates screen for the latest check.
+     */
+    private string $checkUpdatesUrl = '';
+
     public function __construct(SettingsRepository $settings)
     {
         $this->settings = $settings;
@@ -254,28 +268,13 @@ final class AdminManager
         }
 
         if ($hasUpdate) {
-            $updatesUrl = is_network_admin() ? network_admin_url('update-core.php') : admin_url('update-core.php');
-            add_settings_error(
-                'emje_motion_check_updates',
-                'emje_motion_update_available',
-                sprintf(
-                    /* translators: %s: updates page URL */
-                    esc_html__('Update available — open %s.', 'emje-motion'),
-                    '<a href="' . esc_url($updatesUrl) . '">' . esc_html__('Updates', 'emje-motion') . '</a>',
-                ),
-                'updated',
-            );
+            $this->checkUpdatesResult = 'available';
+            $this->checkUpdatesUrl = is_network_admin() ? network_admin_url('update-core.php') : admin_url('update-core.php');
         } else {
             // Check if remote check actually ran (if updater still cached with no update, it's up to date).
-            add_settings_error(
-                'emje_motion_check_updates',
-                'emje_motion_up_to_date',
-                esc_html__("You're up to date.", 'emje-motion'),
-                'updated',
-            );
+            $this->checkUpdatesResult = 'current';
+            $this->checkUpdatesUrl = '';
         }
-
-        set_transient('settings_errors', get_settings_errors(), 30);
     }
 
     public function renderOverview(): void
@@ -320,6 +319,10 @@ final class AdminManager
                 $elementorVersion = $data['Version'];
             }
         }
+
+        // Inline result of Check for Updates (same request, left of the button).
+        $updatesResult = $this->checkUpdatesResult;
+        $updatesUrl = $this->checkUpdatesUrl;
 
         include EMJE_MOTION_PATH . 'src/Admin/Views/about.php';
     }
