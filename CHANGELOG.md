@@ -3,6 +3,11 @@
 All notable changes to Emje Motion are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [1.0.18] - 2026-09-04
+
+### Changed
+- **Compat** — `Tested up to: 7.1` (header + updater `tested` field + mu stub + PRD): warning "Compatibility with WordPress 7.1: Not tested" di Dashboard → Updates kini jadi "Yes (according to its author)". Verified live di WP 7.1 + Elementor 4.2.4 + PHP 8.3.33.
+
 ## [1.0.17] - 2026-09-04
 
 ### Added

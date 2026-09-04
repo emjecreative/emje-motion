@@ -42,7 +42,7 @@ Detail teknis implementasi ada di:
 | Product | Emje Motion |
 | Version | 1.3.0 (Ready — Comet Trail + Text Follow typography/shadow) |
 | Type | WordPress Plugin |
-| Platform | WordPress 6.7+ (Tested up to 6.8) |
+| Platform | WordPress 6.7+ (Tested up to 7.1) |
 | Builder | Elementor 3.23+ (Requires Plugins: elementor) |
 | Language | English (Text Domain: emje-motion) |
 | License | GPL-2.0-or-later |
