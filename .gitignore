@@ -10,6 +10,9 @@ composer.phar
 /build/
 /dist/
 
+# Internal dev docs (local only, never public)
+/docs/
+
 # Cache
 .php-cs-fixer.cache
 .phpunit.result.cache

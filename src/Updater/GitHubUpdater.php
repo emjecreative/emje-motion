@@ -387,8 +387,10 @@ final class GitHubUpdater
             return null;
         }
 
-        // Prefer attached asset emje-motion.zip, fallback to zipball.
+        // Prefer versioned asset emje-motion-{version}.zip, accept legacy emje-motion.zip, fallback to zipball.
         $downloadUrl = '';
+        $fallbackUrl = '';
+        $expectedAsset = 'emje-motion-' . $version . '.zip';
         if (isset($data['assets']) && is_array($data['assets'])) {
             foreach ($data['assets'] as $asset) {
                 if (! is_array($asset)) {
@@ -396,11 +398,23 @@ final class GitHubUpdater
                 }
                 $name = isset($asset['name']) && is_string($asset['name']) ? $asset['name'] : '';
                 $urlAsset = isset($asset['browser_download_url']) && is_string($asset['browser_download_url']) ? $asset['browser_download_url'] : '';
-                if ($name === 'emje-motion.zip' && $urlAsset !== '') {
+                if ($urlAsset === '') {
+                    continue;
+                }
+                if ($name === $expectedAsset) {
                     $downloadUrl = $urlAsset;
                     break;
                 }
+                if ($name === 'emje-motion.zip' || (str_starts_with($name, 'emje-motion-') && str_ends_with($name, '.zip'))) {
+                    if ($fallbackUrl === '') {
+                        $fallbackUrl = $urlAsset;
+                    }
+                }
             }
+        }
+
+        if ($downloadUrl === '') {
+            $downloadUrl = $fallbackUrl;
         }
 
         if ($downloadUrl === '') {

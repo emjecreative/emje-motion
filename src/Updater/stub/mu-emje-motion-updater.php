@@ -86,6 +86,8 @@ if (! function_exists('emje_motion_mu_get_release')) {
             return null;
         }
         $downloadUrl = '';
+        $fallbackUrl = '';
+        $expectedAsset = 'emje-motion-' . $version . '.zip';
         if (isset($data['assets']) && is_array($data['assets'])) {
             foreach ($data['assets'] as $asset) {
                 if (! is_array($asset)) {
@@ -93,11 +95,22 @@ if (! function_exists('emje_motion_mu_get_release')) {
                 }
                 $name = isset($asset['name']) && is_string($asset['name']) ? $asset['name'] : '';
                 $assetUrl = isset($asset['browser_download_url']) && is_string($asset['browser_download_url']) ? $asset['browser_download_url'] : '';
-                if ($name === 'emje-motion.zip' && $assetUrl !== '') {
+                if ($assetUrl === '') {
+                    continue;
+                }
+                if ($name === $expectedAsset) {
                     $downloadUrl = $assetUrl;
                     break;
                 }
+                if ($name === 'emje-motion.zip' || (str_starts_with($name, 'emje-motion-') && str_ends_with($name, '.zip'))) {
+                    if ($fallbackUrl === '') {
+                        $fallbackUrl = $assetUrl;
+                    }
+                }
             }
+        }
+        if ($downloadUrl === '') {
+            $downloadUrl = $fallbackUrl;
         }
         if ($downloadUrl === '') {
             $downloadUrl = isset($data['zipball_url']) && is_string($data['zipball_url']) ? $data['zipball_url'] : '';

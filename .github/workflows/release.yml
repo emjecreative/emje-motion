@@ -43,7 +43,7 @@ jobs:
       - name: Create plugin zip
         run: |
           mkdir -p build
-          ZIP="emje-motion.zip"
+          ZIP="emje-motion-${{ steps.version.outputs.version }}.zip"
           # Include only runtime files — exclude .git, node_modules, .github, etc.
           zip -r "$ZIP" \
             emje-motion.php \
@@ -63,13 +63,13 @@ jobs:
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          files: emje-motion.zip
+          files: emje-motion-*.zip
           generate_release_notes: true
           body: |
             ## Emje Motion ${{ steps.version.outputs.version }}
 
             ### Install
-            1. Download `emje-motion.zip` below
+            1. Download `emje-motion-${{ steps.version.outputs.version }}.zip` below
             2. WordPress → Plugins → Add New → Upload Plugin → Choose File → Install Now
 
             ### Update

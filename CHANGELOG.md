@@ -3,6 +3,12 @@
 All notable changes to Emje Motion are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [1.0.20] - 2026-09-04
+
+### Changed
+- **Repo** — `docs/` keluar dari GitHub (internal only, lokal tetap ada, `.gitignore`), README ramping total (tagline + 3 fitur + syarat + install + link)
+- **Release** — asset zip berversi (`emje-motion-1.0.x.zip`); updater (plugin + mu stub) mengenali nama berversi, tetap terima legacy `emje-motion.zip`, zipball jadi cadangan terakhir
+
 ## [1.0.19] - 2026-09-04
 
 ### Changed
