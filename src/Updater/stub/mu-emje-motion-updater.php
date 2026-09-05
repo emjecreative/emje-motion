@@ -260,7 +260,7 @@ if (! function_exists('emje_motion_mu_plugin_info')) {
         if ($release === null) {
             return $result;
         }
-        return (object) [
+        $info = [
             'name' => 'Emje Motion',
             'slug' => 'emje-motion',
             'version' => $release['version'],
@@ -274,10 +274,50 @@ if (! function_exists('emje_motion_mu_plugin_info')) {
             'last_updated' => $release['published_at'],
             'icons' => emje_motion_mu_get_icons(),
             'sections' => [
-                'description' => 'Beautiful motion for your website.',
+                'description' => emje_motion_mu_description_section(),
                 'changelog' => emje_motion_mu_changelog_section($release['body'], $release['version']),
             ],
         ];
+
+        $banners = emje_motion_mu_get_banners();
+        if ($banners !== []) {
+            $info['banners'] = $banners;
+        }
+
+        return (object) $info;
+    }
+}
+
+if (! function_exists('emje_motion_mu_description_section')) {
+    function emje_motion_mu_description_section(): string
+    {
+        return '<p><strong>Beautiful motion for your website.</strong></p>'
+            . '<p>Emje Motion gives your pages movement with a purpose — every animation earns its place. Simple controls, visitors who stay.</p>'
+            . '<p><strong>Features</strong></p>'
+            . '<ul><li><strong>Text Motion</strong> — Scramble, Unfold &amp; Fill Reveal for headings and text.</li>'
+            . '<li><strong>Smooth Scroll</strong> — buttery site-wide scrolling.</li>'
+            . '<li><strong>Interaction Motion</strong> — Hover Reveal and Interactive Cursor for containers.</li></ul>';
+    }
+}
+
+if (! function_exists('emje_motion_mu_get_banners')) {
+    function emje_motion_mu_get_banners(): array
+    {
+        $base = function_exists('plugins_url') ? plugins_url('emje-motion/') : '';
+        if ($base === '') {
+            $base = defined('WP_PLUGIN_URL') ? rtrim((string) WP_PLUGIN_URL, '/') . '/emje-motion/' : '';
+        }
+        $dir = defined('WP_PLUGIN_DIR') ? rtrim((string) WP_PLUGIN_DIR, '/\\') . '/emje-motion/assets/images/' : '';
+
+        $banners = [];
+        if ($dir !== '' && file_exists($dir . 'emje-motion-banner-772x250.png')) {
+            $banners['low'] = $base . 'assets/images/emje-motion-banner-772x250.png';
+        }
+        if ($dir !== '' && file_exists($dir . 'emje-motion-banner-1544x500.png')) {
+            $banners['high'] = $base . 'assets/images/emje-motion-banner-1544x500.png';
+        }
+
+        return $banners;
     }
 }
 
@@ -288,10 +328,18 @@ if (! function_exists('emje_motion_mu_changelog_section')) {
         if (file_exists($file)) {
             $content = file_get_contents($file);
             if (is_string($content) && $content !== '') {
-                $section = emje_motion_mu_extract_section($content, $releaseVersion);
-                if ($section !== '') {
-                    return emje_motion_mu_render_markdown($section)
-                        . '<p><a href="https://github.com/emjecreative/emje-motion/blob/main/CHANGELOG.md">Full changelog on GitHub &raquo;</a></p>';
+                $sections = emje_motion_mu_extract_sections($content, $releaseVersion, 3);
+                if ($sections !== []) {
+                    $html = '';
+                    foreach ($sections as $section) {
+                        $title = esc_html($section['version']);
+                        if ($section['date'] !== '') {
+                            $title .= ' — ' . esc_html($section['date']);
+                        }
+                        $html .= '<h4>' . $title . '</h4>' . emje_motion_mu_render_markdown($section['body']);
+                    }
+
+                    return $html . '<p><a href="https://github.com/emjecreative/emje-motion/blob/main/CHANGELOG.md">Full changelog on GitHub &raquo;</a></p>';
                 }
             }
         }
@@ -304,38 +352,57 @@ if (! function_exists('emje_motion_mu_changelog_section')) {
     }
 }
 
-if (! function_exists('emje_motion_mu_extract_section')) {
-    function emje_motion_mu_extract_section(string $content, string $version): string
+if (! function_exists('emje_motion_mu_extract_sections')) {
+    // @return list<array{version: string, date: string, body: string}>
+    function emje_motion_mu_extract_sections(string $content, string $version, int $limit = 3): array
     {
         $content = (string) preg_replace("/\r\n?/", "\n", $content);
 
-        $sections = [];
-        $currentTitle = '';
+        $parsed = [];
+        $currentVersion = '';
+        $currentDate = '';
         $currentBody = [];
         foreach (explode("\n", $content) as $line) {
-            if (preg_match('/^##\s+\[(.+?)\]/', $line, $m)) {
-                if ($currentTitle !== '') {
-                    $sections[$currentTitle] = implode("\n", $currentBody);
+            if (preg_match('/^##\s+\[(.+?)\](?:\s*-\s*(.+?))?\s*$/', $line, $m)) {
+                if ($currentVersion !== '') {
+                    $parsed[] = [
+                        'version' => $currentVersion,
+                        'date' => $currentDate,
+                        'body' => trim(implode("\n", $currentBody)),
+                    ];
                 }
-                $currentTitle = trim((string) $m[1]);
+                $currentVersion = trim((string) $m[1]);
+                $currentDate = isset($m[2]) ? trim((string) $m[2]) : '';
                 $currentBody = [];
                 continue;
             }
-            if ($currentTitle !== '') {
+            if ($currentVersion !== '') {
                 $currentBody[] = $line;
             }
         }
-        if ($currentTitle !== '') {
-            $sections[$currentTitle] = implode("\n", $currentBody);
+        if ($currentVersion !== '') {
+            $parsed[] = [
+                'version' => $currentVersion,
+                'date' => $currentDate,
+                'body' => trim(implode("\n", $currentBody)),
+            ];
         }
 
-        if ($version !== '' && isset($sections[$version])) {
-            return trim($sections[$version]);
+        if ($parsed === []) {
+            return [];
         }
 
-        $first = reset($sections);
+        $start = 0;
+        if ($version !== '') {
+            foreach ($parsed as $i => $section) {
+                if ($section['version'] === $version) {
+                    $start = $i;
+                    break;
+                }
+            }
+        }
 
-        return is_string($first) ? trim($first) : '';
+        return array_slice($parsed, $start, max(1, $limit));
     }
 }
 

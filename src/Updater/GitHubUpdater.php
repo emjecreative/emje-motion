@@ -303,7 +303,7 @@ final class GitHubUpdater
 
         $changelog = $this->getChangelogSection($release['body'], $release['version']);
 
-        return (object) [
+        $info = [
             'name' => 'Emje Motion',
             'slug' => $this->slug,
             'version' => $release['version'],
@@ -317,10 +317,30 @@ final class GitHubUpdater
             'last_updated' => $release['published_at'],
             'icons' => $this->getIcons(),
             'sections' => [
-                'description' => 'Beautiful motion for your website.',
+                'description' => $this->getDescriptionSection(),
                 'changelog' => $changelog,
             ],
         ];
+
+        $banners = $this->getBanners();
+        if ($banners !== []) {
+            $info['banners'] = $banners;
+        }
+
+        return (object) $info;
+    }
+
+    /**
+     * Rich Description tab for the View details modal.
+     */
+    private function getDescriptionSection(): string
+    {
+        return '<p><strong>Beautiful motion for your website.</strong></p>'
+            . '<p>Emje Motion gives your pages movement with a purpose — every animation earns its place. Simple controls, visitors who stay.</p>'
+            . '<p><strong>Features</strong></p>'
+            . '<ul><li><strong>Text Motion</strong> — Scramble, Unfold &amp; Fill Reveal for headings and text.</li>'
+            . '<li><strong>Smooth Scroll</strong> — buttery site-wide scrolling.</li>'
+            . '<li><strong>Interaction Motion</strong> — Hover Reveal and Interactive Cursor for containers.</li></ul>';
     }
 
     /**
@@ -500,6 +520,30 @@ final class GitHubUpdater
     }
 
     /**
+     * Modal header banner (772x250 + retina 1544x500).
+     *
+     * Local files so it renders offline; omitted entirely when the
+     * images are not (yet) shipped, in which case core shows no banner.
+     *
+     * @return array{low?: string, high?: string}
+     */
+    private function getBanners(): array
+    {
+        $base = defined('EMJE_MOTION_URL') ? (string) EMJE_MOTION_URL : '';
+        $dir = defined('EMJE_MOTION_PATH') ? (string) EMJE_MOTION_PATH . 'assets/images/' : '';
+
+        $banners = [];
+        if ($dir !== '' && file_exists($dir . 'emje-motion-banner-772x250.png')) {
+            $banners['low'] = $base . 'assets/images/emje-motion-banner-772x250.png';
+        }
+        if ($dir !== '' && file_exists($dir . 'emje-motion-banner-1544x500.png')) {
+            $banners['high'] = $base . 'assets/images/emje-motion-banner-1544x500.png';
+        }
+
+        return $banners;
+    }
+
+    /**
      * Whether a download URL is hosted on an allowed GitHub host (prevents arbitrary package URLs).
      */
     private function isAllowedDownloadHost(string $url): bool
@@ -554,8 +598,8 @@ final class GitHubUpdater
     /**
      * Build changelog section for plugins_api (View details modal).
      *
-     * Shows the latest version section only, rendered as clean HTML —
-     * no raw markdown, no giant scroll box. Older history lives on GitHub.
+     * Shows the 3 newest version sections, each titled with its version
+     * and date, rendered as clean HTML. Full history lives on GitHub.
      */
     private function getChangelogSection(string $releaseBody, string $releaseVersion): string
     {
@@ -564,9 +608,18 @@ final class GitHubUpdater
         if ($changelogPath !== '' && file_exists($changelogPath)) {
             $content = file_get_contents($changelogPath);
             if (is_string($content) && $content !== '') {
-                $section = $this->extractChangelogSection($content, $releaseVersion);
-                if ($section !== '') {
-                    return $this->renderMarkdownSnippet($section)
+                $sections = $this->extractChangelogSections($content, $releaseVersion, 3);
+                if ($sections !== []) {
+                    $html = '';
+                    foreach ($sections as $section) {
+                        $title = esc_html($section['version']);
+                        if ($section['date'] !== '') {
+                            $title .= ' — ' . esc_html($section['date']);
+                        }
+                        $html .= '<h4>' . $title . '</h4>' . $this->renderMarkdownSnippet($section['body']);
+                    }
+
+                    return $html
                         . '<p><a href="https://github.com/' . esc_html($this->repo) . '/blob/main/CHANGELOG.md">Full changelog on GitHub &raquo;</a></p>';
                 }
             }
@@ -580,43 +633,66 @@ final class GitHubUpdater
     }
 
     /**
-     * Extract one `## [version]` section from CHANGELOG.md (latest first).
+     * Extract newest `## [version] - date` sections from CHANGELOG.md.
      *
-     * Prefers the section matching the remote release version so the modal
-     * always describes the version being offered; falls back to the newest
-     * section when the exact one is not found (e.g. unreleased tag).
+     * Starts at the section matching the remote release version so the
+     * modal always describes the version being offered, then continues
+     * with older ones; falls back to the newest sections when the exact
+     * one is not found (e.g. unreleased tag).
+     *
+     * @return list<array{version: string, date: string, body: string}>
      */
-    private function extractChangelogSection(string $content, string $version): string
+    private function extractChangelogSections(string $content, string $version, int $limit = 3): array
     {
         $content = (string) preg_replace("/\r\n?/", "\n", $content);
 
-        $sections = [];
-        $currentTitle = '';
+        /** @var list<array{version: string, date: string, body: string}> $parsed */
+        $parsed = [];
+        $currentVersion = '';
+        $currentDate = '';
         $currentBody = [];
+
         foreach (explode("\n", $content) as $line) {
-            if (preg_match('/^##\s+\[(.+?)\]/', $line, $m)) {
-                if ($currentTitle !== '') {
-                    $sections[$currentTitle] = implode("\n", $currentBody);
+            if (preg_match('/^##\s+\[(.+?)\](?:\s*-\s*(.+?))?\s*$/', $line, $m)) {
+                if ($currentVersion !== '') {
+                    $parsed[] = [
+                        'version' => $currentVersion,
+                        'date' => $currentDate,
+                        'body' => trim(implode("\n", $currentBody)),
+                    ];
                 }
-                $currentTitle = trim((string) $m[1]);
+                $currentVersion = trim((string) $m[1]);
+                $currentDate = isset($m[2]) ? trim((string) $m[2]) : '';
                 $currentBody = [];
                 continue;
             }
-            if ($currentTitle !== '') {
+            if ($currentVersion !== '') {
                 $currentBody[] = $line;
             }
         }
-        if ($currentTitle !== '') {
-            $sections[$currentTitle] = implode("\n", $currentBody);
+        if ($currentVersion !== '') {
+            $parsed[] = [
+                'version' => $currentVersion,
+                'date' => $currentDate,
+                'body' => trim(implode("\n", $currentBody)),
+            ];
         }
 
-        if ($version !== '' && isset($sections[$version])) {
-            return trim($sections[$version]);
+        if ($parsed === []) {
+            return [];
         }
 
-        $first = reset($sections);
+        $start = 0;
+        if ($version !== '') {
+            foreach ($parsed as $i => $section) {
+                if ($section['version'] === $version) {
+                    $start = $i;
+                    break;
+                }
+            }
+        }
 
-        return is_string($first) ? trim($first) : '';
+        return array_slice($parsed, $start, max(1, $limit));
     }
 
     /**

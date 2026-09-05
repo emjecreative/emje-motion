@@ -3,6 +3,11 @@
 All notable changes to Emje Motion are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [1.0.27] - 2026-09-05
+
+### Added
+- **Modal** — banner header 772x250 (+retina) di View details; tab Description kaya (tagline + paragraf + 3 fitur); tab Changelog tampil 3 versi terbaru berjudul versi+tanggal
+
 ## [1.0.26] - 2026-09-05
 
 ### Fixed
