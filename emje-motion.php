@@ -11,7 +11,7 @@
 /**
  * Plugin Name: Emje Motion
  * Description: Beautiful motion for your website.
- * Version: 1.0.29
+ * Version: 1.0.30
  * Requires at least: 6.7
  * Tested up to: 7.1
  * Requires PHP: 8.2
@@ -28,7 +28,7 @@ declare(strict_types=1);
 
 defined('ABSPATH') || exit;
 
-define('EMJE_MOTION_VERSION', '1.0.29');
+define('EMJE_MOTION_VERSION', '1.0.30');
 define('EMJE_MOTION_FILE', __FILE__);
 define('EMJE_MOTION_PATH', plugin_dir_path(__FILE__));
 define('EMJE_MOTION_URL', plugin_dir_url(__FILE__));

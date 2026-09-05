@@ -82,7 +82,7 @@ $featureUrl = 'https://github.com/emjecreative/emje-motion/issues/new?template=f
 					<span class="emje-links__text"><span class="emje-links__title"><?php echo esc_html__('Support', 'emje-motion'); ?></span><span class="emje-links__url">Get Help</span></span>
 					<i class="ph-duotone ph-caret-right emje-links__caret" aria-hidden="true"></i>
 				</a>
-				<a href="<?php echo esc_url($featureUrl); ?>" target="_blank" rel="noopener noreferrer">
+				<a href="<?php echo esc_attr($featureUrl); ?>" target="_blank" rel="noopener noreferrer">
 					<span class="emje-links__icon"><i class="ph-duotone ph-lightbulb"></i></span>
 					<span class="emje-links__text"><span class="emje-links__title"><?php echo esc_html__('Request a Feature', 'emje-motion'); ?></span><span class="emje-links__url"><?php echo esc_html__("Shape what's next", 'emje-motion'); ?></span></span>
 					<i class="ph-duotone ph-caret-right emje-links__caret" aria-hidden="true"></i>
