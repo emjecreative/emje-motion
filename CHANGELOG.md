@@ -3,6 +3,11 @@
 All notable changes to Emje Motion are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [1.0.24] - 2026-09-05
+
+### Fixed
+- **Multisite** — fatal `Call to undefined function wp_get_current_user()` di setiap halaman admin: sync helper mu dimajukan dari file-load ke hook `admin_init` (fungsi user WordPress belum ada saat plugin dimuat). Wajib update untuk semua multisite
+
 ## [1.0.23] - 2026-09-05
 
 ### Fixed

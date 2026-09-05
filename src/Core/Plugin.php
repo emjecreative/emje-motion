@@ -140,11 +140,14 @@ final class Plugin
             $updater->register();
         }
 
-        // Sync mu-plugin helper on every admin load (not just when missing):
-        // updates via Network Admin never re-run Activate, so a stale helper
-        // would otherwise freeze there forever. install() no-ops when in sync.
-        if (function_exists('is_multisite') && is_multisite() && is_admin()) {
-            MuPluginInstaller::install();
+        // Sync mu-plugin helper on admin_init — NEVER at file-load time:
+        // pluggable functions (wp_get_current_user, used by
+        // current_user_can inside install()) do not exist yet while
+        // wp-settings.php is still including active plugins. Calling
+        // earlier is a deterministic fatal on multisite admin.
+        // install() no-ops when already in sync.
+        if (function_exists('is_multisite') && is_multisite()) {
+            add_action('admin_init', [MuPluginInstaller::class, 'install']);
         }
     }
 
