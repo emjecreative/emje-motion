@@ -444,6 +444,32 @@ add_filter('transient_update_plugins', 'emje_motion_mu_merge_update');
 add_filter('plugins_api', 'emje_motion_mu_plugin_info', 10, 3);
 add_filter('upgrader_source_selection', 'emje_motion_mu_fix_source', 10, 4);
 add_filter('upgrader_package_options', 'emje_motion_mu_guard_package');
+add_filter('plugin_row_meta', 'emje_motion_mu_row_meta', 10, 2);
+
+if (! function_exists('emje_motion_mu_row_meta')) {
+    // "View details" ala wordpress.org untuk Network Admin + subsite.
+    // Kode utama tidak dimuat di Network Admin saat aktif per-site,
+    // jadi mu yang mendaftarkan; AdminManager mundur saat multisite
+    // agar link tidak dobel di dashboard subsite.
+    function emje_motion_mu_row_meta($links, $pluginFile)
+    {
+        if (! is_array($links)) {
+            return $links;
+        }
+        if ($pluginFile !== 'emje-motion/emje-motion.php') {
+            return $links;
+        }
+        $url = self_admin_url('plugin-install.php?tab=plugin-information&plugin=emje-motion&TB_iframe=true&width=640&height=662');
+        $links[] = sprintf(
+            '<a href="%s" class="thickbox open-plugin-details-modal" aria-label="%s">%s</a>',
+            esc_url($url),
+            esc_attr__('View Emje Motion details', 'emje-motion'),
+            esc_html__('View details', 'emje-motion'),
+        );
+
+        return $links;
+    }
+}
 
 if (! function_exists('emje_motion_mu_guard_package')) {
     // Tolak arsip source (zipball/tarball): isinya repo mentah tanpa

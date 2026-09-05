@@ -3,6 +3,11 @@
 All notable changes to Emje Motion are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [1.0.26] - 2026-09-05
+
+### Fixed
+- **Multisite** — link "View details" kini muncul juga di Network Admin (didaftarkan helper mu yang selalu dimuat); `AdminManager` mundur saat multisite agar tidak dobel di subsite
+
 ## [1.0.25] - 2026-09-05
 
 ### Changed

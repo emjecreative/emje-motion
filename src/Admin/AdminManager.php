@@ -42,7 +42,11 @@ final class AdminManager
         add_action('admin_menu', [$this, 'registerMenu']);
         add_action('admin_init', [$this, 'handleSave']);
         add_action('admin_enqueue_scripts', [$this, 'enqueueAssets']);
-        add_filter('plugin_row_meta', [$this, 'rowMeta'], 10, 2);
+        // Single-site only: on multisite the mu helper owns this link
+        // (it loads in Network Admin too) — registering both would double it.
+        if (! function_exists('is_multisite') || ! is_multisite()) {
+            add_filter('plugin_row_meta', [$this, 'rowMeta'], 10, 2);
+        }
     }
 
     /**
