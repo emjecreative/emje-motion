@@ -3,6 +3,11 @@
 All notable changes to Emje Motion are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [1.0.25] - 2026-09-05
+
+### Changed
+- **Plugins list** — "Visit plugin site" diganti "View details" ala plugin wordpress.org (modal Description + Changelog dari updater); header `Plugin URI` dihapus
+
 ## [1.0.24] - 2026-09-05
 
 ### Fixed
