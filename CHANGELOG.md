@@ -3,6 +3,13 @@
 All notable changes to Emje Motion are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [1.0.28] - 2026-09-05
+
+### Added
+- **About** — replaced the Changelog card with "Request a Feature"
+- Prefilled GitHub issue (enhancement label) with plugin, WordPress, Elementor, and PHP versions included automatically
+- Issue templates: Feature request and Bug report; blank issues disabled
+
 ## [1.0.27] - 2026-09-05
 
 ### Added

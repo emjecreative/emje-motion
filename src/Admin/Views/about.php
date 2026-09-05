@@ -14,6 +14,16 @@ declare(strict_types=1);
  */
 
 defined('ABSPATH') || exit;
+
+$featureBody = "## What's the idea?\n<!-- One or two sentences. Example: a typewriter text effect for headings. -->\n"
+    . "\n## What problem does it solve?\n<!-- Who needs this and in what situation? -->\n"
+    . "\n## Environment\n"
+    . '- Emje Motion version: ' . $version . "\n"
+    . '- WordPress version: ' . $wpVersion . "\n"
+    . '- Elementor version: ' . $elementorVersion . "\n"
+    . '- PHP version: ' . $phpVersion . "\n";
+$featureUrl = 'https://github.com/emjecreative/emje-motion/issues/new?labels=enhancement&title='
+    . rawurlencode('[Feature] ') . '&body=' . rawurlencode($featureBody);
 ?>
 <header class="emje-admin-header" id="emjeAdminHeader">
 	<div class="emje-admin-header__inner">
@@ -70,9 +80,9 @@ defined('ABSPATH') || exit;
 					<span class="emje-links__text"><span class="emje-links__title"><?php echo esc_html__('Support', 'emje-motion'); ?></span><span class="emje-links__url">Get Help</span></span>
 					<i class="ph-duotone ph-caret-right emje-links__caret" aria-hidden="true"></i>
 				</a>
-				<a href="https://github.com/emjecreative/emje-motion#readme" target="_blank" rel="noopener noreferrer">
-					<span class="emje-links__icon"><i class="ph-duotone ph-clock-counter-clockwise"></i></span>
-					<span class="emje-links__text"><span class="emje-links__title"><?php echo esc_html__('Changelog', 'emje-motion'); ?></span><span class="emje-links__url">WHAT'S NEW</span></span>
+				<a href="<?php echo esc_url($featureUrl); ?>" target="_blank" rel="noopener noreferrer">
+					<span class="emje-links__icon"><i class="ph-duotone ph-lightbulb"></i></span>
+					<span class="emje-links__text"><span class="emje-links__title"><?php echo esc_html__('Request a Feature', 'emje-motion'); ?></span><span class="emje-links__url"><?php echo esc_html__("Shape what's next", 'emje-motion'); ?></span></span>
 					<i class="ph-duotone ph-caret-right emje-links__caret" aria-hidden="true"></i>
 				</a>
 			</div>
