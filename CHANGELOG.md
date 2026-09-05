@@ -3,6 +3,11 @@
 All notable changes to Emje Motion are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [1.0.29] - 2026-09-05
+
+### Fixed
+- **About** — Request a Feature card now opens the Feature request template directly (template parameter) with all sections prefilled
+
 ## [1.0.28] - 2026-09-05
 
 ### Added

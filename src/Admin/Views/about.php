@@ -17,12 +17,14 @@ defined('ABSPATH') || exit;
 
 $featureBody = "## What's the idea?\n<!-- One or two sentences. Example: a typewriter text effect for headings. -->\n"
     . "\n## What problem does it solve?\n<!-- Who needs this and in what situation? -->\n"
+    . "\n## How should it behave?\n<!-- Controls you'd expect, what triggers it, what the result looks like. -->\n"
     . "\n## Environment\n"
     . '- Emje Motion version: ' . $version . "\n"
     . '- WordPress version: ' . $wpVersion . "\n"
     . '- Elementor version: ' . $elementorVersion . "\n"
-    . '- PHP version: ' . $phpVersion . "\n";
-$featureUrl = 'https://github.com/emjecreative/emje-motion/issues/new?labels=enhancement&title='
+    . '- PHP version: ' . $phpVersion . "\n"
+    . "\n## Anything else?\n<!-- Mockup, reference link, or a similar effect elsewhere. -->\n";
+$featureUrl = 'https://github.com/emjecreative/emje-motion/issues/new?template=feature_request.md&labels=enhancement&title='
     . rawurlencode('[Feature] ') . '&body=' . rawurlencode($featureBody);
 ?>
 <header class="emje-admin-header" id="emjeAdminHeader">
