@@ -46,7 +46,7 @@ jobs:
           rm -rf "$STAGE"
           mkdir -p "$STAGE"
           # Stage only runtime files inside a single top-level folder (required by WP Plugin_Upgrader)
-          cp emje-motion.php README.md CHANGELOG.md "$STAGE/"
+          cp emje-motion.php README.md CHANGELOG.md USER-GUIDE.md "$STAGE/"
           cp -r src dist assets vendor "$STAGE/"
           # Only include languages/ if it actually contains files (empty dir breaks WP installer)
           if ls languages/* 1>/dev/null 2>&1; then

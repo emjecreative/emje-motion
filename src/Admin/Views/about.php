@@ -72,7 +72,7 @@ $featureUrl = 'https://github.com/emjecreative/emje-motion/issues/new?template=f
 					<span class="emje-links__text"><span class="emje-links__title"><?php echo esc_html__('Website', 'emje-motion'); ?></span><span class="emje-links__url">emjecreative.com</span></span>
 					<i class="ph-duotone ph-caret-right emje-links__caret" aria-hidden="true"></i>
 				</a>
-				<a href="https://github.com/emjecreative/emje-motion" target="_blank" rel="noopener noreferrer">
+				<a href="https://github.com/emjecreative/emje-motion/blob/main/USER-GUIDE.md" target="_blank" rel="noopener noreferrer">
 					<span class="emje-links__icon"><i class="ph-duotone ph-book-open"></i></span>
 					<span class="emje-links__text"><span class="emje-links__title"><?php echo esc_html__('Documentation', 'emje-motion'); ?></span><span class="emje-links__url">Read Guide</span></span>
 					<i class="ph-duotone ph-caret-right emje-links__caret" aria-hidden="true"></i>

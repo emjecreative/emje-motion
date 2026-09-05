@@ -25,6 +25,7 @@ Emje Motion gives your pages movement with a purpose — every animation earns i
 
 ## Links
 
+- [User Guide](https://github.com/emjecreative/emje-motion/blob/main/USER-GUIDE.md)
 - [Changelog](https://github.com/emjecreative/emje-motion/blob/main/CHANGELOG.md)
 - [Support](https://github.com/emjecreative/emje-motion/issues)
 

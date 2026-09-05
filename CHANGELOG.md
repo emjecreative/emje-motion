@@ -3,6 +3,11 @@
 All notable changes to Emje Motion are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [1.0.31] - 2026-09-05
+
+### Added
+- **Docs** — new USER-GUIDE.md (quick start, all three modules, dashboard, troubleshooting); About Documentation card and README link to it
+
 ## [1.0.30] - 2026-09-05
 
 ### Fixed
