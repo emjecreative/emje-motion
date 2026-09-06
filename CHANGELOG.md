@@ -3,6 +3,11 @@
 All notable changes to Emje Motion are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [1.0.1] - 2026-09-06
+
+### Fixed
+- **About** — Request a Feature prefill keeps its line breaks (`esc_attr` preserves encoded newlines; `esc_url` strips them)
+
 ## [1.0.0] - 2026-09-06
 
 Initial public release.
