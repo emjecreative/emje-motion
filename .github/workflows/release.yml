@@ -1,0 +1,94 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          coverage: none
+
+      - name: Install NPM deps
+        run: npm ci
+
+      - name: Build assets
+        run: npm run build
+
+      - name: Install Composer deps (no-dev)
+        run: composer install --no-dev --optimize-autoloader --no-progress --prefer-dist
+
+      - name: Get version from tag
+        id: version
+        run: echo "version=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
+
+      - name: Create plugin zip
+        run: |
+          STAGE="build/emje-motion"
+          rm -rf "$STAGE"
+          mkdir -p "$STAGE"
+          # Stage only runtime files inside a single top-level folder (required by WP Plugin_Upgrader)
+          cp emje-motion.php README.md CHANGELOG.md USER-GUIDE.md "$STAGE/"
+          cp -r src dist assets vendor "$STAGE/"
+          # Only include languages/ if it actually contains files (empty dir breaks WP installer)
+          if ls languages/* 1>/dev/null 2>&1; then
+            cp -r languages "$STAGE/"
+          fi
+
+          ZIP="emje-motion-${{ steps.version.outputs.version }}.zip"
+          rm -f "$ZIP" "build/$ZIP"
+          cd build
+          zip -r "../$ZIP" emje-motion
+          cd ..
+
+          # Verify zip contents
+          unzip -l "$ZIP" | head -40
+          ls -lh "$ZIP"
+
+          # Fail fast if the wrapper folder is missing
+          if ! unzip -l "$ZIP" | grep -q "emje-motion/emje-motion.php"; then
+            echo "::error::Zip is missing emje-motion/emje-motion.php wrapper folder"
+            exit 1
+          fi
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: emje-motion-*.zip
+          generate_release_notes: true
+          body: |
+            ## Emje Motion ${{ steps.version.outputs.version }}
+
+            ### Install
+            1. Download `emje-motion-${{ steps.version.outputs.version }}.zip` below
+            2. WordPress → Plugins → Add New → Upload Plugin → Choose File → Install Now
+
+            ### Update
+            If you already have v${{ steps.version.outputs.version }} installed via GitHub, go to **Dashboard → Updates → Check again** to update with 1 click.
+
+            ### Changelog
+            See [CHANGELOG.md](https://github.com/emjecreative/emje-motion/blob/main/CHANGELOG.md) for full details.
+
+            ### Requirements
+            - WordPress 6.7+
+            - Elementor 3.23+
+            - PHP 8.2+
+

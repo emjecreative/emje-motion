@@ -1,0 +1,854 @@
+# Emje Motion translation template.
+# Copyright (C) 2026 Emje Creative
+# This file is distributed under the GPL-2.0-or-later license.
+msgid ""
+msgstr ""
+"Project-Id-Version: Emje Motion 1.0.0\n"
+"Report-Msgid-Bugs-To: https://github.com/emjecreative/emje-motion/issues\n"
+"POT-Creation-Date: 2026-09-06T05:20:51+00:00\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: tools/make-pot.js\n"
+"X-Domain: emje-motion\n"
+"Language: \n"
+
+#. %1$d active modules, %2$d total modules.
+#: src/Admin/Views/overview.php:24
+msgid "%1$d of %2$d active"
+msgstr ""
+
+#: src/Modules/InteractionMotion/Controls/CursorControls.php:283
+msgid "0 = square, 12 = rounded, 50+ = circle/pill."
+msgstr ""
+
+#: src/Admin/AdminManager.php:119 src/Admin/AdminManager.php:120
+#: src/Admin/Views/about.php:39 src/Admin/Views/about.php:47
+#: src/Admin/Views/about.php:63 src/Admin/Views/overview.php:37
+#: src/Admin/Views/overview.php:45 src/Admin/Views/settings.php:27
+#: src/Admin/Views/settings.php:35
+msgid "About"
+msgstr ""
+
+#: src/Admin/Views/overview.php:21
+msgid "All features active"
+msgstr ""
+
+#: src/Modules/TextMotion/Controls/TextMotionControls.php:101
+msgid "Animation"
+msgstr ""
+
+#: src/Modules/InteractionMotion/Controls/InteractionMotionControls.php:95
+msgid "Auto preview in Editor. Off saves resources."
+msgstr ""
+
+#: src/Modules/TextMotion/Controls/TextMotionControls.php:467
+msgid "Automatically replay animation when controls change."
+msgstr ""
+
+#: src/Admin/AdminManager.php:391 src/Admin/AdminManager.php:397
+#: src/Admin/AdminManager.php:403
+msgid "Available"
+msgstr ""
+
+#: src/Modules/TextMotion/Controls/TextMotionControls.php:426
+msgid "Back Out"
+msgstr ""
+
+#: src/Modules/InteractionMotion/Controls/CursorControls.php:179
+msgid "Background"
+msgstr ""
+
+#: src/Modules/TextMotion/Controls/TextMotionControls.php:303
+msgid "Background Opacity"
+msgstr ""
+
+#: src/Admin/Views/about.php:54
+msgid "Beautiful motion for your website."
+msgstr ""
+
+#: src/Admin/Views/settings.php:60
+msgid "Behavior"
+msgstr ""
+
+#: src/Modules/InteractionMotion/Controls/CursorControls.php:505
+msgid "Blend Mode"
+msgstr ""
+
+#: src/Modules/InteractionMotion/Controls/CursorControls.php:269
+msgid "Border Radius"
+msgstr ""
+
+#: src/Admin/AdminManager.php:396
+msgid "Buttery smooth scrolling — site-wide, zero-jank, native feel. Global module."
+msgstr ""
+
+#: src/Modules/TextMotion/Controls/TextMotionControls.php:184
+msgid "Center Out"
+msgstr ""
+
+#: src/Modules/TextMotion/Controls/TextMotionControls.php:139
+msgid "Character Set"
+msgstr ""
+
+#: src/Modules/TextMotion/Controls/TextMotionControls.php:247
+msgid "Characters"
+msgstr ""
+
+#: src/Admin/Views/about.php:171
+msgid "Check for Updates"
+msgstr ""
+
+#: src/Admin/Views/about.php:133
+msgid "Check if a newer version is available."
+msgstr ""
+
+#: src/Modules/InteractionMotion/Controls/HoverControls.php:117
+msgid "Clip Path"
+msgstr ""
+
+#: src/Modules/InteractionMotion/Controls/CursorControls.php:96
+msgid "Color"
+msgstr ""
+
+#: src/Modules/InteractionMotion/Controls/CursorControls.php:434
+msgid "Color of the last dot. Gradient interpolates from Head to Tail."
+msgstr ""
+
+#: src/Modules/InteractionMotion/Controls/CursorControls.php:416
+msgid "Color of the leading dot (head of comet)."
+msgstr ""
+
+#: src/Modules/InteractionMotion/Controls/CursorControls.php:44
+msgid "Comet Trail"
+msgstr ""
+
+#: src/Modules/TextMotion/Controls/TextMotionControls.php:205
+msgid "Controls how quickly random characters change. 1 = Normal speed."
+msgstr ""
+
+#: src/Admin/Views/settings.php:123
+msgid "Controls scroll distance per tick. Range 0.8–1.5, default 1.2."
+msgstr ""
+
+#: src/Modules/TextMotion/Controls/TextMotionControls.php:429
+msgid "Controls the animation easing."
+msgstr ""
+
+#: src/Modules/InteractionMotion/Controls/CursorControls.php:38
+msgid "Cursor Type"
+msgstr ""
+
+#: src/Modules/TextMotion/Controls/TextMotionControls.php:147
+msgid "Custom"
+msgstr ""
+
+#: src/Modules/TextMotion/Controls/TextMotionControls.php:161
+msgid "Custom Characters"
+msgstr ""
+
+#: src/Modules/TextMotion/Controls/TextMotionControls.php:396
+msgid "Delay"
+msgstr ""
+
+#: src/Modules/TextMotion/Controls/TextMotionControls.php:401
+msgid "Delay before the animation starts, in seconds."
+msgstr ""
+
+#: src/Modules/TextMotion/Controls/TextMotionControls.php:267
+msgid "Delay between each word/character animation, in seconds."
+msgstr ""
+
+#: src/Modules/TextMotion/Controls/TextMotionControls.php:340
+msgid "Delay between lines. 0 = together, 0.15 = next line starts after 0.15s. For 25% overlap with 1s duration use 0.25."
+msgstr ""
+
+#: src/Modules/InteractionMotion/Controls/CursorControls.php:510
+msgid "Difference"
+msgstr ""
+
+#: src/Modules/InteractionMotion/Controls/CursorControls.php:512
+msgid "Difference inverts colors underneath the cursor."
+msgstr ""
+
+#: src/Admin/Views/settings.php:79
+msgid "Disable Hover Reveal & Interactive Cursor on touch devices."
+msgstr ""
+
+#: src/Admin/Views/settings.php:78
+msgid "Disable Interaction Motion on Mobile"
+msgstr ""
+
+#: src/Admin/Views/settings.php:100
+msgid "Disable Smooth Scroll on Mobile"
+msgstr ""
+
+#: src/Admin/Views/settings.php:101
+msgid "Disable smooth scroll on touch devices."
+msgstr ""
+
+#: src/Admin/Views/overview.php:82
+msgid "Disabled"
+msgstr ""
+
+#: src/Admin/Views/about.php:158 src/Admin/Views/about.php:166
+msgid "Dismiss"
+msgstr ""
+
+#: src/Admin/Views/about.php:77
+msgid "Documentation"
+msgstr ""
+
+#: src/Modules/InteractionMotion/Controls/CursorControls.php:43
+msgid "Dot + Ring"
+msgstr ""
+
+#: src/Modules/InteractionMotion/Controls/CursorControls.php:384
+msgid "Dot Size"
+msgstr ""
+
+#: src/Modules/InteractionMotion/Controls/CursorControls.php:355
+msgid "Dots"
+msgstr ""
+
+#: src/Modules/TextMotion/Controls/TextMotionControls.php:375
+msgid "Duration"
+msgstr ""
+
+#: src/Modules/TextMotion/Controls/TextMotionControls.php:417
+msgid "Ease"
+msgstr ""
+
+#: src/Modules/InteractionMotion/Controls/InteractionMotionControls.php:56
+msgid "Effect"
+msgstr ""
+
+#: src/Modules/TextMotion/Controls/TextMotionControls.php:427
+msgid "Elastic Out"
+msgstr ""
+
+#: src/Admin/AdminManager.php:90 src/Admin/AdminManager.php:91
+#: src/Admin/AdminNotice.php:28
+msgid "Emje Motion"
+msgstr ""
+
+#: src/Admin/Views/about.php:32 src/Admin/Views/overview.php:30
+#: src/Admin/Views/settings.php:20
+msgid "Emje Motion Overview"
+msgstr ""
+
+#: emje-motion.php:120
+msgid "Emje Motion is incompletely installed (missing files). Please reinstall it: "
+msgstr ""
+
+#: src/Updater/GitHubUpdater.php:85
+#: src/Updater/stub/mu-emje-motion-updater.php:573
+msgid "Emje Motion update rejected: source archive has no built files. Please update from the release asset (emje-motion-x.y.z.zip), or reinstall manually from the latest release."
+msgstr ""
+
+#: src/Modules/InteractionMotion/Controls/InteractionMotionControls.php:42
+#: src/Modules/TextMotion/Controls/TextMotionControls.php:87
+msgid "Enable"
+msgstr ""
+
+#: src/Admin/Views/overview.php:66
+msgid "Enable JavaScript to track changes."
+msgstr ""
+
+#: src/Admin/Views/overview.php:82
+msgid "Enabled"
+msgstr ""
+
+#: src/Modules/TextMotion/Controls/TextMotionControls.php:164
+msgid "Enter custom characters"
+msgstr ""
+
+#: src/Modules/InteractionMotion/Controls/CursorControls.php:298
+msgid "Entrance"
+msgstr ""
+
+#: src/Modules/TextMotion/Controls/TextMotionControls.php:507
+msgid "Event"
+msgstr ""
+
+#: src/Modules/InteractionMotion/Controls/HoverControls.php:115
+msgid "Fade"
+msgstr ""
+
+#: src/Modules/InteractionMotion/Controls/CursorControls.php:478
+msgid "Fade Tail"
+msgstr ""
+
+#: src/Modules/InteractionMotion/Controls/CursorControls.php:484
+msgid "Fade opacity toward the tail. Off keeps all dots opaque."
+msgstr ""
+
+#: src/Admin/Views/overview.php:60
+msgid "Features"
+msgstr ""
+
+#: src/Admin/AdminManager.php:251
+msgid "Features saved."
+msgstr ""
+
+#: src/Modules/TextMotion/Controls/TextMotionControls.php:107
+#: src/Modules/TextMotion/Controls/TextMotionControls.php:290
+msgid "Fill Reveal"
+msgstr ""
+
+#: src/Modules/InteractionMotion/Controls/CursorControls.php:544
+msgid "Follow Smoothness"
+msgstr ""
+
+#: src/Modules/InteractionMotion/Controls/HoverControls.php:73
+msgid "Follow Speed"
+msgstr ""
+
+#: src/Modules/InteractionMotion/Controls/HoverControls.php:59
+msgid "Full"
+msgstr ""
+
+#: src/Admin/Views/about.php:55
+msgid "Give your pages movement with a purpose — simple controls, visitors who stay."
+msgstr ""
+
+#: src/Admin/Views/settings.php:96
+msgid "Global smooth scroll. Enabled via Overview → Smooth Scroll toggle."
+msgstr ""
+
+#: src/Modules/InteractionMotion/Controls/CursorControls.php:413
+msgid "Head Color"
+msgstr ""
+
+#: src/Modules/InteractionMotion/Controls/CursorControls.php:398
+msgid "Head dot size. Tail dots scale down automatically."
+msgstr ""
+
+#: src/Modules/InteractionMotion/Controls/HoverControls.php:136
+msgid "Heading Only"
+msgstr ""
+
+#: src/Modules/InteractionMotion/Controls/CursorControls.php:526
+msgid "Hide Native Cursor"
+msgstr ""
+
+#: src/Admin/Views/settings.php:67
+msgid "Honors your system preference. Motion auto-skips if the user prefers less animation."
+msgstr ""
+
+#: src/Modules/InteractionMotion/Controls/HoverControls.php:164
+msgid "Horizontal offset from cursor. Negative = left, positive = right."
+msgstr ""
+
+#: src/Modules/InteractionMotion/Controls/CursorControls.php:254
+msgid "Horizontal padding. Controls circle width. Longer text becomes pill."
+msgstr ""
+
+#: src/Modules/TextMotion/Controls/TextMotionControls.php:513
+msgid "Hover"
+msgstr ""
+
+#: src/Modules/InteractionMotion/Controls/HoverControls.php:22
+#: src/Modules/InteractionMotion/Controls/InteractionMotionControls.php:60
+msgid "Hover Reveal"
+msgstr ""
+
+#: src/Admin/AdminManager.php:402
+msgid "Hover Reveal & Interactive Cursor for Container — one effect per Container."
+msgstr ""
+
+#: src/Modules/InteractionMotion/Controls/HoverControls.php:234
+msgid "Hover Rotate"
+msgstr ""
+
+#: src/Modules/InteractionMotion/Controls/CursorControls.php:112
+msgid "Hover Scale"
+msgstr ""
+
+#: src/Modules/InteractionMotion/Controls/CursorControls.php:463
+msgid "How fast dots chase the one ahead. Lower = tighter, higher = longer tail (default 0.35)."
+msgstr ""
+
+#: src/Modules/InteractionMotion/Controls/HoverControls.php:79
+msgid "How quickly the image follows the cursor. Lower is smoother."
+msgstr ""
+
+#: src/Modules/InteractionMotion/Controls/CursorControls.php:306
+msgid "How the cursor appears when entering the container."
+msgstr ""
+
+#: src/Modules/InteractionMotion/Controls/HoverControls.php:52
+msgid "Image Size"
+msgstr ""
+
+#: src/Admin/Views/about.php:64
+msgid "Information & updates"
+msgstr ""
+
+#: src/Admin/AdminManager.php:189
+msgid "Insufficient permissions."
+msgstr ""
+
+#: src/Admin/AdminManager.php:401
+#: src/Modules/InteractionMotion/Controls/InteractionMotionControls.php:34
+msgid "Interaction Motion"
+msgstr ""
+
+#: src/Modules/InteractionMotion/Controls/CursorControls.php:25
+#: src/Modules/InteractionMotion/Controls/InteractionMotionControls.php:61
+msgid "Interactive Cursor"
+msgstr ""
+
+#: src/Modules/InteractionMotion/Controls/HoverControls.php:58
+msgid "Large"
+msgstr ""
+
+#: src/Modules/TextMotion/Controls/TextMotionControls.php:182
+msgid "Left → Right"
+msgstr ""
+
+#: src/Modules/TextMotion/Controls/TextMotionControls.php:143
+msgid "Letters"
+msgstr ""
+
+#: src/Modules/TextMotion/Controls/TextMotionControls.php:145
+msgid "Letters & Numbers"
+msgstr ""
+
+#: src/Modules/TextMotion/Controls/TextMotionControls.php:334
+msgid "Line Stagger"
+msgstr ""
+
+#: src/Modules/InteractionMotion/Controls/InteractionMotionControls.php:89
+#: src/Modules/TextMotion/Controls/TextMotionControls.php:461
+msgid "Live Preview"
+msgstr ""
+
+#: src/Modules/InteractionMotion/Controls/CursorControls.php:558
+msgid "Lower = snappier, higher = more trailing."
+msgstr ""
+
+#: src/Admin/Views/settings.php:113
+msgid "Lower is smoother. Range 0.05–0.15, default 0.075."
+msgstr ""
+
+#: src/Admin/Views/settings.php:62
+msgid "Manage how motion behaves across your site."
+msgstr ""
+
+#: src/Admin/Views/settings.php:51
+msgid "Manage preferences & performance"
+msgstr ""
+
+#: src/Modules/InteractionMotion/Controls/HoverControls.php:57
+msgid "Medium"
+msgstr ""
+
+#: src/Admin/Views/about.php:44 src/Admin/Views/overview.php:42
+#: src/Admin/Views/settings.php:32
+msgid "Mobile navigation"
+msgstr ""
+
+#: src/Modules/InteractionMotion/Controls/CursorControls.php:481
+#: src/Modules/InteractionMotion/Controls/CursorControls.php:529
+#: src/Modules/TextMotion/Controls/TextMotionControls.php:530
+msgid "No"
+msgstr ""
+
+#: src/Admin/Views/overview.php:64 src/Admin/Views/settings.php:54
+msgid "No changes to save"
+msgstr ""
+
+#: src/Admin/Views/overview.php:19
+msgid "No features active"
+msgstr ""
+
+#: src/Modules/InteractionMotion/Controls/CursorControls.php:304
+msgid "None"
+msgstr ""
+
+#: src/Modules/TextMotion/Controls/TextMotionControls.php:421
+msgid "None (Linear)"
+msgstr ""
+
+#: src/Modules/InteractionMotion/Controls/CursorControls.php:509
+msgid "Normal"
+msgstr ""
+
+#: src/Admin/Views/about.php:117
+msgid "Not detected"
+msgstr ""
+
+#: src/Modules/InteractionMotion/Controls/CursorControls.php:369
+msgid "Number of trailing dots. More = longer comet tail."
+msgstr ""
+
+#: src/Modules/TextMotion/Controls/TextMotionControls.php:144
+msgid "Numbers"
+msgstr ""
+
+#: src/Modules/InteractionMotion/Controls/InteractionMotionControls.php:45
+#: src/Modules/InteractionMotion/Controls/InteractionMotionControls.php:92
+#: src/Modules/TextMotion/Controls/TextMotionControls.php:464
+#: src/Modules/TextMotion/Controls/TextMotionControls.php:90
+msgid "Off"
+msgstr ""
+
+#: src/Modules/InteractionMotion/Controls/HoverControls.php:150
+msgid "Offset X"
+msgstr ""
+
+#: src/Modules/InteractionMotion/Controls/HoverControls.php:178
+msgid "Offset Y"
+msgstr ""
+
+#: src/Modules/InteractionMotion/Controls/InteractionMotionControls.php:44
+#: src/Modules/InteractionMotion/Controls/InteractionMotionControls.php:91
+#: src/Modules/TextMotion/Controls/TextMotionControls.php:463
+#: src/Modules/TextMotion/Controls/TextMotionControls.php:89
+msgid "On"
+msgstr ""
+
+#: src/Modules/TextMotion/Controls/TextMotionControls.php:514
+msgid "On Scroll (Scrub)"
+msgstr ""
+
+#: src/Modules/TextMotion/Controls/TextMotionControls.php:317
+msgid "Opacity of the background text layer."
+msgstr ""
+
+#: src/Admin/AdminManager.php:101 src/Admin/AdminManager.php:102
+#: src/Admin/Views/about.php:37 src/Admin/Views/about.php:45
+#: src/Admin/Views/overview.php:35 src/Admin/Views/overview.php:43
+#: src/Admin/Views/settings.php:25 src/Admin/Views/settings.php:33
+msgid "Overview"
+msgstr ""
+
+#: src/Modules/InteractionMotion/Controls/CursorControls.php:240
+msgid "Padding X"
+msgstr ""
+
+#: src/Modules/InteractionMotion/Controls/CursorControls.php:211
+msgid "Padding Y"
+msgstr ""
+
+#: src/Modules/TextMotion/Controls/TextMotionControls.php:511
+msgid "Page Load"
+msgstr ""
+
+#: src/Modules/TextMotion/Controls/TextMotionControls.php:527
+msgid "Play Once"
+msgstr ""
+
+#: src/Admin/Views/about.php:108
+msgid "Plugin"
+msgstr ""
+
+#: src/Modules/TextMotion/Controls/TextMotionControls.php:422
+msgid "Power1 Out"
+msgstr ""
+
+#: src/Modules/TextMotion/Controls/TextMotionControls.php:423
+msgid "Power2 Out"
+msgstr ""
+
+#: src/Modules/TextMotion/Controls/TextMotionControls.php:424
+msgid "Power3 Out"
+msgstr ""
+
+#: src/Modules/TextMotion/Controls/TextMotionControls.php:425
+msgid "Power4 Out"
+msgstr ""
+
+#: src/Modules/TextMotion/Controls/TextMotionControls.php:533
+msgid "Prevent the animation from replaying after it has completed."
+msgstr ""
+
+#: src/Modules/InteractionMotion/Controls/InteractionMotionControls.php:77
+#: src/Modules/TextMotion/Controls/TextMotionControls.php:449
+msgid "Preview"
+msgstr ""
+
+#: src/Modules/TextMotion/Controls/TextMotionControls.php:481
+msgid "Preview Animation"
+msgstr ""
+
+#: src/Admin/Views/about.php:36 src/Admin/Views/overview.php:34
+#: src/Admin/Views/settings.php:24
+msgid "Primary"
+msgstr ""
+
+#: src/Modules/TextMotion/Controls/TextMotionControls.php:185
+msgid "Random"
+msgstr ""
+
+#: src/Modules/TextMotion/Controls/TextMotionControls.php:481
+msgid "Replays animation regardless of Play Once."
+msgstr ""
+
+#: src/Admin/Views/about.php:87
+msgid "Request a Feature"
+msgstr ""
+
+#: src/Admin/Views/settings.php:66
+msgid "Respect Reduced Motion"
+msgstr ""
+
+#: src/Modules/InteractionMotion/Controls/HoverControls.php:111
+msgid "Reveal Animation"
+msgstr ""
+
+#: src/Modules/InteractionMotion/Controls/HoverControls.php:35
+msgid "Reveal Image"
+msgstr ""
+
+#: src/Modules/TextMotion/Controls/TextMotionControls.php:178
+msgid "Reveal Order"
+msgstr ""
+
+#: src/Modules/TextMotion/Controls/TextMotionControls.php:183
+msgid "Right → Left"
+msgstr ""
+
+#: src/Modules/InteractionMotion/Controls/HoverControls.php:206
+msgid "Rotate"
+msgstr ""
+
+#: src/Modules/InteractionMotion/Controls/HoverControls.php:248
+msgid "Rotate when hovering. Applied on hover with animation."
+msgstr ""
+
+#: src/Admin/Views/overview.php:64
+msgid "Save Changes"
+msgstr ""
+
+#: src/Admin/Views/settings.php:54
+msgid "Save Settings"
+msgstr ""
+
+#: src/Modules/InteractionMotion/Controls/CursorControls.php:302
+#: src/Modules/InteractionMotion/Controls/HoverControls.php:116
+msgid "Scale"
+msgstr ""
+
+#: src/Modules/InteractionMotion/Controls/CursorControls.php:303
+msgid "Scale Bounce"
+msgstr ""
+
+#: src/Modules/InteractionMotion/Controls/HoverControls.php:93
+msgid "Scale on Hover"
+msgstr ""
+
+#: src/Modules/InteractionMotion/Controls/CursorControls.php:118
+msgid "Scale when hovering links/buttons inside the container."
+msgstr ""
+
+#: src/Modules/TextMotion/Controls/TextMotionControls.php:105
+#: src/Modules/TextMotion/Controls/TextMotionControls.php:126
+msgid "Scramble"
+msgstr ""
+
+#: src/Modules/TextMotion/Controls/TextMotionControls.php:199
+msgid "Scramble Speed"
+msgstr ""
+
+#: src/Admin/AdminManager.php:390
+msgid "Scramble, Unfold & Fill Reveal for Heading & Text Editor. Live preview in editor."
+msgstr ""
+
+#: src/Modules/TextMotion/Controls/TextMotionControls.php:512
+msgid "Scroll Into View"
+msgstr ""
+
+#: src/Admin/AdminManager.php:185
+msgid "Security check failed."
+msgstr ""
+
+#: src/Admin/AdminManager.php:110 src/Admin/AdminManager.php:111
+#: src/Admin/Views/about.php:38 src/Admin/Views/about.php:46
+#: src/Admin/Views/overview.php:36 src/Admin/Views/overview.php:44
+#: src/Admin/Views/settings.php:26 src/Admin/Views/settings.php:34
+#: src/Admin/Views/settings.php:50
+msgid "Settings"
+msgstr ""
+
+#: src/Admin/AdminManager.php:290
+msgid "Settings saved."
+msgstr ""
+
+#: src/Modules/InteractionMotion/Controls/CursorControls.php:322
+msgid "Shadow"
+msgstr ""
+
+#: src/Admin/Views/about.php:87
+msgid "Shape what's next"
+msgstr ""
+
+#: src/Modules/InteractionMotion/Controls/CursorControls.php:69
+msgid "Size"
+msgstr ""
+
+#: src/Admin/AdminManager.php:395 src/Admin/Views/settings.php:94
+msgid "Smooth Scroll"
+msgstr ""
+
+#: src/Admin/Views/settings.php:112
+msgid "Smoothness"
+msgstr ""
+
+#: src/Modules/TextMotion/Controls/TextMotionControls.php:242
+msgid "Split By"
+msgstr ""
+
+#: src/Modules/TextMotion/Controls/TextMotionControls.php:261
+msgid "Stagger"
+msgstr ""
+
+#: src/Modules/InteractionMotion/Controls/HoverControls.php:220
+msgid "Static rotate. For hover rotate, set Hover Rotate below."
+msgstr ""
+
+#: src/Admin/Views/about.php:82
+msgid "Support"
+msgstr ""
+
+#: src/Modules/TextMotion/Controls/TextMotionControls.php:146
+msgid "Symbols"
+msgstr ""
+
+#: src/Admin/Views/about.php:100
+msgid "System Status"
+msgstr ""
+
+#: src/Modules/InteractionMotion/Controls/CursorControls.php:431
+msgid "Tail Color"
+msgstr ""
+
+#: src/Modules/InteractionMotion/Controls/CursorControls.php:195
+msgid "Text Color"
+msgstr ""
+
+#: src/Modules/InteractionMotion/Controls/CursorControls.php:42
+msgid "Text Follow"
+msgstr ""
+
+#: src/Modules/InteractionMotion/Controls/CursorControls.php:139
+msgid "Text Label"
+msgstr ""
+
+#: src/Admin/AdminManager.php:389
+#: src/Modules/TextMotion/Controls/TextMotionControls.php:62
+msgid "Text Motion"
+msgstr ""
+
+#: src/Modules/InteractionMotion/Controls/CursorControls.php:143
+msgid "Text shown inside the Text Follow cursor."
+msgstr ""
+
+#: src/Modules/InteractionMotion/Controls/HoverControls.php:56
+msgid "Thumbnail"
+msgstr ""
+
+#: src/Modules/TextMotion/Controls/TextMotionControls.php:363
+msgid "Timing"
+msgstr ""
+
+#: src/Admin/Views/about.php:41 src/Admin/Views/overview.php:39
+#: src/Admin/Views/settings.php:29
+msgid "Toggle navigation"
+msgstr ""
+
+#: src/Modules/TextMotion/Controls/TextMotionControls.php:380
+msgid "Total animation duration in seconds."
+msgstr ""
+
+#: src/Modules/InteractionMotion/Controls/CursorControls.php:449
+msgid "Trail Lag"
+msgstr ""
+
+#: src/Modules/TextMotion/Controls/TextMotionControls.php:496
+msgid "Trigger"
+msgstr ""
+
+#: src/Modules/InteractionMotion/Controls/HoverControls.php:131
+msgid "Trigger Area"
+msgstr ""
+
+#: src/Modules/InteractionMotion/Controls/CursorControls.php:159
+msgid "Typography"
+msgstr ""
+
+#: src/Modules/TextMotion/Controls/TextMotionControls.php:106
+#: src/Modules/TextMotion/Controls/TextMotionControls.php:229
+msgid "Unfold"
+msgstr ""
+
+#. %s: updates page URL
+#: src/Admin/Views/about.php:147
+msgid "Update available — open %s."
+msgstr ""
+
+#: src/Admin/Views/about.php:132 src/Admin/Views/about.php:148
+msgid "Updates"
+msgstr ""
+
+#: src/Modules/InteractionMotion/Controls/HoverControls.php:192
+msgid "Vertical offset from cursor. Negative = above, positive = below."
+msgstr ""
+
+#: src/Modules/InteractionMotion/Controls/CursorControls.php:225
+msgid "Vertical padding. Controls circle height."
+msgstr ""
+
+#: src/Admin/AdminManager.php:74
+#: src/Updater/stub/mu-emje-motion-updater.php:539
+msgid "View Emje Motion details"
+msgstr ""
+
+#: src/Admin/AdminManager.php:75
+#: src/Updater/stub/mu-emje-motion-updater.php:540
+msgid "View details"
+msgstr ""
+
+#: src/Admin/Views/about.php:72
+msgid "Website"
+msgstr ""
+
+#: src/Admin/Views/about.php:101
+msgid "What’s running under the hood."
+msgstr ""
+
+#: src/Admin/Views/settings.php:122
+msgid "Wheel Multiplier"
+msgstr ""
+
+#: src/Modules/InteractionMotion/Controls/HoverControls.php:135
+msgid "Whole Container"
+msgstr ""
+
+#: src/Modules/TextMotion/Controls/TextMotionControls.php:246
+msgid "Words"
+msgstr ""
+
+#: src/Modules/InteractionMotion/Controls/CursorControls.php:480
+#: src/Modules/InteractionMotion/Controls/CursorControls.php:528
+#: src/Modules/TextMotion/Controls/TextMotionControls.php:529
+msgid "Yes"
+msgstr ""
+
+#: src/Admin/Views/about.php:165
+msgid "You're up to date."
+msgstr ""
+
+#: emje-motion.php:122
+msgid "download the latest release zip"
+msgstr ""
+
+#: src/Modules/InteractionMotion/Controls/CursorControls.php:142
+msgid "e.g. View"
+msgstr ""
+
+#: src/Admin/AdminNotice.php:29
+msgid "requires Elementor to be installed and activated."
+msgstr ""
+

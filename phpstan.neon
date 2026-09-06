@@ -1,0 +1,25 @@
+parameters:
+    level: 8
+
+    paths:
+        - src
+        - emje-motion.php
+
+    excludePaths:
+        - src/Updater/stub
+
+    bootstrapFiles:
+        - vendor/autoload.php
+        - vendor/php-stubs/wordpress-stubs/wordpress-stubs.php
+
+    reportUnmatchedIgnoredErrors: true
+
+    ignoreErrors:
+        # Elementor is provided at runtime, not via Composer.
+        - '#(Class Elementor\\.* not found|unknown class Elementor\\.*|invalid type Elementor\\.*)#'
+        # WP constants available at runtime.
+        - '#Constant (EMJE_MOTION[A-Z_]*|WPMU_PLUGIN_DIR|WP_CONTENT_DIR|WP_PLUGIN_DIR) not found#'
+        # Asset URL var tag: WordPress returns string, we guarantee non-empty.
+        - '#PHPDoc tag @var.*not subtype#'
+
+    tmpDir: .phpstan

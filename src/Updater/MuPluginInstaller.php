@@ -1,0 +1,135 @@
+<?php
+
+declare(strict_types=1);
+
+namespace EmjeCreative\EmjeMotion\Updater;
+
+/**
+ * Auto-installs mu-plugin updater shim for multisite per-site activation.
+ */
+final class MuPluginInstaller
+{
+    public const MU_FILE = 'emje-motion-updater.php';
+
+    public static function install(): void
+    {
+        if (! function_exists('is_multisite') || ! is_multisite()) {
+            return;
+        }
+
+        // Only admin users with plugin activation capability may trigger the file write.
+        if (! current_user_can('activate_plugins')) {
+            return;
+        }
+
+        $muDir = defined('WPMU_PLUGIN_DIR') ? WPMU_PLUGIN_DIR : WP_CONTENT_DIR . '/mu-plugins';
+        $target = rtrim($muDir, '/\\') . '/' . self::MU_FILE;
+        $source = dirname(__DIR__) . '/Updater/stub/mu-emje-motion-updater.php';
+
+        // Alternative path when called from mu context: __DIR__ is src/Updater
+        if (! file_exists($source)) {
+            $source = EMJE_MOTION_PATH . 'src/Updater/stub/mu-emje-motion-updater.php';
+        }
+
+        if (! file_exists($source)) {
+            return;
+        }
+
+        if (! is_dir($muDir)) {
+            // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_mkdir --mu install requires mkdir
+            @mkdir($muDir, 0755, true);
+        }
+
+        if (! is_dir($muDir) || ! is_writable($muDir)) {
+            return;
+        }
+
+        // Sync when content differs (normalized) so stub updates always propagate.
+        // filemtime alone is unreliable: copy() stamps "now", freezing future syncs.
+        $shouldCopy = true;
+        if (file_exists($target)) {
+            $shouldCopy = self::isSourceNewer($source, $target);
+        }
+
+        if ($shouldCopy) {
+            // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_copy --mu install
+            @copy($source, $target);
+        }
+    }
+
+    /**
+     * Whether the source stub differs from the installed mu file.
+     *
+     * Compares normalized contents (not filemtime) so every stub change —
+     * icons, tested version, heal logic — propagates on next admin load.
+     */
+    private static function isSourceNewer(string $source, string $target): bool
+    {
+        // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_file_get_contents -- mu sync check
+        $src = @file_get_contents($source);
+        // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_file_get_contents -- mu sync check
+        $dst = @file_get_contents($target);
+
+        if (is_string($src) && is_string($dst)) {
+            $normalize = static fn (string $s): string => str_replace(["\r\n", "\r"], "\n", $s);
+
+            return $normalize($src) !== $normalize($dst);
+        }
+
+        return filemtime($source) > filemtime($target);
+    }
+
+    public static function uninstall(): void
+    {
+        if (! function_exists('is_multisite') || ! is_multisite()) {
+            return;
+        }
+
+        // Only remove if no site still has plugin active (network or per-site).
+        if (self::isActiveAnywhere()) {
+            return;
+        }
+
+        $muDir = defined('WPMU_PLUGIN_DIR') ? WPMU_PLUGIN_DIR : WP_CONTENT_DIR . '/mu-plugins';
+        $target = rtrim($muDir, '/\\') . '/' . self::MU_FILE;
+
+        if (file_exists($target)) {
+            // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_unlink -- mu cleanup
+            @unlink($target);
+        }
+    }
+
+    /**
+     * Check if plugin is active anywhere in the network.
+     */
+    private static function isActiveAnywhere(): bool
+    {
+        $plugin = plugin_basename(EMJE_MOTION_FILE);
+
+        // Network activated?
+        if (function_exists('is_plugin_active_for_network') && is_plugin_active_for_network($plugin)) {
+            return true;
+        }
+
+        if (! function_exists('get_sites') || ! function_exists('is_plugin_active')) {
+            return false;
+        }
+
+        // Check each site by ID (no artificial limit; IDs only for performance).
+        $sites = get_sites(['number' => 0, 'fields' => 'ids']);
+        foreach ($sites as $siteId) {
+            $siteId = (int) $siteId;
+            if ($siteId <= 0) {
+                continue;
+            }
+            switch_to_blog($siteId);
+            $active = is_plugin_active($plugin);
+            restore_current_blog();
+            if ($active) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+}

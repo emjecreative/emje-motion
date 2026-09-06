@@ -1,0 +1,259 @@
+<?php
+
+declare(strict_types=1);
+
+namespace EmjeCreative\EmjeMotion\Modules\InteractionMotion\Controls;
+
+use Elementor\Controls_Manager;
+
+/**
+ * Hover Reveal controls for Interaction Motion.
+ */
+final class HoverControls
+{
+    /**
+     * @param mixed $element
+     */
+    public function register($element): void
+    {
+        $element->add_control(
+            'emje_interaction_hover_heading',
+            [
+                'label' => esc_html__('Hover Reveal', 'emje-motion'),
+                'type' => Controls_Manager::HEADING,
+                'separator' => 'before',
+                'condition' => [
+                    'emje_interaction_enable' => 'yes',
+                    'emje_interaction_effect' => 'hover-reveal',
+                ],
+            ],
+        );
+
+        $element->add_control(
+            'emje_interaction_hover_image',
+            [
+                'label' => esc_html__('Reveal Image', 'emje-motion'),
+                'type' => Controls_Manager::MEDIA,
+                'default' => [
+                    'url' => '',
+                ],
+                'condition' => [
+                    'emje_interaction_enable' => 'yes',
+                    'emje_interaction_effect' => 'hover-reveal',
+                ],
+                'frontend_available' => true,
+                'render_type' => 'template',
+            ],
+        );
+
+        $element->add_control(
+            'emje_interaction_hover_image_size',
+            [
+                'label' => esc_html__('Image Size', 'emje-motion'),
+                'type' => Controls_Manager::SELECT,
+                'default' => 'medium',
+                'options' => [
+                    'thumbnail' => esc_html__('Thumbnail', 'emje-motion'),
+                    'medium' => esc_html__('Medium', 'emje-motion'),
+                    'large' => esc_html__('Large', 'emje-motion'),
+                    'full' => esc_html__('Full', 'emje-motion'),
+                ],
+                'condition' => [
+                    'emje_interaction_enable' => 'yes',
+                    'emje_interaction_effect' => 'hover-reveal',
+                ],
+                'frontend_available' => true,
+                'render_type' => 'template',
+            ],
+        );
+
+        $element->add_control(
+            'emje_interaction_hover_follow_speed',
+            [
+                'label' => esc_html__('Follow Speed', 'emje-motion'),
+                'type' => Controls_Manager::NUMBER,
+                'default' => 0.12,
+                'min' => 0.05,
+                'max' => 0.3,
+                'step' => 0.01,
+                'description' => esc_html__('How quickly the image follows the cursor. Lower is smoother.', 'emje-motion'),
+                'classes' => 'emje-control--has-tooltip',
+                'condition' => [
+                    'emje_interaction_enable' => 'yes',
+                    'emje_interaction_effect' => 'hover-reveal',
+                ],
+                'frontend_available' => true,
+                'render_type' => 'none',
+            ],
+        );
+
+        $element->add_control(
+            'emje_interaction_hover_scale',
+            [
+                'label' => esc_html__('Scale on Hover', 'emje-motion'),
+                'type' => Controls_Manager::NUMBER,
+                'default' => 1.0,
+                'min' => 0.8,
+                'max' => 1.2,
+                'step' => 0.05,
+                'condition' => [
+                    'emje_interaction_enable' => 'yes',
+                    'emje_interaction_effect' => 'hover-reveal',
+                ],
+                'frontend_available' => true,
+                'render_type' => 'none',
+            ],
+        );
+
+        $element->add_control(
+            'emje_interaction_hover_animation',
+            [
+                'label' => esc_html__('Reveal Animation', 'emje-motion'),
+                'type' => Controls_Manager::SELECT,
+                'default' => 'fade',
+                'options' => [
+                    'fade' => esc_html__('Fade', 'emje-motion'),
+                    'scale' => esc_html__('Scale', 'emje-motion'),
+                    'clip' => esc_html__('Clip Path', 'emje-motion'),
+                ],
+                'condition' => [
+                    'emje_interaction_enable' => 'yes',
+                    'emje_interaction_effect' => 'hover-reveal',
+                ],
+                'frontend_available' => true,
+                'render_type' => 'none',
+            ],
+        );
+
+        $element->add_control(
+            'emje_interaction_hover_trigger_area',
+            [
+                'label' => esc_html__('Trigger Area', 'emje-motion'),
+                'type' => Controls_Manager::SELECT,
+                'default' => 'container',
+                'options' => [
+                    'container' => esc_html__('Whole Container', 'emje-motion'),
+                    'heading' => esc_html__('Heading Only', 'emje-motion'),
+                ],
+                'condition' => [
+                    'emje_interaction_enable' => 'yes',
+                    'emje_interaction_effect' => 'hover-reveal',
+                ],
+                'frontend_available' => true,
+                'render_type' => 'template',
+            ],
+        );
+
+        $element->add_control(
+            'emje_interaction_hover_offset_x',
+            [
+                'label' => esc_html__('Offset X', 'emje-motion'),
+                'type' => Controls_Manager::SLIDER,
+                'size_units' => ['px'],
+                'range' => [
+                    'px' => [
+                        'min' => -200,
+                        'max' => 200,
+                        'step' => 1,
+                    ],
+                ],
+                'default' => [
+                    'size' => 0,
+                    'unit' => 'px',
+                ],
+                'description' => esc_html__('Horizontal offset from cursor. Negative = left, positive = right.', 'emje-motion'),
+                'classes' => 'emje-control--has-tooltip',
+                'condition' => [
+                    'emje_interaction_enable' => 'yes',
+                    'emje_interaction_effect' => 'hover-reveal',
+                ],
+                'frontend_available' => true,
+                'render_type' => 'none',
+            ],
+        );
+
+        $element->add_control(
+            'emje_interaction_hover_offset_y',
+            [
+                'label' => esc_html__('Offset Y', 'emje-motion'),
+                'type' => Controls_Manager::SLIDER,
+                'size_units' => ['px'],
+                'range' => [
+                    'px' => [
+                        'min' => -200,
+                        'max' => 200,
+                        'step' => 1,
+                    ],
+                ],
+                'default' => [
+                    'size' => 0,
+                    'unit' => 'px',
+                ],
+                'description' => esc_html__('Vertical offset from cursor. Negative = above, positive = below.', 'emje-motion'),
+                'classes' => 'emje-control--has-tooltip',
+                'condition' => [
+                    'emje_interaction_enable' => 'yes',
+                    'emje_interaction_effect' => 'hover-reveal',
+                ],
+                'frontend_available' => true,
+                'render_type' => 'none',
+            ],
+        );
+
+        $element->add_control(
+            'emje_interaction_hover_rotate',
+            [
+                'label' => esc_html__('Rotate', 'emje-motion'),
+                'type' => Controls_Manager::SLIDER,
+                'size_units' => ['deg'],
+                'range' => [
+                    'deg' => [
+                        'min' => 0,
+                        'max' => 360,
+                        'step' => 1,
+                    ],
+                ],
+                'default' => [
+                    'size' => 0,
+                    'unit' => 'deg',
+                ],
+                'description' => esc_html__('Static rotate. For hover rotate, set Hover Rotate below.', 'emje-motion'),
+                'classes' => 'emje-control--has-tooltip',
+                'condition' => [
+                    'emje_interaction_enable' => 'yes',
+                    'emje_interaction_effect' => 'hover-reveal',
+                ],
+                'frontend_available' => true,
+                'render_type' => 'none',
+            ],
+        );
+
+        $element->add_control(
+            'emje_interaction_hover_rotate_hover',
+            [
+                'label' => esc_html__('Hover Rotate', 'emje-motion'),
+                'type' => Controls_Manager::SLIDER,
+                'size_units' => ['deg'],
+                'range' => [
+                    'deg' => [
+                        'min' => 0,
+                        'max' => 360,
+                        'step' => 1,
+                    ],
+                ],
+                'default' => [
+                    'size' => 15,
+                    'unit' => 'deg',
+                ],
+                'description' => esc_html__('Rotate when hovering. Applied on hover with animation.', 'emje-motion'),
+                'classes' => 'emje-control--has-tooltip',
+                'condition' => [
+                    'emje_interaction_enable' => 'yes',
+                    'emje_interaction_effect' => 'hover-reveal',
+                ],
+                'frontend_available' => true,
+                'render_type' => 'none',
+            ],
+        );
+    }
+}

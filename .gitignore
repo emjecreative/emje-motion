@@ -1,0 +1,36 @@
+# Composer
+/vendor/
+auth.json
+composer.phar
+
+# Node
+/node_modules/
+
+# Build
+/build/
+/dist/
+emje-motion-*.zip
+*.zip
+
+# Internal dev docs (local only, never public)
+/docs/
+
+# Cache
+.php-cs-fixer.cache
+.phpunit.result.cache
+/.phpstan/
+
+# Logs
+*.log
+
+# Environment
+.env
+.env.local
+
+# IDE
+.vscode/settings.json
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db

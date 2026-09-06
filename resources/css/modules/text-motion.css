@@ -1,0 +1,108 @@
+.emje-motion-fill {
+
+	position: relative;
+	display: inline-block;
+	max-width: 100%;
+	vertical-align: baseline;
+	overflow: visible;
+	padding-bottom: 0.12em;
+	margin-bottom: -0.12em;
+
+}
+
+.emje-motion-fill__background {
+
+	display: block;
+	opacity: .25;
+	white-space: normal;
+	overflow-wrap: break-word;
+	word-break: break-word;
+
+}
+
+.emje-motion-fill__mask {
+
+	position: absolute;
+
+	inset: 0;
+
+	width: 100%;
+	height: 100%;
+
+	overflow: visible;
+	overflow-x: clip;
+	clip-path: inset(0 100% 0 0);
+
+}
+
+.emje-motion-fill__foreground {
+
+	display: block;
+	white-space: normal;
+	overflow-wrap: break-word;
+	word-break: break-word;
+
+}
+
+.emje-motion-fill__line {
+	display: block;
+	position: relative;
+	overflow: visible;
+	overflow-x: clip;
+	padding-bottom: 0.12em;
+	margin-bottom: -0.02em;
+	line-height: inherit;
+}
+
+.emje-motion-fill__line .emje-motion-fill__background,
+.emje-motion-fill__line .emje-motion-fill__mask,
+.emje-motion-fill__line .emje-motion-fill__foreground {
+	display: block;
+}
+
+.emje-motion-fill__line .emje-motion-fill__mask {
+	position: absolute;
+	inset: 0;
+	width: 100%;
+	height: 100%;
+	overflow: visible;
+	overflow-x: clip;
+	clip-path: inset(0 100% 0 0);
+}
+
+.emje-motion-char,
+.emje-motion-word,
+.emje-motion-line {
+    display: inline-block;
+}
+
+
+.emje-motion-word {
+    will-change: transform, opacity;
+}
+
+.emje-motion-char,
+.emje-motion-word {
+	backface-visibility: hidden;
+	transform: translateZ(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+	.emje-motion-char,
+	.emje-motion-word,
+	.emje-motion-fill__mask {
+
+		animation: none !important;
+		transition: none !important;
+		transform: none !important;
+		will-change: auto !important;
+	}
+
+	.emje-motion-fill__mask {
+
+		clip-path: none !important;
+	}
+
+}
+
