@@ -9,6 +9,7 @@ Beautiful motion for your website.
 - [Quick start](#quick-start)
 - [Text Motion](#text-motion)
 - [Interaction Motion](#interaction-motion)
+- [Background Motion](#background-motion)
 - [Smooth Scroll](#smooth-scroll)
 - [Dashboard](#dashboard)
 - [Troubleshooting](#troubleshooting)
@@ -88,6 +89,24 @@ Replaces the native cursor inside the container. Pick a **Cursor Type**:
 Common settings: **Hide Native Cursor** (hide the real cursor inside the container) and **Follow Smoothness** (lower is snappier, higher trails more; Dot + Ring and Text Follow only).
 
 Note: Hover Reveal and Interactive Cursor hide themselves on touch devices — mobile visitors get the normal experience.
+
+## Background Motion
+
+Available on **Container** elements, **Style** tab, **Background Motion** section. Standalone from Interaction Motion — one ambient effect per Container, rendered behind your content so the native Container background (color, gradient, or image) still shows through.
+
+### ASCII
+
+An interactive character grid filling the Container: faint dots idle, glowing letters/numbers/symbols near the cursor.
+
+- **Character Color** — default neutral white (`#FFFFFF`).
+- **Hover Characters** — Full (default) or Simple.
+- **Cell Width / Cell Height** — grid density (defaults `22px` / `26px`).
+- **Font Size** — character size (default `14px`).
+- **Glow Radius / Inner Radius** — cursor light reach (defaults `360px` / `30px`).
+- **Max Opacity** — brightest glow (default `0.35`).
+- **Edge Fade** — top/bottom feather so the grid melts into the background (default `10%`).
+
+Respects reduced motion and hides on touch devices per dashboard settings. Aurora appears as an option but renders nothing yet — spec follows.
 
 ## Smooth Scroll
 

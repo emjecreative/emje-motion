@@ -22,6 +22,7 @@ final class SettingsRepository
         'text-motion',
         'smooth-scroll',
         'interaction-motion',
+        'background-motion',
         // Legacy IDs kept for backward compat (migrated to interaction-motion)
         'hover-reveal',
         'interactive-cursor',
@@ -39,6 +40,7 @@ final class SettingsRepository
         'text-motion' => true,
         'smooth-scroll' => false,
         'interaction-motion' => true,
+        'background-motion' => true,
         'hover-reveal' => true,
         'interactive-cursor' => true,
     ];

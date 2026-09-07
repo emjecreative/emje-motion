@@ -1,0 +1,44 @@
+.emje-background-motion {
+    position: relative;
+}
+
+.emje-ascii {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+    z-index: 0;
+}
+
+.emje-ascii__grid {
+    display: grid;
+    width: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    user-select: none;
+    pointer-events: none;
+}
+
+.emje-ascii__cell {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.06s ease;
+}
+
+/* Keep Elementor content above the ambient layer without stealing clicks. */
+.emje-background-motion > :not(.emje-ascii) {
+    position: relative;
+    z-index: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .emje-ascii__cell {
+        transition: none;
+    }
+}

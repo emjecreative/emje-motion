@@ -9,6 +9,7 @@ use EmjeCreative\EmjeMotion\Admin\AdminNotice;
 use EmjeCreative\EmjeMotion\Admin\SettingsRepository;
 use EmjeCreative\EmjeMotion\Assets\AssetsManager;
 use EmjeCreative\EmjeMotion\Elementor\ElementorManager;
+use EmjeCreative\EmjeMotion\Modules\BackgroundMotion\BackgroundMotion;
 use EmjeCreative\EmjeMotion\Modules\HoverReveal\HoverReveal;
 use EmjeCreative\EmjeMotion\Modules\InteractionMotion\InteractionMotion;
 use EmjeCreative\EmjeMotion\Modules\InteractiveCursor\InteractiveCursor;
@@ -92,6 +93,7 @@ final class Plugin
             HoverReveal::class,
             InteractiveCursor::class,
             InteractionMotion::class,
+            BackgroundMotion::class,
         ];
 
         foreach ($modules as $class) {

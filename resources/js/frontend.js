@@ -2,10 +2,12 @@ import '../css/modules/text-motion.css';
 import '../css/modules/smooth-scroll.css';
 import '../css/modules/hover-reveal.css';
 import '../css/modules/interactive-cursor.css';
+import '../css/modules/background-motion.css';
 import MotionEngine from './core/MotionEngine';
 import LenisScroll from './modules/SmoothScroll/LenisScroll';
 import HoverReveal from './modules/HoverReveal/HoverReveal';
 import InteractiveCursor from './modules/InteractiveCursor/InteractiveCursor';
+import BackgroundMotion from './modules/BackgroundMotion/BackgroundMotion';
 
 /**
  * Singleton engine instance.
@@ -52,11 +54,16 @@ function bootstrapInteractiveCursor() {
     InteractiveCursor.initAll();
 }
 
+function bootstrapBackgroundMotion() {
+    BackgroundMotion.initAll();
+}
+
 function bootstrapAll() {
     bootstrapSmoothScroll();
     bootstrapEmjeMotion();
     bootstrapHoverReveal();
     bootstrapInteractiveCursor();
+    bootstrapBackgroundMotion();
 }
 
 function handleNode(node) {
@@ -74,6 +81,12 @@ function handleNode(node) {
     }
     if (node.querySelectorAll) {
         node.querySelectorAll('[data-emje-cursor]').forEach(function(e) { InteractiveCursor.reInit(e); });
+    }
+    if (node.matches && node.matches('[data-emje-background]')) {
+        BackgroundMotion.reInit(node);
+    }
+    if (node.querySelectorAll) {
+        node.querySelectorAll('[data-emje-background]').forEach(function(e) { BackgroundMotion.reInit(e); });
     }
 }
 
@@ -139,4 +152,5 @@ if (typeof window !== 'undefined') {
     window.EmjeMotion.getEngine = getEngine;
     window.EmjeMotionHoverReveal = HoverReveal;
     window.EmjeMotionCursor = InteractiveCursor;
+    window.EmjeMotionBackground = BackgroundMotion;
 }

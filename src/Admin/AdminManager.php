@@ -228,7 +228,7 @@ final class AdminManager
 
         // Visible modules in Overview (3)
         $posted = wp_unslash($_POST);
-        foreach (['text-motion', 'smooth-scroll', 'interaction-motion'] as $id) {
+        foreach (['text-motion', 'smooth-scroll', 'interaction-motion', 'background-motion'] as $id) {
             // phpcs:ignore WordPress.Security.NonceVerification.Missing -- already verified
             $key = 'module_' . str_replace('-', '_', $id);
             $modules[$id] = isset($posted[$key]) && $posted[$key] === '1';
@@ -402,6 +402,12 @@ final class AdminManager
                 'description' => esc_html__('Hover Reveal & Interactive Cursor for Container — one effect per Container.', 'emje-motion'),
                 'status' => esc_html__('Available', 'emje-motion'),
                 'icon' => 'cursor-click',
+            ],
+            'background-motion' => [
+                'label' => esc_html__('Background Motion', 'emje-motion'),
+                'description' => esc_html__('ASCII ambient backgrounds for Container. Aurora coming soon.', 'emje-motion'),
+                'status' => esc_html__('Available', 'emje-motion'),
+                'icon' => 'sparkle',
             ],
         ];
     }

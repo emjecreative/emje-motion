@@ -3,6 +3,11 @@
 All notable changes to Emje Motion are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [Unreleased]
+
+### Added
+- **Background Motion** — new standalone Container module with ASCII ambient backgrounds (grid fills the Container, neutral white default, edge fade via transparent mask so native backgrounds show through). Aurora listed as a name-only placeholder.
+
 ## [1.0.1] - 2026-09-06
 
 ### Fixed

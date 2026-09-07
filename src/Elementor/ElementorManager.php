@@ -6,6 +6,7 @@ namespace EmjeCreative\EmjeMotion\Elementor;
 
 use EmjeCreative\EmjeMotion\Core\Container;
 use EmjeCreative\EmjeMotion\Core\ModuleLoader;
+use EmjeCreative\EmjeMotion\Modules\BackgroundMotion\BackgroundMotion;
 use EmjeCreative\EmjeMotion\Modules\HoverReveal\HoverReveal;
 use EmjeCreative\EmjeMotion\Modules\InteractionMotion\InteractionMotion;
 use EmjeCreative\EmjeMotion\Modules\InteractiveCursor\InteractiveCursor;
@@ -58,6 +59,7 @@ final class ElementorManager
             HoverReveal::class,
             InteractiveCursor::class,
             InteractionMotion::class,
+            BackgroundMotion::class,
         ];
 
         foreach ($classes as $class) {

@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Editor bridge for Emje Motion live preview.
  * Loaded in Elementor editor top frame via elementor/editor/before_enqueue_scripts.
  * TODO: Split God File → editor/textMotionBridge.js, editor/interactionBridge.js, editor/tooltip.js, editor/previewSync.js
@@ -821,7 +821,8 @@
                 var text = (titleEl ? titleEl.textContent : h.textContent).trim();
                 var isText = text === 'Text Motion' || text.indexOf('Text Motion') === 0;
                 var isInter = text === 'Interaction Motion' || text.indexOf('Interaction Motion') === 0;
-                if (!isText && !isInter) return;
+                var isBg = text === 'Background Motion' || text.indexOf('Background Motion') === 0;
+                if (!isText && !isInter && !isBg) return;
                 if (h.querySelector('.emje-panel-heading-icon')) return;
                 var img = document.createElement('img');
                 img.className = 'emje-panel-heading-icon';
@@ -868,12 +869,223 @@
         debounced();
     }
 
+    function buildBackgroundConfig(settings) {
+        var get = function(k, d) { var v = settings.get(k); return v !== undefined && v !== null ? v : d; };
+        var enable = get('emje_background_enable', '') === 'yes';
+        var effect = get('emje_background_effect', 'ascii');
+        if (effect === 'ascii-interactive') effect = 'ascii'; // legacy value
+        if (['ascii', 'aurora'].indexOf(effect) === -1) effect = 'ascii';
+        var live = get('emje_background_live_preview', '') === 'yes';
+        if (!enable || effect !== 'ascii') {
+            return { enable: enable, effect: effect, livePreview: live };
+        }
+        var num = function(k, def, min, max) {
+            var v = get(k, null);
+            if (v && typeof v === 'object' && v.size !== undefined) v = v.size;
+            var n = parseFloat(v);
+            if (isNaN(n)) return def;
+            return Math.max(min, Math.min(max, n));
+        };
+        var isValidColor = function(c){ if(!c||typeof c!=='string')return false; c=c.trim(); return /^#([0-9A-F]{3,8})$/i.test(c) || /^(rgba?|hsla?|var)\s*\(.*\)$/i.test(c) || c.indexOf('var(')===0 || /^[a-zA-Z]+$/.test(c); };
+        var color = get('emje_background_ascii_color', '#FFFFFF');
+        if (typeof color !== 'string') color = '#FFFFFF';
+        var globals = get('__globals__', null);
+        if (globals && typeof globals === 'object' && globals['emje_background_ascii_color']) {
+            var gv = globals['emje_background_ascii_color'];
+            if (typeof gv === 'string' && gv.indexOf('globals/colors') !== -1) {
+                var m = gv.match(/id=([^&]+)/);
+                if (m) gv = 'var(--e-global-color-' + m[1].replace(/[^a-zA-Z0-9_-]/g, '') + ')';
+            }
+            if (isValidColor(gv)) color = gv;
+        }
+        if (!isValidColor(color)) color = '#FFFFFF';
+        var charset = get('emje_background_ascii_charset', 'full');
+        if (['full', 'simple'].indexOf(charset) === -1) charset = 'full';
+        return {
+            enable: true,
+            effect: effect,
+            livePreview: live,
+            color: color,
+            charset: charset,
+            cellW: num('emje_background_ascii_cell_w', 22, 8, 60),
+            cellH: num('emje_background_ascii_cell_h', 26, 8, 60),
+            fontSize: num('emje_background_ascii_font', 14, 6, 32),
+            radius: num('emje_background_ascii_radius', 360, 100, 600),
+            innerRadius: num('emje_background_ascii_inner', 30, 0, 200),
+            maxOpacity: num('emje_background_ascii_opacity', 0.35, 0, 1),
+            fade: num('emje_background_ascii_fade', 10, 0, 30)
+        };
+    }
+
+    function syncBackgroundPreview(settings, widgetId, win, doc) {
+        var cfg = buildBackgroundConfig(settings);
+        var target = findTarget(doc, widgetId, 'data-emje-background');
+        if (!target && widgetId) {
+            target = doc.querySelector('[data-id="' + widgetId + '"]');
+        }
+        if (!target) return;
+        if (!cfg.enable || (cfg.effect !== 'ascii' && cfg.effect !== 'ascii-interactive') || !cfg.livePreview) {
+            try { target.removeAttribute('data-emje-background'); } catch (e) {}
+            try {
+                if (win.EmjeMotionBackground && win.EmjeMotionBackground._instances && win.EmjeMotionBackground._instances.get(target)) {
+                    var old = win.EmjeMotionBackground._instances.get(target);
+                    if (old && typeof old.destroy === 'function') old.destroy();
+                    win.EmjeMotionBackground._instances.delete(target);
+                    delete target.dataset.emjeBackgroundInitialized;
+                }
+            } catch (e) {}
+            return;
+        }
+        try {
+            target.setAttribute('data-emje-background', JSON.stringify({
+                effect: 'ascii',
+                color: cfg.color,
+                charset: cfg.charset,
+                cellW: cfg.cellW,
+                cellH: cfg.cellH,
+                fontSize: cfg.fontSize,
+                radius: cfg.radius,
+                innerRadius: cfg.innerRadius,
+                maxOpacity: cfg.maxOpacity,
+                fade: cfg.fade,
+                livePreview: cfg.livePreview
+            }));
+        } catch (e) {}
+        if (win.EmjeMotionBackground && win.EmjeMotionBackground.reInit) {
+            win.EmjeMotionBackground.reInit(target);
+        }
+    }
+
+    function bindBackgroundBridge() {
+        if (!window.elementor || !window.elementor.channels || !window.elementor.channels.editor) return;
+        window.elementor.channels.editor.on('change', function(view) {
+            var model = null;
+            var settings = null;
+            var widgetType = null;
+            var widgetId = null;
+            if (view && view.model) {
+                model = view.model;
+                settings = typeof model.get === 'function' ? model.get('settings') : null;
+                widgetType = model.get('widgetType') || model.get('elType');
+                widgetId = model.get('id');
+            }
+            if (!settings || typeof settings.get !== 'function') return;
+            if (widgetType !== 'container') return;
+            if (settings.get('emje_background_enable') === undefined && settings.get('emje_background_effect') === undefined) return;
+            var win = getPreviewWindow();
+            var doc = getPreviewDocument();
+            if (!win || !doc) return;
+            clearTimeout(bindBackgroundBridge._t);
+            bindBackgroundBridge._t = setTimeout(function() {
+                syncBackgroundPreview(settings, widgetId, win, doc);
+            }, 150);
+        });
+    }
+
+    function findContainerModel(dataId) {
+        try {
+            var found = null;
+            var search = function(models) {
+                if (!models || found) return;
+                for (var i = 0; i < models.length; i++) {
+                    var m = models[i];
+                    if (!m || typeof m.get !== 'function') continue;
+                    if (m.get('id') === dataId) { found = m; return; }
+                    var ch = m.get('elements');
+                    if (ch) {
+                        var arr = ch.models || ch;
+                        if (arr && arr.length) search(arr);
+                    }
+                    if (found) return;
+                }
+            };
+            if (window.elementor && window.elementor.elements && window.elementor.elements.models) {
+                search(window.elementor.elements.models);
+            }
+            return found;
+        } catch (e) { return null; }
+    }
+
+    function applyBackgroundToTarget(win, target, cfg) {
+        try {
+            target.setAttribute('data-emje-background', JSON.stringify({
+                effect: 'ascii',
+                color: cfg.color,
+                charset: cfg.charset,
+                cellW: cfg.cellW,
+                cellH: cfg.cellH,
+                fontSize: cfg.fontSize,
+                radius: cfg.radius,
+                innerRadius: cfg.innerRadius,
+                maxOpacity: cfg.maxOpacity,
+                fade: cfg.fade,
+                livePreview: cfg.livePreview
+            }));
+        } catch (e) {}
+        if (win.EmjeMotionBackground && win.EmjeMotionBackground.reInit) {
+            win.EmjeMotionBackground.reInit(target);
+        }
+    }
+
+    function destroyBackgroundOnTarget(win, target) {
+        try { target.removeAttribute('data-emje-background'); } catch (e) {}
+        try {
+            if (win.EmjeMotionBackground && win.EmjeMotionBackground._instances && win.EmjeMotionBackground._instances.get(target)) {
+                var old = win.EmjeMotionBackground._instances.get(target);
+                if (old && typeof old.destroy === 'function') old.destroy();
+                win.EmjeMotionBackground._instances.delete(target);
+                delete target.dataset.emjeBackgroundInitialized;
+            }
+        } catch (e) {}
+    }
+
+    function hookBackgroundPreviewRender() {
+        // Re-apply Background Motion from the edited model whenever Elementor
+        // re-renders a container in preview (render_type template wipes our
+        // data attribute + layer, so change events alone are not enough).
+        var win = getPreviewWindow();
+        if (!win || !win.elementorFrontend || !win.elementorFrontend.hooks) return;
+        if (win._emjeBackgroundHooked) return;
+        win._emjeBackgroundHooked = true;
+        win.elementorFrontend.hooks.addAction('frontend/element_ready/container', function($el) {
+            try {
+                var el = ($el && $el[0] && $el[0].getAttribute) ? $el[0] : (($el && $el.getAttribute) ? $el : null);
+                if (!el) return;
+                var dataId = el.getAttribute('data-id');
+                // If the layer survived, just re-init from the attribute.
+                if (!dataId) {
+                    if (el.hasAttribute('data-emje-background') && win.EmjeMotionBackground && win.EmjeMotionBackground.reInit) {
+                        win.EmjeMotionBackground.reInit(el);
+                    }
+                    return;
+                }
+                var model = findContainerModel(dataId);
+                if (!model) {
+                    if (el.hasAttribute('data-emje-background') && win.EmjeMotionBackground && win.EmjeMotionBackground.reInit) {
+                        win.EmjeMotionBackground.reInit(el);
+                    }
+                    return;
+                }
+                var settings = model.get('settings');
+                if (!settings || typeof settings.get !== 'function') return;
+                if (settings.get('emje_background_enable') !== 'yes') { destroyBackgroundOnTarget(win, el); return; }
+                if (settings.get('emje_background_live_preview') !== 'yes') { destroyBackgroundOnTarget(win, el); return; }
+                var eff = settings.get('emje_background_effect') || 'ascii';
+                if (eff !== 'ascii' && eff !== 'ascii-interactive') { destroyBackgroundOnTarget(win, el); return; }
+                var cfg = buildBackgroundConfig(settings);
+                if (!cfg.enable) { destroyBackgroundOnTarget(win, el); return; }
+                applyBackgroundToTarget(win, el, cfg);
+            } catch (e) {}
+        });
+    }
+
     function initBridge() {
         if (window._emjeEditorBridged) {
             return;
         }
         window._emjeEditorBridged = true;
         bindEditorChange();
+        bindBackgroundBridge();
         bindPreviewLoaded();
         bindTooltips();
         bindContainerGlobalsListener();
@@ -1030,6 +1242,9 @@
             var doc = getPreviewDocument();
             if (!win || !doc) return;
 
+            // (Re)hook container re-renders in preview for Background Motion.
+            hookBackgroundPreviewRender();
+
             // Helper to sync a single container model to preview
             var syncContainerFromModel = function(model) {
                 try {
@@ -1163,6 +1378,25 @@
                             } catch(e){}
                         }
                     }
+                    // Background Motion (ASCII) — sync from model for unsaved drafts.
+                    try {
+                        var bgEn = settings.get('emje_background_enable');
+                        var bgLive = settings.get('emje_background_live_preview') === 'yes';
+                        var bgTarget = findTarget(doc2, widgetId, 'data-emje-background') || (widgetId ? doc2.querySelector('[data-id="' + widgetId + '"]') : null);
+                        if (bgTarget) {
+                            var bgEff = settings.get('emje_background_effect') || 'ascii';
+                            if (bgEn === 'yes' && bgLive && (bgEff === 'ascii' || bgEff === 'ascii-interactive')) {
+                                var bgCfg = buildBackgroundConfig(settings);
+                                if (bgCfg.enable) {
+                                    applyBackgroundToTarget(win2, bgTarget, bgCfg);
+                                } else {
+                                    destroyBackgroundOnTarget(win2, bgTarget);
+                                }
+                            } else if (bgEn !== undefined || settings.get('emje_background_effect') !== undefined) {
+                                destroyBackgroundOnTarget(win2, bgTarget);
+                            }
+                        }
+                    } catch (e) {}
                 } catch (e) {}
             };
 
@@ -1211,6 +1445,9 @@
                 }
                 if (win2.EmjeMotionCursor && typeof win2.EmjeMotionCursor.initAll === 'function') {
                     win2.EmjeMotionCursor.initAll();
+                }
+                if (win2.EmjeMotionBackground && typeof win2.EmjeMotionBackground.initAll === 'function') {
+                    win2.EmjeMotionBackground.initAll();
                 }
             };
 

@@ -94,7 +94,7 @@ final class AssetsManager
         if ($widget !== null && is_object($widget) && method_exists($widget, 'get_settings_for_display')) {
             /** @var mixed $settings */
             $settings = $widget->get_settings_for_display();
-            if (is_array($settings) && empty($settings['emje_motion_enable']) && empty($settings['emje_hover_reveal_enable']) && empty($settings['emje_cursor_enable']) && empty($settings['emje_interaction_enable'])) {
+            if (is_array($settings) && empty($settings['emje_motion_enable']) && empty($settings['emje_hover_reveal_enable']) && empty($settings['emje_cursor_enable']) && empty($settings['emje_interaction_enable']) && empty($settings['emje_background_enable'])) {
                 return;
             }
         }
@@ -188,7 +188,7 @@ final class AssetsManager
 
         if ($postId > 0) {
             $elementorData = get_post_meta($postId, '_elementor_data', true);
-            $needleKeys = ['emje_motion_enable', 'emje_hover_reveal_enable', 'emje_cursor_enable', 'emje_interaction_enable'];
+            $needleKeys = ['emje_motion_enable', 'emje_hover_reveal_enable', 'emje_cursor_enable', 'emje_interaction_enable', 'emje_background_enable'];
 
             if (! empty($elementorData) && is_string($elementorData)) {
                 foreach ($needleKeys as $needle) {
