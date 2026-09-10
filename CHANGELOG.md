@@ -6,7 +6,23 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## [Unreleased]
 
 ### Added
-- **Background Motion** — new standalone Container module with ASCII ambient backgrounds (grid fills the Container, neutral white default, edge fade via transparent mask so native backgrounds show through). Aurora listed as a name-only placeholder.
+- **Background Motion** — new standalone Container module with ASCII ambient backgrounds (grid fills the Container, neutral white default, edge fade via transparent mask so native backgrounds show through).
+- **Background Motion: Pixel** — interactive pixel grid that lights up under the cursor.
+- **Background Motion: Pixel glow + trail** — Glow Radius paints a soft falloff area around the cursor (`color-mix` blend from Highlight to Base; `0` keeps the classic single cell) and Trail Fade lingers lit cells before they fade back; mousemove is rAF-coalesced and offscreen grids skip painting via IntersectionObserver.
+- **Background Motion: Pixel fit modes** — new Fit control: Stretch to fill by default (cells flex to fill the container, zero leftover) or Crop edges to fill (precise size, edge cells trimmed). Dividers are now single-sided cell borders over a transparent grid so translucent Base shows the native container background. Gap tooltip clarifies it only applies when Border Width is `0`.
+- **Background Motion: Pixel removals** — removed the Exact fit option and the Lift Effect control entirely (color-only glow from now on); no migration needed as Pixel is still unreleased.
+
+### Fixed
+- **Background Motion** — ASCII no longer crashes the whole frontend boot on dense grids (`ReferenceError: gridH is not defined` in the perf guard; one bad container killed `initAll` for every container on the page). Also hardened `initAll`/`reInit` with per-element try/catch like Interactive Cursor.
+- **Background Motion editor preview** — first Enable → Effect → Live Preview sequence now reliably shows the effect: added verify-and-repair after every preview apply (re-applies when a late Elementor re-render wiped the layer, max 2 retries) and retry installing the preview repair hook when the iframe isn't ready yet.
+
+### Removed
+- **Legacy modules retired** — standalone `HoverReveal` + `InteractiveCursor` modules no longer boot (their editor controls were already gone) and their source files are deleted; pages built with v1.0.0 keep rendering through `InteractionMotion`'s legacy fallback, and containers with both old + new keys no longer render double layers. Note: disabling the `interaction-motion` module now also disables legacy rendering. Retired `hover-reveal`/`interactive-cursor` module IDs are dropped from settings (stale stored keys ignored).
+- **Dead code** — removed unused `PixelGrid.cellFromPoint/setActive`, `AsciiInteractive` leftover `void full` + never-set `_touched` guard, `ColorResolver.getFallback` (+ `FALLBACK_*`), deprecated `TextSplitter.getTargets`, unused editor badge CSS + preview `content_classes`, unreachable `page-load` case, duplicate `preview:loaded` listener, empty preview-elements branch, double `reInit` and inline destroy in background sync.
+
+### Changed
+- **Shared utils** — Background Motion effects now share `smoothstep`/`isEditMode`/`applyEdgeMask` from `shared.js`; PHP color/slider sanitizing unified on `ColorResolver` + `SliderResolver` (incl. `#RRGGBBAA` support everywhere). No config output changes.
+- **Background Motion defaults** — ASCII Character Color and Pixel Highlight Color now default to blue (`#3B82F6`) instead of white/gray.
 
 ## [1.0.1] - 2026-09-06
 
