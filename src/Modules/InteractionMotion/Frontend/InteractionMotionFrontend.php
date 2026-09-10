@@ -102,68 +102,39 @@ final class InteractionMotionFrontend
     private function buildHoverConfig(array $settings, bool $isNew): array
     {
         if ($isNew) {
-            $image = $settings['emje_interaction_hover_image'] ?? null;
-            $imageSize = isset($settings['emje_interaction_hover_image_size']) ? (string) $settings['emje_interaction_hover_image_size'] : 'medium';
-            // Resolve sized URL for quality + speed (thumbnail = smaller file)
-            $imageUrl = '';
-            if (is_array($image)) {
-                if (! empty($image['id'])) {
-                    $sized = wp_get_attachment_image_src((int) $image['id'], $imageSize);
-                    if (is_array($sized) && ! empty($sized[0])) {
-                        $imageUrl = (string) $sized[0];
-                    } elseif (! empty($image['url'])) {
-                        $imageUrl = (string) $image['url'];
-                    }
-                } elseif (! empty($image['url'])) {
-                    $imageUrl = (string) $image['url'];
-                }
-            } elseif (is_string($image) && $image !== '') {
-                $imageUrl = $image;
-            }
-            $followSpeed = isset($settings['emje_interaction_hover_follow_speed']) ? (float) $settings['emje_interaction_hover_follow_speed'] : 0.12;
-            $scale = isset($settings['emje_interaction_hover_scale']) ? (float) $settings['emje_interaction_hover_scale'] : 1.0;
-            $animation = isset($settings['emje_interaction_hover_animation']) ? (string) $settings['emje_interaction_hover_animation'] : 'fade';
-            $triggerArea = isset($settings['emje_interaction_hover_trigger_area']) ? (string) $settings['emje_interaction_hover_trigger_area'] : 'container';
-            $livePreview = ($settings['emje_interaction_live_preview'] ?? '') === 'yes';
-            // New controls: offset & rotate
-            $offsetX = $this->resolveSliderValue($settings['emje_interaction_hover_offset_x'] ?? 0, 0, -200, 200);
-            $offsetY = $this->resolveSliderValue($settings['emje_interaction_hover_offset_y'] ?? 0, 0, -200, 200);
-            $rotate = $this->resolveSliderValue($settings['emje_interaction_hover_rotate'] ?? 0, 0, 0, 360);
-            $rotateHover = $this->resolveSliderValue($settings['emje_interaction_hover_rotate_hover'] ?? 15, 15, 0, 360);
-            // Clamp
-            $followSpeed = max(0.05, min(0.3, $followSpeed));
-            $scale = max(0.8, min(1.2, $scale));
-            if (! in_array($animation, ['fade', 'scale', 'clip'], true)) {
-                $animation = 'fade';
-            }
-            if (! in_array($triggerArea, ['container', 'heading'], true)) {
-                $triggerArea = 'container';
-            }
-            if (! in_array($imageSize, ['thumbnail', 'medium', 'large', 'full'], true)) {
-                $imageSize = 'medium';
-            }
-
-            $globalSettings = $this->settings->getSettings();
-
-            return [
-                'imageUrl' => esc_url_raw($imageUrl),
-                'imageSize' => $imageSize,
-                'followSpeed' => $followSpeed,
-                'scale' => $scale,
-                'animation' => $animation,
-                'triggerArea' => $triggerArea,
-                'livePreview' => $livePreview,
-                'offsetX' => $offsetX,
-                'offsetY' => $offsetY,
-                'rotate' => $rotate,
-                'rotateHover' => $rotateHover,
-                'disableOnMobile' => ! empty($globalSettings['disable_interaction_on_mobile']),
-            ];
+            $fields = $this->resolveHoverFields($settings, 'emje_interaction_hover_', 'emje_interaction_live_preview');
+            // New controls: offset & rotate (legacy has no equivalent).
+            $fields['offsetX'] = $this->resolveSliderValue($settings['emje_interaction_hover_offset_x'] ?? 0, 0, -200, 200);
+            $fields['offsetY'] = $this->resolveSliderValue($settings['emje_interaction_hover_offset_y'] ?? 0, 0, -200, 200);
+            $fields['rotate'] = $this->resolveSliderValue($settings['emje_interaction_hover_rotate'] ?? 0, 0, 0, 360);
+            $fields['rotateHover'] = $this->resolveSliderValue($settings['emje_interaction_hover_rotate_hover'] ?? 15, 15, 0, 360);
+        } else {
+            // Legacy v1.0.0 keys; offset/rotate did not exist back then.
+            $fields = $this->resolveHoverFields($settings, 'emje_hover_reveal_', 'emje_hover_reveal_live_preview');
+            $fields['offsetX'] = 0;
+            $fields['offsetY'] = 0;
+            $fields['rotate'] = 0;
+            $fields['rotateHover'] = 15;
         }
 
-        // Legacy
-        $image = $settings['emje_hover_reveal_image'] ?? null;
-        $imageSize = isset($settings['emje_hover_reveal_image_size']) ? (string) $settings['emje_hover_reveal_image_size'] : 'medium';
+        $globalSettings = $this->settings->getSettings();
+        $fields['disableOnMobile'] = ! empty($globalSettings['disable_interaction_on_mobile']);
+
+        return $fields;
+    }
+
+    /**
+     * Resolve + clamp shared Hover Reveal fields for either key family.
+     *
+     * @param array<string, mixed> $settings
+     *
+     * @return array<string, mixed>
+     */
+    private function resolveHoverFields(array $settings, string $prefix, string $liveKey): array
+    {
+        $image = $settings[$prefix . 'image'] ?? null;
+        $imageSize = isset($settings[$prefix . 'image_size']) ? (string) $settings[$prefix . 'image_size'] : 'medium';
+        // Resolve sized URL for quality + speed (thumbnail = smaller file)
         $imageUrl = '';
         if (is_array($image)) {
             if (! empty($image['id'])) {
@@ -179,11 +150,11 @@ final class InteractionMotionFrontend
         } elseif (is_string($image) && $image !== '') {
             $imageUrl = $image;
         }
-        $followSpeed = isset($settings['emje_hover_reveal_follow_speed']) ? (float) $settings['emje_hover_reveal_follow_speed'] : 0.12;
-        $scale = isset($settings['emje_hover_reveal_scale']) ? (float) $settings['emje_hover_reveal_scale'] : 1.0;
-        $animation = isset($settings['emje_hover_reveal_animation']) ? (string) $settings['emje_hover_reveal_animation'] : 'fade';
-        $triggerArea = isset($settings['emje_hover_reveal_trigger_area']) ? (string) $settings['emje_hover_reveal_trigger_area'] : 'container';
-        $livePreview = ($settings['emje_hover_reveal_live_preview'] ?? '') === 'yes';
+        $followSpeed = isset($settings[$prefix . 'follow_speed']) ? (float) $settings[$prefix . 'follow_speed'] : 0.12;
+        $scale = isset($settings[$prefix . 'scale']) ? (float) $settings[$prefix . 'scale'] : 1.0;
+        $animation = isset($settings[$prefix . 'animation']) ? (string) $settings[$prefix . 'animation'] : 'fade';
+        $triggerArea = isset($settings[$prefix . 'trigger_area']) ? (string) $settings[$prefix . 'trigger_area'] : 'container';
+        $livePreview = ($settings[$liveKey] ?? '') === 'yes';
         $followSpeed = max(0.05, min(0.3, $followSpeed));
         $scale = max(0.8, min(1.2, $scale));
         if (! in_array($animation, ['fade', 'scale', 'clip'], true)) {
@@ -196,8 +167,6 @@ final class InteractionMotionFrontend
             $imageSize = 'medium';
         }
 
-        $globalSettingsLegacy = $this->settings->getSettings();
-
         return [
             'imageUrl' => esc_url_raw($imageUrl),
             'imageSize' => $imageSize,
@@ -206,11 +175,6 @@ final class InteractionMotionFrontend
             'animation' => $animation,
             'triggerArea' => $triggerArea,
             'livePreview' => $livePreview,
-            'offsetX' => 0,
-            'offsetY' => 0,
-            'rotate' => 0,
-            'rotateHover' => 15,
-            'disableOnMobile' => ! empty($globalSettingsLegacy['disable_interaction_on_mobile']),
         ];
     }
 

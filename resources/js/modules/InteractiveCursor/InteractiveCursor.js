@@ -1,9 +1,10 @@
 import gsap from 'gsap';
+import { buildTextFollow, enterTextFollow, leaveTextFollow } from './strategies/TextFollowCursor.js';
+import { buildDotRing, bindDotRingHover } from './strategies/DotRingCursor.js';
 
 /**
  * Interactive Cursor per Container.
- * Types: text-follow | dot-ring
- * TODO: Extract strategies TextFollowCursor/DotRingCursor (God Class).
+ * Types: text-follow | dot-ring (strategies in ./strategies/).
  */
 export default class InteractiveCursor {
     constructor(container, config) {
@@ -90,63 +91,10 @@ export default class InteractiveCursor {
         this.cursorEl.style.setProperty('--emje-cursor-size', `${this.config.size}px`);
 
         if (this.config.type === 'text-follow') {
-            this.followEl = document.createElement('div');
-            this.followEl.className = 'emje-cursor__follow';
-            this.followEl.style.setProperty('--emje-follow-bg', this.config.bgColor);
-            this.followEl.style.setProperty('--emje-follow-text', this.config.textColor);
-            this.followEl.style.setProperty('--emje-follow-py', `${this.config.paddingY}px`);
-            this.followEl.style.setProperty('--emje-follow-px', `${this.config.paddingX}px`);
-            this.followEl.style.setProperty('--emje-follow-radius', `${this.config.radius}px`);
-            this.followEl.style.setProperty('--emje-follow-fs', `${this.config.fontSize}px`);
-            // Box shadow via Elementor group (preferred) — fallback to legacy shadowBlur
-            const boxShadowVal = this.config.boxShadow && this.config.boxShadow !== 'none' ? this.config.boxShadow : (this.config.shadow ? `0px 8px ${this.config.shadowBlur}px 0px rgba(0, 0, 0, 0.12)` : 'none');
-            this.followEl.style.boxShadow = boxShadowVal;
-
-            this.labelEl = document.createElement('span');
-            this.labelEl.className = 'emje-cursor__label emje-cursor__label--follow';
-            this.labelEl.textContent = this.config.label || 'View';
-
-            // Typography (Elementor group) — apply inline to label
-            const typo = this.config.typography;
-            if (typo) {
-                if (typo.fontFamily) this.labelEl.style.fontFamily = typo.fontFamily;
-                if (typo.fontSize) {
-                    const fs = String(typo.fontSize);
-                    if (fs.startsWith('var(')) {
-                        this.labelEl.style.fontSize = fs;
-                    } else {
-                        this.labelEl.style.fontSize = typo.fontSize + (typo.fontSizeUnit || 'px');
-                    }
-                } else {
-                    this.labelEl.style.fontSize = `${this.config.fontSize}px`;
-                }
-                if (typo.fontWeight) this.labelEl.style.fontWeight = typo.fontWeight;
-                if (typo.textTransform) this.labelEl.style.textTransform = typo.textTransform;
-                if (typo.fontStyle) this.labelEl.style.fontStyle = typo.fontStyle;
-                if (typo.lineHeight) this.labelEl.style.lineHeight = typo.lineHeight;
-                if (typo.letterSpacing) this.labelEl.style.letterSpacing = typo.letterSpacing;
-            } else {
-                this.labelEl.style.fontSize = `${this.config.fontSize}px`;
-            }
-            this.followEl.appendChild(this.labelEl);
-            this.cursorEl.appendChild(this.followEl);
+            buildTextFollow(this);
         } else {
             // dot-ring (default fallback)
-            this.dotEl = document.createElement('div');
-            this.dotEl.className = 'emje-cursor__dot';
-            this.cursorEl.appendChild(this.dotEl);
-
-            this.ringEl = document.createElement('div');
-            this.ringEl.className = 'emje-cursor__ring';
-
-            if (this.config.label) {
-                this.labelEl = document.createElement('span');
-                this.labelEl.className = 'emje-cursor__label';
-                this.labelEl.textContent = this.config.label;
-                this.ringEl.appendChild(this.labelEl);
-            }
-
-            this.cursorEl.appendChild(this.ringEl);
+            buildDotRing(this);
         }
 
         document.body.appendChild(this.cursorEl);
@@ -178,14 +126,7 @@ export default class InteractiveCursor {
         // Hover scaling for dot-ring only.
         this._interactiveHandlers = [];
         if (this.config.type === 'dot-ring') {
-            const interactiveEls = this.container.querySelectorAll('a, button, .elementor-button, [role="button"]');
-            interactiveEls.forEach((el) => {
-                const enter = this.onInteractiveEnter.bind(this);
-                const leave = this.onInteractiveLeave.bind(this);
-                el.addEventListener('mouseenter', enter);
-                el.addEventListener('mouseleave', leave);
-                this._interactiveHandlers.push([el, enter, leave]);
-            });
+            bindDotRingHover(this);
         }
     }
 
@@ -200,20 +141,7 @@ export default class InteractiveCursor {
         const isReduced = !this.isEditMode() && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
         if (this.config.type === 'text-follow' && this.followEl && !isReduced) {
-            const entrance = this.config.entrance;
-            if (entrance === 'none') {
-                gsap.to(this.cursorEl, { opacity: 1, duration: 0.2, ease: 'power2.out' });
-                gsap.set(this.followEl, { scale: 1 });
-            } else if (entrance === 'scale-bounce') {
-                gsap.set(this.followEl, { scale: 0.3 });
-                gsap.to(this.cursorEl, { opacity: 1, duration: 0.15, ease: 'power2.out' });
-                gsap.to(this.followEl, { scale: 1, duration: 0.45, ease: 'back.out(1.4)' });
-            } else {
-                // scale — Scale Smooth (default)
-                gsap.set(this.followEl, { scale: 0.5 });
-                gsap.to(this.cursorEl, { opacity: 1, duration: 0.2, ease: 'power2.out' });
-                gsap.to(this.followEl, { scale: 1, duration: 0.35, ease: 'power2.out' });
-            }
+            enterTextFollow(this);
         } else {
             gsap.to(this.cursorEl, { opacity: 1, duration: 0.2, ease: 'power2.out' });
         }
@@ -227,11 +155,7 @@ export default class InteractiveCursor {
         const isReduced = !this.isEditMode() && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
         if (this.config.type === 'text-follow' && this.followEl && !isReduced && this.config.entrance !== 'none') {
-            const scaleTo = this.config.entrance === 'scale-bounce' ? 0.3 : 0.5;
-            gsap.to(this.followEl, { scale: scaleTo, duration: 0.2, ease: 'power2.in' });
-            gsap.to(this.cursorEl, { opacity: 0, duration: 0.18, ease: 'power2.in', onComplete: () => {
-                if (!this.isInside) this.cursorEl.classList.add('emje-cursor--hidden');
-            }});
+            leaveTextFollow(this);
         } else {
             gsap.to(this.cursorEl, { opacity: 0, duration: 0.15, ease: 'power2.in', onComplete: () => {
                 if (!this.isInside) this.cursorEl.classList.add('emje-cursor--hidden');
@@ -249,26 +173,6 @@ export default class InteractiveCursor {
 
         this.xTo(e.clientX);
         this.yTo(e.clientY);
-    }
-
-    onInteractiveEnter() {
-        if (!this.ringEl) {
-            return;
-        }
-
-        gsap.to(this.ringEl, {
-            scale: this.config.hoverScale,
-            duration: 0.25,
-            ease: 'power2.out',
-        });
-
-        if (this.cursorEl) {
-            this.cursorEl.classList.add('emje-cursor--hover');
-        }
-    }
-
-    onInteractiveLeave() {
-        this.resetScale();
     }
 
     resetScale() {
