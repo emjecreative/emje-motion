@@ -1,15 +1,9 @@
+import { smoothstep, isEditMode, applyEdgeMask } from './shared';
+
 const SIMPLE_CHARS = ['.', '-', ':'];
 const FULL_CHARS = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz!@#$%^&*_+-=|;:,.?/~`'.split('');
 
 const MAX_CELLS = 2500;
-
-function smoothstep(edge0, edge1, x) {
-    if (edge1 <= edge0) {
-        return x < edge0 ? 0 : 1;
-    }
-    const t = Math.max(0, Math.min(1, (x - edge0) / (edge1 - edge0)));
-    return t * t * (3 - 2 * t);
-}
 
 function pickSimple() {
     return SIMPLE_CHARS[Math.floor(Math.random() * SIMPLE_CHARS.length)];
@@ -34,7 +28,7 @@ export default class AsciiInteractive {
     constructor(container, config) {
         this.container = container;
         this.config = {
-            color: config.color ?? '#FFFFFF',
+            color: config.color ?? '#3B82F6',
             charset: config.charset === 'simple' ? 'simple' : 'full',
             cellW: Math.max(8, Math.min(60, parseFloat(config.cellW) || 22)),
             cellH: Math.max(8, Math.min(60, parseFloat(config.cellH) || 26)),
@@ -68,18 +62,8 @@ export default class AsciiInteractive {
         this._observer = null;
     }
 
-    isEditMode() {
-        if (document.body.classList.contains('elementor-editor-active')) {
-            return true;
-        }
-        if (typeof window.elementorFrontend !== 'undefined' && window.elementorFrontend.isEditMode) {
-            try { return window.elementorFrontend.isEditMode(); } catch (_e) { return false; }
-        }
-        return false;
-    }
-
     shouldInit() {
-        if (this.isEditMode()) {
+        if (isEditMode()) {
             return this.config.livePreview === true;
         }
         if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
@@ -90,21 +74,6 @@ export default class AsciiInteractive {
             return false;
         }
         return true;
-    }
-
-    applyMask() {
-        if (!this.gridEl) {
-            return;
-        }
-        const fade = this.config.fade;
-        if (!fade) {
-            this.gridEl.style.maskImage = '';
-            this.gridEl.style.webkitMaskImage = '';
-            return;
-        }
-        const mask = `linear-gradient(to bottom, transparent 0%, black ${fade}%, black ${100 - fade}%, transparent 100%)`;
-        this.gridEl.style.maskImage = mask;
-        this.gridEl.style.webkitMaskImage = mask;
     }
 
     build() {
@@ -121,7 +90,7 @@ export default class AsciiInteractive {
         this.container.insertBefore(this.wrapEl, this.container.firstChild);
         this.container.classList.add('emje-background-motion');
 
-        this.applyMask();
+        applyEdgeMask(this.gridEl, this.config.fade);
         this.populate();
     }
 
@@ -142,7 +111,7 @@ export default class AsciiInteractive {
             cellW *= scale;
             cellH *= scale;
             cols = Math.max(1, Math.ceil(width / cellW));
-            rows = Math.max(1, Math.ceil(gridH / cellH));
+            rows = Math.max(1, Math.ceil(height / cellH));
         }
 
         this.cols = cols;
@@ -152,8 +121,6 @@ export default class AsciiInteractive {
         this.gridEl.innerHTML = '';
         this.cells = [];
 
-        const full = this.config.charset === 'full';
-        void full;
         for (let r = 0; r < rows; r++) {
             for (let c = 0; c < cols; c++) {
                 const cell = document.createElement('div');
@@ -227,7 +194,7 @@ export default class AsciiInteractive {
                 cell.el.style.opacity = (0.02 + Math.random() * 0.05).toFixed(3);
                 cell.el.textContent = pickSimple();
                 const t = setTimeout(() => {
-                    if (cell.el.style.opacity !== '0' && !cell._touched) {
+                    if (cell.el.style.opacity !== '0') {
                         cell.el.style.opacity = '0';
                     }
                 }, 600 + Math.random() * 2000);
