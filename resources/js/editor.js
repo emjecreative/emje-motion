@@ -44,9 +44,33 @@
     }
 
     function isValidEditorColor(c) {
+        // Mirror PHP ColorResolver::sanitizeColor(): reject anything that
+        // could break out of a CSS value context first.
         if (!c || typeof c !== 'string') return false;
         c = c.trim();
-        return /^#([0-9A-F]{3,8})$/i.test(c) || /^(rgba?|hsla?|var)\s*\(.*\)$/i.test(c) || c.indexOf('var(') === 0 || /^[a-zA-Z]+$/.test(c);
+        if (/[;{}<>"']|url\(/i.test(c)) return false;
+        if (/^#([0-9A-F]{3}|[0-9A-F]{4}|[0-9A-F]{6}|[0-9A-F]{8})$/i.test(c)) return true;
+        if (/^(?:rgba?|hsla?)\s*\([0-9.,%\s\/]+\)$/i.test(c)) return true;
+        if (/^var\(\s*--[a-zA-Z0-9_-]+\s*\)$/i.test(c)) return true;
+        if (/^[a-zA-Z]+$/.test(c)) return true;
+        return false;
+    }
+
+    function safeCssEnum(v, re, fallback) {
+        // Allowlisted CSS keyword; rejects any break-out characters.
+        if (typeof v !== 'string') return fallback;
+        v = v.trim();
+        if (/[;{}<>"']/.test(v)) return fallback;
+        return re.test(v) ? v : fallback;
+    }
+
+    function safeCssMeasure(v, fallback) {
+        // Numeric measurement with a known unit, or a plain number.
+        if (v === null || v === undefined) return fallback;
+        var s = String(v).trim();
+        if (/[;{}<>"']|url\(/i.test(s)) return fallback;
+        if (/^[0-9]*\.?[0-9]+(px|em|rem|%|ex|ch|vw|vh)?$/.test(s)) return s;
+        return fallback;
     }
 
     function findTarget(previewDoc, widgetId, attr) {
@@ -296,7 +320,8 @@
         } else {
             var type2 = get('emje_interaction_cursor_type', 'text-follow');
             if (type2 === 'dot' || type2 === 'ring') type2 = 'dot-ring';
-            if (['dot-ring', 'text-follow', 'trail'].indexOf(type2) === -1) type2 = 'text-follow';
+            // Retired 'trail' (Comet Trail) falls through to text-follow.
+            if (['dot-ring', 'text-follow'].indexOf(type2) === -1) type2 = 'text-follow';
             var size2b = 20;
             var rawSize2 = get('emje_interaction_cursor_size', null);
             if (rawSize2 && typeof rawSize2 === 'object' && rawSize2.size !== undefined) size2b = parseInt(rawSize2.size, 10);
@@ -365,17 +390,17 @@
                 typo.fontSizeUnit = 'px';
             }
             var typoWeight = get('emje_interaction_cursor_typography_font_weight', '600');
-            typo.fontWeight = typoWeight || '600';
+            typo.fontWeight = safeCssEnum(typoWeight, /^(normal|bold|lighter|bolder|[1-9]00)$/, '600');
             var typoTransform = get('emje_interaction_cursor_typography_text_transform', '');
-            typo.textTransform = typoTransform || '';
+            typo.textTransform = safeCssEnum(typoTransform, /^(none|capitalize|uppercase|lowercase|full-width)$/, '');
             var typoStyle = get('emje_interaction_cursor_typography_font_style', '');
-            typo.fontStyle = typoStyle || '';
+            typo.fontStyle = safeCssEnum(typoStyle, /^(normal|italic|oblique)$/, '');
             var typoLineH = get('emje_interaction_cursor_typography_line_height', '');
-            if (typoLineH && typeof typoLineH === 'object' && typoLineH.size !== undefined) typo.lineHeight = typoLineH.size + (typoLineH.unit || '');
-            else if (typoLineH) typo.lineHeight = String(typoLineH);
+            if (typoLineH && typeof typoLineH === 'object' && typoLineH.size !== undefined) typo.lineHeight = safeCssMeasure(typoLineH.size + (typoLineH.unit || ''), '');
+            else if (typoLineH) typo.lineHeight = safeCssMeasure(typoLineH, '');
             var typoLetter = get('emje_interaction_cursor_typography_letter_spacing', '');
-            if (typoLetter && typeof typoLetter === 'object' && typoLetter.size !== undefined) typo.letterSpacing = typoLetter.size + (typoLetter.unit || 'px');
-            else if (typoLetter) typo.letterSpacing = String(typoLetter);
+            if (typoLetter && typeof typoLetter === 'object' && typoLetter.size !== undefined) typo.letterSpacing = safeCssMeasure(typoLetter.size + (typoLetter.unit || 'px'), '');
+            else if (typoLetter) typo.letterSpacing = safeCssMeasure(typoLetter, '');
             var entrance2 = get('emje_interaction_cursor_entrance', 'scale');
             if (['scale', 'scale-bounce', 'none'].indexOf(entrance2) === -1) entrance2 = 'scale';
             var smoothRaw2 = get('emje_interaction_cursor_follow_smoothness', null);
@@ -395,6 +420,7 @@
                 var blur = boxShadowVal.blur !== undefined ? parseInt(boxShadowVal.blur, 10) : 32;
                 var spread = boxShadowVal.spread !== undefined ? parseInt(boxShadowVal.spread, 10) : 0;
                 var col = boxShadowVal.color || 'rgba(0, 0, 0, 0.12)';
+                if (!isValidEditorColor(col)) col = 'rgba(0, 0, 0, 0.12)';
                 boxShadowStr = h + 'px ' + v2 + 'px ' + blur + 'px ' + spread + 'px ' + col;
             }
             // Legacy v1.0.0 compat: old pages stored plain shadow
@@ -404,37 +430,6 @@
             if (boxShadowStr === '0px 8px 32px 0px rgba(0, 0, 0, 0.12)' && !legacyShadow) {
                 boxShadowStr = 'none';
             }
-            var trailDotsRaw = get('emje_interaction_cursor_trail_dots', null);
-            var trailDots = 6;
-            if (trailDotsRaw && typeof trailDotsRaw === 'object' && trailDotsRaw.size !== undefined) trailDots = parseInt(trailDotsRaw.size, 10);
-            else if (!isNaN(parseInt(trailDotsRaw, 10))) trailDots = parseInt(trailDotsRaw, 10);
-            trailDots = Math.max(3, Math.min(12, trailDots));
-            var trailSizeRaw = get('emje_interaction_cursor_trail_size', null);
-            var trailSize = 20;
-            if (trailSizeRaw && typeof trailSizeRaw === 'object' && trailSizeRaw.size !== undefined) trailSize = parseInt(trailSizeRaw.size, 10);
-            else if (!isNaN(parseInt(trailSizeRaw, 10))) trailSize = parseInt(trailSizeRaw, 10);
-            trailSize = Math.max(4, Math.min(24, trailSize));
-            var headColor = get('emje_interaction_cursor_trail_head_color', '#111111');
-            var tailColor = get('emje_interaction_cursor_trail_tail_color', '#FF4D5A');
-            if (globals && typeof globals === 'object') {
-                if (globals['emje_interaction_cursor_trail_head_color']) {
-                    var gvHead = resolveGlobalColor(globals['emje_interaction_cursor_trail_head_color']);
-                    if (isValidColor(gvHead)) headColor = gvHead;
-                }
-                if (globals['emje_interaction_cursor_trail_tail_color']) {
-                    var gvTail = resolveGlobalColor(globals['emje_interaction_cursor_trail_tail_color']);
-                    if (isValidColor(gvTail)) tailColor = gvTail;
-                }
-            }
-            if (!isValidColor(headColor)) headColor = '#111111';
-            if (!isValidColor(tailColor)) tailColor = '#FF4D5A';
-            var trailLagRaw = get('emje_interaction_cursor_trail_lag', null);
-            var trailLag = 0.35;
-            if (trailLagRaw && typeof trailLagRaw === 'object' && trailLagRaw.size !== undefined) trailLag = parseFloat(trailLagRaw.size);
-            else if (!isNaN(parseFloat(trailLagRaw))) trailLag = parseFloat(trailLagRaw);
-            if (isNaN(trailLag)) trailLag = 0.35;
-            trailLag = Math.max(0.1, Math.min(0.5, trailLag));
-            var trailFade = get('emje_interaction_cursor_trail_fade', 'yes') === 'yes';
             return {
                 enable: true,
                 effect: effect,
@@ -457,13 +452,7 @@
                 followSmoothness: smooth2,
                 boxShadow: boxShadowStr,
                 shadow: boxShadowStr !== 'none',
-                shadowBlur: legacyBlur,
-                trailDots: trailDots,
-                trailSize: trailSize,
-                trailHeadColor: headColor,
-                trailTailColor: tailColor,
-                trailLag: trailLag,
-                trailFade: trailFade
+                shadowBlur: legacyBlur
             };
         }
     }
@@ -501,7 +490,7 @@
     function bindEditorChange() {
         if (!window.elementor.channels || !window.elementor.channels.editor) return;
 
-        // Global colors live preview for Comet Trail & Interactive Cursor
+        // Global colors live preview for Interactive Cursor
         try {
             window.elementor.channels.editor.on('change:__globals__', function(view) {
                 var model = view && view.model ? view.model : null;
@@ -513,8 +502,6 @@
                 var hasRelevant = globals['emje_interaction_cursor_bg_color'] !== undefined ||
                     globals['emje_interaction_cursor_text_color'] !== undefined ||
                     globals['emje_interaction_cursor_color'] !== undefined ||
-                    globals['emje_interaction_cursor_trail_head_color'] !== undefined ||
-                    globals['emje_interaction_cursor_trail_tail_color'] !== undefined ||
                     globals['emje_interaction_cursor_typography_font_family'] !== undefined ||
                     globals['emje_interaction_cursor_typography_typography'] !== undefined;
                 if (!hasRelevant) return;
@@ -526,7 +513,7 @@
                 if (!target) return;
                 var cfg = buildInteractionConfig(settings);
                 if (!cfg.enable || cfg.effect !== 'interactive-cursor' || !cfg.livePreview) return;
-                try { target.setAttribute('data-emje-cursor', JSON.stringify({type: cfg.type, size: cfg.size, color: cfg.color, blendMode: cfg.blendMode, hoverScale: cfg.hoverScale, hideNative: cfg.hideNative, label: cfg.label, bgColor: cfg.bgColor, textColor: cfg.textColor, paddingY: cfg.paddingY, paddingX: cfg.paddingX, radius: cfg.radius, fontSize: cfg.fontSize, typography: cfg.typography, entrance: cfg.entrance, followSmoothness: cfg.followSmoothness, boxShadow: cfg.boxShadow, shadow: cfg.shadow, shadowBlur: cfg.shadowBlur, trailDots: cfg.trailDots, trailSize: cfg.trailSize, trailHeadColor: cfg.trailHeadColor, trailTailColor: cfg.trailTailColor, trailLag: cfg.trailLag, trailFade: cfg.trailFade, livePreview: cfg.livePreview})); } catch(e){}
+                try { target.setAttribute('data-emje-cursor', JSON.stringify({type: cfg.type, size: cfg.size, color: cfg.color, blendMode: cfg.blendMode, hoverScale: cfg.hoverScale, hideNative: cfg.hideNative, label: cfg.label, bgColor: cfg.bgColor, textColor: cfg.textColor, paddingY: cfg.paddingY, paddingX: cfg.paddingX, radius: cfg.radius, fontSize: cfg.fontSize, typography: cfg.typography, entrance: cfg.entrance, followSmoothness: cfg.followSmoothness, boxShadow: cfg.boxShadow, shadow: cfg.shadow, shadowBlur: cfg.shadowBlur, livePreview: cfg.livePreview})); } catch(e){}
                 if (win.EmjeMotionCursor && win.EmjeMotionCursor.reInit) win.EmjeMotionCursor.reInit(target);
             });
         } catch(e){}
@@ -745,7 +732,7 @@
                                     targetC.removeAttribute('data-emje-hover-reveal');
                                 }
                             } catch(e){}
-                            try { targetC.setAttribute('data-emje-cursor', JSON.stringify({type: cfg.type, size: cfg.size, color: cfg.color, blendMode: cfg.blendMode, hoverScale: cfg.hoverScale, hideNative: cfg.hideNative, label: cfg.label, bgColor: cfg.bgColor, textColor: cfg.textColor, paddingY: cfg.paddingY, paddingX: cfg.paddingX, radius: cfg.radius, fontSize: cfg.fontSize, typography: cfg.typography, entrance: cfg.entrance, followSmoothness: cfg.followSmoothness, boxShadow: cfg.boxShadow, shadow: cfg.shadow, shadowBlur: cfg.shadowBlur, trailDots: cfg.trailDots, trailSize: cfg.trailSize, trailHeadColor: cfg.trailHeadColor, trailTailColor: cfg.trailTailColor, trailLag: cfg.trailLag, trailFade: cfg.trailFade, livePreview: cfg.livePreview})); } catch(e){}
+                            try { targetC.setAttribute('data-emje-cursor', JSON.stringify({type: cfg.type, size: cfg.size, color: cfg.color, blendMode: cfg.blendMode, hoverScale: cfg.hoverScale, hideNative: cfg.hideNative, label: cfg.label, bgColor: cfg.bgColor, textColor: cfg.textColor, paddingY: cfg.paddingY, paddingX: cfg.paddingX, radius: cfg.radius, fontSize: cfg.fontSize, typography: cfg.typography, entrance: cfg.entrance, followSmoothness: cfg.followSmoothness, boxShadow: cfg.boxShadow, shadow: cfg.shadow, shadowBlur: cfg.shadowBlur, livePreview: cfg.livePreview})); } catch(e){}
                             if (win.EmjeMotionCursor && win.EmjeMotionCursor.reInit) win.EmjeMotionCursor.reInit(targetC);
                         }
                     }, 150);
@@ -1368,7 +1355,7 @@
                                     bgColor: cfg.bgColor, textColor: cfg.textColor, paddingY: cfg.paddingY, paddingX: cfg.paddingX,
                                     radius: cfg.radius, fontSize: cfg.fontSize, typography: cfg.typography,
                                     entrance: cfg.entrance, followSmoothness: cfg.followSmoothness, boxShadow: cfg.boxShadow,
-                                    shadow: cfg.shadow, shadowBlur: cfg.shadowBlur, trailDots: cfg.trailDots, trailSize: cfg.trailSize, trailHeadColor: cfg.trailHeadColor, trailTailColor: cfg.trailTailColor, trailLag: cfg.trailLag, trailFade: cfg.trailFade, livePreview: cfg.livePreview
+                                    shadow: cfg.shadow, shadowBlur: cfg.shadowBlur, livePreview: cfg.livePreview
                                 }));
                             } catch(e){}
                             win.EmjeMotionCursor.reInit(target);
@@ -1395,13 +1382,6 @@
                     settings.on('change:emje_interaction_cursor_typography_font_style', debouncedSync);
                     settings.on('change:emje_interaction_cursor_box_shadow_box_shadow_type', debouncedSync);
                     settings.on('change:emje_interaction_cursor_box_shadow_box_shadow', debouncedSync);
-                    // Comet Trail
-                    settings.on('change:emje_interaction_cursor_trail_head_color', debouncedSync);
-                    settings.on('change:emje_interaction_cursor_trail_tail_color', debouncedSync);
-                    settings.on('change:emje_interaction_cursor_trail_dots', debouncedSync);
-                    settings.on('change:emje_interaction_cursor_trail_size', debouncedSync);
-                    settings.on('change:emje_interaction_cursor_trail_lag', debouncedSync);
-                    settings.on('change:emje_interaction_cursor_trail_fade', debouncedSync);
                     settings.on('change:emje_interaction_cursor_type', debouncedSync);
                     settings.on('change:__globals__', debouncedSync);
                     // Fallback generic
@@ -1411,8 +1391,6 @@
                             ch['emje_interaction_cursor_color'] !== undefined ||
                             ch['emje_interaction_cursor_bg_color'] !== undefined ||
                             ch['emje_interaction_cursor_text_color'] !== undefined ||
-                            ch['emje_interaction_cursor_trail_head_color'] !== undefined ||
-                            ch['emje_interaction_cursor_trail_tail_color'] !== undefined ||
                             ch['emje_interaction_cursor_typography_typography'] !== undefined ||
                             ch['emje_interaction_cursor_typography_font_family'] !== undefined ||
                             ch['emje_interaction_cursor_box_shadow_box_shadow'] !== undefined) {
@@ -1459,7 +1437,7 @@
                         if (cfg.effect !== 'interactive-cursor') return;
                         var target = findTarget(doc2, wid, 'data-emje-cursor') || doc2.querySelector('[data-id="' + wid + '"]');
                         if (!target) return;
-                        try { target.setAttribute('data-emje-cursor', JSON.stringify({type: cfg.type, size: cfg.size, color: cfg.color, blendMode: cfg.blendMode, hoverScale: cfg.hoverScale, hideNative: cfg.hideNative, label: cfg.label, bgColor: cfg.bgColor, textColor: cfg.textColor, paddingY: cfg.paddingY, paddingX: cfg.paddingX, radius: cfg.radius, fontSize: cfg.fontSize, typography: cfg.typography, entrance: cfg.entrance, followSmoothness: cfg.followSmoothness, boxShadow: cfg.boxShadow, shadow: cfg.shadow, shadowBlur: cfg.shadowBlur, trailDots: cfg.trailDots, trailSize: cfg.trailSize, trailHeadColor: cfg.trailHeadColor, trailTailColor: cfg.trailTailColor, trailLag: cfg.trailLag, trailFade: cfg.trailFade, livePreview: cfg.livePreview})); } catch(e){}
+                        try { target.setAttribute('data-emje-cursor', JSON.stringify({type: cfg.type, size: cfg.size, color: cfg.color, blendMode: cfg.blendMode, hoverScale: cfg.hoverScale, hideNative: cfg.hideNative, label: cfg.label, bgColor: cfg.bgColor, textColor: cfg.textColor, paddingY: cfg.paddingY, paddingX: cfg.paddingX, radius: cfg.radius, fontSize: cfg.fontSize, typography: cfg.typography, entrance: cfg.entrance, followSmoothness: cfg.followSmoothness, boxShadow: cfg.boxShadow, shadow: cfg.shadow, shadowBlur: cfg.shadowBlur, livePreview: cfg.livePreview})); } catch(e){}
                         if (win2.EmjeMotionCursor && win2.EmjeMotionCursor.reInit) win2.EmjeMotionCursor.reInit(target);
                     } catch(e){}
                 });
@@ -1563,7 +1541,7 @@
                                     targetC.removeAttribute('data-emje-hover-reveal');
                                 }
                             } catch(e){}
-                            try { targetC.setAttribute('data-emje-cursor', JSON.stringify({type: cfgNew.type, size: cfgNew.size, color: cfgNew.color, blendMode: cfgNew.blendMode, hoverScale: cfgNew.hoverScale, hideNative: cfgNew.hideNative, label: cfgNew.label, bgColor: cfgNew.bgColor, textColor: cfgNew.textColor, paddingY: cfgNew.paddingY, paddingX: cfgNew.paddingX, radius: cfgNew.radius, fontSize: cfgNew.fontSize, typography: cfgNew.typography, entrance: cfgNew.entrance, followSmoothness: cfgNew.followSmoothness, boxShadow: cfgNew.boxShadow, shadow: cfgNew.shadow, shadowBlur: cfgNew.shadowBlur, trailDots: cfgNew.trailDots, trailSize: cfgNew.trailSize, trailHeadColor: cfgNew.trailHeadColor, trailTailColor: cfgNew.trailTailColor, trailLag: cfgNew.trailLag, trailFade: cfgNew.trailFade, livePreview: cfgNew.livePreview})); } catch(e){}
+                            try { targetC.setAttribute('data-emje-cursor', JSON.stringify({type: cfgNew.type, size: cfgNew.size, color: cfgNew.color, blendMode: cfgNew.blendMode, hoverScale: cfgNew.hoverScale, hideNative: cfgNew.hideNative, label: cfgNew.label, bgColor: cfgNew.bgColor, textColor: cfgNew.textColor, paddingY: cfgNew.paddingY, paddingX: cfgNew.paddingX, radius: cfgNew.radius, fontSize: cfgNew.fontSize, typography: cfgNew.typography, entrance: cfgNew.entrance, followSmoothness: cfgNew.followSmoothness, boxShadow: cfgNew.boxShadow, shadow: cfgNew.shadow, shadowBlur: cfgNew.shadowBlur, livePreview: cfgNew.livePreview})); } catch(e){}
                             if (win2.EmjeMotionCursor && win2.EmjeMotionCursor.reInit) win2.EmjeMotionCursor.reInit(targetC);
                         }
                         return;

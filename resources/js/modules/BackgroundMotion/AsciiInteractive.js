@@ -1,9 +1,9 @@
-import { smoothstep, isEditMode, applyEdgeMask } from './shared';
+import { smoothstep, isEditMode, applyEdgeMask, LIMITS, clampNum } from './shared';
 
 const SIMPLE_CHARS = ['.', '-', ':'];
 const FULL_CHARS = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz!@#$%^&*_+-=|;:,.?/~`'.split('');
 
-const MAX_CELLS = 2500;
+const MAX_CELLS = LIMITS.ascii.maxCells;
 
 function pickSimple() {
     return SIMPLE_CHARS[Math.floor(Math.random() * SIMPLE_CHARS.length)];
@@ -30,13 +30,13 @@ export default class AsciiInteractive {
         this.config = {
             color: config.color ?? '#3B82F6',
             charset: config.charset === 'simple' ? 'simple' : 'full',
-            cellW: Math.max(8, Math.min(60, parseFloat(config.cellW) || 22)),
-            cellH: Math.max(8, Math.min(60, parseFloat(config.cellH) || 26)),
-            fontSize: Math.max(6, Math.min(32, parseFloat(config.fontSize) || 14)),
-            radius: Math.max(100, Math.min(600, parseFloat(config.radius) || 360)),
-            innerRadius: Math.max(0, Math.min(200, parseFloat(config.innerRadius) || 30)),
-            maxOpacity: Math.max(0, Math.min(1, parseFloat(config.maxOpacity ?? 0.35) || 0)),
-            fade: Math.max(0, Math.min(30, parseFloat(config.fade ?? 10) || 0)),
+            cellW: clampNum(parseFloat(config.cellW) || 22, LIMITS.ascii.cell, 22),
+            cellH: clampNum(parseFloat(config.cellH) || 26, LIMITS.ascii.cell, 26),
+            fontSize: clampNum(parseFloat(config.fontSize) || 14, LIMITS.ascii.fontSize, 14),
+            radius: clampNum(parseFloat(config.radius) || 360, LIMITS.ascii.radius, 360),
+            innerRadius: clampNum(parseFloat(config.innerRadius) || 30, LIMITS.ascii.innerRadius, 30),
+            maxOpacity: clampNum(parseFloat(config.maxOpacity ?? 0.35) || 0, LIMITS.ascii.maxOpacity, 0),
+            fade: clampNum(parseFloat(config.fade ?? 10) || 0, LIMITS.ascii.fade, 0),
             livePreview: config.livePreview ?? false,
             disableOnMobile: config.disableOnMobile ?? true,
         };

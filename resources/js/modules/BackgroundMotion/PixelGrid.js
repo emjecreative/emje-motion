@@ -1,6 +1,6 @@
-import { smoothstep, isEditMode, applyEdgeMask } from './shared';
+import { smoothstep, isEditMode, applyEdgeMask, LIMITS, clampNum } from './shared';
 
-const MAX_CELLS = 3000;
+const MAX_CELLS = LIMITS.pixel.maxCells;
 const MAX_DELTA = 8;
 
 function toNumber(value, fallback) {
@@ -25,14 +25,14 @@ export default class PixelGrid {
             base: typeof config.base === 'string' && config.base.trim() !== '' ? config.base : 'rgba(255, 255, 255, 0.08)',
             active: typeof config.active === 'string' && config.active.trim() !== '' ? config.active : '#3B82F6',
             fit: fitRaw === 'crop' ? 'crop' : 'stretch',
-            cellSize: Math.max(24, Math.min(96, toNumber(config.cellSize, 56))),
-            gap: Math.max(0, Math.min(12, gapRaw)),
-            borderW: Math.max(0, Math.min(2, borderRaw)),
+            cellSize: clampNum(toNumber(config.cellSize, 56), LIMITS.pixel.cellSize, 56),
+            gap: clampNum(gapRaw, LIMITS.pixel.gap, 2),
+            borderW: clampNum(borderRaw, LIMITS.pixel.borderW, 1),
             border: typeof config.border === 'string' && config.border.trim() !== '' ? config.border : 'rgba(255, 255, 255, 0.15)',
-            speed: Math.max(0.05, Math.min(0.5, toNumber(config.speed, 0.15))),
-            radius: Math.max(0, Math.min(300, radiusRaw)),
-            trail: Math.max(0, Math.min(1.5, trailRaw)),
-            fade: Math.max(0, Math.min(30, toNumber(config.fade ?? 10, 10))),
+            speed: clampNum(toNumber(config.speed, 0.15), LIMITS.pixel.speed, 0.15),
+            radius: clampNum(radiusRaw, LIMITS.pixel.radius, 120),
+            trail: clampNum(trailRaw, LIMITS.pixel.trail, 0.4),
+            fade: clampNum(toNumber(config.fade ?? 10, 10), LIMITS.pixel.fade, 10),
             livePreview: config.livePreview ?? false,
             disableOnMobile: config.disableOnMobile ?? true,
         };

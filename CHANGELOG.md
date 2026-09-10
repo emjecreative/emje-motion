@@ -19,10 +19,14 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Removed
 - **Legacy modules retired** — standalone `HoverReveal` + `InteractiveCursor` modules no longer boot (their editor controls were already gone) and their source files are deleted; pages built with v1.0.0 keep rendering through `InteractionMotion`'s legacy fallback, and containers with both old + new keys no longer render double layers. Note: disabling the `interaction-motion` module now also disables legacy rendering. Retired `hover-reveal`/`interactive-cursor` module IDs are dropped from settings (stale stored keys ignored).
 - **Dead code** — removed unused `PixelGrid.cellFromPoint/setActive`, `AsciiInteractive` leftover `void full` + never-set `_touched` guard, `ColorResolver.getFallback` (+ `FALLBACK_*`), deprecated `TextSplitter.getTargets`, unused editor badge CSS + preview `content_classes`, unreachable `page-load` case, duplicate `preview:loaded` listener, empty preview-elements branch, double `reInit` and inline destroy in background sync.
+- **Comet Trail retired** — Interactive Cursor is down to Text Follow and Dot + Ring; the 6 trail controls, trail rendering loop and styles are removed. Pages saved with `type: trail` automatically fall through to Text Follow via the existing type whitelist (PHP + JS).
 
 ### Changed
-- **Shared utils** — Background Motion effects now share `smoothstep`/`isEditMode`/`applyEdgeMask` from `shared.js`; PHP color/slider sanitizing unified on `ColorResolver` + `SliderResolver` (incl. `#RRGGBBAA` support everywhere). No config output changes.
+- **Shared utils** — Background Motion effects now share `smoothstep`/`isEditMode`/`applyEdgeMask`/`LIMITS`/`clampNum` from `shared.js`; PHP color/slider sanitizing unified on `ColorResolver` + `SliderResolver` (incl. `#RRGGBBAA` support everywhere). No config output changes.
 - **Background Motion defaults** — ASCII Character Color and Pixel Highlight Color now default to blue (`#3B82F6`) instead of white/gray.
+
+### Security
+- **Editor color validation hardened** — `isValidEditorColor` now mirrors PHP `ColorResolver` (rejects break-out characters, strict hex/rgba/var shapes); cursor box-shadow color and typography keywords/measurements are validated before entering preview payloads.
 
 ## [1.0.1] - 2026-09-06
 

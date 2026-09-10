@@ -2,6 +2,35 @@
  * Shared helpers for Background Motion effects (ASCII / Pixel).
  * Single source of truth — do not duplicate into effect files.
  */
+export const LIMITS = {
+    pixel: {
+        cellSize: [24, 96],
+        gap: [0, 12],
+        borderW: [0, 2],
+        speed: [0.05, 0.5],
+        radius: [0, 300],
+        trail: [0, 1.5],
+        fade: [0, 30],
+        maxCells: 3000,
+    },
+    ascii: {
+        cell: [8, 60],
+        fontSize: [6, 32],
+        radius: [100, 600],
+        innerRadius: [0, 200],
+        maxOpacity: [0, 1],
+        fade: [0, 30],
+        maxCells: 2500,
+    },
+};
+
+export function clampNum(value, range, fallback) {
+    const n = parseFloat(value);
+    if (Number.isNaN(n)) {
+        return fallback;
+    }
+    return Math.max(range[0], Math.min(range[1], n));
+}
 export function smoothstep(edge0, edge1, x) {
     if (edge1 <= edge0) {
         return x < edge0 ? 0 : 1;
