@@ -19,6 +19,7 @@ emje-motion-*.zip
 .php-cs-fixer.cache
 .phpunit.result.cache
 /.phpstan/
+/tests/smoke/.tmp/
 
 # Logs
 *.log
