@@ -24,6 +24,7 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - **Shared utils** — Background Motion effects now share `smoothstep`/`isEditMode`/`applyEdgeMask`/`LIMITS`/`clampNum` from `shared.js`; PHP color/slider sanitizing unified on `ColorResolver` + `SliderResolver` (incl. `#RRGGBBAA` support everywhere). No config output changes.
 - **Editor bridge split (stage 1)** — shared helpers moved to `editor/utils.js`, Background Motion bridge to `editor/backgroundBridge.js`; `editor.js` is now a thin entry. Bundled output unchanged (`dist/js/editor.js`).
+- **Editor bridge split (stage 2, done)** — `textMotionBridge.js`, `interactionBridge.js`, `tooltip.js`, `previewSync.js` extracted the same way; `editor.js` is now ~40 lines of wiring. God File fully paid off.
 - **Background Motion defaults** — ASCII Character Color and Pixel Highlight Color now default to blue (`#3B82F6`) instead of white/gray.
 
 ### Security
