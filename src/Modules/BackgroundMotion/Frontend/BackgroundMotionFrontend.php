@@ -5,18 +5,29 @@ declare(strict_types=1);
 namespace EmjeCreative\EmjeMotion\Modules\BackgroundMotion\Frontend;
 
 use EmjeCreative\EmjeMotion\Admin\SettingsRepository;
+use EmjeCreative\EmjeMotion\Modules\InteractionMotion\Services\ColorResolver;
+use EmjeCreative\EmjeMotion\Modules\InteractionMotion\Services\SliderResolver;
 
 /**
  * Renders Background Motion frontend attributes for Container.
- * Only ascii renders for now; aurora is a name placeholder.
+ * Effects: ascii / pixel.
+ *
+ * Color/slider sanitizing is shared with Interaction Motion via
+ * ColorResolver + SliderResolver (single source of truth).
  */
 final class BackgroundMotionFrontend
 {
     private SettingsRepository $settings;
 
+    private ColorResolver $colorResolver;
+
+    private SliderResolver $sliderResolver;
+
     public function __construct(?SettingsRepository $settings = null)
     {
         $this->settings = $settings ?? new SettingsRepository();
+        $this->colorResolver = new ColorResolver();
+        $this->sliderResolver = new SliderResolver();
     }
 
     /**
@@ -50,18 +61,17 @@ final class BackgroundMotionFrontend
         }
 
         $effect = isset($settings['emje_background_effect']) ? (string) $settings['emje_background_effect'] : 'ascii';
-
-        // Legacy value from early builds.
         if ($effect === 'ascii-interactive') {
             $effect = 'ascii';
         }
-
-        if ($effect !== 'ascii') {
-            // Aurora: name only for now — render nothing.
-            return;
+        if (! in_array($effect, ['ascii', 'pixel'], true)) {
+            // Unknown/retired effect (e.g. aurora sketches) — fall back to ASCII.
+            $effect = 'ascii';
         }
 
-        $config = $this->buildAsciiConfig($settings);
+        $config = $effect === 'pixel'
+            ? $this->buildPixelConfig($settings)
+            : $this->buildAsciiConfig($settings);
 
         $this->addDataAttribute($element, $config, 'data-emje-background', 'emje-background-motion');
     }
@@ -76,10 +86,10 @@ final class BackgroundMotionFrontend
         $colorRaw = trim((string) ($settings['emje_background_ascii_color'] ?? ''));
         $globals = $settings['__globals__'] ?? [];
         if (is_array($globals) && isset($globals['emje_background_ascii_color']) && is_string($globals['emje_background_ascii_color']) && trim($globals['emje_background_ascii_color']) !== '') {
-            $colorRaw = $this->resolveGlobalColorVar($globals['emje_background_ascii_color']);
+            $colorRaw = $this->colorResolver->resolveGlobalColorVar($globals['emje_background_ascii_color']);
         }
         if ($colorRaw === '') {
-            $colorRaw = '#FFFFFF';
+            $colorRaw = '#3B82F6';
         }
 
         $charset = isset($settings['emje_background_ascii_charset']) ? (string) $settings['emje_background_ascii_charset'] : 'full';
@@ -91,83 +101,77 @@ final class BackgroundMotionFrontend
 
         return [
             'effect' => 'ascii',
-            'color' => $this->sanitizeColor($colorRaw, '#FFFFFF'),
+            'color' => $this->colorResolver->sanitizeColor($colorRaw, '#3B82F6'),
             'charset' => $charset,
-            'cellW' => $this->resolveFloat($settings['emje_background_ascii_cell_w'] ?? 22, 22, 8, 60),
-            'cellH' => $this->resolveFloat($settings['emje_background_ascii_cell_h'] ?? 26, 26, 8, 60),
-            'fontSize' => $this->resolveFloat($settings['emje_background_ascii_font'] ?? 14, 14, 6, 32),
-            'radius' => $this->resolveFloat($settings['emje_background_ascii_radius'] ?? 360, 360, 100, 600),
-            'innerRadius' => $this->resolveFloat($settings['emje_background_ascii_inner'] ?? 30, 30, 0, 200),
-            'maxOpacity' => $this->resolveFloat($settings['emje_background_ascii_opacity'] ?? 0.35, 0.35, 0, 1),
-            'fade' => $this->resolveFloat($settings['emje_background_ascii_fade'] ?? 10, 10, 0, 30),
+            'cellW' => $this->sliderResolver->resolveFloat($settings['emje_background_ascii_cell_w'] ?? 22, 22, 8, 60),
+            'cellH' => $this->sliderResolver->resolveFloat($settings['emje_background_ascii_cell_h'] ?? 26, 26, 8, 60),
+            'fontSize' => $this->sliderResolver->resolveFloat($settings['emje_background_ascii_font'] ?? 14, 14, 6, 32),
+            'radius' => $this->sliderResolver->resolveFloat($settings['emje_background_ascii_radius'] ?? 360, 360, 100, 600),
+            'innerRadius' => $this->sliderResolver->resolveFloat($settings['emje_background_ascii_inner'] ?? 30, 30, 0, 200),
+            'maxOpacity' => $this->sliderResolver->resolveFloat($settings['emje_background_ascii_opacity'] ?? 0.35, 0.35, 0, 1),
+            'fade' => $this->sliderResolver->resolveFloat($settings['emje_background_ascii_fade'] ?? 10, 10, 0, 30),
             'livePreview' => ($settings['emje_background_live_preview'] ?? '') === 'yes',
             'disableOnMobile' => ! empty($globalSettings['disable_interaction_on_mobile']),
         ];
     }
 
     /**
-     * @param mixed $value
+     * @param array<string, mixed> $settings
+     *
+     * @return array<string, mixed>
      */
-    private function resolveFloat(mixed $value, float $default, float $min, float $max): float
+    private function buildPixelConfig(array $settings): array
     {
-        $raw = $value;
-        if (is_array($value) && isset($value['size'])) {
-            $raw = $value['size'];
-        }
-        if (! is_numeric($raw)) {
-            return $default;
-        }
-
-        return max($min, min($max, (float) $raw));
-    }
-
-    private function resolveGlobalColorVar(string $globalValue): string
-    {
-        if (str_contains($globalValue, 'globals/colors')) {
-            $parts = parse_url($globalValue);
-            if (isset($parts['query'])) {
-                parse_str($parts['query'], $query);
-                if (isset($query['id']) && is_string($query['id']) && $query['id'] !== '') {
-                    $id = preg_replace('/[^a-zA-Z0-9_-]/', '', $query['id']);
-                    return "var(--e-global-color-{$id})";
-                }
+        $baseRaw = trim((string) ($settings['emje_background_pixel_base'] ?? ''));
+        $activeRaw = trim((string) ($settings['emje_background_pixel_active'] ?? ''));
+        $globals = $settings['__globals__'] ?? [];
+        if (is_array($globals)) {
+            if (isset($globals['emje_background_pixel_base']) && is_string($globals['emje_background_pixel_base']) && trim($globals['emje_background_pixel_base']) !== '') {
+                $baseRaw = $this->colorResolver->resolveGlobalColorVar($globals['emje_background_pixel_base']);
             }
-            if (preg_match('/id=([^&]+)/', $globalValue, $m)) {
-                $id = preg_replace('/[^a-zA-Z0-9_-]/', '', $m[1]);
-                return "var(--e-global-color-{$id})";
+            if (isset($globals['emje_background_pixel_active']) && is_string($globals['emje_background_pixel_active']) && trim($globals['emje_background_pixel_active']) !== '') {
+                $activeRaw = $this->colorResolver->resolveGlobalColorVar($globals['emje_background_pixel_active']);
             }
         }
-        if (str_starts_with($globalValue, 'var(')) {
-            return $globalValue;
+        if ($baseRaw === '') {
+            $baseRaw = 'rgba(255, 255, 255, 0.08)';
+        }
+        if ($activeRaw === '') {
+            $activeRaw = '#3B82F6';
+        }
+        $borderRaw = trim((string) ($settings['emje_background_pixel_border'] ?? ''));
+        if (is_array($globals)) {
+            if (isset($globals['emje_background_pixel_border']) && is_string($globals['emje_background_pixel_border']) && trim($globals['emje_background_pixel_border']) !== '') {
+                $borderRaw = $this->colorResolver->resolveGlobalColorVar($globals['emje_background_pixel_border']);
+            }
+        }
+        if ($borderRaw === '') {
+            $borderRaw = 'rgba(255, 255, 255, 0.15)';
         }
 
-        return $globalValue;
-    }
-
-    private function sanitizeColor(string $value, string $fallback): string
-    {
-        $value = trim($value);
-        if ($value === '') {
-            return $fallback;
-        }
-        if (preg_match('/[;{}<>"\']|url\(/i', $value) === 1) {
-            return $fallback;
-        }
-        $hex = sanitize_hex_color($value);
-        if ($hex) {
-            return $hex;
-        }
-        if (preg_match('/^(?:rgba?|hsla?)\s*\([0-9.,%\s\/]+\)$/i', $value)) {
-            return $value;
-        }
-        if (preg_match('/^var\(\s*--[a-zA-Z0-9_-]+\s*\)$/i', $value)) {
-            return $value;
-        }
-        if (preg_match('/^[a-zA-Z]+$/', $value)) {
-            return strtolower($value);
+        $fit = isset($settings['emje_background_pixel_fit']) ? (string) $settings['emje_background_pixel_fit'] : 'stretch';
+        if (! in_array($fit, ['stretch', 'crop'], true)) {
+            $fit = 'stretch';
         }
 
-        return $fallback;
+        $globalSettings = $this->settings->getSettings();
+
+        return [
+            'effect' => 'pixel',
+            'base' => $this->colorResolver->sanitizeColor($baseRaw, 'rgba(255, 255, 255, 0.08)'),
+            'active' => $this->colorResolver->sanitizeColor($activeRaw, '#3B82F6'),
+            'fit' => $fit,
+            'cellSize' => $this->sliderResolver->resolveFloat($settings['emje_background_pixel_size'] ?? 56, 56, 24, 96),
+            'gap' => $this->sliderResolver->resolveFloat($settings['emje_background_pixel_gap'] ?? 2, 2, 0, 12),
+            'borderW' => $this->sliderResolver->resolveFloat($settings['emje_background_pixel_border_w'] ?? 1, 1, 0, 2),
+            'border' => $this->colorResolver->sanitizeColor($borderRaw, 'rgba(255, 255, 255, 0.15)'),
+            'speed' => $this->sliderResolver->resolveFloat($settings['emje_background_pixel_speed'] ?? 0.15, 0.15, 0.05, 0.5),
+            'radius' => $this->sliderResolver->resolveFloat($settings['emje_background_pixel_radius'] ?? 120, 120, 0, 300),
+            'trail' => $this->sliderResolver->resolveFloat($settings['emje_background_pixel_trail'] ?? 0.4, 0.4, 0, 1.5),
+            'fade' => $this->sliderResolver->resolveFloat($settings['emje_background_pixel_fade'] ?? 10, 10, 0, 30),
+            'livePreview' => ($settings['emje_background_live_preview'] ?? '') === 'yes',
+            'disableOnMobile' => ! empty($globalSettings['disable_interaction_on_mobile']),
+        ];
     }
 
     /**

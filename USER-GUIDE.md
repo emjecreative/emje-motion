@@ -98,7 +98,7 @@ Available on **Container** elements, **Style** tab, **Background Motion** sectio
 
 An interactive character grid filling the Container: faint dots idle, glowing letters/numbers/symbols near the cursor.
 
-- **Character Color** — default neutral white (`#FFFFFF`).
+- **Character Color** — default blue (`#3B82F6`).
 - **Hover Characters** — Full (default) or Simple.
 - **Cell Width / Cell Height** — grid density (defaults `22px` / `26px`).
 - **Font Size** — character size (default `14px`).
@@ -106,7 +106,23 @@ An interactive character grid filling the Container: faint dots idle, glowing le
 - **Max Opacity** — brightest glow (default `0.35`).
 - **Edge Fade** — top/bottom feather so the grid melts into the background (default `10%`).
 
-Respects reduced motion and hides on touch devices per dashboard settings. Aurora appears as an option but renders nothing yet — spec follows.
+Respects reduced motion and hides on touch devices per dashboard settings.
+
+### Pixel
+
+Interactive pixel grid that lights up under your cursor.
+
+- **Base Color** — resting cell color (default translucent white).
+- **Highlight Color** — lit cell color (default `#3B82F6`).
+- **Fit** — Stretch to fill (default; cells resize to fill the container, zero leftover) or Crop edges to fill (Cell Size stays precise, edge cells trimmed).
+- **Cell Size / Gap** — grid density (defaults `56px` / `2px`). Gap is the spacing between cells when Border Width is `0`; it is ignored while dividers are active.
+- **Border Width / Border Color** — single shared divider lines between cells like the reference (defaults `1px` translucent white; `0` hides them and Gap spacing applies instead).
+- **Transition Speed** — fade in/out pace (default `0.15`).
+- **Glow Radius** — cursor light reach in pixels (default `120px`; `0` lights a single cell).
+- **Trail Fade** — how long lit cells linger before fading back, in seconds (default `0.4`; `0` snaps back instantly).
+- **Edge Fade** — top/bottom feather so the grid melts into the background (default `10%`).
+
+Respects reduced motion and hides on touch devices per dashboard settings.
 
 ## Smooth Scroll
 
