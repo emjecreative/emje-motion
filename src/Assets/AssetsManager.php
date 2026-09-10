@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace EmjeCreative\EmjeMotion\Assets;
 
+use EmjeCreative\EmjeMotion\Admin\SettingsRepository;
+
 /**
  * Handles plugin assets.
  */
@@ -261,6 +263,16 @@ final class AssetsManager
                 'EmjeMotionConfig',
                 [
                     'logoUrl' => EMJE_MOTION_URL . 'assets/images/emje-motion-logo.svg',
+                ],
+            );
+            // Expose global flags so editor live preview matches frontend
+            // gating (e.g. disable interaction motion on mobile).
+            $editorGlobals = (new SettingsRepository())->getSettings();
+            wp_localize_script(
+                self::EDITOR_SCRIPT,
+                'EmjeMotionEditorGlobals',
+                [
+                    'disableInteractionOnMobile' => ! empty($editorGlobals['disable_interaction_on_mobile']),
                 ],
             );
             // Also expose EMJE_MOTION_URL as global for fallback.

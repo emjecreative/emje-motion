@@ -479,7 +479,6 @@ final class TextMotionControls
             [
                 'type' => Controls_Manager::RAW_HTML,
                 'raw' => '<button type="button" class="elementor-button elementor-button-success emje-motion-preview-btn" style="width:100%;margin-top:8px;"><i class="eicon-play" aria-hidden="true"></i> ' . esc_html__('Preview Animation', 'emje-motion') . '</button><div class="elementor-control-field-description">' . esc_html__('Replays animation regardless of Play Once.', 'emje-motion') . '</div>',
-                'content_classes' => 'emje-motion-preview-control',
                 'condition' => [
                     'emje_motion_enable' => 'yes',
                     'emje_motion_live_preview' => 'yes',

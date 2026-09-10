@@ -16,6 +16,10 @@ final class SettingsRepository
     /**
      * Known module IDs.
      *
+     * Note: legacy 'hover-reveal' / 'interactive-cursor' IDs were retired —
+     * old pages keep rendering through InteractionMotion's legacy fallback,
+     * which does not consult module toggles. Stale stored keys are ignored.
+     *
      * @var string[]
      */
     public const MODULE_IDS = [
@@ -23,9 +27,6 @@ final class SettingsRepository
         'smooth-scroll',
         'interaction-motion',
         'background-motion',
-        // Legacy IDs kept for backward compat (migrated to interaction-motion)
-        'hover-reveal',
-        'interactive-cursor',
     ];
 
     /**
@@ -41,8 +42,6 @@ final class SettingsRepository
         'smooth-scroll' => false,
         'interaction-motion' => true,
         'background-motion' => true,
-        'hover-reveal' => true,
-        'interactive-cursor' => true,
     ];
 
     /**

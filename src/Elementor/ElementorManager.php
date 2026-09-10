@@ -7,9 +7,7 @@ namespace EmjeCreative\EmjeMotion\Elementor;
 use EmjeCreative\EmjeMotion\Core\Container;
 use EmjeCreative\EmjeMotion\Core\ModuleLoader;
 use EmjeCreative\EmjeMotion\Modules\BackgroundMotion\BackgroundMotion;
-use EmjeCreative\EmjeMotion\Modules\HoverReveal\HoverReveal;
 use EmjeCreative\EmjeMotion\Modules\InteractionMotion\InteractionMotion;
-use EmjeCreative\EmjeMotion\Modules\InteractiveCursor\InteractiveCursor;
 use EmjeCreative\EmjeMotion\Modules\SmoothScroll\SmoothScroll;
 use EmjeCreative\EmjeMotion\Modules\TextMotion\TextMotion;
 
@@ -53,11 +51,10 @@ final class ElementorManager
     private function registerModules(): void
     {
         /** @var array<int, class-string<\EmjeCreative\EmjeMotion\Contracts\ModuleInterface>> $classes */
+        // Legacy HoverReveal + InteractiveCursor retired (see Plugin.php).
         $classes = [
             TextMotion::class,
             SmoothScroll::class,
-            HoverReveal::class,
-            InteractiveCursor::class,
             InteractionMotion::class,
             BackgroundMotion::class,
         ];

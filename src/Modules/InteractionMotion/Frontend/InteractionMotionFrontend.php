@@ -337,7 +337,8 @@ final class InteractionMotionFrontend
             $paddingX = $this->resolveSliderValue($settings['emje_interaction_cursor_padding_x'] ?? 32, 32, 12, 56);
             $radius = $this->resolveSliderValue($settings['emje_interaction_cursor_radius'] ?? 99, 99, 0, 100);
             $typography = $this->resolveTypography($settings, 'emje_interaction_cursor_typography');
-            // legacy fontSize fallback
+            // Legacy v1.0.0 compat: old pages stored a plain font_size slider
+            // with no matching Elementor control; keep reading it as fallback.
             $fontSizeLegacy = $this->resolveSliderValue($settings['emje_interaction_cursor_font_size'] ?? null, $typography['fontSize'] ?? 14, 10, 24);
             if (isset($typography['fontSize']) && $typography['fontSize'] > 0) {
                 $fontSizeLegacy = $typography['fontSize'];

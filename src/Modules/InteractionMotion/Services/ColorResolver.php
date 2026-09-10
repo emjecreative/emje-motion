@@ -9,12 +9,6 @@ namespace EmjeCreative\EmjeMotion\Modules\InteractionMotion\Services;
  */
 final class ColorResolver
 {
-    public const FALLBACK_DOT_RING = '#000000';
-    public const FALLBACK_BG = '#FFFFFF';
-    public const FALLBACK_TEXT = '#111111';
-    public const FALLBACK_TRAIL_HEAD = '#111111';
-    public const FALLBACK_TRAIL_TAIL = '#FF4D5A';
-
     public function resolveGlobalColorVar(string $globalValue): string
     {
         if (str_contains($globalValue, 'globals/colors')) {
@@ -58,6 +52,11 @@ final class ColorResolver
             return $hex;
         }
 
+        // 8-digit hex with alpha (#RRGGBBAA) — supported by browsers & canvas.
+        if (preg_match('/^#[0-9a-fA-F]{8}$/', $value)) {
+            return $value;
+        }
+
         // Allow rgb/rgba/hsl/hsla (numeric channels) and CSS custom properties.
         if (preg_match('/^(?:rgba?|hsla?)\s*\([0-9.,%\s\/]+\)$/i', $value)) {
             return $value;
@@ -71,17 +70,5 @@ final class ColorResolver
             return strtolower($value);
         }
         return $fallback;
-    }
-
-    public function getFallback(string $key): string
-    {
-        return match ($key) {
-            'dot_ring' => self::FALLBACK_DOT_RING,
-            'bg' => self::FALLBACK_BG,
-            'text' => self::FALLBACK_TEXT,
-            'trail_head' => self::FALLBACK_TRAIL_HEAD,
-            'trail_tail' => self::FALLBACK_TRAIL_TAIL,
-            default => self::FALLBACK_DOT_RING,
-        };
     }
 }

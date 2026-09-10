@@ -223,7 +223,6 @@ final class AdminManager
     {
         $this->verifyRequest('emje_motion_save_modules');
 
-        $existing = $this->settings->getModules();
         $modules = [];
 
         // Visible modules in Overview (3)
@@ -234,15 +233,9 @@ final class AdminManager
             $modules[$id] = isset($posted[$key]) && $posted[$key] === '1';
         }
 
-        // Preserve legacy hover/cursor for backward compat (old pages still render via InteractionMotionFrontend legacy fallback)
-        $modules['hover-reveal'] = $existing['hover-reveal'] ?? true;
-        $modules['interactive-cursor'] = $existing['interactive-cursor'] ?? true;
-        // Sync legacy to new: if interaction is enabled, keep legacy enabled for old frontend; if interaction disabled, keep legacy as is
-        if (! empty($modules['interaction-motion'])) {
-            $modules['hover-reveal'] = true;
-            $modules['interactive-cursor'] = true;
-        }
-
+        // Note: legacy hover-reveal / interactive-cursor module IDs are retired;
+        // saveModules() only persists known MODULE_IDS, so stale stored keys
+        // are dropped on the next save automatically.
         $this->settings->saveModules($modules);
 
         add_settings_error(
@@ -405,7 +398,7 @@ final class AdminManager
             ],
             'background-motion' => [
                 'label' => esc_html__('Background Motion', 'emje-motion'),
-                'description' => esc_html__('ASCII ambient backgrounds for Container. Aurora coming soon.', 'emje-motion'),
+                'description' => esc_html__('ASCII & Pixel ambient backgrounds for Container.', 'emje-motion'),
                 'status' => esc_html__('Available', 'emje-motion'),
                 'icon' => 'sparkle',
             ],

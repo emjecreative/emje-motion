@@ -163,7 +163,6 @@ export default class MotionEngine {
                 break;
             }
             case 'load':
-            case 'page-load':
             default:
                 playAnimation();
                 break;

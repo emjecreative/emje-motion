@@ -250,21 +250,6 @@ export default class TextSplitter {
 	}
 
     /**
-     * Get animation targets.
-     *
-     * @returns {HTMLElement[]}
-     */
-	/**
-	 * @deprecated
-	 * Use split() return value instead.
-	 */
-    getTargets() {
-
-        return this.targets;
-
-    }
-
-    /**
      * Restore original markup.
      */
     revert() {
