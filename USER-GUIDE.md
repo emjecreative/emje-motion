@@ -84,9 +84,8 @@ Replaces the native cursor inside the container. Pick a **Cursor Type**:
 
 - **Text Follow** (default) — a label pill that trails the cursor. Customize the **Text Label** (default `View`), typography, colors, padding, corner radius, and shadow.
 - **Dot + Ring** — a dot with a lagging ring. Customize **Size** (default `20px`), **Color**, and **Hover Scale** over links and buttons.
-- **Comet Trail** — a fading tail of dots. Customize **Dots** (default `6`, up to 12), **Dot Size**, **Head/Tail Colors** (gradient from head to tail), **Trail Lag**, and **Fade Tail**.
 
-Common settings: **Hide Native Cursor** (hide the real cursor inside the container) and **Follow Smoothness** (lower is snappier, higher trails more; Dot + Ring and Text Follow only).
+Common settings: **Hide Native Cursor** (hide the real cursor inside the container) and **Follow Smoothness** (lower is snappier, higher trails more).
 
 Note: Hover Reveal and Interactive Cursor hide themselves on touch devices — mobile visitors get the normal experience.
 

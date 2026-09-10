@@ -10,7 +10,7 @@ use Elementor\Group_Control_Typography;
 
 /**
  * Interactive Cursor controls for Interaction Motion.
- * Handles dot-ring, text-follow and comet trail.
+ * Handles dot-ring and text-follow.
  */
 final class CursorControls
 {
@@ -41,7 +41,6 @@ final class CursorControls
                 'options' => [
                     'text-follow' => esc_html__('Text Follow', 'emje-motion'),
                     'dot-ring' => esc_html__('Dot + Ring', 'emje-motion'),
-                    'trail' => esc_html__('Comet Trail', 'emje-motion'),
                 ],
                 'condition' => [
                     'emje_interaction_enable' => 'yes',
@@ -54,7 +53,6 @@ final class CursorControls
 
         $this->registerDotRing($element);
         $this->registerTextFollow($element);
-        $this->registerTrail($element);
         $this->registerCommon($element);
     }
 
@@ -347,156 +345,6 @@ final class CursorControls
     /**
      * @param mixed $element
      */
-    private function registerTrail($element): void
-    {
-        $element->add_control(
-            'emje_interaction_cursor_trail_dots',
-            [
-                'label' => esc_html__('Dots', 'emje-motion'),
-                'type' => Controls_Manager::SLIDER,
-                'size_units' => ['px'],
-                'range' => [
-                    'px' => [
-                        'min' => 3,
-                        'max' => 12,
-                        'step' => 1,
-                    ],
-                ],
-                'default' => [
-                    'size' => 6,
-                    'unit' => 'px',
-                ],
-                'description' => esc_html__('Number of trailing dots. More = longer comet tail.', 'emje-motion'),
-                'classes' => 'emje-control--has-tooltip',
-                'condition' => [
-                    'emje_interaction_enable' => 'yes',
-                    'emje_interaction_effect' => 'interactive-cursor',
-                    'emje_interaction_cursor_type' => 'trail',
-                ],
-                'frontend_available' => true,
-                'render_type' => 'none',
-            ],
-        );
-
-        $element->add_control(
-            'emje_interaction_cursor_trail_size',
-            [
-                'label' => esc_html__('Dot Size', 'emje-motion'),
-                'type' => Controls_Manager::SLIDER,
-                'size_units' => ['px'],
-                'range' => [
-                    'px' => [
-                        'min' => 4,
-                        'max' => 24,
-                        'step' => 1,
-                    ],
-                ],
-                'default' => [
-                    'size' => 20,
-                    'unit' => 'px',
-                ],
-                'description' => esc_html__('Head dot size. Tail dots scale down automatically.', 'emje-motion'),
-                'classes' => 'emje-control--has-tooltip',
-                'condition' => [
-                    'emje_interaction_enable' => 'yes',
-                    'emje_interaction_effect' => 'interactive-cursor',
-                    'emje_interaction_cursor_type' => 'trail',
-                ],
-                'frontend_available' => true,
-                'render_type' => 'none',
-            ],
-        );
-
-        $element->add_control(
-            'emje_interaction_cursor_trail_head_color',
-            [
-                'label' => esc_html__('Head Color', 'emje-motion'),
-                'type' => Controls_Manager::COLOR,
-                'default' => '#111111',
-                'description' => esc_html__('Color of the leading dot (head of comet).', 'emje-motion'),
-                'classes' => 'emje-control--has-tooltip',
-                'condition' => [
-                    'emje_interaction_enable' => 'yes',
-                    'emje_interaction_effect' => 'interactive-cursor',
-                    'emje_interaction_cursor_type' => 'trail',
-                ],
-                'frontend_available' => true,
-                'render_type' => 'none',
-            ],
-        );
-
-        $element->add_control(
-            'emje_interaction_cursor_trail_tail_color',
-            [
-                'label' => esc_html__('Tail Color', 'emje-motion'),
-                'type' => Controls_Manager::COLOR,
-                'default' => '#FF4D5A',
-                'description' => esc_html__('Color of the last dot. Gradient interpolates from Head to Tail.', 'emje-motion'),
-                'classes' => 'emje-control--has-tooltip',
-                'condition' => [
-                    'emje_interaction_enable' => 'yes',
-                    'emje_interaction_effect' => 'interactive-cursor',
-                    'emje_interaction_cursor_type' => 'trail',
-                ],
-                'frontend_available' => true,
-                'render_type' => 'none',
-            ],
-        );
-
-        $element->add_control(
-            'emje_interaction_cursor_trail_lag',
-            [
-                'label' => esc_html__('Trail Lag', 'emje-motion'),
-                'type' => Controls_Manager::SLIDER,
-                'size_units' => [''],
-                'range' => [
-                    '' => [
-                        'min' => 0.1,
-                        'max' => 0.5,
-                        'step' => 0.01,
-                    ],
-                ],
-                'default' => [
-                    'size' => 0.35,
-                    'unit' => '',
-                ],
-                'description' => esc_html__('How fast dots chase the one ahead. Lower = tighter, higher = longer tail (default 0.35).', 'emje-motion'),
-                'classes' => 'emje-control--has-tooltip',
-                'condition' => [
-                    'emje_interaction_enable' => 'yes',
-                    'emje_interaction_effect' => 'interactive-cursor',
-                    'emje_interaction_cursor_type' => 'trail',
-                ],
-                'frontend_available' => true,
-                'render_type' => 'none',
-            ],
-        );
-
-        $element->add_control(
-            'emje_interaction_cursor_trail_fade',
-            [
-                'label' => esc_html__('Fade Tail', 'emje-motion'),
-                'type' => Controls_Manager::SWITCHER,
-                'label_on' => esc_html__('Yes', 'emje-motion'),
-                'label_off' => esc_html__('No', 'emje-motion'),
-                'return_value' => 'yes',
-                'default' => 'yes',
-                'description' => esc_html__('Fade opacity toward the tail. Off keeps all dots opaque.', 'emje-motion'),
-                'classes' => 'emje-control--has-tooltip',
-                'condition' => [
-                    'emje_interaction_enable' => 'yes',
-                    'emje_interaction_effect' => 'interactive-cursor',
-                    'emje_interaction_cursor_type' => 'trail',
-                ],
-                'frontend_available' => true,
-                'render_type' => 'none',
-            ],
-        );
-    }
-
-    /**
-     * @param mixed $element
-     */
     private function registerCommon($element): void
     {
         $element->add_control(
@@ -555,7 +403,7 @@ final class CursorControls
                     'size' => 0.5,
                     'unit' => 's',
                 ],
-                'description' => esc_html__('Lower = snappier, higher = more trailing.', 'emje-motion'),
+                'description' => esc_html__('Lower = snappier, higher = more lag.', 'emje-motion'),
                 'classes' => 'emje-control--has-tooltip',
                 'condition' => [
                     'emje_interaction_enable' => 'yes',

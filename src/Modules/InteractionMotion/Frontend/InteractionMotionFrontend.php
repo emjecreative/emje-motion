@@ -250,7 +250,7 @@ final class InteractionMotionFrontend
             }
             $hoverScale = isset($settings['emje_interaction_cursor_hover_scale']) ? (float) $settings['emje_interaction_cursor_hover_scale'] : 1.5;
             $hideNative = ($settings['emje_interaction_cursor_hide_native'] ?? '') === 'yes';
-            // Text Label only for Text Follow, Dot+Ring has no label (hapus total)
+            // Text Label only for Text Follow; Dot+Ring has no label.
             if ($type === 'text-follow') {
                 $label = isset($settings['emje_interaction_cursor_text_label']) ? (string) $settings['emje_interaction_cursor_text_label'] : 'View';
                 $label = sanitize_text_field($label);
@@ -261,136 +261,30 @@ final class InteractionMotionFrontend
                 $label = '';
             }
             $livePreview = ($settings['emje_interaction_live_preview'] ?? '') === 'yes';
-            if (! in_array($type, ['dot-ring', 'text-follow', 'trail'], true)) {
+            // Retired 'trail' (Comet Trail) falls through to text-follow.
+            if (! in_array($type, ['dot-ring', 'text-follow'], true)) {
                 $type = 'text-follow';
             }
             $hoverScale = max(1.2, min(2.0, $hoverScale));
 
-            // Comet Trail specific
-            $trailDotsRaw = $settings['emje_interaction_cursor_trail_dots'] ?? null;
-            $trailDots = 6;
-            if (is_array($trailDotsRaw) && isset($trailDotsRaw['size'])) {
-                $trailDots = (int) $trailDotsRaw['size'];
-            } elseif (is_numeric($trailDotsRaw)) {
-                $trailDots = (int) $trailDotsRaw;
-            }
-            $trailDots = max(3, min(12, $trailDots));
-
-            $trailSizeRaw = $settings['emje_interaction_cursor_trail_size'] ?? null;
-            $trailSize = 20;
-            if (is_array($trailSizeRaw) && isset($trailSizeRaw['size'])) {
-                $trailSize = (int) $trailSizeRaw['size'];
-            } elseif (is_numeric($trailSizeRaw)) {
-                $trailSize = (int) $trailSizeRaw;
-            }
-            $trailSize = max(4, min(24, $trailSize));
-
-            $headColorRaw = trim((string) ($settings['emje_interaction_cursor_trail_head_color'] ?? ''));
-            $tailColorRaw = trim((string) ($settings['emje_interaction_cursor_trail_tail_color'] ?? ''));
-            $globalsTrail = $settings['__globals__'] ?? [];
-            if (isset($globalsTrail['emje_interaction_cursor_trail_head_color']) && is_string($globalsTrail['emje_interaction_cursor_trail_head_color']) && trim($globalsTrail['emje_interaction_cursor_trail_head_color']) !== '') {
-                $headColorRaw = $this->resolveGlobalColorVar($globalsTrail['emje_interaction_cursor_trail_head_color']);
-            }
-            if (isset($globalsTrail['emje_interaction_cursor_trail_tail_color']) && is_string($globalsTrail['emje_interaction_cursor_trail_tail_color']) && trim($globalsTrail['emje_interaction_cursor_trail_tail_color']) !== '') {
-                $tailColorRaw = $this->resolveGlobalColorVar($globalsTrail['emje_interaction_cursor_trail_tail_color']);
-            }
-            if ($headColorRaw === '') {
-                $headColorRaw = '#111111';
-            }
-            if ($tailColorRaw === '') {
-                $tailColorRaw = '#FF4D5A';
-            }
-            $trailHeadColor = $this->sanitizeColor($headColorRaw, '#111111');
-            $trailTailColor = $this->sanitizeColor($tailColorRaw, '#FF4D5A');
-
-            $trailLagRaw = $settings['emje_interaction_cursor_trail_lag'] ?? null;
-            $trailLag = 0.35;
-            if (is_array($trailLagRaw) && isset($trailLagRaw['size'])) {
-                $trailLag = (float) $trailLagRaw['size'];
-            } elseif (is_numeric($trailLagRaw)) {
-                $trailLag = (float) $trailLagRaw;
-            }
-            $trailLag = max(0.1, min(0.5, $trailLag));
-
-            $trailFade = ($settings['emje_interaction_cursor_trail_fade'] ?? 'yes') === 'yes';
-
-            // Text Follow specific — allow hex, rgb/a, hsl/a, globals
-            $bgColorRaw = trim((string) ($settings['emje_interaction_cursor_bg_color'] ?? ''));
-            $textColorRaw = trim((string) ($settings['emje_interaction_cursor_text_color'] ?? ''));
-            // Handle Elementor Global Colors via __globals__ — prioritize var() so kit updates propagate
-            $globals = $settings['__globals__'] ?? [];
-            if (isset($globals['emje_interaction_cursor_bg_color']) && is_string($globals['emje_interaction_cursor_bg_color']) && trim($globals['emje_interaction_cursor_bg_color']) !== '') {
-                $bgColorRaw = $this->resolveGlobalColorVar($globals['emje_interaction_cursor_bg_color']);
-            }
-            if (isset($globals['emje_interaction_cursor_text_color']) && is_string($globals['emje_interaction_cursor_text_color']) && trim($globals['emje_interaction_cursor_text_color']) !== '') {
-                $textColorRaw = $this->resolveGlobalColorVar($globals['emje_interaction_cursor_text_color']);
-            }
-            if ($bgColorRaw === '') {
-                $bgColorRaw = '#FFFFFF';
-            }
-            if ($textColorRaw === '') {
-                $textColorRaw = '#111111';
-            }
-            $bgColor = $this->sanitizeColor($bgColorRaw, '#FFFFFF');
-            $textColor = $this->sanitizeColor($textColorRaw, '#111111');
-            $paddingY = $this->resolveSliderValue($settings['emje_interaction_cursor_padding_y'] ?? 40, 40, 8, 48);
-            $paddingX = $this->resolveSliderValue($settings['emje_interaction_cursor_padding_x'] ?? 32, 32, 12, 56);
-            $radius = $this->resolveSliderValue($settings['emje_interaction_cursor_radius'] ?? 99, 99, 0, 100);
-            $typography = $this->resolveTypography($settings, 'emje_interaction_cursor_typography');
-            // Legacy v1.0.0 compat: old pages stored a plain font_size slider
-            // with no matching Elementor control; keep reading it as fallback.
-            $fontSizeLegacy = $this->resolveSliderValue($settings['emje_interaction_cursor_font_size'] ?? null, $typography['fontSize'] ?? 14, 10, 24);
-            if (isset($typography['fontSize']) && $typography['fontSize'] > 0) {
-                $fontSizeLegacy = $typography['fontSize'];
-            }
-            $fontSize = $fontSizeLegacy;
-            $entrance = isset($settings['emje_interaction_cursor_entrance']) ? (string) $settings['emje_interaction_cursor_entrance'] : 'scale';
-            if (! in_array($entrance, ['scale', 'scale-bounce', 'none'], true)) {
-                $entrance = 'scale';
-            }
-            $followSmoothnessRaw = $settings['emje_interaction_cursor_follow_smoothness'] ?? null;
-            $followSmoothness = 0.5;
-            if (is_array($followSmoothnessRaw) && isset($followSmoothnessRaw['size'])) {
-                $followSmoothness = (float) $followSmoothnessRaw['size'];
-            } elseif (is_numeric($followSmoothnessRaw)) {
-                $followSmoothness = (float) $followSmoothnessRaw;
-            }
-            $followSmoothness = max(0.05, min(0.6, $followSmoothness));
-            $boxShadow = $this->resolveBoxShadow($settings, 'emje_interaction_cursor_box_shadow', '0px 8px 32px 0px rgba(0, 0, 0, 0.12)');
-
+            // Text Follow specific - allow hex, rgb/a, hsl/a, globals
+            $extras = $this->resolveTextFollowExtras($settings);
             $globalSettingsCursor = $this->settings->getSettings();
 
-            return [
-                'type' => $type,
-                'size' => $size,
-                'color' => $color,
-                'blendMode' => $blendMode,
-                'hoverScale' => $hoverScale,
-                'hideNative' => $hideNative,
-                'label' => $label,
-                'bgColor' => $bgColor,
-                'textColor' => $textColor,
-                'paddingY' => $paddingY,
-                'paddingX' => $paddingX,
-                'radius' => $radius,
-                'fontSize' => $fontSize,
-                'typography' => $typography,
-                'entrance' => $entrance,
-                'followSmoothness' => $followSmoothness,
-                'boxShadow' => $boxShadow,
-                // Comet Trail
-                'trailDots' => $trailDots,
-                'trailSize' => $trailSize,
-                'trailHeadColor' => $trailHeadColor,
-                'trailTailColor' => $trailTailColor,
-                'trailLag' => $trailLag,
-                'trailFade' => $trailFade,
-                // legacy keys for backward compat
-                'shadow' => $boxShadow !== 'none',
-                'shadowBlur' => 32,
-                'livePreview' => $livePreview,
-                'disableOnMobile' => ! empty($globalSettingsCursor['disable_interaction_on_mobile']),
-            ];
+            return array_merge(
+                [
+                    'type' => $type,
+                    'size' => $size,
+                    'color' => $color,
+                    'blendMode' => $blendMode,
+                    'hoverScale' => $hoverScale,
+                    'hideNative' => $hideNative,
+                    'label' => $label,
+                    'livePreview' => $livePreview,
+                    'disableOnMobile' => ! empty($globalSettingsCursor['disable_interaction_on_mobile']),
+                ],
+                $extras,
+            );
         }
 
         $type = isset($settings['emje_cursor_type']) ? (string) $settings['emje_cursor_type'] : 'text-follow';
@@ -416,7 +310,8 @@ final class InteractionMotionFrontend
             $label = 'View';
         }
         $livePreview = ($settings['emje_cursor_live_preview'] ?? '') === 'yes';
-        if (! in_array($type, ['dot-ring', 'text-follow', 'trail'], true)) {
+        // Retired 'trail' (Comet Trail) falls through to text-follow.
+        if (! in_array($type, ['dot-ring', 'text-follow'], true)) {
             $type = 'text-follow';
         }
         $hoverScale = max(1.2, min(2.0, $hoverScale));
@@ -453,14 +348,77 @@ final class InteractionMotionFrontend
             'boxShadow' => '0px 8px 32px 0px rgba(0, 0, 0, 0.12)',
             'shadow' => true,
             'shadowBlur' => 32,
-            'trailDots' => 6,
-            'trailSize' => 20,
-            'trailHeadColor' => '#111111',
-            'trailTailColor' => '#FF4D5A',
-            'trailLag' => 0.35,
-            'trailFade' => true,
             'livePreview' => $livePreview,
             'disableOnMobile' => ! empty($globalSettingsLegacyCursor['disable_interaction_on_mobile']),
+        ];
+    }
+
+    /**
+     * Resolve Text Follow extras (pill styling, typography, entrance, shadow).
+     *
+     * @param array<string, mixed> $settings
+     *
+     * @return array<string, mixed>
+     */
+    private function resolveTextFollowExtras(array $settings): array
+    {
+        $bgColorRaw = trim((string) ($settings['emje_interaction_cursor_bg_color'] ?? ''));
+        $textColorRaw = trim((string) ($settings['emje_interaction_cursor_text_color'] ?? ''));
+        // Handle Elementor Global Colors via __globals__ — prioritize var() so kit updates propagate
+        $globals = $settings['__globals__'] ?? [];
+        if (isset($globals['emje_interaction_cursor_bg_color']) && is_string($globals['emje_interaction_cursor_bg_color']) && trim($globals['emje_interaction_cursor_bg_color']) !== '') {
+            $bgColorRaw = $this->resolveGlobalColorVar($globals['emje_interaction_cursor_bg_color']);
+        }
+        if (isset($globals['emje_interaction_cursor_text_color']) && is_string($globals['emje_interaction_cursor_text_color']) && trim($globals['emje_interaction_cursor_text_color']) !== '') {
+            $textColorRaw = $this->resolveGlobalColorVar($globals['emje_interaction_cursor_text_color']);
+        }
+        if ($bgColorRaw === '') {
+            $bgColorRaw = '#FFFFFF';
+        }
+        if ($textColorRaw === '') {
+            $textColorRaw = '#111111';
+        }
+        $bgColor = $this->sanitizeColor($bgColorRaw, '#FFFFFF');
+        $textColor = $this->sanitizeColor($textColorRaw, '#111111');
+        $paddingY = $this->resolveSliderValue($settings['emje_interaction_cursor_padding_y'] ?? 40, 40, 8, 48);
+        $paddingX = $this->resolveSliderValue($settings['emje_interaction_cursor_padding_x'] ?? 32, 32, 12, 56);
+        $radius = $this->resolveSliderValue($settings['emje_interaction_cursor_radius'] ?? 99, 99, 0, 100);
+        $typography = $this->resolveTypography($settings, 'emje_interaction_cursor_typography');
+        // Legacy v1.0.0 compat: old pages stored a plain font_size slider
+        // with no matching Elementor control; keep reading it as fallback.
+        $fontSizeLegacy = $this->resolveSliderValue($settings['emje_interaction_cursor_font_size'] ?? null, $typography['fontSize'] ?? 14, 10, 24);
+        if (isset($typography['fontSize']) && $typography['fontSize'] > 0) {
+            $fontSizeLegacy = $typography['fontSize'];
+        }
+        $fontSize = $fontSizeLegacy;
+        $entrance = isset($settings['emje_interaction_cursor_entrance']) ? (string) $settings['emje_interaction_cursor_entrance'] : 'scale';
+        if (! in_array($entrance, ['scale', 'scale-bounce', 'none'], true)) {
+            $entrance = 'scale';
+        }
+        $followSmoothnessRaw = $settings['emje_interaction_cursor_follow_smoothness'] ?? null;
+        $followSmoothness = 0.5;
+        if (is_array($followSmoothnessRaw) && isset($followSmoothnessRaw['size'])) {
+            $followSmoothness = (float) $followSmoothnessRaw['size'];
+        } elseif (is_numeric($followSmoothnessRaw)) {
+            $followSmoothness = (float) $followSmoothnessRaw;
+        }
+        $followSmoothness = max(0.05, min(0.6, $followSmoothness));
+        $boxShadow = $this->resolveBoxShadow($settings, 'emje_interaction_cursor_box_shadow', '0px 8px 32px 0px rgba(0, 0, 0, 0.12)');
+
+        return [
+            'bgColor' => $bgColor,
+            'textColor' => $textColor,
+            'paddingY' => $paddingY,
+            'paddingX' => $paddingX,
+            'radius' => $radius,
+            'fontSize' => $fontSize,
+            'typography' => $typography,
+            'entrance' => $entrance,
+            'followSmoothness' => $followSmoothness,
+            'boxShadow' => $boxShadow,
+            // legacy keys for backward compat
+            'shadow' => $boxShadow !== 'none',
+            'shadowBlur' => 32,
         ];
     }
 
