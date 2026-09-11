@@ -1,4 +1,4 @@
-import { getPreviewWindow, getPreviewDocument, editorDisableOnMobile, isValidEditorColor, findTarget } from './utils.js';
+import { getPreviewWindow, getPreviewDocument, isValidEditorColor, findTarget } from './utils.js';
 
 export function buildBackgroundConfig(settings) {
     var get = function(k, d) { var v = settings.get(k); return v !== undefined && v !== null ? v : d; };
@@ -9,9 +9,12 @@ export function buildBackgroundConfig(settings) {
     }
     var effect = get('emje_background_effect', 'ascii');
     if (effect === 'ascii-interactive') effect = 'ascii'; // legacy value
-    if (effect !== 'ascii' && effect !== 'pixel') effect = 'ascii';
+    if (effect !== 'ascii' && effect !== 'pixel' && effect !== 'dither') effect = 'ascii';
     if (effect === 'pixel') {
         return buildPixelConfig(settings, live);
+    }
+    if (effect === 'dither') {
+        return buildDitherConfig(settings, live);
     }
     var num = function(k, def, min, max) {
         var v = get(k, null);
@@ -48,7 +51,7 @@ export function buildBackgroundConfig(settings) {
         innerRadius: num('emje_background_ascii_inner', 30, 0, 200),
         maxOpacity: num('emje_background_ascii_opacity', 0.35, 0, 1),
         fade: num('emje_background_ascii_fade', 10, 0, 30),
-        disableOnMobile: editorDisableOnMobile()
+        disableOnMobile: get('emje_background_ascii_disable_mobile', 'yes') === 'yes'
     };
 }
 
@@ -94,11 +97,73 @@ export function buildPixelConfig(settings, live) {
         radius: num('emje_background_pixel_radius', 120, 0, 300),
         trail: num('emje_background_pixel_trail', 0.4, 0, 1.5),
         fade: num('emje_background_pixel_fade', 10, 0, 30),
-        disableOnMobile: editorDisableOnMobile()
+        disableOnMobile: get('emje_background_pixel_disable_mobile', 'yes') === 'yes'
+    };
+}
+
+export function buildDitherConfig(settings, live) {
+    var get = function(k, d) { var v = settings.get(k); return v !== undefined && v !== null ? v : d; };
+    var num = function(k, def, min, max) {
+        var v = get(k, null);
+        if (v && typeof v === 'object' && v.size !== undefined) v = v.size;
+        var n = parseFloat(v);
+        if (isNaN(n)) return def;
+        return Math.max(min, Math.min(max, n));
+    };
+    var isValidColor = isValidEditorColor;
+    var pickColor = function(key, fallback) {
+        var c = get(key, fallback);
+        if (typeof c !== 'string') c = fallback;
+        var globals = get('__globals__', null);
+        if (globals && typeof globals === 'object' && globals[key]) {
+            var gv = globals[key];
+            if (typeof gv === 'string' && gv.indexOf('globals/colors') !== -1) {
+                var m = gv.match(/id=([^&]+)/);
+                if (m) gv = 'var(--e-global-color-' + m[1].replace(/[^a-zA-Z0-9_-]/g, '') + ')';
+            }
+            if (isValidColor(gv)) c = gv;
+        }
+        if (!isValidColor(c)) c = fallback;
+        return c;
+    };
+    return {
+        enable: true,
+        effect: 'dither',
+        livePreview: live,
+        fg: pickColor('emje_background_dither_fg', '#3B82F6'),
+        bg: pickColor('emje_background_dither_bg', 'rgba(255, 255, 255, 0)'),
+        pixel: num('emje_background_dither_pixel', 8, 4, 32),
+        density: num('emje_background_dither_density', 0.5, 0, 1),
+        scale: num('emje_background_dither_scale', 1.5, 0.5, 4),
+        speed: num('emje_background_dither_speed', 0.6, 0, 2),
+        ripple: get('emje_background_dither_ripple', 'yes') === 'yes',
+        rippleStrength: num('emje_background_dither_ripple_strength', 0.6, 0, 1),
+        rippleWidth: num('emje_background_dither_ripple_width', 140, 20, 400),
+        rippleSpeed: num('emje_background_dither_ripple_speed', 420, 100, 1200),
+        fade: num('emje_background_dither_fade', 10, 0, 30),
+        disableOnMobile: get('emje_background_dither_disable_mobile', '') === 'yes'
     };
 }
 
 export function buildBackgroundPayload(cfg) {
+    if (cfg.effect === 'dither') {
+        return {
+            effect: 'dither',
+            fg: cfg.fg,
+            bg: cfg.bg,
+            pixel: cfg.pixel,
+            density: cfg.density,
+            scale: cfg.scale,
+            speed: cfg.speed,
+            ripple: cfg.ripple,
+            rippleStrength: cfg.rippleStrength,
+            rippleWidth: cfg.rippleWidth,
+            rippleSpeed: cfg.rippleSpeed,
+            fade: cfg.fade,
+            disableOnMobile: cfg.disableOnMobile,
+            livePreview: cfg.livePreview
+        };
+    }
     if (cfg.effect === 'pixel') {
         return {
             effect: 'pixel',
@@ -148,7 +213,7 @@ export function backgroundLayerPresent(target) {
     try {
         if (!target) return false;
         if (target.dataset && target.dataset.emjeBackgroundInitialized === 'true') return true;
-        if (target.querySelector && target.querySelector('.emje-ascii, .emje-pixel')) return true;
+        if (target.querySelector && target.querySelector('.emje-ascii, .emje-pixel, .emje-dither')) return true;
     } catch (e) {}
     return false;
 }
@@ -372,13 +437,21 @@ var EMJE_BG_KEYS = [
     'emje_background_ascii_color', 'emje_background_ascii_charset',
     'emje_background_ascii_cell_w', 'emje_background_ascii_cell_h', 'emje_background_ascii_font',
     'emje_background_ascii_radius', 'emje_background_ascii_inner', 'emje_background_ascii_opacity',
-    'emje_background_ascii_fade',
+    'emje_background_ascii_fade', 'emje_background_ascii_disable_mobile',
     'emje_background_pixel_base', 'emje_background_pixel_active',
     'emje_background_pixel_fit',
     'emje_background_pixel_size', 'emje_background_pixel_gap', 'emje_background_pixel_speed',
     'emje_background_pixel_border_w', 'emje_background_pixel_border',
     'emje_background_pixel_radius', 'emje_background_pixel_trail',
-    'emje_background_pixel_fade', 'emje_background_live_preview'
+    'emje_background_pixel_fade', 'emje_background_pixel_disable_mobile',
+    'emje_background_live_preview',
+    'emje_background_dither_fg', 'emje_background_dither_bg',
+    'emje_background_dither_pixel',
+    'emje_background_dither_density', 'emje_background_dither_scale',
+    'emje_background_dither_speed', 'emje_background_dither_ripple',
+    'emje_background_dither_ripple_strength', 'emje_background_dither_ripple_width',
+    'emje_background_dither_ripple_speed', 'emje_background_dither_fade',
+    'emje_background_dither_disable_mobile'
 ];
 
 export function bindBackgroundSettingsListener() {

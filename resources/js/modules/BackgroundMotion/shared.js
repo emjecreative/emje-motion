@@ -1,5 +1,5 @@
 /**
- * Shared helpers for Background Motion effects (ASCII / Pixel).
+ * Shared helpers for Background Motion effects (ASCII / Pixel / Dither).
  * Single source of truth — do not duplicate into effect files.
  */
 export const LIMITS = {
@@ -21,6 +21,18 @@ export const LIMITS = {
         maxOpacity: [0, 1],
         fade: [0, 30],
         maxCells: 2500,
+    },
+    dither: {
+        pixel: [4, 32],
+        density: [0, 1],
+        scale: [0.5, 4],
+        speed: [0, 2],
+        rippleStrength: [0, 1],
+        rippleWidth: [20, 400],
+        rippleSpeed: [100, 1200],
+        fade: [0, 30],
+        maxDpr: 1.5,
+        maxCells: 12000,
     },
 };
 

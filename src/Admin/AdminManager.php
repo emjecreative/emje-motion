@@ -269,7 +269,6 @@ final class AdminManager
 
         $settings = [
             'respect_reduced_motion' => isset($posted['respect_reduced_motion']) && $posted['respect_reduced_motion'] === '1',
-            'disable_interaction_on_mobile' => isset($posted['disable_interaction_on_mobile']) && $posted['disable_interaction_on_mobile'] === '1',
             'disable_smooth_on_mobile' => $disableSmooth,
             'smooth_scroll_lerp' => $lerp,
             'smooth_scroll_wheel_multiplier' => $wheel,

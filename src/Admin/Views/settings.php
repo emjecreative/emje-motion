@@ -12,8 +12,6 @@ declare(strict_types=1);
 defined('ABSPATH') || exit;
 
 settings_errors('emje_motion_settings');
-
-$version = defined('EMJE_MOTION_VERSION') ? EMJE_MOTION_VERSION : '0.0.0';
 ?>
 <header class="emje-admin-header" id="emjeAdminHeader">
 	<div class="emje-admin-header__inner">
@@ -69,18 +67,6 @@ $version = defined('EMJE_MOTION_VERSION') ? EMJE_MOTION_VERSION : '0.0.0';
 						<div class="emje-setting-row__control">
 							<label class="emje-switch">
 								<input type="checkbox" name="respect_reduced_motion" value="1" <?php checked(! empty($settings['respect_reduced_motion'])); ?> />
-								<span class="emje-switch__track"><span class="emje-switch__thumb"></span></span>
-							</label>
-						</div>
-					</div>
-					<div class="emje-setting-row">
-						<div class="emje-setting-row__left">
-							<div class="emje-setting-row__label"><?php echo esc_html__('Disable Interaction Motion on Mobile', 'emje-motion'); ?></div>
-							<div class="emje-setting-row__desc"><?php echo esc_html__('Disable Hover Reveal & Interactive Cursor on touch devices.', 'emje-motion'); ?></div>
-						</div>
-						<div class="emje-setting-row__control">
-							<label class="emje-switch">
-								<input type="checkbox" name="disable_interaction_on_mobile" value="1" <?php checked(! empty($settings['disable_interaction_on_mobile'])); ?> />
 								<span class="emje-switch__track"><span class="emje-switch__thumb"></span></span>
 							</label>
 						</div>

@@ -87,7 +87,7 @@ Replaces the native cursor inside the container. Pick a **Cursor Type**:
 
 Common settings: **Hide Native Cursor** (hide the real cursor inside the container) and **Follow Smoothness** (lower is snappier, higher trails more).
 
-Note: Hover Reveal and Interactive Cursor hide themselves on touch devices — mobile visitors get the normal experience.
+Each effect has its own **Disable on Mobile & Tablet** switch (on by default) — turn it off per effect if you want it visible on touch devices.
 
 ## Background Motion
 
@@ -104,8 +104,9 @@ An interactive character grid filling the Container: faint dots idle, glowing le
 - **Glow Radius / Inner Radius** — cursor light reach (defaults `360px` / `30px`).
 - **Max Opacity** — brightest glow (default `0.35`).
 - **Edge Fade** — top/bottom feather so the grid melts into the background (default `10%`).
+- **Disable on Mobile & Tablet** — hide on touch devices (on by default).
 
-Respects reduced motion and hides on touch devices per dashboard settings.
+Respects reduced motion.
 
 ### Pixel
 
@@ -120,8 +121,25 @@ Interactive pixel grid that lights up under your cursor.
 - **Glow Radius** — cursor light reach in pixels (default `120px`; `0` lights a single cell).
 - **Trail Fade** — how long lit cells linger before fading back, in seconds (default `0.4`; `0` snaps back instantly).
 - **Edge Fade** — top/bottom feather so the grid melts into the background (default `10%`).
+- **Disable on Mobile & Tablet** — hide on touch devices (on by default).
 
-Respects reduced motion and hides on touch devices per dashboard settings.
+Respects reduced motion.
+
+### Dither
+
+Ambient animated retro-dither background, inspired by shader-style dither art. It lives on its own — no cursor needed — and a click/tap sends an expanding ripple through the pattern.
+
+- **Dot Color** — pattern color (default `#3B82F6`).
+- **Background Color** — canvas fill (default transparent, so the native container background shows through).
+- **Look** — square dots (single fast path, smooth at 60fps even while scrolling).
+- **Pixel Size** — base cell size (default `8px`; larger is blockier).
+- **Pattern Density / Pattern Scale** — how full the pattern looks and the size of the underlying noise (defaults `0.5` / `1.5`).
+- **Animation Speed** — evolution pace (default `0.6`; `0` freezes on a single frame).
+- **Enable Ripples + Strength / Width / Speed** — click/tap ripple (defaults on, `0.6` / `140px` / `420`).
+- **Edge Fade** — top/bottom feather so the pattern melts into the background (default `10%`).
+- **Disable on Mobile & Tablet** — hide on touch devices (off by default, so it stays visible — tap sends a ripple).
+
+Respects reduced motion. Resolution auto-scales down under load and the animation pauses offscreen.
 
 ## Smooth Scroll
 
@@ -141,7 +159,7 @@ Toggle the three feature modules individually. The status line tells you how man
 
 ### Settings
 
-- **Behavior** — **Respect Reduced Motion** (skip motion for visitors whose system prefers less animation) and **Disable Interaction Motion on Mobile**.
+- **Behavior** — **Respect Reduced Motion** (skip motion for visitors whose system prefers less animation). Mobile visibility is controlled per effect in Elementor (**Disable on Mobile & Tablet**).
 - **Smooth Scroll** — visible only while the Smooth Scroll module is enabled; see above.
 
 ### About
@@ -151,6 +169,8 @@ Version info, **System Status** (plugin, WordPress, Elementor, and PHP versions 
 ## Troubleshooting
 
 **Motion doesn't appear.** Check in order: the module toggle in Overview is on → **Enable** is on in the widget's Style tab → clear any cache (page cache, Elementor → Tools → Regenerate CSS) → confirm you're viewing the frontend, not a cached copy.
+
+**Motion missing on mobile/tablet.** Each effect has its own **Disable on Mobile & Tablet** switch (on by default except Dither) — turn it off on that effect to show it on touch devices.
 
 **"405 Not Allowed" when uploading the zip.** Some hosts block dashboard uploads at the server level — this is not caused by the plugin. Install via File Manager instead: delete the old `emje-motion` folder, extract the release zip so the main file sits directly at `wp-content/plugins/emje-motion/emje-motion.php`, then Activate.
 

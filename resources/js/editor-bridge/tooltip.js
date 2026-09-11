@@ -29,7 +29,6 @@ export function bindTooltips() {
                 var bw = bubble.offsetWidth || 180;
                 var bh = bubble.offsetHeight || 60;
                 var vw = document.documentElement.clientWidth || window.innerWidth;
-                var vh = document.documentElement.clientHeight || window.innerHeight;
                 var margin = 12;
                 // Centered above the icon, clamped with 12px margin so it never touches sidebar edges
                 var left = rect.left + rect.width / 2 - bw / 2;

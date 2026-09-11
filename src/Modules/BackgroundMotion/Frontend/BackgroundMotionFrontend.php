@@ -4,28 +4,24 @@ declare(strict_types=1);
 
 namespace EmjeCreative\EmjeMotion\Modules\BackgroundMotion\Frontend;
 
-use EmjeCreative\EmjeMotion\Admin\SettingsRepository;
 use EmjeCreative\EmjeMotion\Modules\InteractionMotion\Services\ColorResolver;
 use EmjeCreative\EmjeMotion\Modules\InteractionMotion\Services\SliderResolver;
 
 /**
  * Renders Background Motion frontend attributes for Container.
- * Effects: ascii / pixel.
+ * Effects: ascii / pixel / dither.
  *
  * Color/slider sanitizing is shared with Interaction Motion via
  * ColorResolver + SliderResolver (single source of truth).
  */
 final class BackgroundMotionFrontend
 {
-    private SettingsRepository $settings;
-
     private ColorResolver $colorResolver;
 
     private SliderResolver $sliderResolver;
 
-    public function __construct(?SettingsRepository $settings = null)
+    public function __construct()
     {
-        $this->settings = $settings ?? new SettingsRepository();
         $this->colorResolver = new ColorResolver();
         $this->sliderResolver = new SliderResolver();
     }
@@ -64,14 +60,18 @@ final class BackgroundMotionFrontend
         if ($effect === 'ascii-interactive') {
             $effect = 'ascii';
         }
-        if (! in_array($effect, ['ascii', 'pixel'], true)) {
+        if (! in_array($effect, ['ascii', 'pixel', 'dither'], true)) {
             // Unknown/retired effect (e.g. aurora sketches) — fall back to ASCII.
             $effect = 'ascii';
         }
 
-        $config = $effect === 'pixel'
-            ? $this->buildPixelConfig($settings)
-            : $this->buildAsciiConfig($settings);
+        if ($effect === 'pixel') {
+            $config = $this->buildPixelConfig($settings);
+        } elseif ($effect === 'dither') {
+            $config = $this->buildDitherConfig($settings);
+        } else {
+            $config = $this->buildAsciiConfig($settings);
+        }
 
         $this->addDataAttribute($element, $config, 'data-emje-background', 'emje-background-motion');
     }
@@ -97,8 +97,6 @@ final class BackgroundMotionFrontend
             $charset = 'full';
         }
 
-        $globalSettings = $this->settings->getSettings();
-
         return [
             'effect' => 'ascii',
             'color' => $this->colorResolver->sanitizeColor($colorRaw, '#3B82F6'),
@@ -111,7 +109,7 @@ final class BackgroundMotionFrontend
             'maxOpacity' => $this->sliderResolver->resolveFloat($settings['emje_background_ascii_opacity'] ?? 0.35, 0.35, 0, 1),
             'fade' => $this->sliderResolver->resolveFloat($settings['emje_background_ascii_fade'] ?? 10, 10, 0, 30),
             'livePreview' => ($settings['emje_background_live_preview'] ?? '') === 'yes',
-            'disableOnMobile' => ! empty($globalSettings['disable_interaction_on_mobile']),
+            'disableOnMobile' => ($settings['emje_background_ascii_disable_mobile'] ?? 'yes') === 'yes',
         ];
     }
 
@@ -154,8 +152,6 @@ final class BackgroundMotionFrontend
             $fit = 'stretch';
         }
 
-        $globalSettings = $this->settings->getSettings();
-
         return [
             'effect' => 'pixel',
             'base' => $this->colorResolver->sanitizeColor($baseRaw, 'rgba(255, 255, 255, 0.08)'),
@@ -170,7 +166,50 @@ final class BackgroundMotionFrontend
             'trail' => $this->sliderResolver->resolveFloat($settings['emje_background_pixel_trail'] ?? 0.4, 0.4, 0, 1.5),
             'fade' => $this->sliderResolver->resolveFloat($settings['emje_background_pixel_fade'] ?? 10, 10, 0, 30),
             'livePreview' => ($settings['emje_background_live_preview'] ?? '') === 'yes',
-            'disableOnMobile' => ! empty($globalSettings['disable_interaction_on_mobile']),
+            'disableOnMobile' => ($settings['emje_background_pixel_disable_mobile'] ?? 'yes') === 'yes',
+        ];
+    }
+
+    /**
+     * @param array<string, mixed> $settings
+     *
+     * @return array<string, mixed>
+     */
+    private function buildDitherConfig(array $settings): array
+    {
+        $fgRaw = trim((string) ($settings['emje_background_dither_fg'] ?? ''));
+        $bgRaw = trim((string) ($settings['emje_background_dither_bg'] ?? ''));
+        $globals = $settings['__globals__'] ?? [];
+        if (is_array($globals)) {
+            if (isset($globals['emje_background_dither_fg']) && is_string($globals['emje_background_dither_fg']) && trim($globals['emje_background_dither_fg']) !== '') {
+                $fgRaw = $this->colorResolver->resolveGlobalColorVar($globals['emje_background_dither_fg']);
+            }
+            if (isset($globals['emje_background_dither_bg']) && is_string($globals['emje_background_dither_bg']) && trim($globals['emje_background_dither_bg']) !== '') {
+                $bgRaw = $this->colorResolver->resolveGlobalColorVar($globals['emje_background_dither_bg']);
+            }
+        }
+        if ($fgRaw === '') {
+            $fgRaw = '#3B82F6';
+        }
+        if ($bgRaw === '') {
+            $bgRaw = 'rgba(255, 255, 255, 0)';
+        }
+
+        return [
+            'effect' => 'dither',
+            'fg' => $this->colorResolver->sanitizeColor($fgRaw, '#3B82F6'),
+            'bg' => $this->colorResolver->sanitizeColor($bgRaw, 'rgba(255, 255, 255, 0)'),
+            'pixel' => $this->sliderResolver->resolveFloat($settings['emje_background_dither_pixel'] ?? 8, 8, 4, 32),
+            'density' => $this->sliderResolver->resolveFloat($settings['emje_background_dither_density'] ?? 0.5, 0.5, 0, 1),
+            'scale' => $this->sliderResolver->resolveFloat($settings['emje_background_dither_scale'] ?? 1.5, 1.5, 0.5, 4),
+            'speed' => $this->sliderResolver->resolveFloat($settings['emje_background_dither_speed'] ?? 0.6, 0.6, 0, 2),
+            'ripple' => ($settings['emje_background_dither_ripple'] ?? 'yes') === 'yes',
+            'rippleStrength' => $this->sliderResolver->resolveFloat($settings['emje_background_dither_ripple_strength'] ?? 0.6, 0.6, 0, 1),
+            'rippleWidth' => $this->sliderResolver->resolveFloat($settings['emje_background_dither_ripple_width'] ?? 140, 140, 20, 400),
+            'rippleSpeed' => $this->sliderResolver->resolveFloat($settings['emje_background_dither_ripple_speed'] ?? 420, 420, 100, 1200),
+            'fade' => $this->sliderResolver->resolveFloat($settings['emje_background_dither_fade'] ?? 10, 10, 0, 30),
+            'livePreview' => ($settings['emje_background_live_preview'] ?? '') === 'yes',
+            'disableOnMobile' => ($settings['emje_background_dither_disable_mobile'] ?? '') === 'yes',
         ];
     }
 

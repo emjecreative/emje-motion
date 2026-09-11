@@ -1,5 +1,3 @@
-import { findTarget } from './utils.js';
-
 export function buildTextMotionConfig(settings) {
     var get = function(key, def) {
         var v = settings.get(key);

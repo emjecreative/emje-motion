@@ -21,16 +21,6 @@ export function getPreviewDocument() {
     return win ? win.document : null;
 }
 
-export function editorDisableOnMobile() {
-    try {
-        var g = window.EmjeMotionEditorGlobals;
-        if (g && typeof g.disableInteractionOnMobile !== 'undefined') {
-            return !!g.disableInteractionOnMobile;
-        }
-    } catch (e) {}
-    return true;
-}
-
 export function isValidEditorColor(c) {
     // Mirror PHP ColorResolver::sanitizeColor(): reject anything that
     // could break out of a CSS value context first.

@@ -23,7 +23,6 @@ if ($activeCount === 0) {
     // translators: %1$d active modules, %2$d total modules.
     $statusLabel = sprintf(esc_html__('%1$d of %2$d active', 'emje-motion'), $activeCount, $totalCount);
 }
-$version = defined('EMJE_MOTION_VERSION') ? EMJE_MOTION_VERSION : '0.0.0';
 ?>
 <header class="emje-admin-header" id="emjeAdminHeader">
 	<div class="emje-admin-header__inner">

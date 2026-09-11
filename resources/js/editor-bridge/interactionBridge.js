@@ -1,4 +1,4 @@
-import { sanitizeImageUrl, getPreviewWindow, getPreviewDocument, editorDisableOnMobile, isValidEditorColor, safeCssEnum, safeCssMeasure, findTarget } from './utils.js';
+import { sanitizeImageUrl, getPreviewWindow, getPreviewDocument, isValidEditorColor, safeCssEnum, safeCssMeasure, findTarget } from './utils.js';
 import { buildTextMotionConfig } from './textMotionBridge.js';
 
 export function buildHoverConfig(settings) {
@@ -37,7 +37,9 @@ export function buildHoverConfig(settings) {
         offsetY: 0,
         rotate: 0,
         rotateHover: 15,
-        disableOnMobile: editorDisableOnMobile(),
+        // Legacy retired controls predate the per-effect toggle — keep the
+        // historical hidden-on-touch behavior.
+        disableOnMobile: true,
         livePreview: get('emje_hover_reveal_live_preview', '') === 'yes'
     };
 }
@@ -57,9 +59,6 @@ export function buildCursorConfig(settings) {
     if (!color || typeof color !== 'string') color = '#000000';
     if (!/^#([0-9A-F]{3}){1,2}$/i.test(color)) color = '#000000';
 
-    var blend = get('emje_cursor_blend_mode', 'normal');
-    if (['normal', 'difference'].indexOf(blend) === -1) blend = 'normal';
-
     var scale = parseFloat(get('emje_cursor_hover_scale', 1.5));
     if (isNaN(scale)) scale = 1.5;
     scale = Math.max(1.2, Math.min(2, scale));
@@ -73,7 +72,6 @@ export function buildCursorConfig(settings) {
         type: type,
         size: size,
         color: color,
-        blendMode: blend,
         hoverScale: scale,
         hideNative: hide,
         label: label,
@@ -133,7 +131,8 @@ export function buildInteractionConfig(settings) {
             offsetX: offsetX,
             offsetY: offsetY,
             rotate: rotate,
-            rotateHover: rotateHover
+            rotateHover: rotateHover,
+            disableOnMobile: get('emje_interaction_hover_disable_mobile', 'yes') === 'yes'
         };
     } else {
         var type2 = get('emje_interaction_cursor_type', 'text-follow');
@@ -162,8 +161,6 @@ export function buildInteractionConfig(settings) {
             if (isValidColor(gvColorDot)) color2 = gvColorDot;
         }
         if (!isValidColor(color2)) color2 = '#000000';
-        var blend2 = get('emje_interaction_cursor_blend_mode', 'normal');
-        if (['normal', 'difference'].indexOf(blend2) === -1) blend2 = 'normal';
         var scale2b = parseFloat(get('emje_interaction_cursor_hover_scale', 1.5));
         if (isNaN(scale2b)) scale2b = 1.5;
         scale2b = Math.max(1.2, Math.min(2, scale2b));
@@ -255,7 +252,6 @@ export function buildInteractionConfig(settings) {
             type: type2,
             size: size2b,
             color: color2,
-            blendMode: blend2,
             hoverScale: scale2b,
             hideNative: hide2,
             label: label2,
@@ -270,7 +266,8 @@ export function buildInteractionConfig(settings) {
             followSmoothness: smooth2,
             boxShadow: boxShadowStr,
             shadow: boxShadowStr !== 'none',
-            shadowBlur: legacyBlur
+            shadowBlur: legacyBlur,
+            disableOnMobile: get('emje_interaction_cursor_disable_mobile', 'yes') === 'yes'
         };
     }
 }
@@ -331,7 +328,7 @@ export function bindEditorChange() {
             if (!target) return;
             var cfg = buildInteractionConfig(settings);
             if (!cfg.enable || cfg.effect !== 'interactive-cursor' || !cfg.livePreview) return;
-            try { target.setAttribute('data-emje-cursor', JSON.stringify({type: cfg.type, size: cfg.size, color: cfg.color, blendMode: cfg.blendMode, hoverScale: cfg.hoverScale, hideNative: cfg.hideNative, label: cfg.label, bgColor: cfg.bgColor, textColor: cfg.textColor, paddingY: cfg.paddingY, paddingX: cfg.paddingX, radius: cfg.radius, fontSize: cfg.fontSize, typography: cfg.typography, entrance: cfg.entrance, followSmoothness: cfg.followSmoothness, boxShadow: cfg.boxShadow, shadow: cfg.shadow, shadowBlur: cfg.shadowBlur, livePreview: cfg.livePreview})); } catch(e){}
+            try { target.setAttribute('data-emje-cursor', JSON.stringify({type: cfg.type, size: cfg.size, color: cfg.color, hoverScale: cfg.hoverScale, hideNative: cfg.hideNative, label: cfg.label, bgColor: cfg.bgColor, textColor: cfg.textColor, paddingY: cfg.paddingY, paddingX: cfg.paddingX, radius: cfg.radius, fontSize: cfg.fontSize, typography: cfg.typography, entrance: cfg.entrance, followSmoothness: cfg.followSmoothness, boxShadow: cfg.boxShadow, shadow: cfg.shadow, shadowBlur: cfg.shadowBlur, livePreview: cfg.livePreview})); } catch(e){}
             if (win.EmjeMotionCursor && win.EmjeMotionCursor.reInit) win.EmjeMotionCursor.reInit(target);
         });
     } catch(e){}
@@ -550,7 +547,7 @@ export function bindEditorChange() {
                                 targetC.removeAttribute('data-emje-hover-reveal');
                             }
                         } catch(e){}
-                        try { targetC.setAttribute('data-emje-cursor', JSON.stringify({type: cfg.type, size: cfg.size, color: cfg.color, blendMode: cfg.blendMode, hoverScale: cfg.hoverScale, hideNative: cfg.hideNative, label: cfg.label, bgColor: cfg.bgColor, textColor: cfg.textColor, paddingY: cfg.paddingY, paddingX: cfg.paddingX, radius: cfg.radius, fontSize: cfg.fontSize, typography: cfg.typography, entrance: cfg.entrance, followSmoothness: cfg.followSmoothness, boxShadow: cfg.boxShadow, shadow: cfg.shadow, shadowBlur: cfg.shadowBlur, livePreview: cfg.livePreview})); } catch(e){}
+                        try { targetC.setAttribute('data-emje-cursor', JSON.stringify({type: cfg.type, size: cfg.size, color: cfg.color, hoverScale: cfg.hoverScale, hideNative: cfg.hideNative, label: cfg.label, bgColor: cfg.bgColor, textColor: cfg.textColor, paddingY: cfg.paddingY, paddingX: cfg.paddingX, radius: cfg.radius, fontSize: cfg.fontSize, typography: cfg.typography, entrance: cfg.entrance, followSmoothness: cfg.followSmoothness, boxShadow: cfg.boxShadow, shadow: cfg.shadow, shadowBlur: cfg.shadowBlur, livePreview: cfg.livePreview})); } catch(e){}
                         if (win.EmjeMotionCursor && win.EmjeMotionCursor.reInit) win.EmjeMotionCursor.reInit(targetC);
                     }
                 }, 150);
@@ -587,7 +584,7 @@ export function bindContainerGlobalsListener() {
                         if (!cfg.enable || cfg.effect !== 'interactive-cursor') return;
                         try {
                             target.setAttribute('data-emje-cursor', JSON.stringify({
-                                type: cfg.type, size: cfg.size, color: cfg.color, blendMode: cfg.blendMode,
+                                type: cfg.type, size: cfg.size, color: cfg.color,
                                 hoverScale: cfg.hoverScale, hideNative: cfg.hideNative, label: cfg.label,
                                 bgColor: cfg.bgColor, textColor: cfg.textColor, paddingY: cfg.paddingY, paddingX: cfg.paddingX,
                                 radius: cfg.radius, fontSize: cfg.fontSize, typography: cfg.typography,
@@ -620,6 +617,8 @@ export function bindContainerGlobalsListener() {
                 settings.on('change:emje_interaction_cursor_box_shadow_box_shadow_type', debouncedSync);
                 settings.on('change:emje_interaction_cursor_box_shadow_box_shadow', debouncedSync);
                 settings.on('change:emje_interaction_cursor_type', debouncedSync);
+                settings.on('change:emje_interaction_cursor_disable_mobile', debouncedSync);
+                settings.on('change:emje_interaction_hover_disable_mobile', debouncedSync);
                 settings.on('change:__globals__', debouncedSync);
                 // Fallback generic
                 settings.on('change', function(m) {
@@ -630,7 +629,9 @@ export function bindContainerGlobalsListener() {
                         ch['emje_interaction_cursor_text_color'] !== undefined ||
                         ch['emje_interaction_cursor_typography_typography'] !== undefined ||
                         ch['emje_interaction_cursor_typography_font_family'] !== undefined ||
-                        ch['emje_interaction_cursor_box_shadow_box_shadow'] !== undefined) {
+                        ch['emje_interaction_cursor_box_shadow_box_shadow'] !== undefined ||
+                        ch['emje_interaction_cursor_disable_mobile'] !== undefined ||
+                        ch['emje_interaction_hover_disable_mobile'] !== undefined) {
                         debouncedSync();
                     }
                 });

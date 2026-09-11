@@ -27,6 +27,32 @@ const dot = buildInteractionConfig(model({
 }));
 eq('editor-dot-migrate', dot.type, 'dot-ring');
 
+// Per-effect mobile toggle: cursor defaults to hidden on touch...
+eq('editor-cursor-mobile-default', dot.disableOnMobile, true);
+const cursorShown = buildInteractionConfig(model({
+    emje_interaction_enable: 'yes',
+    emje_interaction_effect: 'interactive-cursor',
+    emje_interaction_cursor_type: 'dot-ring',
+    emje_interaction_cursor_disable_mobile: '',
+}));
+eq('editor-cursor-mobile-override', cursorShown.disableOnMobile, false);
+
+// ...and so does hover reveal.
+const hover = buildInteractionConfig(model({
+    emje_interaction_enable: 'yes',
+    emje_interaction_effect: 'hover-reveal',
+    emje_interaction_live_preview: 'yes',
+    emje_interaction_hover_image: { url: 'https://example.com/a.jpg' },
+}));
+eq('editor-hover-mobile-default', hover.disableOnMobile, true);
+const hoverShown = buildInteractionConfig(model({
+    emje_interaction_enable: 'yes',
+    emje_interaction_effect: 'hover-reveal',
+    emje_interaction_hover_image: { url: 'https://example.com/a.jpg' },
+    emje_interaction_hover_disable_mobile: '',
+}));
+eq('editor-hover-mobile-override', hoverShown.disableOnMobile, false);
+
 // JS runtime guard: old saved payloads fall through too.
 const { default: InteractiveCursor } = await import(tmpUrl('mod-interactiveCursor.mjs'));
 const inst = new InteractiveCursor({}, { type: 'trail' });

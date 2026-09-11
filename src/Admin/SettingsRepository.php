@@ -51,7 +51,6 @@ final class SettingsRepository
      */
     private const DEFAULT_SETTINGS = [
         'respect_reduced_motion' => true,
-        'disable_interaction_on_mobile' => true,
         'disable_smooth_on_mobile' => true,
         'smooth_scroll_lerp' => 0.075,
         'smooth_scroll_wheel_multiplier' => 1.2,
@@ -126,14 +125,12 @@ final class SettingsRepository
             $stored = [];
         }
 
-        // Legacy fallback: single disable_on_mobile → split into two
-        if (! array_key_exists('disable_interaction_on_mobile', $stored) && array_key_exists('disable_on_mobile', $stored)) {
-            $stored['disable_interaction_on_mobile'] = (bool) $stored['disable_on_mobile'];
-        }
+        // Legacy fallback: single disable_on_mobile → smooth (interaction
+        // motion is now per-effect in Elementor, no global fallback).
         if (! array_key_exists('disable_smooth_on_mobile', $stored) && array_key_exists('disable_on_mobile', $stored)) {
             $stored['disable_smooth_on_mobile'] = (bool) $stored['disable_on_mobile'];
         }
-        unset($stored['disable_on_mobile']);
+        unset($stored['disable_on_mobile'], $stored['disable_interaction_on_mobile']);
 
         return array_intersect_key(array_merge(self::DEFAULT_SETTINGS, $stored), self::DEFAULT_SETTINGS);
     }
@@ -155,7 +152,6 @@ final class SettingsRepository
 
         $sanitized = [
             'respect_reduced_motion' => isset($settings['respect_reduced_motion']) ? (bool) $settings['respect_reduced_motion'] : $current['respect_reduced_motion'],
-            'disable_interaction_on_mobile' => isset($settings['disable_interaction_on_mobile']) ? (bool) $settings['disable_interaction_on_mobile'] : $current['disable_interaction_on_mobile'],
             'disable_smooth_on_mobile' => isset($settings['disable_smooth_on_mobile']) ? (bool) $settings['disable_smooth_on_mobile'] : $current['disable_smooth_on_mobile'],
             'smooth_scroll_lerp' => $lerp,
             'smooth_scroll_wheel_multiplier' => $wheel,

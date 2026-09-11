@@ -9,7 +9,7 @@ Emje Motion gives your pages movement with a purpose — every animation earns i
 - **Text Motion** — Scramble, Unfold & Fill Reveal for Heading & Text Editor
 - **Smooth Scroll** — buttery site-wide scrolling, zero jank
 - **Interaction Motion** — Hover Reveal & Interactive Cursor for Containers
-- **Background Motion** — ASCII & Pixel ambient backgrounds for Containers
+- **Background Motion** — ASCII, Pixel & Dither ambient backgrounds for Containers
 
 ## Requirements
 

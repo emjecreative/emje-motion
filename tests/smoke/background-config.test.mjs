@@ -1,6 +1,6 @@
 import { tmpUrl, model, eq } from './helpers.mjs';
 
-const { buildBackgroundConfig, buildPixelConfig, buildBackgroundPayload } =
+const { buildBackgroundConfig, buildPixelConfig, buildDitherConfig, buildBackgroundPayload } =
     await import(tmpUrl('eb-backgroundBridge.mjs'));
 
 const ascii = buildBackgroundConfig(model({
@@ -14,6 +14,13 @@ eq('ascii-effect', ascii.effect, 'ascii');
 eq('ascii-color', ascii.color, '#3B82F6');
 eq('ascii-cellW', ascii.cellW, 22);
 eq('ascii-mobile-default', ascii.disableOnMobile, true);
+
+const asciiShown = buildBackgroundConfig(model({
+    emje_background_enable: 'yes',
+    emje_background_effect: 'ascii',
+    emje_background_ascii_disable_mobile: '',
+}));
+eq('ascii-mobile-override', asciiShown.disableOnMobile, false);
 
 const px = buildBackgroundConfig(model({
     emje_background_enable: 'yes',
@@ -46,3 +53,33 @@ const zero = buildPixelConfig(model({
 }), true);
 eq('zero-radius', zero.radius, 0);
 eq('zero-trail', zero.trail, 0);
+
+const dither = buildBackgroundConfig(model({
+    emje_background_enable: 'yes',
+    emje_background_live_preview: 'yes',
+    emje_background_effect: 'dither',
+    emje_background_dither_speed: 0,
+}));
+eq('dither-effect', dither.effect, 'dither');
+eq('dither-speed-zero', dither.speed, 0);
+eq('dither-ripple-default', dither.ripple, true);
+eq('dither-fg-default', dither.fg, '#3B82F6');
+eq('dither-no-shape', 'shape' in dither, false);
+eq('dither-mobile-default', dither.disableOnMobile, false);
+
+const ditherHidden = buildBackgroundConfig(model({
+    emje_background_enable: 'yes',
+    emje_background_effect: 'dither',
+    emje_background_dither_disable_mobile: 'yes',
+}));
+eq('dither-mobile-override', ditherHidden.disableOnMobile, true);
+
+const ditherPayload = buildBackgroundPayload(dither);
+eq('dither-payload-effect', ditherPayload.effect, 'dither');
+eq('dither-payload-no-shape', 'shape' in ditherPayload, false);
+eq('dither-payload-live', ditherPayload.livePreview, true);
+
+const ditherDirect = buildDitherConfig(model({
+    emje_background_dither_density: 0.8,
+}), true);
+eq('dither-density', ditherDirect.density, 0.8);

@@ -88,28 +88,6 @@
     line-height: 1;
 }
 
-.emje-cursor--difference {
-    mix-blend-mode: difference;
-}
-
-.emje-cursor--difference .emje-cursor__dot,
-.emje-cursor--difference .emje-cursor__ring {
-    background: #fff;
-    border-color: #fff;
-}
-
-.emje-cursor--difference .emje-cursor__label {
-    color: #fff;
-}
-
-.emje-cursor--difference .emje-cursor__follow {
-    background: #fff;
-}
-
-.emje-cursor--difference .emje-cursor__label--follow {
-    color: #000;
-}
-
 .emje-interactive-cursor--hide-native {
     cursor: none;
 }

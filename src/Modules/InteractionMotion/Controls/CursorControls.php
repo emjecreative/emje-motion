@@ -348,27 +348,6 @@ final class CursorControls
     private function registerCommon($element): void
     {
         $element->add_control(
-            'emje_interaction_cursor_blend_mode',
-            [
-                'label' => esc_html__('Blend Mode', 'emje-motion'),
-                'type' => Controls_Manager::SELECT,
-                'default' => 'normal',
-                'options' => [
-                    'normal' => esc_html__('Normal', 'emje-motion'),
-                    'difference' => esc_html__('Difference', 'emje-motion'),
-                ],
-                'description' => esc_html__('Difference inverts colors underneath the cursor.', 'emje-motion'),
-                'classes' => 'emje-control--has-tooltip',
-                'condition' => [
-                    'emje_interaction_enable' => 'yes',
-                    'emje_interaction_effect' => 'interactive-cursor',
-                ],
-                'frontend_available' => true,
-                'render_type' => 'none',
-            ],
-        );
-
-        $element->add_control(
             'emje_interaction_cursor_hide_native',
             [
                 'label' => esc_html__('Hide Native Cursor', 'emje-motion'),
@@ -412,6 +391,26 @@ final class CursorControls
                 ],
                 'frontend_available' => true,
                 'render_type' => 'none',
+            ],
+        );
+
+        $element->add_control(
+            'emje_interaction_cursor_disable_mobile',
+            [
+                'label' => esc_html__('Disable on Mobile & Tablet', 'emje-motion'),
+                'type' => Controls_Manager::SWITCHER,
+                'label_on' => esc_html__('Hide', 'emje-motion'),
+                'label_off' => esc_html__('Show', 'emje-motion'),
+                'return_value' => 'yes',
+                'default' => 'yes',
+                'description' => esc_html__('Hide this effect on touch devices.', 'emje-motion'),
+                'classes' => 'emje-control--has-tooltip',
+                'condition' => [
+                    'emje_interaction_enable' => 'yes',
+                    'emje_interaction_effect' => 'interactive-cursor',
+                ],
+                'frontend_available' => true,
+                'render_type' => 'template',
             ],
         );
     }

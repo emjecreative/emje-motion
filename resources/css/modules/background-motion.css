@@ -33,7 +33,7 @@
 }
 
 /* Keep Elementor content above the ambient layer without stealing clicks. */
-.emje-background-motion > :not(.emje-ascii):not(.emje-pixel) {
+.emje-background-motion > :not(.emje-ascii):not(.emje-pixel):not(.emje-dither) {
     position: relative;
     z-index: 1;
 }
@@ -81,4 +81,21 @@
 
 .emje-pixel__grid--instant .emje-pixel__cell {
     transition-duration: 0s !important;
+}
+
+/* ---------- Dither ---------- */
+
+.emje-dither {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+    z-index: 0;
+}
+
+.emje-dither__canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
 }

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace EmjeCreative\EmjeMotion\Modules\InteractionMotion\Frontend;
 
-use EmjeCreative\EmjeMotion\Admin\SettingsRepository;
 use EmjeCreative\EmjeMotion\Modules\InteractionMotion\Services\ColorResolver;
 use EmjeCreative\EmjeMotion\Modules\InteractionMotion\Services\SliderResolver;
 
@@ -16,13 +15,11 @@ final class InteractionMotionFrontend
 {
     private ColorResolver $colorResolver;
     private SliderResolver $sliderResolver;
-    private SettingsRepository $settings;
 
-    public function __construct(?SettingsRepository $settings = null)
+    public function __construct()
     {
         $this->colorResolver = new ColorResolver();
         $this->sliderResolver = new SliderResolver();
-        $this->settings = $settings ?? new SettingsRepository();
     }
 
     /**
@@ -117,8 +114,10 @@ final class InteractionMotionFrontend
             $fields['rotateHover'] = 15;
         }
 
-        $globalSettings = $this->settings->getSettings();
-        $fields['disableOnMobile'] = ! empty($globalSettings['disable_interaction_on_mobile']);
+        // New keys carry emje_interaction_hover_disable_mobile (default yes);
+        // legacy v1.0.0 settings predate the toggle, so they fall back to
+        // hidden-on-touch — the historical behavior.
+        $fields['disableOnMobile'] = ($settings['emje_interaction_hover_disable_mobile'] ?? 'yes') === 'yes';
 
         return $fields;
     }
@@ -208,10 +207,6 @@ final class InteractionMotionFrontend
                 $colorRaw = '#000000';
             }
             $color = $this->sanitizeColor($colorRaw, '#000000');
-            $blendMode = isset($settings['emje_interaction_cursor_blend_mode']) ? (string) $settings['emje_interaction_cursor_blend_mode'] : 'normal';
-            if (! in_array($blendMode, ['normal', 'difference'], true)) {
-                $blendMode = 'normal';
-            }
             $hoverScale = isset($settings['emje_interaction_cursor_hover_scale']) ? (float) $settings['emje_interaction_cursor_hover_scale'] : 1.5;
             $hideNative = ($settings['emje_interaction_cursor_hide_native'] ?? '') === 'yes';
             // Text Label only for Text Follow; Dot+Ring has no label.
@@ -233,19 +228,17 @@ final class InteractionMotionFrontend
 
             // Text Follow specific - allow hex, rgb/a, hsl/a, globals
             $extras = $this->resolveTextFollowExtras($settings);
-            $globalSettingsCursor = $this->settings->getSettings();
 
             return array_merge(
                 [
                     'type' => $type,
                     'size' => $size,
                     'color' => $color,
-                    'blendMode' => $blendMode,
                     'hoverScale' => $hoverScale,
                     'hideNative' => $hideNative,
                     'label' => $label,
                     'livePreview' => $livePreview,
-                    'disableOnMobile' => ! empty($globalSettingsCursor['disable_interaction_on_mobile']),
+                    'disableOnMobile' => ($settings['emje_interaction_cursor_disable_mobile'] ?? 'yes') === 'yes',
                 ],
                 $extras,
             );
@@ -265,7 +258,6 @@ final class InteractionMotionFrontend
         $size = max(12, min(40, $size));
         $color = isset($settings['emje_cursor_color']) ? (string) $settings['emje_cursor_color'] : '#000000';
         $color = sanitize_hex_color($color) ?: '#000000';
-        $blendMode = 'normal';
         $hoverScale = isset($settings['emje_cursor_hover_scale']) ? (float) $settings['emje_cursor_hover_scale'] : 1.5;
         $hideNative = ($settings['emje_cursor_hide_native'] ?? '') === 'yes';
         $label = isset($settings['emje_cursor_text_label']) ? (string) $settings['emje_cursor_text_label'] : 'View';
@@ -280,13 +272,10 @@ final class InteractionMotionFrontend
         }
         $hoverScale = max(1.2, min(2.0, $hoverScale));
 
-        $globalSettingsLegacyCursor = $this->settings->getSettings();
-
         return [
             'type' => $type,
             'size' => $size,
             'color' => $color,
-            'blendMode' => $blendMode,
             'hoverScale' => $hoverScale,
             'hideNative' => $hideNative,
             'label' => $label,
@@ -313,7 +302,9 @@ final class InteractionMotionFrontend
             'shadow' => true,
             'shadowBlur' => 32,
             'livePreview' => $livePreview,
-            'disableOnMobile' => ! empty($globalSettingsLegacyCursor['disable_interaction_on_mobile']),
+            // Legacy v1.0.0 keys predate the per-effect toggle — keep the
+            // historical hidden-on-touch behavior.
+            'disableOnMobile' => true,
         ];
     }
 

@@ -3,9 +3,9 @@
 # This file is distributed under the GPL-2.0-or-later license.
 msgid ""
 msgstr ""
-"Project-Id-Version: Emje Motion 1.0.1\n"
+"Project-Id-Version: Emje Motion 1.1.0\n"
 "Report-Msgid-Bugs-To: https://github.com/emjecreative/emje-motion/issues\n"
-"POT-Creation-Date: 2026-09-06T06:09:34+00:00\n"
+"POT-Creation-Date: 2026-09-11T17:35:27+00:00\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -18,15 +18,28 @@ msgstr ""
 msgid "%1$d of %2$d active"
 msgstr ""
 
-#: src/Modules/InteractionMotion/Controls/CursorControls.php:283
+#: src/Modules/InteractionMotion/Controls/CursorControls.php:281
 msgid "0 = square, 12 = rounded, 50+ = circle/pill."
+msgstr ""
+
+#: src/Modules/BackgroundMotion/Controls/BackgroundMotionControls.php:678
+msgid "0 freezes on a single frame."
+msgstr ""
+
+#: src/Modules/BackgroundMotion/Controls/BackgroundMotionControls.php:60
+#: src/Modules/BackgroundMotion/Controls/BackgroundMotionControls.php:80
+msgid "ASCII"
+msgstr ""
+
+#: src/Admin/AdminManager.php:400
+msgid "ASCII & Pixel ambient backgrounds for Container."
 msgstr ""
 
 #: src/Admin/AdminManager.php:119 src/Admin/AdminManager.php:120
 #: src/Admin/Views/about.php:39 src/Admin/Views/about.php:47
-#: src/Admin/Views/about.php:63 src/Admin/Views/overview.php:37
-#: src/Admin/Views/overview.php:45 src/Admin/Views/settings.php:27
-#: src/Admin/Views/settings.php:35
+#: src/Admin/Views/about.php:63 src/Admin/Views/overview.php:36
+#: src/Admin/Views/overview.php:44 src/Admin/Views/settings.php:25
+#: src/Admin/Views/settings.php:33
 msgid "About"
 msgstr ""
 
@@ -34,10 +47,19 @@ msgstr ""
 msgid "All features active"
 msgstr ""
 
+#: src/Modules/BackgroundMotion/Controls/BackgroundMotionControls.php:559
+msgid "Animated retro dither that lives on its own. Click/tap sends a ripple."
+msgstr ""
+
 #: src/Modules/TextMotion/Controls/TextMotionControls.php:101
 msgid "Animation"
 msgstr ""
 
+#: src/Modules/BackgroundMotion/Controls/BackgroundMotionControls.php:664
+msgid "Animation Speed"
+msgstr ""
+
+#: src/Modules/BackgroundMotion/Controls/BackgroundMotionControls.php:821
 #: src/Modules/InteractionMotion/Controls/InteractionMotionControls.php:95
 msgid "Auto preview in Editor. Off saves resources."
 msgstr ""
@@ -46,8 +68,8 @@ msgstr ""
 msgid "Automatically replay animation when controls change."
 msgstr ""
 
-#: src/Admin/AdminManager.php:391 src/Admin/AdminManager.php:397
-#: src/Admin/AdminManager.php:403
+#: src/Admin/AdminManager.php:383 src/Admin/AdminManager.php:389
+#: src/Admin/AdminManager.php:395 src/Admin/AdminManager.php:401
 msgid "Available"
 msgstr ""
 
@@ -55,36 +77,73 @@ msgstr ""
 msgid "Back Out"
 msgstr ""
 
-#: src/Modules/InteractionMotion/Controls/CursorControls.php:179
+#: src/Modules/InteractionMotion/Controls/CursorControls.php:177
 msgid "Background"
+msgstr ""
+
+#: src/Modules/BackgroundMotion/Controls/BackgroundMotionControls.php:579
+msgid "Background Color"
+msgstr ""
+
+#: src/Admin/AdminManager.php:399
+#: src/Modules/BackgroundMotion/Controls/BackgroundMotionControls.php:34
+msgid "Background Motion"
 msgstr ""
 
 #: src/Modules/TextMotion/Controls/TextMotionControls.php:303
 msgid "Background Opacity"
 msgstr ""
 
+#: src/Modules/BackgroundMotion/Controls/BackgroundMotionControls.php:312
+msgid "Base Color"
+msgstr ""
+
+#: src/Modules/BackgroundMotion/Controls/BackgroundMotionControls.php:607
+msgid "Base cell size. Larger is blockier and more retro."
+msgstr ""
+
 #: src/Admin/Views/about.php:54
 msgid "Beautiful motion for your website."
 msgstr ""
 
-#: src/Admin/Views/settings.php:60
+#: src/Admin/Views/settings.php:58
 msgid "Behavior"
 msgstr ""
 
-#: src/Modules/InteractionMotion/Controls/CursorControls.php:505
-msgid "Blend Mode"
+#: src/Modules/BackgroundMotion/Controls/BackgroundMotionControls.php:425
+msgid "Border Color"
 msgstr ""
 
-#: src/Modules/InteractionMotion/Controls/CursorControls.php:269
+#: src/Modules/InteractionMotion/Controls/CursorControls.php:267
 msgid "Border Radius"
 msgstr ""
 
-#: src/Admin/AdminManager.php:396
+#: src/Modules/BackgroundMotion/Controls/BackgroundMotionControls.php:402
+msgid "Border Width"
+msgstr ""
+
+#: src/Admin/AdminManager.php:388
 msgid "Buttery smooth scrolling — site-wide, zero-jank, native feel. Global module."
+msgstr ""
+
+#: src/Modules/BackgroundMotion/Controls/BackgroundMotionControls.php:140
+msgid "Cell Height"
+msgstr ""
+
+#: src/Modules/BackgroundMotion/Controls/BackgroundMotionControls.php:336
+msgid "Cell Size"
+msgstr ""
+
+#: src/Modules/BackgroundMotion/Controls/BackgroundMotionControls.php:117
+msgid "Cell Width"
 msgstr ""
 
 #: src/Modules/TextMotion/Controls/TextMotionControls.php:184
 msgid "Center Out"
+msgstr ""
+
+#: src/Modules/BackgroundMotion/Controls/BackgroundMotionControls.php:89
+msgid "Character Color"
 msgstr ""
 
 #: src/Modules/TextMotion/Controls/TextMotionControls.php:139
@@ -107,27 +166,15 @@ msgstr ""
 msgid "Clip Path"
 msgstr ""
 
-#: src/Modules/InteractionMotion/Controls/CursorControls.php:96
+#: src/Modules/InteractionMotion/Controls/CursorControls.php:94
 msgid "Color"
-msgstr ""
-
-#: src/Modules/InteractionMotion/Controls/CursorControls.php:434
-msgid "Color of the last dot. Gradient interpolates from Head to Tail."
-msgstr ""
-
-#: src/Modules/InteractionMotion/Controls/CursorControls.php:416
-msgid "Color of the leading dot (head of comet)."
-msgstr ""
-
-#: src/Modules/InteractionMotion/Controls/CursorControls.php:44
-msgid "Comet Trail"
 msgstr ""
 
 #: src/Modules/TextMotion/Controls/TextMotionControls.php:205
 msgid "Controls how quickly random characters change. 1 = Normal speed."
 msgstr ""
 
-#: src/Admin/Views/settings.php:123
+#: src/Admin/Views/settings.php:109
 msgid "Controls scroll distance per tick. Range 0.8–1.5, default 1.2."
 msgstr ""
 
@@ -135,8 +182,16 @@ msgstr ""
 msgid "Controls the animation easing."
 msgstr ""
 
+#: src/Modules/BackgroundMotion/Controls/BackgroundMotionControls.php:364
+msgid "Crop edges to fill"
+msgstr ""
+
 #: src/Modules/InteractionMotion/Controls/CursorControls.php:38
 msgid "Cursor Type"
+msgstr ""
+
+#: src/Modules/BackgroundMotion/Controls/BackgroundMotionControls.php:474
+msgid "Cursor light reach. 0 lights a single cell (classic)."
 msgstr ""
 
 #: src/Modules/TextMotion/Controls/TextMotionControls.php:147
@@ -163,36 +218,33 @@ msgstr ""
 msgid "Delay between lines. 0 = together, 0.15 = next line starts after 0.15s. For 25% overlap with 1s duration use 0.25."
 msgstr ""
 
-#: src/Modules/InteractionMotion/Controls/CursorControls.php:510
-msgid "Difference"
-msgstr ""
-
-#: src/Modules/InteractionMotion/Controls/CursorControls.php:512
-msgid "Difference inverts colors underneath the cursor."
-msgstr ""
-
-#: src/Admin/Views/settings.php:79
-msgid "Disable Hover Reveal & Interactive Cursor on touch devices."
-msgstr ""
-
-#: src/Admin/Views/settings.php:78
-msgid "Disable Interaction Motion on Mobile"
-msgstr ""
-
-#: src/Admin/Views/settings.php:100
+#: src/Admin/Views/settings.php:86
 msgid "Disable Smooth Scroll on Mobile"
 msgstr ""
 
-#: src/Admin/Views/settings.php:101
+#: src/Modules/BackgroundMotion/Controls/BackgroundMotionControls.php:280
+#: src/Modules/BackgroundMotion/Controls/BackgroundMotionControls.php:535
+#: src/Modules/BackgroundMotion/Controls/BackgroundMotionControls.php:798
+#: src/Modules/InteractionMotion/Controls/CursorControls.php:400
+#: src/Modules/InteractionMotion/Controls/HoverControls.php:262
+msgid "Disable on Mobile & Tablet"
+msgstr ""
+
+#: src/Admin/Views/settings.php:87
 msgid "Disable smooth scroll on touch devices."
 msgstr ""
 
-#: src/Admin/Views/overview.php:82
+#: src/Admin/Views/overview.php:81
 msgid "Disabled"
 msgstr ""
 
 #: src/Admin/Views/about.php:159 src/Admin/Views/about.php:167
 msgid "Dismiss"
+msgstr ""
+
+#: src/Modules/BackgroundMotion/Controls/BackgroundMotionControls.php:557
+#: src/Modules/BackgroundMotion/Controls/BackgroundMotionControls.php:62
+msgid "Dither"
 msgstr ""
 
 #: src/Admin/Views/about.php:77
@@ -203,12 +255,8 @@ msgstr ""
 msgid "Dot + Ring"
 msgstr ""
 
-#: src/Modules/InteractionMotion/Controls/CursorControls.php:384
-msgid "Dot Size"
-msgstr ""
-
-#: src/Modules/InteractionMotion/Controls/CursorControls.php:355
-msgid "Dots"
+#: src/Modules/BackgroundMotion/Controls/BackgroundMotionControls.php:567
+msgid "Dot Color"
 msgstr ""
 
 #: src/Modules/TextMotion/Controls/TextMotionControls.php:375
@@ -219,6 +267,13 @@ msgstr ""
 msgid "Ease"
 msgstr ""
 
+#: src/Modules/BackgroundMotion/Controls/BackgroundMotionControls.php:255
+#: src/Modules/BackgroundMotion/Controls/BackgroundMotionControls.php:510
+#: src/Modules/BackgroundMotion/Controls/BackgroundMotionControls.php:773
+msgid "Edge Fade"
+msgstr ""
+
+#: src/Modules/BackgroundMotion/Controls/BackgroundMotionControls.php:56
 #: src/Modules/InteractionMotion/Controls/InteractionMotionControls.php:56
 msgid "Effect"
 msgstr ""
@@ -232,8 +287,8 @@ msgstr ""
 msgid "Emje Motion"
 msgstr ""
 
-#: src/Admin/Views/about.php:32 src/Admin/Views/overview.php:30
-#: src/Admin/Views/settings.php:20
+#: src/Admin/Views/about.php:32 src/Admin/Views/overview.php:29
+#: src/Admin/Views/settings.php:18
 msgid "Emje Motion Overview"
 msgstr ""
 
@@ -246,16 +301,21 @@ msgstr ""
 msgid "Emje Motion update rejected: source archive has no built files. Please update from the release asset (emje-motion-x.y.z.zip), or reinstall manually from the latest release."
 msgstr ""
 
+#: src/Modules/BackgroundMotion/Controls/BackgroundMotionControls.php:42
 #: src/Modules/InteractionMotion/Controls/InteractionMotionControls.php:42
 #: src/Modules/TextMotion/Controls/TextMotionControls.php:87
 msgid "Enable"
 msgstr ""
 
-#: src/Admin/Views/overview.php:66
+#: src/Admin/Views/overview.php:65
 msgid "Enable JavaScript to track changes."
 msgstr ""
 
-#: src/Admin/Views/overview.php:82
+#: src/Modules/BackgroundMotion/Controls/BackgroundMotionControls.php:689
+msgid "Enable Ripples"
+msgstr ""
+
+#: src/Admin/Views/overview.php:81
 msgid "Enabled"
 msgstr ""
 
@@ -263,11 +323,11 @@ msgstr ""
 msgid "Enter custom characters"
 msgstr ""
 
-#: src/Modules/InteractionMotion/Controls/CursorControls.php:298
+#: src/Modules/InteractionMotion/Controls/CursorControls.php:296
 msgid "Entrance"
 msgstr ""
 
-#: src/Modules/TextMotion/Controls/TextMotionControls.php:507
+#: src/Modules/TextMotion/Controls/TextMotionControls.php:506
 msgid "Event"
 msgstr ""
 
@@ -275,19 +335,11 @@ msgstr ""
 msgid "Fade"
 msgstr ""
 
-#: src/Modules/InteractionMotion/Controls/CursorControls.php:478
-msgid "Fade Tail"
-msgstr ""
-
-#: src/Modules/InteractionMotion/Controls/CursorControls.php:484
-msgid "Fade opacity toward the tail. Off keeps all dots opaque."
-msgstr ""
-
-#: src/Admin/Views/overview.php:60
+#: src/Admin/Views/overview.php:59
 msgid "Features"
 msgstr ""
 
-#: src/Admin/AdminManager.php:251
+#: src/Admin/AdminManager.php:244
 msgid "Features saved."
 msgstr ""
 
@@ -296,7 +348,11 @@ msgstr ""
 msgid "Fill Reveal"
 msgstr ""
 
-#: src/Modules/InteractionMotion/Controls/CursorControls.php:544
+#: src/Modules/BackgroundMotion/Controls/BackgroundMotionControls.php:359
+msgid "Fit"
+msgstr ""
+
+#: src/Modules/InteractionMotion/Controls/CursorControls.php:371
 msgid "Follow Smoothness"
 msgstr ""
 
@@ -304,35 +360,67 @@ msgstr ""
 msgid "Follow Speed"
 msgstr ""
 
+#: src/Modules/BackgroundMotion/Controls/BackgroundMotionControls.php:163
+msgid "Font Size"
+msgstr ""
+
 #: src/Modules/InteractionMotion/Controls/HoverControls.php:59
 msgid "Full"
+msgstr ""
+
+#: src/Modules/BackgroundMotion/Controls/BackgroundMotionControls.php:105
+msgid "Full (letters, numbers & symbols)"
+msgstr ""
+
+#: src/Modules/BackgroundMotion/Controls/BackgroundMotionControls.php:377
+msgid "Gap"
 msgstr ""
 
 #: src/Admin/Views/about.php:55
 msgid "Give your pages movement with a purpose — simple controls, visitors who stay."
 msgstr ""
 
-#: src/Admin/Views/settings.php:96
+#: src/Admin/Views/settings.php:82
 msgid "Global smooth scroll. Enabled via Overview → Smooth Scroll toggle."
 msgstr ""
 
-#: src/Modules/InteractionMotion/Controls/CursorControls.php:413
-msgid "Head Color"
-msgstr ""
-
-#: src/Modules/InteractionMotion/Controls/CursorControls.php:398
-msgid "Head dot size. Tail dots scale down automatically."
+#: src/Modules/BackgroundMotion/Controls/BackgroundMotionControls.php:186
+#: src/Modules/BackgroundMotion/Controls/BackgroundMotionControls.php:460
+msgid "Glow Radius"
 msgstr ""
 
 #: src/Modules/InteractionMotion/Controls/HoverControls.php:136
 msgid "Heading Only"
 msgstr ""
 
-#: src/Modules/InteractionMotion/Controls/CursorControls.php:526
+#: src/Modules/BackgroundMotion/Controls/BackgroundMotionControls.php:282
+#: src/Modules/BackgroundMotion/Controls/BackgroundMotionControls.php:537
+#: src/Modules/BackgroundMotion/Controls/BackgroundMotionControls.php:800
+#: src/Modules/InteractionMotion/Controls/CursorControls.php:402
+#: src/Modules/InteractionMotion/Controls/HoverControls.php:264
+msgid "Hide"
+msgstr ""
+
+#: src/Modules/InteractionMotion/Controls/CursorControls.php:353
 msgid "Hide Native Cursor"
 msgstr ""
 
-#: src/Admin/Views/settings.php:67
+#: src/Modules/BackgroundMotion/Controls/BackgroundMotionControls.php:286
+#: src/Modules/BackgroundMotion/Controls/BackgroundMotionControls.php:541
+#: src/Modules/InteractionMotion/Controls/CursorControls.php:406
+#: src/Modules/InteractionMotion/Controls/HoverControls.php:268
+msgid "Hide this effect on touch devices."
+msgstr ""
+
+#: src/Modules/BackgroundMotion/Controls/BackgroundMotionControls.php:804
+msgid "Hide this effect on touch devices. Off keeps it visible — tap sends a ripple."
+msgstr ""
+
+#: src/Modules/BackgroundMotion/Controls/BackgroundMotionControls.php:324
+msgid "Highlight Color"
+msgstr ""
+
+#: src/Admin/Views/settings.php:65
 msgid "Honors your system preference. Motion auto-skips if the user prefers less animation."
 msgstr ""
 
@@ -340,12 +428,16 @@ msgstr ""
 msgid "Horizontal offset from cursor. Negative = left, positive = right."
 msgstr ""
 
-#: src/Modules/InteractionMotion/Controls/CursorControls.php:254
+#: src/Modules/InteractionMotion/Controls/CursorControls.php:252
 msgid "Horizontal padding. Controls circle width. Longer text becomes pill."
 msgstr ""
 
-#: src/Modules/TextMotion/Controls/TextMotionControls.php:513
+#: src/Modules/TextMotion/Controls/TextMotionControls.php:512
 msgid "Hover"
+msgstr ""
+
+#: src/Modules/BackgroundMotion/Controls/BackgroundMotionControls.php:101
+msgid "Hover Characters"
 msgstr ""
 
 #: src/Modules/InteractionMotion/Controls/HoverControls.php:22
@@ -353,7 +445,7 @@ msgstr ""
 msgid "Hover Reveal"
 msgstr ""
 
-#: src/Admin/AdminManager.php:402
+#: src/Admin/AdminManager.php:394
 msgid "Hover Reveal & Interactive Cursor for Container — one effect per Container."
 msgstr ""
 
@@ -361,19 +453,19 @@ msgstr ""
 msgid "Hover Rotate"
 msgstr ""
 
-#: src/Modules/InteractionMotion/Controls/CursorControls.php:112
+#: src/Modules/InteractionMotion/Controls/CursorControls.php:110
 msgid "Hover Scale"
 msgstr ""
 
-#: src/Modules/InteractionMotion/Controls/CursorControls.php:463
-msgid "How fast dots chase the one ahead. Lower = tighter, higher = longer tail (default 0.35)."
+#: src/Modules/BackgroundMotion/Controls/BackgroundMotionControls.php:499
+msgid "How long lit cells linger before fading back. 0 snaps back instantly."
 msgstr ""
 
 #: src/Modules/InteractionMotion/Controls/HoverControls.php:79
 msgid "How quickly the image follows the cursor. Lower is smoother."
 msgstr ""
 
-#: src/Modules/InteractionMotion/Controls/CursorControls.php:306
+#: src/Modules/InteractionMotion/Controls/CursorControls.php:304
 msgid "How the cursor appears when entering the container."
 msgstr ""
 
@@ -385,11 +477,15 @@ msgstr ""
 msgid "Information & updates"
 msgstr ""
 
+#: src/Modules/BackgroundMotion/Controls/BackgroundMotionControls.php:209
+msgid "Inner Radius"
+msgstr ""
+
 #: src/Admin/AdminManager.php:189
 msgid "Insufficient permissions."
 msgstr ""
 
-#: src/Admin/AdminManager.php:401
+#: src/Admin/AdminManager.php:393
 #: src/Modules/InteractionMotion/Controls/InteractionMotionControls.php:34
 msgid "Interaction Motion"
 msgstr ""
@@ -397,6 +493,10 @@ msgstr ""
 #: src/Modules/InteractionMotion/Controls/CursorControls.php:25
 #: src/Modules/InteractionMotion/Controls/InteractionMotionControls.php:61
 msgid "Interactive Cursor"
+msgstr ""
+
+#: src/Modules/BackgroundMotion/Controls/BackgroundMotionControls.php:304
+msgid "Interactive pixel grid that lights up under your cursor."
 msgstr ""
 
 #: src/Modules/InteractionMotion/Controls/HoverControls.php:58
@@ -419,43 +519,47 @@ msgstr ""
 msgid "Line Stagger"
 msgstr ""
 
+#: src/Modules/BackgroundMotion/Controls/BackgroundMotionControls.php:815
 #: src/Modules/InteractionMotion/Controls/InteractionMotionControls.php:89
 #: src/Modules/TextMotion/Controls/TextMotionControls.php:461
 msgid "Live Preview"
 msgstr ""
 
-#: src/Modules/InteractionMotion/Controls/CursorControls.php:558
-msgid "Lower = snappier, higher = more trailing."
+#: src/Modules/InteractionMotion/Controls/CursorControls.php:385
+msgid "Lower = snappier, higher = more lag."
 msgstr ""
 
-#: src/Admin/Views/settings.php:113
+#: src/Admin/Views/settings.php:99
 msgid "Lower is smoother. Range 0.05–0.15, default 0.075."
 msgstr ""
 
-#: src/Admin/Views/settings.php:62
+#: src/Admin/Views/settings.php:60
 msgid "Manage how motion behaves across your site."
 msgstr ""
 
-#: src/Admin/Views/settings.php:51
+#: src/Admin/Views/settings.php:49
 msgid "Manage preferences & performance"
+msgstr ""
+
+#: src/Modules/BackgroundMotion/Controls/BackgroundMotionControls.php:232
+msgid "Max Opacity"
 msgstr ""
 
 #: src/Modules/InteractionMotion/Controls/HoverControls.php:57
 msgid "Medium"
 msgstr ""
 
-#: src/Admin/Views/about.php:44 src/Admin/Views/overview.php:42
-#: src/Admin/Views/settings.php:32
+#: src/Admin/Views/about.php:44 src/Admin/Views/overview.php:41
+#: src/Admin/Views/settings.php:30
 msgid "Mobile navigation"
 msgstr ""
 
-#: src/Modules/InteractionMotion/Controls/CursorControls.php:481
-#: src/Modules/InteractionMotion/Controls/CursorControls.php:529
-#: src/Modules/TextMotion/Controls/TextMotionControls.php:530
+#: src/Modules/InteractionMotion/Controls/CursorControls.php:356
+#: src/Modules/TextMotion/Controls/TextMotionControls.php:529
 msgid "No"
 msgstr ""
 
-#: src/Admin/Views/overview.php:64 src/Admin/Views/settings.php:54
+#: src/Admin/Views/overview.php:63 src/Admin/Views/settings.php:52
 msgid "No changes to save"
 msgstr ""
 
@@ -463,7 +567,7 @@ msgstr ""
 msgid "No features active"
 msgstr ""
 
-#: src/Modules/InteractionMotion/Controls/CursorControls.php:304
+#: src/Modules/InteractionMotion/Controls/CursorControls.php:302
 msgid "None"
 msgstr ""
 
@@ -471,22 +575,17 @@ msgstr ""
 msgid "None (Linear)"
 msgstr ""
 
-#: src/Modules/InteractionMotion/Controls/CursorControls.php:509
-msgid "Normal"
-msgstr ""
-
 #: src/Admin/Views/about.php:118
 msgid "Not detected"
-msgstr ""
-
-#: src/Modules/InteractionMotion/Controls/CursorControls.php:369
-msgid "Number of trailing dots. More = longer comet tail."
 msgstr ""
 
 #: src/Modules/TextMotion/Controls/TextMotionControls.php:144
 msgid "Numbers"
 msgstr ""
 
+#: src/Modules/BackgroundMotion/Controls/BackgroundMotionControls.php:45
+#: src/Modules/BackgroundMotion/Controls/BackgroundMotionControls.php:692
+#: src/Modules/BackgroundMotion/Controls/BackgroundMotionControls.php:818
 #: src/Modules/InteractionMotion/Controls/InteractionMotionControls.php:45
 #: src/Modules/InteractionMotion/Controls/InteractionMotionControls.php:92
 #: src/Modules/TextMotion/Controls/TextMotionControls.php:464
@@ -502,6 +601,9 @@ msgstr ""
 msgid "Offset Y"
 msgstr ""
 
+#: src/Modules/BackgroundMotion/Controls/BackgroundMotionControls.php:44
+#: src/Modules/BackgroundMotion/Controls/BackgroundMotionControls.php:691
+#: src/Modules/BackgroundMotion/Controls/BackgroundMotionControls.php:817
 #: src/Modules/InteractionMotion/Controls/InteractionMotionControls.php:44
 #: src/Modules/InteractionMotion/Controls/InteractionMotionControls.php:91
 #: src/Modules/TextMotion/Controls/TextMotionControls.php:463
@@ -509,7 +611,7 @@ msgstr ""
 msgid "On"
 msgstr ""
 
-#: src/Modules/TextMotion/Controls/TextMotionControls.php:514
+#: src/Modules/TextMotion/Controls/TextMotionControls.php:513
 msgid "On Scroll (Scrub)"
 msgstr ""
 
@@ -519,24 +621,41 @@ msgstr ""
 
 #: src/Admin/AdminManager.php:101 src/Admin/AdminManager.php:102
 #: src/Admin/Views/about.php:37 src/Admin/Views/about.php:45
-#: src/Admin/Views/overview.php:35 src/Admin/Views/overview.php:43
-#: src/Admin/Views/settings.php:25 src/Admin/Views/settings.php:33
+#: src/Admin/Views/overview.php:34 src/Admin/Views/overview.php:42
+#: src/Admin/Views/settings.php:23 src/Admin/Views/settings.php:31
 msgid "Overview"
 msgstr ""
 
-#: src/Modules/InteractionMotion/Controls/CursorControls.php:240
+#: src/Modules/InteractionMotion/Controls/CursorControls.php:238
 msgid "Padding X"
 msgstr ""
 
-#: src/Modules/InteractionMotion/Controls/CursorControls.php:211
+#: src/Modules/InteractionMotion/Controls/CursorControls.php:209
 msgid "Padding Y"
 msgstr ""
 
-#: src/Modules/TextMotion/Controls/TextMotionControls.php:511
+#: src/Modules/TextMotion/Controls/TextMotionControls.php:510
 msgid "Page Load"
 msgstr ""
 
-#: src/Modules/TextMotion/Controls/TextMotionControls.php:527
+#: src/Modules/BackgroundMotion/Controls/BackgroundMotionControls.php:618
+msgid "Pattern Density"
+msgstr ""
+
+#: src/Modules/BackgroundMotion/Controls/BackgroundMotionControls.php:641
+msgid "Pattern Scale"
+msgstr ""
+
+#: src/Modules/BackgroundMotion/Controls/BackgroundMotionControls.php:302
+#: src/Modules/BackgroundMotion/Controls/BackgroundMotionControls.php:61
+msgid "Pixel"
+msgstr ""
+
+#: src/Modules/BackgroundMotion/Controls/BackgroundMotionControls.php:593
+msgid "Pixel Size"
+msgstr ""
+
+#: src/Modules/TextMotion/Controls/TextMotionControls.php:526
 msgid "Play Once"
 msgstr ""
 
@@ -560,7 +679,7 @@ msgstr ""
 msgid "Power4 Out"
 msgstr ""
 
-#: src/Modules/TextMotion/Controls/TextMotionControls.php:533
+#: src/Modules/TextMotion/Controls/TextMotionControls.php:532
 msgid "Prevent the animation from replaying after it has completed."
 msgstr ""
 
@@ -573,8 +692,8 @@ msgstr ""
 msgid "Preview Animation"
 msgstr ""
 
-#: src/Admin/Views/about.php:36 src/Admin/Views/overview.php:34
-#: src/Admin/Views/settings.php:24
+#: src/Admin/Views/about.php:36 src/Admin/Views/overview.php:33
+#: src/Admin/Views/settings.php:22
 msgid "Primary"
 msgstr ""
 
@@ -590,7 +709,7 @@ msgstr ""
 msgid "Request a Feature"
 msgstr ""
 
-#: src/Admin/Views/settings.php:66
+#: src/Admin/Views/settings.php:64
 msgid "Respect Reduced Motion"
 msgstr ""
 
@@ -610,6 +729,18 @@ msgstr ""
 msgid "Right → Left"
 msgstr ""
 
+#: src/Modules/BackgroundMotion/Controls/BackgroundMotionControls.php:750
+msgid "Ripple Speed"
+msgstr ""
+
+#: src/Modules/BackgroundMotion/Controls/BackgroundMotionControls.php:704
+msgid "Ripple Strength"
+msgstr ""
+
+#: src/Modules/BackgroundMotion/Controls/BackgroundMotionControls.php:727
+msgid "Ripple Width"
+msgstr ""
+
 #: src/Modules/InteractionMotion/Controls/HoverControls.php:206
 msgid "Rotate"
 msgstr ""
@@ -618,20 +749,20 @@ msgstr ""
 msgid "Rotate when hovering. Applied on hover with animation."
 msgstr ""
 
-#: src/Admin/Views/overview.php:64
+#: src/Admin/Views/overview.php:63
 msgid "Save Changes"
 msgstr ""
 
-#: src/Admin/Views/settings.php:54
+#: src/Admin/Views/settings.php:52
 msgid "Save Settings"
 msgstr ""
 
-#: src/Modules/InteractionMotion/Controls/CursorControls.php:302
+#: src/Modules/InteractionMotion/Controls/CursorControls.php:300
 #: src/Modules/InteractionMotion/Controls/HoverControls.php:116
 msgid "Scale"
 msgstr ""
 
-#: src/Modules/InteractionMotion/Controls/CursorControls.php:303
+#: src/Modules/InteractionMotion/Controls/CursorControls.php:301
 msgid "Scale Bounce"
 msgstr ""
 
@@ -639,7 +770,7 @@ msgstr ""
 msgid "Scale on Hover"
 msgstr ""
 
-#: src/Modules/InteractionMotion/Controls/CursorControls.php:118
+#: src/Modules/InteractionMotion/Controls/CursorControls.php:116
 msgid "Scale when hovering links/buttons inside the container."
 msgstr ""
 
@@ -652,11 +783,11 @@ msgstr ""
 msgid "Scramble Speed"
 msgstr ""
 
-#: src/Admin/AdminManager.php:390
+#: src/Admin/AdminManager.php:382
 msgid "Scramble, Unfold & Fill Reveal for Heading & Text Editor. Live preview in editor."
 msgstr ""
 
-#: src/Modules/TextMotion/Controls/TextMotionControls.php:512
+#: src/Modules/TextMotion/Controls/TextMotionControls.php:511
 msgid "Scroll Into View"
 msgstr ""
 
@@ -666,17 +797,17 @@ msgstr ""
 
 #: src/Admin/AdminManager.php:110 src/Admin/AdminManager.php:111
 #: src/Admin/Views/about.php:38 src/Admin/Views/about.php:46
-#: src/Admin/Views/overview.php:36 src/Admin/Views/overview.php:44
-#: src/Admin/Views/settings.php:26 src/Admin/Views/settings.php:34
-#: src/Admin/Views/settings.php:50
+#: src/Admin/Views/overview.php:35 src/Admin/Views/overview.php:43
+#: src/Admin/Views/settings.php:24 src/Admin/Views/settings.php:32
+#: src/Admin/Views/settings.php:48
 msgid "Settings"
 msgstr ""
 
-#: src/Admin/AdminManager.php:290
+#: src/Admin/AdminManager.php:282
 msgid "Settings saved."
 msgstr ""
 
-#: src/Modules/InteractionMotion/Controls/CursorControls.php:322
+#: src/Modules/InteractionMotion/Controls/CursorControls.php:320
 msgid "Shadow"
 msgstr ""
 
@@ -684,16 +815,32 @@ msgstr ""
 msgid "Shape what's next"
 msgstr ""
 
-#: src/Modules/InteractionMotion/Controls/CursorControls.php:69
+#: src/Modules/BackgroundMotion/Controls/BackgroundMotionControls.php:283
+#: src/Modules/BackgroundMotion/Controls/BackgroundMotionControls.php:538
+#: src/Modules/BackgroundMotion/Controls/BackgroundMotionControls.php:801
+#: src/Modules/InteractionMotion/Controls/CursorControls.php:403
+#: src/Modules/InteractionMotion/Controls/HoverControls.php:265
+msgid "Show"
+msgstr ""
+
+#: src/Modules/BackgroundMotion/Controls/BackgroundMotionControls.php:106
+msgid "Simple (dots & dashes)"
+msgstr ""
+
+#: src/Modules/InteractionMotion/Controls/CursorControls.php:67
 msgid "Size"
 msgstr ""
 
-#: src/Admin/AdminManager.php:395 src/Admin/Views/settings.php:94
+#: src/Admin/AdminManager.php:387 src/Admin/Views/settings.php:80
 msgid "Smooth Scroll"
 msgstr ""
 
-#: src/Admin/Views/settings.php:112
+#: src/Admin/Views/settings.php:98
 msgid "Smoothness"
+msgstr ""
+
+#: src/Modules/BackgroundMotion/Controls/BackgroundMotionControls.php:391
+msgid "Spacing between cells when Border Width is 0. Ignored while dividers are active."
 msgstr ""
 
 #: src/Modules/TextMotion/Controls/TextMotionControls.php:242
@@ -708,6 +855,14 @@ msgstr ""
 msgid "Static rotate. For hover rotate, set Hover Rotate below."
 msgstr ""
 
+#: src/Modules/BackgroundMotion/Controls/BackgroundMotionControls.php:366
+msgid "Stretch resizes cells to fill the container. Crop keeps Cell Size precise and trims edge cells."
+msgstr ""
+
+#: src/Modules/BackgroundMotion/Controls/BackgroundMotionControls.php:363
+msgid "Stretch to fill"
+msgstr ""
+
 #: src/Admin/Views/about.php:82
 msgid "Support"
 msgstr ""
@@ -720,11 +875,7 @@ msgstr ""
 msgid "System Status"
 msgstr ""
 
-#: src/Modules/InteractionMotion/Controls/CursorControls.php:431
-msgid "Tail Color"
-msgstr ""
-
-#: src/Modules/InteractionMotion/Controls/CursorControls.php:195
+#: src/Modules/InteractionMotion/Controls/CursorControls.php:193
 msgid "Text Color"
 msgstr ""
 
@@ -732,16 +883,16 @@ msgstr ""
 msgid "Text Follow"
 msgstr ""
 
-#: src/Modules/InteractionMotion/Controls/CursorControls.php:139
+#: src/Modules/InteractionMotion/Controls/CursorControls.php:137
 msgid "Text Label"
 msgstr ""
 
-#: src/Admin/AdminManager.php:389
+#: src/Admin/AdminManager.php:381
 #: src/Modules/TextMotion/Controls/TextMotionControls.php:62
 msgid "Text Motion"
 msgstr ""
 
-#: src/Modules/InteractionMotion/Controls/CursorControls.php:143
+#: src/Modules/InteractionMotion/Controls/CursorControls.php:141
 msgid "Text shown inside the Text Follow cursor."
 msgstr ""
 
@@ -753,20 +904,37 @@ msgstr ""
 msgid "Timing"
 msgstr ""
 
-#: src/Admin/Views/about.php:41 src/Admin/Views/overview.php:39
-#: src/Admin/Views/settings.php:29
+#: src/Admin/Views/about.php:41 src/Admin/Views/overview.php:38
+#: src/Admin/Views/settings.php:27
 msgid "Toggle navigation"
+msgstr ""
+
+#: src/Modules/BackgroundMotion/Controls/BackgroundMotionControls.php:269
+#: src/Modules/BackgroundMotion/Controls/BackgroundMotionControls.php:524
+msgid "Top/bottom feather so the grid melts into the container background."
+msgstr ""
+
+#: src/Modules/BackgroundMotion/Controls/BackgroundMotionControls.php:787
+msgid "Top/bottom feather so the pattern melts into the container background."
 msgstr ""
 
 #: src/Modules/TextMotion/Controls/TextMotionControls.php:380
 msgid "Total animation duration in seconds."
 msgstr ""
 
-#: src/Modules/InteractionMotion/Controls/CursorControls.php:449
-msgid "Trail Lag"
+#: src/Modules/BackgroundMotion/Controls/BackgroundMotionControls.php:485
+msgid "Trail Fade"
 msgstr ""
 
-#: src/Modules/TextMotion/Controls/TextMotionControls.php:496
+#: src/Modules/BackgroundMotion/Controls/BackgroundMotionControls.php:437
+msgid "Transition Speed"
+msgstr ""
+
+#: src/Modules/BackgroundMotion/Controls/BackgroundMotionControls.php:582
+msgid "Transparent keeps the native container background visible."
+msgstr ""
+
+#: src/Modules/TextMotion/Controls/TextMotionControls.php:495
 msgid "Trigger"
 msgstr ""
 
@@ -774,7 +942,7 @@ msgstr ""
 msgid "Trigger Area"
 msgstr ""
 
-#: src/Modules/InteractionMotion/Controls/CursorControls.php:159
+#: src/Modules/InteractionMotion/Controls/CursorControls.php:157
 msgid "Typography"
 msgstr ""
 
@@ -796,7 +964,7 @@ msgstr ""
 msgid "Vertical offset from cursor. Negative = above, positive = below."
 msgstr ""
 
-#: src/Modules/InteractionMotion/Controls/CursorControls.php:225
+#: src/Modules/InteractionMotion/Controls/CursorControls.php:223
 msgid "Vertical padding. Controls circle height."
 msgstr ""
 
@@ -818,7 +986,7 @@ msgstr ""
 msgid "What’s running under the hood."
 msgstr ""
 
-#: src/Admin/Views/settings.php:122
+#: src/Admin/Views/settings.php:108
 msgid "Wheel Multiplier"
 msgstr ""
 
@@ -830,9 +998,8 @@ msgstr ""
 msgid "Words"
 msgstr ""
 
-#: src/Modules/InteractionMotion/Controls/CursorControls.php:480
-#: src/Modules/InteractionMotion/Controls/CursorControls.php:528
-#: src/Modules/TextMotion/Controls/TextMotionControls.php:529
+#: src/Modules/InteractionMotion/Controls/CursorControls.php:355
+#: src/Modules/TextMotion/Controls/TextMotionControls.php:528
 msgid "Yes"
 msgstr ""
 
@@ -844,7 +1011,7 @@ msgstr ""
 msgid "download the latest release zip"
 msgstr ""
 
-#: src/Modules/InteractionMotion/Controls/CursorControls.php:142
+#: src/Modules/InteractionMotion/Controls/CursorControls.php:140
 msgid "e.g. View"
 msgstr ""
 

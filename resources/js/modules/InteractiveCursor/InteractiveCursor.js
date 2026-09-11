@@ -52,8 +52,6 @@ export default class InteractiveCursor {
         this.labelEl = null;
         this.xTo = null;
         this.yTo = null;
-        this.xDotTo = null;
-        this.yDotTo = null;
         this.isInside = false;
     }
 
@@ -104,11 +102,6 @@ export default class InteractiveCursor {
         const ease = 'power2.out';
         this.xTo = gsap.quickTo(this.cursorEl, 'x', { duration: dur, ease: ease });
         this.yTo = gsap.quickTo(this.cursorEl, 'y', { duration: dur, ease: ease });
-
-        if (this.dotEl) {
-            this.xDotTo = gsap.quickTo(this.dotEl, 'x', { duration: 0.06, ease: 'power3' });
-            this.yDotTo = gsap.quickTo(this.dotEl, 'y', { duration: 0.06, ease: 'power3' });
-        }
 
         if (this.config.hideNative) {
             this.container.classList.add('emje-interactive-cursor--hide-native');

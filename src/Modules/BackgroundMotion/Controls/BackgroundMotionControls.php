@@ -8,7 +8,7 @@ use Elementor\Controls_Manager;
 
 /**
  * Registers Elementor controls for Background Motion (standalone Container section).
- * Effects: ascii / pixel.
+ * Effects: ascii / pixel / dither.
  */
 final class BackgroundMotionControls
 {
@@ -59,6 +59,7 @@ final class BackgroundMotionControls
                 'options' => [
                     'ascii' => esc_html__('ASCII', 'emje-motion'),
                     'pixel' => esc_html__('Pixel', 'emje-motion'),
+                    'dither' => esc_html__('Dither', 'emje-motion'),
                 ],
                 'condition' => [
                     'emje_background_enable' => 'yes',
@@ -266,6 +267,23 @@ final class BackgroundMotionControls
                     'size' => 10,
                 ],
                 'description' => esc_html__('Top/bottom feather so the grid melts into the container background.', 'emje-motion'),
+                'classes' => 'emje-control--has-tooltip',
+                'condition' => $asciiCondition,
+                'frontend_available' => true,
+                'render_type' => 'template',
+            ],
+        );
+
+        $element->add_control(
+            'emje_background_ascii_disable_mobile',
+            [
+                'label' => esc_html__('Disable on Mobile & Tablet', 'emje-motion'),
+                'type' => Controls_Manager::SWITCHER,
+                'label_on' => esc_html__('Hide', 'emje-motion'),
+                'label_off' => esc_html__('Show', 'emje-motion'),
+                'return_value' => 'yes',
+                'default' => 'yes',
+                'description' => esc_html__('Hide this effect on touch devices.', 'emje-motion'),
                 'classes' => 'emje-control--has-tooltip',
                 'condition' => $asciiCondition,
                 'frontend_available' => true,
@@ -506,6 +524,286 @@ final class BackgroundMotionControls
                 'description' => esc_html__('Top/bottom feather so the grid melts into the container background.', 'emje-motion'),
                 'classes' => 'emje-control--has-tooltip',
                 'condition' => $pixelCondition,
+                'frontend_available' => true,
+                'render_type' => 'template',
+            ],
+        );
+
+        $element->add_control(
+            'emje_background_pixel_disable_mobile',
+            [
+                'label' => esc_html__('Disable on Mobile & Tablet', 'emje-motion'),
+                'type' => Controls_Manager::SWITCHER,
+                'label_on' => esc_html__('Hide', 'emje-motion'),
+                'label_off' => esc_html__('Show', 'emje-motion'),
+                'return_value' => 'yes',
+                'default' => 'yes',
+                'description' => esc_html__('Hide this effect on touch devices.', 'emje-motion'),
+                'classes' => 'emje-control--has-tooltip',
+                'condition' => $pixelCondition,
+                'frontend_available' => true,
+                'render_type' => 'template',
+            ],
+        );
+
+        $ditherCondition = [
+            'emje_background_enable' => 'yes',
+            'emje_background_effect' => 'dither',
+        ];
+
+        $element->add_control(
+            'emje_background_dither_heading',
+            [
+                'label' => esc_html__('Dither', 'emje-motion'),
+                'type' => Controls_Manager::HEADING,
+                'description' => esc_html__('Animated retro dither that lives on its own. Click/tap sends a ripple.', 'emje-motion'),
+                'condition' => $ditherCondition,
+            ],
+        );
+
+        $element->add_control(
+            'emje_background_dither_fg',
+            [
+                'label' => esc_html__('Dot Color', 'emje-motion'),
+                'type' => Controls_Manager::COLOR,
+                'default' => '#3B82F6',
+                'condition' => $ditherCondition,
+                'frontend_available' => true,
+                'render_type' => 'template',
+            ],
+        );
+
+        $element->add_control(
+            'emje_background_dither_bg',
+            [
+                'label' => esc_html__('Background Color', 'emje-motion'),
+                'type' => Controls_Manager::COLOR,
+                'default' => 'rgba(255, 255, 255, 0)',
+                'description' => esc_html__('Transparent keeps the native container background visible.', 'emje-motion'),
+                'classes' => 'emje-control--has-tooltip',
+                'condition' => $ditherCondition,
+                'frontend_available' => true,
+                'render_type' => 'template',
+            ],
+        );
+
+        $element->add_control(
+            'emje_background_dither_pixel',
+            [
+                'label' => esc_html__('Pixel Size', 'emje-motion'),
+                'type' => Controls_Manager::SLIDER,
+                'size_units' => ['px'],
+                'range' => [
+                    'px' => [
+                        'min' => 4,
+                        'max' => 32,
+                        'step' => 1,
+                    ],
+                ],
+                'default' => [
+                    'unit' => 'px',
+                    'size' => 8,
+                ],
+                'description' => esc_html__('Base cell size. Larger is blockier and more retro.', 'emje-motion'),
+                'classes' => 'emje-control--has-tooltip',
+                'condition' => $ditherCondition,
+                'frontend_available' => true,
+                'render_type' => 'template',
+            ],
+        );
+
+        $element->add_control(
+            'emje_background_dither_density',
+            [
+                'label' => esc_html__('Pattern Density', 'emje-motion'),
+                'type' => Controls_Manager::SLIDER,
+                'size_units' => ['px'],
+                'range' => [
+                    'px' => [
+                        'min' => 0,
+                        'max' => 1,
+                        'step' => 0.01,
+                    ],
+                ],
+                'default' => [
+                    'unit' => 'px',
+                    'size' => 0.5,
+                ],
+                'condition' => $ditherCondition,
+                'frontend_available' => true,
+                'render_type' => 'template',
+            ],
+        );
+
+        $element->add_control(
+            'emje_background_dither_scale',
+            [
+                'label' => esc_html__('Pattern Scale', 'emje-motion'),
+                'type' => Controls_Manager::SLIDER,
+                'size_units' => ['px'],
+                'range' => [
+                    'px' => [
+                        'min' => 0.5,
+                        'max' => 4,
+                        'step' => 0.1,
+                    ],
+                ],
+                'default' => [
+                    'unit' => 'px',
+                    'size' => 1.5,
+                ],
+                'condition' => $ditherCondition,
+                'frontend_available' => true,
+                'render_type' => 'template',
+            ],
+        );
+
+        $element->add_control(
+            'emje_background_dither_speed',
+            [
+                'label' => esc_html__('Animation Speed', 'emje-motion'),
+                'type' => Controls_Manager::SLIDER,
+                'size_units' => ['px'],
+                'range' => [
+                    'px' => [
+                        'min' => 0,
+                        'max' => 2,
+                        'step' => 0.05,
+                    ],
+                ],
+                'default' => [
+                    'unit' => 'px',
+                    'size' => 0.6,
+                ],
+                'description' => esc_html__('0 freezes on a single frame.', 'emje-motion'),
+                'classes' => 'emje-control--has-tooltip',
+                'condition' => $ditherCondition,
+                'frontend_available' => true,
+                'render_type' => 'template',
+            ],
+        );
+
+        $element->add_control(
+            'emje_background_dither_ripple',
+            [
+                'label' => esc_html__('Enable Ripples', 'emje-motion'),
+                'type' => Controls_Manager::SWITCHER,
+                'label_on' => esc_html__('On', 'emje-motion'),
+                'label_off' => esc_html__('Off', 'emje-motion'),
+                'return_value' => 'yes',
+                'default' => 'yes',
+                'condition' => $ditherCondition,
+                'frontend_available' => true,
+                'render_type' => 'template',
+            ],
+        );
+
+        $element->add_control(
+            'emje_background_dither_ripple_strength',
+            [
+                'label' => esc_html__('Ripple Strength', 'emje-motion'),
+                'type' => Controls_Manager::SLIDER,
+                'size_units' => ['px'],
+                'range' => [
+                    'px' => [
+                        'min' => 0,
+                        'max' => 1,
+                        'step' => 0.01,
+                    ],
+                ],
+                'default' => [
+                    'unit' => 'px',
+                    'size' => 0.6,
+                ],
+                'condition' => array_merge($ditherCondition, ['emje_background_dither_ripple' => 'yes']),
+                'frontend_available' => true,
+                'render_type' => 'template',
+            ],
+        );
+
+        $element->add_control(
+            'emje_background_dither_ripple_width',
+            [
+                'label' => esc_html__('Ripple Width', 'emje-motion'),
+                'type' => Controls_Manager::SLIDER,
+                'size_units' => ['px'],
+                'range' => [
+                    'px' => [
+                        'min' => 20,
+                        'max' => 400,
+                        'step' => 5,
+                    ],
+                ],
+                'default' => [
+                    'unit' => 'px',
+                    'size' => 140,
+                ],
+                'condition' => array_merge($ditherCondition, ['emje_background_dither_ripple' => 'yes']),
+                'frontend_available' => true,
+                'render_type' => 'template',
+            ],
+        );
+
+        $element->add_control(
+            'emje_background_dither_ripple_speed',
+            [
+                'label' => esc_html__('Ripple Speed', 'emje-motion'),
+                'type' => Controls_Manager::SLIDER,
+                'size_units' => ['px'],
+                'range' => [
+                    'px' => [
+                        'min' => 100,
+                        'max' => 1200,
+                        'step' => 10,
+                    ],
+                ],
+                'default' => [
+                    'unit' => 'px',
+                    'size' => 420,
+                ],
+                'condition' => array_merge($ditherCondition, ['emje_background_dither_ripple' => 'yes']),
+                'frontend_available' => true,
+                'render_type' => 'template',
+            ],
+        );
+
+        $element->add_control(
+            'emje_background_dither_fade',
+            [
+                'label' => esc_html__('Edge Fade', 'emje-motion'),
+                'type' => Controls_Manager::SLIDER,
+                'size_units' => ['%'],
+                'range' => [
+                    '%' => [
+                        'min' => 0,
+                        'max' => 30,
+                        'step' => 1,
+                    ],
+                ],
+                'default' => [
+                    'unit' => '%',
+                    'size' => 10,
+                ],
+                'description' => esc_html__('Top/bottom feather so the pattern melts into the container background.', 'emje-motion'),
+                'classes' => 'emje-control--has-tooltip',
+                'condition' => $ditherCondition,
+                'frontend_available' => true,
+                'render_type' => 'template',
+            ],
+        );
+
+        $element->add_control(
+            'emje_background_dither_disable_mobile',
+            [
+                'label' => esc_html__('Disable on Mobile & Tablet', 'emje-motion'),
+                'type' => Controls_Manager::SWITCHER,
+                'label_on' => esc_html__('Hide', 'emje-motion'),
+                'label_off' => esc_html__('Show', 'emje-motion'),
+                'return_value' => 'yes',
+                'default' => '',
+                'description' => esc_html__('Hide this effect on touch devices. Off keeps it visible — tap sends a ripple.', 'emje-motion'),
+                'classes' => 'emje-control--has-tooltip',
+                'condition' => $ditherCondition,
                 'frontend_available' => true,
                 'render_type' => 'template',
             ],

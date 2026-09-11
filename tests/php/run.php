@@ -50,7 +50,6 @@ $out = $m->invoke($front, [
     'emje_interaction_cursor_type' => 'text-follow',
     'emje_interaction_cursor_size' => ['size' => 24, 'unit' => 'px'],
     'emje_interaction_cursor_color' => '#123456',
-    'emje_interaction_cursor_blend_mode' => 'difference',
     'emje_interaction_cursor_hover_scale' => 1.8,
     'emje_interaction_cursor_hide_native' => 'yes',
     'emje_interaction_cursor_text_label' => 'Open',
@@ -65,7 +64,7 @@ $out = $m->invoke($front, [
 check('type', $out['type'], 'text-follow');
 check('size', $out['size'], 24);
 check('color', $out['color'], '#123456');
-check('blend', $out['blendMode'], 'difference');
+check('blend-removed', array_key_exists('blendMode', $out), false);
 check('hoverScale', $out['hoverScale'], 1.8);
 check('hideNative', $out['hideNative'], true);
 check('label', $out['label'], 'Open');
@@ -75,7 +74,7 @@ check('entrance', $out['entrance'], 'scale-bounce');
 check('smooth', $out['followSmoothness'], 0.3);
 check('shadow', $out['shadow'], true);
 check('live', $out['livePreview'], true);
-check('keyCount', count($out), 21);
+check('keyCount', count($out), 20);
 
 // Retired Comet Trail falls through to text-follow (new + legacy paths).
 $trail = $m->invoke($front, ['emje_interaction_cursor_type' => 'trail'], true);

@@ -5,6 +5,16 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
 
+### Changed
+- **Mobile gating is now per-effect** — the global dashboard toggle "Disable Interaction Motion on Mobile" is removed. Each effect (ASCII, Pixel, Dither, Hover Reveal, Interactive Cursor) has its own "Disable on Mobile & Tablet" switch in Elementor (on by default, except Dither which stays visible on touch since it needs no hover — tap sends a ripple). Runtime JSON key `disableOnMobile` is unchanged, so no frontend JS changes were needed.
+
+### Removed
+- **Interactive Cursor: Blend Mode control removed** — the option never reached the runtime (no `mix-blend-mode` was ever applied), so it was a no-op control. Removed the Elementor control, the `blendMode` config key, forwarding in editor bridges, and the dead `.emje-cursor--difference` CSS.
+- **Dead code cleanup** — removed write-only fields (`DitherCanvas._dpr`, stale `_scrollTick`), unused dot quickTos, an unused tooltip var + import, and dead `$version` assignments in admin views.
+
+### Added
+- **Background Motion: Dither** — ambient animated retro-dither background (Canvas 2D, no dependencies): Bayer-thresholded noise field drawn as square dots via the `fillRect` fast path (full 60fps, no shape options by design), alive without mouse input. Click/tap sends an expanding ripple (strength/width/speed). Controls: Dot + Background Color (transparent keeps native background), Pixel Size, Density, Scale, Speed (`0` freezes), Ripples, Edge Fade. Auto-scales resolution under load (capped at 2x Pixel Size), pauses offscreen, respects reduced motion + mobile guard.
+
 ## [1.1.0] - 2026-09-10
 
 ### Added
