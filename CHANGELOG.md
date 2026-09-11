@@ -5,6 +5,8 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
 
+## [1.2.0] - 2026-09-12
+
 ### Changed
 - **Mobile gating is now per-effect** — the global dashboard toggle "Disable Interaction Motion on Mobile" is removed. Each effect (ASCII, Pixel, Dither, Hover Reveal, Interactive Cursor) has its own "Disable on Mobile & Tablet" switch in Elementor (on by default, except Dither which stays visible on touch since it needs no hover — tap sends a ripple). Runtime JSON key `disableOnMobile` is unchanged, so no frontend JS changes were needed.
 
