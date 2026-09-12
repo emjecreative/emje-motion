@@ -21,6 +21,12 @@ const sources = {
     'eb-tooltip.mjs': 'resources/js/editor-bridge/tooltip.js',
     'eb-previewSync.mjs': 'resources/js/editor-bridge/previewSync.js',
     'mod-shared.mjs': 'resources/js/modules/BackgroundMotion/shared.js',
+    'mod-env.mjs': 'resources/js/core/env.js',
+    'mod-meshgradient.mjs': 'resources/js/modules/BackgroundMotion/MeshGradient.js',
+    'mod-backgroundmotion.mjs': 'resources/js/modules/BackgroundMotion/BackgroundMotion.js',
+    'mod-asciiinteractive.mjs': 'resources/js/modules/BackgroundMotion/AsciiInteractive.js',
+    'mod-pixelgrid.mjs': 'resources/js/modules/BackgroundMotion/PixelGrid.js',
+    'mod-dithercanvas.mjs': 'resources/js/modules/BackgroundMotion/DitherCanvas.js',
     'mod-interactiveCursor.mjs': 'resources/js/modules/InteractiveCursor/InteractiveCursor.js',
     'mod-textFollowCursor.mjs': 'resources/js/modules/InteractiveCursor/strategies/TextFollowCursor.js',
     'mod-dotRingCursor.mjs': 'resources/js/modules/InteractiveCursor/strategies/DotRingCursor.js',
@@ -30,7 +36,8 @@ for (const [dest, src] of Object.entries(sources)) {
     let code = readFileSync(join(root, src), 'utf8');
     // Rewrite relative imports to the staged .mjs names (match by
     // basename, case-insensitive: sources use prefixes like mod-Foo).
-    code = code.replace(/from '(\.[\\/][\w\\/.-]+)\.js'/g, (m, p) => {
+    // Handles './shared.js', extensionless './shared', and '../' chains.
+    code = code.replace(/from '((?:\.\.?[\\/])[\w\\/.-]+?)(\.js)?'/g, (m, p) => {
         const base = p.split('/').pop().toLowerCase();
         const hit = Object.keys(sources).find((k) => k.slice(0, -4).split('-').pop().toLowerCase() === base);
         return hit ? `from './${hit}'` : m;

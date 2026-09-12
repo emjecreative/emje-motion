@@ -1,4 +1,5 @@
-import { getPreviewWindow, getPreviewDocument, isValidEditorColor, findTarget } from './utils.js';
+import { getPreviewWindow, getPreviewDocument, isValidEditorColor, pickEditorColor, findTarget } from './utils.js';
+import { DEFAULT_COLORS, LEGACY_PRESETS as LEGACY_MESH_PRESETS } from '../modules/BackgroundMotion/shared';
 
 export function buildBackgroundConfig(settings) {
     var get = function(k, d) { var v = settings.get(k); return v !== undefined && v !== null ? v : d; };
@@ -9,12 +10,15 @@ export function buildBackgroundConfig(settings) {
     }
     var effect = get('emje_background_effect', 'ascii');
     if (effect === 'ascii-interactive') effect = 'ascii'; // legacy value
-    if (effect !== 'ascii' && effect !== 'pixel' && effect !== 'dither') effect = 'ascii';
+    if (effect !== 'ascii' && effect !== 'pixel' && effect !== 'dither' && effect !== 'mesh') effect = 'ascii';
     if (effect === 'pixel') {
         return buildPixelConfig(settings, live);
     }
     if (effect === 'dither') {
         return buildDitherConfig(settings, live);
+    }
+    if (effect === 'mesh') {
+        return buildMeshConfig(settings, live);
     }
     var num = function(k, def, min, max) {
         var v = get(k, null);
@@ -140,12 +144,61 @@ export function buildDitherConfig(settings, live) {
         rippleStrength: num('emje_background_dither_ripple_strength', 0.6, 0, 1),
         rippleWidth: num('emje_background_dither_ripple_width', 140, 20, 400),
         rippleSpeed: num('emje_background_dither_ripple_speed', 420, 100, 1200),
-        fade: num('emje_background_dither_fade', 10, 0, 30),
+        fade: num('emje_background_dither_fade', 0, 0, 30),
         disableOnMobile: get('emje_background_dither_disable_mobile', '') === 'yes'
     };
 }
 
+export function buildMeshConfig(settings, live) {
+    var get = function(k, d) { var v = settings.get(k); return v !== undefined && v !== null ? v : d; };
+    var num = function(k, def, min, max) {
+        var v = get(k, null);
+        if (v && typeof v === 'object' && v.size !== undefined) v = v.size;
+        var n = parseFloat(v);
+        if (isNaN(n)) return def;
+        return Math.max(min, Math.min(max, n));
+    };
+    // Removed preset control: saved pages may still carry a preset value,
+    // used here only as color fallback so old sections look the same.
+    var legacyPreset = get('emje_background_mesh_preset', '');
+    var legacyFallbacks = LEGACY_MESH_PRESETS[legacyPreset] || DEFAULT_COLORS;
+    var motion = get('emje_background_mesh_motion', 'drift');
+    if (['drift', 'swirl', 'pulse', 'flow'].indexOf(motion) === -1) motion = 'drift';
+    var quality = get('emje_background_mesh_quality', 'balanced');
+    if (['low', 'balanced', 'high'].indexOf(quality) === -1) quality = 'balanced';
+    return {
+        enable: true,
+        effect: 'mesh',
+        livePreview: live,
+        motion: motion,
+        colors: [
+            pickEditorColor(get, 'emje_background_mesh_c1', legacyFallbacks[0]),
+            pickEditorColor(get, 'emje_background_mesh_c2', legacyFallbacks[1]),
+            pickEditorColor(get, 'emje_background_mesh_c3', legacyFallbacks[2]),
+            pickEditorColor(get, 'emje_background_mesh_c4', legacyFallbacks[3])
+        ],
+        speed: num('emje_background_mesh_speed', 2, 0, 4),
+        quality: quality,
+        opacity: num('emje_background_mesh_opacity', 1, 0, 1),
+        fade: num('emje_background_mesh_fade', 0, 0, 30),
+        disableOnMobile: get('emje_background_mesh_disable_mobile', '') === 'yes'
+    };
+}
+
 export function buildBackgroundPayload(cfg) {
+    if (cfg.effect === 'mesh') {
+        return {
+            effect: 'mesh',
+            motion: cfg.motion,
+            colors: cfg.colors,
+            speed: cfg.speed,
+            quality: cfg.quality,
+            opacity: cfg.opacity,
+            fade: cfg.fade,
+            disableOnMobile: cfg.disableOnMobile,
+            livePreview: cfg.livePreview
+        };
+    }
     if (cfg.effect === 'dither') {
         return {
             effect: 'dither',
@@ -213,7 +266,7 @@ export function backgroundLayerPresent(target) {
     try {
         if (!target) return false;
         if (target.dataset && target.dataset.emjeBackgroundInitialized === 'true') return true;
-        if (target.querySelector && target.querySelector('.emje-ascii, .emje-pixel, .emje-dither')) return true;
+        if (target.querySelector && target.querySelector('.emje-ascii, .emje-pixel, .emje-dither, .emje-mesh')) return true;
     } catch (e) {}
     return false;
 }
@@ -361,8 +414,44 @@ export function findContainerModel(dataId) {
 }
 
 export function applyBackgroundToTarget(win, target, cfg) {
+    var payload = buildBackgroundPayload(cfg);
+    // Fast path: same mesh instance, only Motion Type / colors changed —
+    // push the new uniforms live instead of re-creating the GL context.
+    // Anything else (effect switch, speed, quality, opacity, fade, …)
+    // still goes through a full re-init below.
     try {
-        target.setAttribute('data-emje-background', JSON.stringify(buildBackgroundPayload(cfg)));
+        var raw = target.getAttribute('data-emje-background');
+        var prev = raw ? JSON.parse(raw) : null;
+        if (prev && prev.effect === 'mesh' && payload.effect === 'mesh'
+            && prev.speed === payload.speed
+            && prev.quality === payload.quality
+            && prev.opacity === payload.opacity
+            && prev.fade === payload.fade
+            && prev.disableOnMobile === payload.disableOnMobile
+            && prev.livePreview === payload.livePreview
+            && win.EmjeMotionBackground && win.EmjeMotionBackground._instances) {
+            // Never "succeed" on a node that is no longer in the document
+            // (Elementor template re-render replaces it): that would push
+            // uniforms into a detached layer while the visible node stays
+            // blank. Fall through to a full re-init instead.
+            var connected = target.isConnected === undefined || target.isConnected === true;
+            var inst = connected ? win.EmjeMotionBackground._instances.get(target) : null;
+            // The instance must still own a live canvas; a lost/destroyed
+            // GL context silently no-ops uniform writes.
+            var canvasOk = !!(inst && inst.canvas && inst.canvas.width > 2 && inst.canvas.height > 2);
+            bgDebug('apply', { fastPath: !!(inst && canvasOk), connected: connected, canvasOk: canvasOk, motion: payload.motion });
+            if (inst && canvasOk && typeof inst.updateLive === 'function'
+                && inst.updateLive({ motion: payload.motion, colors: payload.colors })) {
+                try {
+                    target.setAttribute('data-emje-background', JSON.stringify(payload));
+                } catch (e) {}
+                return;
+            }
+            bgDebug('apply', { fastPath: false, fallback: 're-init' });
+        }
+    } catch (e) {}
+    try {
+        target.setAttribute('data-emje-background', JSON.stringify(payload));
     } catch (e) {}
     if (win.EmjeMotionBackground && win.EmjeMotionBackground.reInit) {
         win.EmjeMotionBackground.reInit(target);
@@ -451,7 +540,12 @@ var EMJE_BG_KEYS = [
     'emje_background_dither_speed', 'emje_background_dither_ripple',
     'emje_background_dither_ripple_strength', 'emje_background_dither_ripple_width',
     'emje_background_dither_ripple_speed', 'emje_background_dither_fade',
-    'emje_background_dither_disable_mobile'
+    'emje_background_dither_disable_mobile',
+    'emje_background_mesh_c1', 'emje_background_mesh_c2',
+    'emje_background_mesh_c3', 'emje_background_mesh_c4', 'emje_background_mesh_motion',
+    'emje_background_mesh_speed',
+    'emje_background_mesh_quality', 'emje_background_mesh_opacity',
+    'emje_background_mesh_fade', 'emje_background_mesh_disable_mobile'
 ];
 
 export function bindBackgroundSettingsListener() {

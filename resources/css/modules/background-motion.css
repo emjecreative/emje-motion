@@ -33,7 +33,7 @@
 }
 
 /* Keep Elementor content above the ambient layer without stealing clicks. */
-.emje-background-motion > :not(.emje-ascii):not(.emje-pixel):not(.emje-dither) {
+.emje-background-motion > :not(.emje-ascii):not(.emje-pixel):not(.emje-dither):not(.emje-mesh) {
     position: relative;
     z-index: 1;
 }
@@ -94,6 +94,23 @@
 }
 
 .emje-dither__canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+}
+
+/* ---------- Mesh Gradient ---------- */
+
+.emje-mesh {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+    z-index: 0;
+}
+
+.emje-mesh__canvas {
     display: block;
     width: 100%;
     height: 100%;

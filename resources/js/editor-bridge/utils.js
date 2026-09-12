@@ -34,6 +34,28 @@ export function isValidEditorColor(c) {
     return false;
 }
 
+/**
+ * Pick an editor color setting with Elementor Global Color support.
+ * Single source of truth for the `globals/colors → var(--e-global-color-)`
+ * mapping previously duplicated in every bridge config builder.
+ * `get` is the settings getter `(key, fallback) => value`.
+ */
+export function pickEditorColor(get, key, fallback) {
+    var c = get(key, fallback);
+    if (typeof c !== 'string') c = fallback;
+    var globals = get('__globals__', null);
+    if (globals && typeof globals === 'object' && globals[key]) {
+        var gv = globals[key];
+        if (typeof gv === 'string' && gv.indexOf('globals/colors') !== -1) {
+            var m = gv.match(/id=([^&]+)/);
+            if (m) gv = 'var(--e-global-color-' + m[1].replace(/[^a-zA-Z0-9_-]/g, '') + ')';
+        }
+        if (isValidEditorColor(gv)) c = gv;
+    }
+    if (!isValidEditorColor(c)) c = fallback;
+    return c;
+}
+
 export function safeCssEnum(v, re, fallback) {
     // Allowlisted CSS keyword; rejects any break-out characters.
     if (typeof v !== 'string') return fallback;

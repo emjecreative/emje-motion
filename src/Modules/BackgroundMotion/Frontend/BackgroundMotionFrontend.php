@@ -6,10 +6,11 @@ namespace EmjeCreative\EmjeMotion\Modules\BackgroundMotion\Frontend;
 
 use EmjeCreative\EmjeMotion\Modules\InteractionMotion\Services\ColorResolver;
 use EmjeCreative\EmjeMotion\Modules\InteractionMotion\Services\SliderResolver;
+use EmjeCreative\EmjeMotion\Support\RenderAttributes;
 
 /**
  * Renders Background Motion frontend attributes for Container.
- * Effects: ascii / pixel / dither.
+ * Effects: ascii / pixel / dither / mesh.
  *
  * Color/slider sanitizing is shared with Interaction Motion via
  * ColorResolver + SliderResolver (single source of truth).
@@ -60,7 +61,7 @@ final class BackgroundMotionFrontend
         if ($effect === 'ascii-interactive') {
             $effect = 'ascii';
         }
-        if (! in_array($effect, ['ascii', 'pixel', 'dither'], true)) {
+        if (! in_array($effect, ['ascii', 'pixel', 'dither', 'mesh'], true)) {
             // Unknown/retired effect (e.g. aurora sketches) — fall back to ASCII.
             $effect = 'ascii';
         }
@@ -69,11 +70,13 @@ final class BackgroundMotionFrontend
             $config = $this->buildPixelConfig($settings);
         } elseif ($effect === 'dither') {
             $config = $this->buildDitherConfig($settings);
+        } elseif ($effect === 'mesh') {
+            $config = $this->buildMeshConfig($settings);
         } else {
             $config = $this->buildAsciiConfig($settings);
         }
 
-        $this->addDataAttribute($element, $config, 'data-emje-background', 'emje-background-motion');
+        RenderAttributes::addDataAttribute($element, $config, 'data-emje-background', 'emje-background-motion');
     }
 
     /**
@@ -207,9 +210,64 @@ final class BackgroundMotionFrontend
             'rippleStrength' => $this->sliderResolver->resolveFloat($settings['emje_background_dither_ripple_strength'] ?? 0.6, 0.6, 0, 1),
             'rippleWidth' => $this->sliderResolver->resolveFloat($settings['emje_background_dither_ripple_width'] ?? 140, 140, 20, 400),
             'rippleSpeed' => $this->sliderResolver->resolveFloat($settings['emje_background_dither_ripple_speed'] ?? 420, 420, 100, 1200),
-            'fade' => $this->sliderResolver->resolveFloat($settings['emje_background_dither_fade'] ?? 10, 10, 0, 30),
+            'fade' => $this->sliderResolver->resolveFloat($settings['emje_background_dither_fade'] ?? 0, 0, 0, 30),
             'livePreview' => ($settings['emje_background_live_preview'] ?? '') === 'yes',
             'disableOnMobile' => ($settings['emje_background_dither_disable_mobile'] ?? '') === 'yes',
+        ];
+    }
+
+    /**
+     * @param array<string, mixed> $settings
+     *
+     * @return array<string, mixed>
+     */
+    private function buildMeshConfig(array $settings): array
+    {
+        // Legacy presets were removed from the UI; saved pages may still
+        // carry `emje_background_mesh_preset`. Map it to colors so old
+        // sections render identically, then forget the preset.
+        $legacyPalettes = [
+            'beach' => ['#D81F1F', '#0438E4', '#78BB8B', '#FAD8D8'],
+            'sunset' => ['#FF6A3D', '#FF2E63', '#7B2FF7', '#F9CB6B'],
+            'ocean' => ['#03045E', '#0077B6', '#00B4D8', '#CAF0F8'],
+        ];
+        $preset = isset($settings['emje_background_mesh_preset']) ? (string) $settings['emje_background_mesh_preset'] : '';
+        $legacy = $legacyPalettes[$preset] ?? null;
+
+        $globals = $settings['__globals__'] ?? [];
+        $colors = [];
+        $fallbacks = $legacy ?? ['#0C4A6E', '#0284C7', '#5EEAD4', '#F0FDFA'];
+        foreach (['emje_background_mesh_c1', 'emje_background_mesh_c2', 'emje_background_mesh_c3', 'emje_background_mesh_c4'] as $i => $key) {
+            $raw = trim((string) ($settings[$key] ?? ''));
+            if (is_array($globals) && isset($globals[$key]) && is_string($globals[$key]) && trim($globals[$key]) !== '') {
+                $raw = $this->colorResolver->resolveGlobalColorVar($globals[$key]);
+            }
+            if ($raw === '') {
+                $raw = $fallbacks[$i];
+            }
+            $colors[] = $this->colorResolver->sanitizeColor($raw, $fallbacks[$i]);
+        }
+
+        $motion = isset($settings['emje_background_mesh_motion']) ? (string) $settings['emje_background_mesh_motion'] : 'drift';
+        if (! in_array($motion, ['drift', 'swirl', 'pulse', 'flow'], true)) {
+            $motion = 'drift';
+        }
+
+        $quality = isset($settings['emje_background_mesh_quality']) ? (string) $settings['emje_background_mesh_quality'] : 'balanced';
+        if (! in_array($quality, ['low', 'balanced', 'high'], true)) {
+            $quality = 'balanced';
+        }
+
+        return [
+            'effect' => 'mesh',
+            'motion' => $motion,
+            'colors' => $colors,
+            'speed' => $this->sliderResolver->resolveFloat($settings['emje_background_mesh_speed'] ?? 2, 2, 0, 4),
+            'quality' => $quality,
+            'opacity' => $this->sliderResolver->resolveFloat($settings['emje_background_mesh_opacity'] ?? 1, 1, 0, 1),
+            'fade' => $this->sliderResolver->resolveFloat($settings['emje_background_mesh_fade'] ?? 0, 0, 0, 30),
+            'livePreview' => ($settings['emje_background_live_preview'] ?? '') === 'yes',
+            'disableOnMobile' => ($settings['emje_background_mesh_disable_mobile'] ?? '') === 'yes',
         ];
     }
 

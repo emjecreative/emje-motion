@@ -129,17 +129,31 @@ Respects reduced motion.
 
 Ambient animated retro-dither background, inspired by shader-style dither art. It lives on its own — no cursor needed — and a click/tap sends an expanding ripple through the pattern.
 
-- **Dot Color** — pattern color (default `#3B82F6`).
-- **Background Color** — canvas fill (default transparent, so the native container background shows through).
+- **Dot Color** — pattern color (default `#1227E2`).
+- **Background Color** — canvas fill (default faint indigo `#1227E21A`; clear it for fully transparent).
 - **Look** — square dots (single fast path, smooth at 60fps even while scrolling).
 - **Pixel Size** — base cell size (default `8px`; larger is blockier).
 - **Pattern Density / Pattern Scale** — how full the pattern looks and the size of the underlying noise (defaults `0.5` / `1.5`).
 - **Animation Speed** — evolution pace (default `0.6`; `0` freezes on a single frame).
 - **Enable Ripples + Strength / Width / Speed** — click/tap ripple (defaults on, `0.6` / `140px` / `420`).
-- **Edge Fade** — top/bottom feather so the pattern melts into the background (default `10%`).
+- **Edge Fade** — top/bottom feather so the pattern melts into the background (default `0%`).
 - **Disable on Mobile & Tablet** — hide on touch devices (off by default, so it stays visible — tap sends a ripple).
 
 Respects reduced motion. Resolution auto-scales down under load and the animation pauses offscreen.
+
+### Mesh Gradient
+
+Animated WebGL mesh gradient — four colors drifting and blending into each other, alive without mouse input.
+
+- **Motion Type** — how the colors move: Drift (default, slow and calm), Swirl (rotating vortex), Pulse (swelling in place), or Flow (traveling diagonal bands).
+- **Color 1–4** — four custom colors that blend into each other (defaults: Lagoon — deep sea navy, blue, mint, sea foam). Hex, `rgb()`/`hsl()`, and Elementor Global Colors are all supported.
+- **Quality** — render resolution: Balanced (default), Low (fastest on weak devices), or High (sharpest).
+- **Animation Speed** — morphing pace (default `2`, range 0–4; `0` freezes on a single frame).
+- **Opacity** — overall strength so the native container background can show through (default `1`; `0` shows only the native background).
+- **Edge Fade** — top/bottom feather so the mesh melts into the background (default `0%`).
+- **Disable on Mobile & Tablet** — hide on touch devices (off by default, so it stays visible).
+
+Respects reduced motion. Falls back to a static gradient where WebGL is unavailable, auto-degrades resolution under load, and pauses offscreen.
 
 ## Smooth Scroll
 

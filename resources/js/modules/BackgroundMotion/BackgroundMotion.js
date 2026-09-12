@@ -1,10 +1,11 @@
 import AsciiInteractive from './AsciiInteractive';
 import PixelGrid from './PixelGrid';
 import DitherCanvas from './DitherCanvas';
+import MeshGradient from './MeshGradient';
 
 /**
  * Background Motion dispatcher — ambient Container backgrounds.
- * Effects: ascii / pixel / dither.
+ * Effects: ascii / pixel / dither / mesh.
  */
 export default class BackgroundMotion {
     static createInstance(el, config) {
@@ -16,6 +17,9 @@ export default class BackgroundMotion {
         }
         if (config.effect === 'dither') {
             return new DitherCanvas(el, config);
+        }
+        if (config.effect === 'mesh') {
+            return new MeshGradient(el, config);
         }
         return new AsciiInteractive(el, config);
     }
