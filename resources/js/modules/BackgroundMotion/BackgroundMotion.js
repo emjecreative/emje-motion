@@ -60,12 +60,24 @@ export default class BackgroundMotion {
             try {
                 config = JSON.parse(el.getAttribute('data-emje-background'));
             } catch (e) {
+                try {
+                    el.removeAttribute('data-emje-background');
+                } catch (_ignored) {}
                 return;
             }
             const instance = BackgroundMotion.createInstance(el, config);
             if (instance && instance.init()) {
                 el.dataset.emjeBackgroundInitialized = 'true';
                 BackgroundMotion._instances.set(el, instance);
+            } else {
+                // Don't leave a zombie attribute behind: with the attr
+                // present but no layer, later passes mistake the node for
+                // a live layer and skip repair (persistent blank preview).
+                try {
+                    el.removeAttribute('data-emje-background');
+                } catch (e) {
+                    // Never let a single container break the caller.
+                }
             }
         } catch (e) {
             // Never let a single container break the caller.

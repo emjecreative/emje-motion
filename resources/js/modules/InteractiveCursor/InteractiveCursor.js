@@ -29,6 +29,7 @@ export default class InteractiveCursor {
             shadow: config.shadow ?? true,
             shadowBlur: config.shadowBlur ?? 32,
             disableOnMobile: config.disableOnMobile ?? true,
+            livePreview: config.livePreview ?? false,
         };
         // migrate legacy dot/ring
         if (this.config.type === 'dot' || this.config.type === 'ring') {

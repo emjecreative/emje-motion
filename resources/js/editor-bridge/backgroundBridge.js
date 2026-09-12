@@ -492,6 +492,16 @@ export function hookBackgroundPreviewRender() {
             var el = ($el && $el[0] && $el[0].getAttribute) ? $el[0] : (($el && $el.getAttribute) ? $el : null);
             if (!el) return;
             var dataId = el.getAttribute('data-id');
+            // The event node may already be stale (a second template
+            // re-render can replace it before we run): re-resolve by
+            // data-id so we always apply to the live node.
+            try {
+                var previewDoc = win.document || getPreviewDocument();
+                if (dataId && previewDoc && previewDoc.querySelector) {
+                    var fresh = previewDoc.querySelector('[data-id="' + dataId + '"]');
+                    if (fresh) el = fresh;
+                }
+            } catch (e) {}
             // If the layer survived, just re-init from the attribute.
             if (!dataId) {
                 if (el.hasAttribute('data-emje-background') && win.EmjeMotionBackground && win.EmjeMotionBackground.reInit) {

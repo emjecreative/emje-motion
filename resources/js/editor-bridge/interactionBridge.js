@@ -46,8 +46,12 @@ export function buildHoverConfig(settings) {
 
 export function buildCursorConfig(settings) {
     var get = function(k, d) { var v = settings.get(k); return v !== undefined && v !== null ? v : d; };
-    var type = get('emje_cursor_type', 'dot-ring');
-    if (['dot', 'ring', 'dot-ring'].indexOf(type) === -1) type = 'dot-ring';
+    // Same canonical defaults as the PHP legacy branch
+    // (InteractionMotionFrontend): unknown types fall to text-follow,
+    // native cursor visible unless explicitly hidden, label 'View'.
+    var type = get('emje_cursor_type', 'text-follow');
+    if (type === 'dot' || type === 'ring') type = 'dot-ring';
+    if (['dot-ring', 'text-follow'].indexOf(type) === -1) type = 'text-follow';
 
     var size = 20;
     var rawSize = get('emje_cursor_size', null);
@@ -63,9 +67,10 @@ export function buildCursorConfig(settings) {
     if (isNaN(scale)) scale = 1.5;
     scale = Math.max(1.2, Math.min(2, scale));
 
-    var hide = get('emje_cursor_hide_native', 'yes') === 'yes';
-    var label = get('emje_cursor_text_label', '');
+    var hide = get('emje_cursor_hide_native', '') === 'yes';
+    var label = get('emje_cursor_text_label', 'View');
     if (typeof label !== 'string') label = String(label);
+    if (label === '') label = 'View';
     if (label.length > 20) label = label.substring(0, 20);
 
     return {

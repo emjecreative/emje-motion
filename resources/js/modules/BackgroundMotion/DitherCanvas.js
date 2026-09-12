@@ -1,4 +1,4 @@
-import { isEditMode, applyEdgeMask, LIMITS, clampNum } from './shared';
+import { isEditMode, applyEdgeMask, LIMITS, clampNum, toNumber, resolveCssVar } from './shared';
 
 // 4x4 Bayer matrix, normalized 0-1. Gives the retro print feel
 // on top of the smooth noise field.
@@ -8,11 +8,6 @@ const BAYER_4 = [
     3, 11, 1, 9,
     15, 7, 13, 5,
 ].map((v) => (v + 0.5) / 16);
-
-function toNumber(value, fallback) {
-    const n = parseFloat(value);
-    return Number.isNaN(n) ? fallback : n;
-}
 
 function isPaintableColor(color) {
     if (typeof color !== 'string' || color.trim() === '') {
@@ -48,6 +43,36 @@ function isTransparentColor(color) {
 }
 
 /**
+ * Background alpha 0-1 for the per-frame paint strategy. Transparent (0)
+ * takes the clearRect path, opaque (1) overpaints directly, and anything
+ * in between must clearRect FIRST then veil — otherwise the veil stacks
+ * every frame and the canvas fades to solid within seconds.
+ */
+export function bgAlpha(color) {
+    if (typeof color !== 'string') {
+        return 1;
+    }
+    const c = color.replace(/\s+/g, '').toLowerCase();
+    if (c === 'transparent') {
+        return 0;
+    }
+    let m = c.match(/^rgba?\(([^)]+)\)$/);
+    if (m) {
+        const parts = m[1].split(',');
+        if (parts.length === 4) {
+            const a = parseFloat(parts[3]);
+            return Number.isNaN(a) ? 1 : Math.min(1, Math.max(0, a));
+        }
+        return 1;
+    }
+    m = c.match(/^#([0-9a-f]{8})$/);
+    if (m) {
+        return parseInt(m[1].slice(6, 8), 16) / 255;
+    }
+    return 1;
+}
+
+/**
  * Dither — ambient animated retro-dither background (Emje original,
  * inspired by the Framer DitherShader reference).
  *
@@ -59,11 +84,17 @@ function isTransparentColor(color) {
 export default class DitherCanvas {
     constructor(container, config) {
         this.container = container;
+        // Canvas 2D fillStyle cannot resolve var() itself: resolve Global
+        // Colors against the owner document first (unresolvable refs fall
+        // through to isPaintableColor → defaults, as before).
+        const ownerDoc = container && container.ownerDocument ? container.ownerDocument : null;
+        const rawFg = typeof config.fg === 'string' ? (resolveCssVar(config.fg, ownerDoc, container) ?? config.fg) : config.fg;
+        const rawBg = typeof config.bg === 'string' ? (resolveCssVar(config.bg, ownerDoc, container) ?? config.bg) : config.bg;
         // NOTE: `config.shape` from older payloads is intentionally ignored —
         // Dither is square-only (single fast path, no shape branching).
         this.config = {
-            fg: isPaintableColor(config.fg) ? config.fg : '#3B82F6',
-            bg: isPaintableColor(config.bg) ? config.bg : 'rgba(255, 255, 255, 0)',
+            fg: isPaintableColor(rawFg) ? rawFg : '#1227E2',
+            bg: isPaintableColor(rawBg) ? rawBg : '#1227E21A',
             pixel: clampNum(toNumber(config.pixel, 8), LIMITS.dither.pixel, 8),
             density: clampNum(toNumber(config.density ?? 0.5, 0.5), LIMITS.dither.density, 0.5),
             scale: clampNum(toNumber(config.scale ?? 1.5, 1.5), LIMITS.dither.scale, 1.5),
@@ -72,14 +103,16 @@ export default class DitherCanvas {
             rippleStrength: clampNum(toNumber(config.rippleStrength ?? 0.6, 0.6), LIMITS.dither.rippleStrength, 0.6),
             rippleWidth: clampNum(toNumber(config.rippleWidth ?? 140, 140), LIMITS.dither.rippleWidth, 140),
             rippleSpeed: clampNum(toNumber(config.rippleSpeed ?? 420, 420), LIMITS.dither.rippleSpeed, 420),
-            fade: clampNum(toNumber(config.fade ?? 10, 10), LIMITS.dither.fade, 10),
+            fade: clampNum(toNumber(config.fade ?? 0, 0), LIMITS.dither.fade, 0),
             livePreview: config.livePreview ?? false,
-            disableOnMobile: config.disableOnMobile ?? true,
+            disableOnMobile: config.disableOnMobile ?? false,
         };
         if (isTransparentColor(this.config.bg)) {
             this._bgTransparent = true;
+            this._bgTranslucent = false;
         } else {
             this._bgTransparent = false;
+            this._bgTranslucent = bgAlpha(this.config.bg) < 1;
         }
 
         this.wrapEl = null;
@@ -245,6 +278,11 @@ export default class DitherCanvas {
         const { cols, rows, cssW, cssH } = this;
 
         if (!this._bgTransparent) {
+            // Translucent veils must start from a cleared frame or the
+            // alpha stacks up every frame (canvas fades to solid).
+            if (this._bgTranslucent) {
+                ctx.clearRect(0, 0, cssW, cssH);
+            }
             ctx.fillStyle = this.config.bg;
             ctx.fillRect(0, 0, cssW, cssH);
         } else {

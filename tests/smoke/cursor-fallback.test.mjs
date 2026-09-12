@@ -1,6 +1,6 @@
 import { tmpUrl, model, eq } from './helpers.mjs';
 
-const { buildInteractionConfig } = await import(tmpUrl('eb-interactionBridge.mjs'));
+const { buildInteractionConfig, buildCursorConfig } = await import(tmpUrl('eb-interactionBridge.mjs'));
 
 // Retired Comet Trail: editor config falls through to text-follow.
 const trail = buildInteractionConfig(model({
@@ -53,9 +53,26 @@ const hoverShown = buildInteractionConfig(model({
 }));
 eq('editor-hover-mobile-override', hoverShown.disableOnMobile, false);
 
+// Legacy builder canonical defaults match the PHP legacy branch:
+// unknown types fall to text-follow, native cursor visible, label View.
+const legacy = buildCursorConfig(model({}));
+eq('legacy-type-default', legacy.type, 'text-follow');
+eq('legacy-hidenative-default', legacy.hideNative, false);
+eq('legacy-label-default', legacy.label, 'View');
+const legacyDot = buildCursorConfig(model({ emje_cursor_type: 'ring' }));
+eq('legacy-dot-migrate', legacyDot.type, 'dot-ring');
+
 // JS runtime guard: old saved payloads fall through too.
 const { default: InteractiveCursor } = await import(tmpUrl('mod-interactiveCursor.mjs'));
 const inst = new InteractiveCursor({}, { type: 'trail' });
 eq('js-trail-fallback', inst.config.type, 'text-follow');
 const inst2 = new InteractiveCursor({}, { type: 'dot-ring' });
 eq('js-dotring-kept', inst2.config.type, 'dot-ring');
+
+// livePreview:false in edit mode blocks init (config key was dropped).
+const realDoc = globalThis.document;
+globalThis.document = { body: { classList: { contains: () => true } } };
+const noLive = new InteractiveCursor({}, { type: 'dot-ring', livePreview: false });
+eq('cursor-live-kept', noLive.config.livePreview, false);
+eq('cursor-live-off-blocks', noLive.shouldInit(), false);
+globalThis.document = realDoc;
