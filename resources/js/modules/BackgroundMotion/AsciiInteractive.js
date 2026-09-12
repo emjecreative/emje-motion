@@ -1,4 +1,4 @@
-import { smoothstep, isEditMode, applyEdgeMask, LIMITS, clampNum } from './shared';
+import { smoothstep, isEditMode, applyEdgeMask, LIMITS, clampNum, toNumber } from './shared';
 
 const SIMPLE_CHARS = ['.', '-', ':'];
 const FULL_CHARS = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz!@#$%^&*_+-=|;:,.?/~`'.split('');
@@ -28,23 +28,18 @@ export default class AsciiInteractive {
     constructor(container, config) {
         this.container = container;
         this.config = {
-            color: config.color ?? '#3B82F6',
+            color: config.color ?? '#1227E2',
             charset: config.charset === 'simple' ? 'simple' : 'full',
             cellW: clampNum(parseFloat(config.cellW) || 22, LIMITS.ascii.cell, 22),
             cellH: clampNum(parseFloat(config.cellH) || 26, LIMITS.ascii.cell, 26),
             fontSize: clampNum(parseFloat(config.fontSize) || 14, LIMITS.ascii.fontSize, 14),
             radius: clampNum(parseFloat(config.radius) || 360, LIMITS.ascii.radius, 360),
             innerRadius: clampNum(parseFloat(config.innerRadius) || 30, LIMITS.ascii.innerRadius, 30),
-            maxOpacity: clampNum(parseFloat(config.maxOpacity ?? 0.35) || 0, LIMITS.ascii.maxOpacity, 0),
-            fade: clampNum(parseFloat(config.fade ?? 10) || 0, LIMITS.ascii.fade, 0),
+            maxOpacity: clampNum(toNumber(config.maxOpacity ?? 0.35, 0.35), LIMITS.ascii.maxOpacity, 0.35),
+            fade: clampNum(toNumber(config.fade ?? 10, 10), LIMITS.ascii.fade, 10),
             livePreview: config.livePreview ?? false,
             disableOnMobile: config.disableOnMobile ?? true,
         };
-        // maxOpacity 0 is valid (invisible) — restore it since `|| 0` above
-        // collapses to the fallback path for NaN only.
-        if (parseFloat(config.maxOpacity) === 0) {
-            this.config.maxOpacity = 0;
-        }
 
         this.wrapEl = null;
         this.gridEl = null;

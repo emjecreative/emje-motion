@@ -89,7 +89,7 @@ final class BackgroundMotionControls
             [
                 'label' => esc_html__('Character Color', 'emje-motion'),
                 'type' => Controls_Manager::COLOR,
-                'default' => '#3B82F6',
+                'default' => '#1227E2',
                 'condition' => $asciiCondition,
                 'frontend_available' => true,
                 'render_type' => 'template',
@@ -105,6 +105,29 @@ final class BackgroundMotionControls
                 'options' => [
                     'full' => esc_html__('Full (letters, numbers & symbols)', 'emje-motion'),
                     'simple' => esc_html__('Simple (dots & dashes)', 'emje-motion'),
+                ],
+                'condition' => $asciiCondition,
+                'frontend_available' => true,
+                'render_type' => 'template',
+            ],
+        );
+
+        $element->add_control(
+            'emje_background_ascii_font',
+            [
+                'label' => esc_html__('Font Size', 'emje-motion'),
+                'type' => Controls_Manager::SLIDER,
+                'size_units' => ['px'],
+                'range' => [
+                    'px' => [
+                        'min' => 6,
+                        'max' => 32,
+                        'step' => 1,
+                    ],
+                ],
+                'default' => [
+                    'unit' => 'px',
+                    'size' => 14,
                 ],
                 'condition' => $asciiCondition,
                 'frontend_available' => true,
@@ -151,29 +174,6 @@ final class BackgroundMotionControls
                 'default' => [
                     'unit' => 'px',
                     'size' => 26,
-                ],
-                'condition' => $asciiCondition,
-                'frontend_available' => true,
-                'render_type' => 'template',
-            ],
-        );
-
-        $element->add_control(
-            'emje_background_ascii_font',
-            [
-                'label' => esc_html__('Font Size', 'emje-motion'),
-                'type' => Controls_Manager::SLIDER,
-                'size_units' => ['px'],
-                'range' => [
-                    'px' => [
-                        'min' => 6,
-                        'max' => 32,
-                        'step' => 1,
-                    ],
-                ],
-                'default' => [
-                    'unit' => 'px',
-                    'size' => 14,
                 ],
                 'condition' => $asciiCondition,
                 'frontend_available' => true,
@@ -267,11 +267,17 @@ final class BackgroundMotionControls
                     'unit' => '%',
                     'size' => 10,
                 ],
-                'description' => esc_html__('Top/bottom feather so the grid melts into the container background.', 'emje-motion'),
-                'classes' => 'emje-control--has-tooltip',
                 'condition' => $asciiCondition,
                 'frontend_available' => true,
                 'render_type' => 'template',
+            ],
+        );
+
+        $element->add_control(
+            'emje_background_ascii_divider_mobile',
+            [
+                'type' => Controls_Manager::DIVIDER,
+                'condition' => $asciiCondition,
             ],
         );
 
@@ -284,8 +290,6 @@ final class BackgroundMotionControls
                 'label_off' => esc_html__('Show', 'emje-motion'),
                 'return_value' => 'yes',
                 'default' => 'yes',
-                'description' => esc_html__('Hide this effect on touch devices.', 'emje-motion'),
-                'classes' => 'emje-control--has-tooltip',
                 'condition' => $asciiCondition,
                 'frontend_available' => true,
                 'render_type' => 'template',
@@ -312,7 +316,7 @@ final class BackgroundMotionControls
             [
                 'label' => esc_html__('Base Color', 'emje-motion'),
                 'type' => Controls_Manager::COLOR,
-                'default' => 'rgba(255, 255, 255, 0.08)',
+                'default' => '#1227E21A',
                 'condition' => $pixelCondition,
                 'frontend_available' => true,
                 'render_type' => 'template',
@@ -324,7 +328,23 @@ final class BackgroundMotionControls
             [
                 'label' => esc_html__('Highlight Color', 'emje-motion'),
                 'type' => Controls_Manager::COLOR,
-                'default' => '#3B82F6',
+                'default' => '#1227E2',
+                'condition' => $pixelCondition,
+                'frontend_available' => true,
+                'render_type' => 'template',
+            ],
+        );
+
+        $element->add_control(
+            'emje_background_pixel_fit',
+            [
+                'label' => esc_html__('Fit', 'emje-motion'),
+                'type' => Controls_Manager::SELECT,
+                'default' => 'stretch',
+                'options' => [
+                    'stretch' => esc_html__('Stretch to fill', 'emje-motion'),
+                    'crop' => esc_html__('Crop edges to fill', 'emje-motion'),
+                ],
                 'condition' => $pixelCondition,
                 'frontend_available' => true,
                 'render_type' => 'template',
@@ -348,24 +368,6 @@ final class BackgroundMotionControls
                     'unit' => 'px',
                     'size' => 56,
                 ],
-                'condition' => $pixelCondition,
-                'frontend_available' => true,
-                'render_type' => 'template',
-            ],
-        );
-
-        $element->add_control(
-            'emje_background_pixel_fit',
-            [
-                'label' => esc_html__('Fit', 'emje-motion'),
-                'type' => Controls_Manager::SELECT,
-                'default' => 'stretch',
-                'options' => [
-                    'stretch' => esc_html__('Stretch to fill', 'emje-motion'),
-                    'crop' => esc_html__('Crop edges to fill', 'emje-motion'),
-                ],
-                'description' => esc_html__('Stretch resizes cells to fill the container. Crop keeps Cell Size precise and trims edge cells.', 'emje-motion'),
-                'classes' => 'emje-control--has-tooltip',
                 'condition' => $pixelCondition,
                 'frontend_available' => true,
                 'render_type' => 'template',
@@ -425,7 +427,7 @@ final class BackgroundMotionControls
             [
                 'label' => esc_html__('Border Color', 'emje-motion'),
                 'type' => Controls_Manager::COLOR,
-                'default' => 'rgba(255, 255, 255, 0.15)',
+                'default' => '#1227E21A',
                 'condition' => $pixelCondition,
                 'frontend_available' => true,
                 'render_type' => 'template',
@@ -472,8 +474,6 @@ final class BackgroundMotionControls
                     'unit' => 'px',
                     'size' => 120,
                 ],
-                'description' => esc_html__('Cursor light reach. 0 lights a single cell (classic).', 'emje-motion'),
-                'classes' => 'emje-control--has-tooltip',
                 'condition' => $pixelCondition,
                 'frontend_available' => true,
                 'render_type' => 'template',
@@ -497,8 +497,6 @@ final class BackgroundMotionControls
                     'unit' => 'px',
                     'size' => 0.4,
                 ],
-                'description' => esc_html__('How long lit cells linger before fading back. 0 snaps back instantly.', 'emje-motion'),
-                'classes' => 'emje-control--has-tooltip',
                 'condition' => $pixelCondition,
                 'frontend_available' => true,
                 'render_type' => 'template',
@@ -520,13 +518,19 @@ final class BackgroundMotionControls
                 ],
                 'default' => [
                     'unit' => '%',
-                    'size' => 10,
+                    'size' => 0,
                 ],
-                'description' => esc_html__('Top/bottom feather so the grid melts into the container background.', 'emje-motion'),
-                'classes' => 'emje-control--has-tooltip',
                 'condition' => $pixelCondition,
                 'frontend_available' => true,
                 'render_type' => 'template',
+            ],
+        );
+
+        $element->add_control(
+            'emje_background_pixel_divider_mobile',
+            [
+                'type' => Controls_Manager::DIVIDER,
+                'condition' => $pixelCondition,
             ],
         );
 
@@ -539,8 +543,6 @@ final class BackgroundMotionControls
                 'label_off' => esc_html__('Show', 'emje-motion'),
                 'return_value' => 'yes',
                 'default' => 'yes',
-                'description' => esc_html__('Hide this effect on touch devices.', 'emje-motion'),
-                'classes' => 'emje-control--has-tooltip',
                 'condition' => $pixelCondition,
                 'frontend_available' => true,
                 'render_type' => 'template',
@@ -567,7 +569,7 @@ final class BackgroundMotionControls
             [
                 'label' => esc_html__('Dot Color', 'emje-motion'),
                 'type' => Controls_Manager::COLOR,
-                'default' => '#3B82F6',
+                'default' => '#1227E2',
                 'condition' => $ditherCondition,
                 'frontend_available' => true,
                 'render_type' => 'template',
@@ -579,9 +581,7 @@ final class BackgroundMotionControls
             [
                 'label' => esc_html__('Background Color', 'emje-motion'),
                 'type' => Controls_Manager::COLOR,
-                'default' => 'rgba(255, 255, 255, 0)',
-                'description' => esc_html__('Transparent keeps the native container background visible.', 'emje-motion'),
-                'classes' => 'emje-control--has-tooltip',
+                'default' => '#1227E21A',
                 'condition' => $ditherCondition,
                 'frontend_available' => true,
                 'render_type' => 'template',
@@ -605,8 +605,6 @@ final class BackgroundMotionControls
                     'unit' => 'px',
                     'size' => 8,
                 ],
-                'description' => esc_html__('Base cell size. Larger is blockier and more retro.', 'emje-motion'),
-                'classes' => 'emje-control--has-tooltip',
                 'condition' => $ditherCondition,
                 'frontend_available' => true,
                 'render_type' => 'template',
@@ -676,11 +674,17 @@ final class BackgroundMotionControls
                     'unit' => 'px',
                     'size' => 0.6,
                 ],
-                'description' => esc_html__('0 freezes on a single frame.', 'emje-motion'),
-                'classes' => 'emje-control--has-tooltip',
                 'condition' => $ditherCondition,
                 'frontend_available' => true,
                 'render_type' => 'template',
+            ],
+        );
+
+        $element->add_control(
+            'emje_background_dither_divider_ripple',
+            [
+                'type' => Controls_Manager::DIVIDER,
+                'condition' => $ditherCondition,
             ],
         );
 
@@ -783,13 +787,19 @@ final class BackgroundMotionControls
                 ],
                 'default' => [
                     'unit' => '%',
-                    'size' => 10,
+                    'size' => 0,
                 ],
-                'description' => esc_html__('Top/bottom feather so the pattern melts into the container background.', 'emje-motion'),
-                'classes' => 'emje-control--has-tooltip',
                 'condition' => $ditherCondition,
                 'frontend_available' => true,
                 'render_type' => 'template',
+            ],
+        );
+
+        $element->add_control(
+            'emje_background_dither_divider_mobile',
+            [
+                'type' => Controls_Manager::DIVIDER,
+                'condition' => $ditherCondition,
             ],
         );
 
@@ -1007,7 +1017,7 @@ final class BackgroundMotionControls
                 'label_off' => esc_html__('Off', 'emje-motion'),
                 'return_value' => 'yes',
                 'default' => '',
-                'description' => esc_html__('Auto preview in Editor. Off saves resources.', 'emje-motion'),
+                'description' => esc_html__('Turn ON to preview. If a change doesn\'t appear, toggle OFF then ON again.', 'emje-motion'),
                 'classes' => 'emje-control--has-tooltip',
                 'frontend_available' => true,
                 'render_type' => 'none',

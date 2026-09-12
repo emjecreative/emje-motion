@@ -92,7 +92,7 @@ final class BackgroundMotionFrontend
             $colorRaw = $this->colorResolver->resolveGlobalColorVar($globals['emje_background_ascii_color']);
         }
         if ($colorRaw === '') {
-            $colorRaw = '#3B82F6';
+            $colorRaw = '#1227E2';
         }
 
         $charset = isset($settings['emje_background_ascii_charset']) ? (string) $settings['emje_background_ascii_charset'] : 'full';
@@ -102,7 +102,7 @@ final class BackgroundMotionFrontend
 
         return [
             'effect' => 'ascii',
-            'color' => $this->colorResolver->sanitizeColor($colorRaw, '#3B82F6'),
+            'color' => $this->colorResolver->sanitizeColor($colorRaw, '#1227E2'),
             'charset' => $charset,
             'cellW' => $this->sliderResolver->resolveFloat($settings['emje_background_ascii_cell_w'] ?? 22, 22, 8, 60),
             'cellH' => $this->sliderResolver->resolveFloat($settings['emje_background_ascii_cell_h'] ?? 26, 26, 8, 60),
@@ -135,10 +135,10 @@ final class BackgroundMotionFrontend
             }
         }
         if ($baseRaw === '') {
-            $baseRaw = 'rgba(255, 255, 255, 0.08)';
+            $baseRaw = '#1227E21A';
         }
         if ($activeRaw === '') {
-            $activeRaw = '#3B82F6';
+            $activeRaw = '#1227E2';
         }
         $borderRaw = trim((string) ($settings['emje_background_pixel_border'] ?? ''));
         if (is_array($globals)) {
@@ -147,7 +147,7 @@ final class BackgroundMotionFrontend
             }
         }
         if ($borderRaw === '') {
-            $borderRaw = 'rgba(255, 255, 255, 0.15)';
+            $borderRaw = '#1227E21A';
         }
 
         $fit = isset($settings['emje_background_pixel_fit']) ? (string) $settings['emje_background_pixel_fit'] : 'stretch';
@@ -157,17 +157,17 @@ final class BackgroundMotionFrontend
 
         return [
             'effect' => 'pixel',
-            'base' => $this->colorResolver->sanitizeColor($baseRaw, 'rgba(255, 255, 255, 0.08)'),
-            'active' => $this->colorResolver->sanitizeColor($activeRaw, '#3B82F6'),
+            'base' => $this->colorResolver->sanitizeColor($baseRaw, '#1227E21A'),
+            'active' => $this->colorResolver->sanitizeColor($activeRaw, '#1227E2'),
             'fit' => $fit,
             'cellSize' => $this->sliderResolver->resolveFloat($settings['emje_background_pixel_size'] ?? 56, 56, 24, 96),
             'gap' => $this->sliderResolver->resolveFloat($settings['emje_background_pixel_gap'] ?? 2, 2, 0, 12),
             'borderW' => $this->sliderResolver->resolveFloat($settings['emje_background_pixel_border_w'] ?? 1, 1, 0, 2),
-            'border' => $this->colorResolver->sanitizeColor($borderRaw, 'rgba(255, 255, 255, 0.15)'),
+            'border' => $this->colorResolver->sanitizeColor($borderRaw, '#1227E21A'),
             'speed' => $this->sliderResolver->resolveFloat($settings['emje_background_pixel_speed'] ?? 0.15, 0.15, 0.05, 0.5),
             'radius' => $this->sliderResolver->resolveFloat($settings['emje_background_pixel_radius'] ?? 120, 120, 0, 300),
             'trail' => $this->sliderResolver->resolveFloat($settings['emje_background_pixel_trail'] ?? 0.4, 0.4, 0, 1.5),
-            'fade' => $this->sliderResolver->resolveFloat($settings['emje_background_pixel_fade'] ?? 10, 10, 0, 30),
+            'fade' => $this->sliderResolver->resolveFloat($settings['emje_background_pixel_fade'] ?? 0, 0, 0, 30),
             'livePreview' => ($settings['emje_background_live_preview'] ?? '') === 'yes',
             'disableOnMobile' => ($settings['emje_background_pixel_disable_mobile'] ?? 'yes') === 'yes',
         ];
@@ -192,16 +192,16 @@ final class BackgroundMotionFrontend
             }
         }
         if ($fgRaw === '') {
-            $fgRaw = '#3B82F6';
+            $fgRaw = '#1227E2';
         }
         if ($bgRaw === '') {
-            $bgRaw = 'rgba(255, 255, 255, 0)';
+            $bgRaw = '#1227E21A';
         }
 
         return [
             'effect' => 'dither',
-            'fg' => $this->colorResolver->sanitizeColor($fgRaw, '#3B82F6'),
-            'bg' => $this->colorResolver->sanitizeColor($bgRaw, 'rgba(255, 255, 255, 0)'),
+            'fg' => $this->colorResolver->sanitizeColor($fgRaw, '#1227E2'),
+            'bg' => $this->colorResolver->sanitizeColor($bgRaw, '#1227E21A'),
             'pixel' => $this->sliderResolver->resolveFloat($settings['emje_background_dither_pixel'] ?? 8, 8, 4, 32),
             'density' => $this->sliderResolver->resolveFloat($settings['emje_background_dither_density'] ?? 0.5, 0.5, 0, 1),
             'scale' => $this->sliderResolver->resolveFloat($settings['emje_background_dither_scale'] ?? 1.5, 1.5, 0.5, 4),
@@ -269,22 +269,5 @@ final class BackgroundMotionFrontend
             'livePreview' => ($settings['emje_background_live_preview'] ?? '') === 'yes',
             'disableOnMobile' => ($settings['emje_background_mesh_disable_mobile'] ?? '') === 'yes',
         ];
-    }
-
-    /**
-     * @param mixed $element
-     * @param array<string, mixed> $config
-     */
-    private function addDataAttribute($element, array $config, string $attr, string $class): void
-    {
-        if (! is_object($element) || ! method_exists($element, 'add_render_attribute')) {
-            return;
-        }
-        $json = wp_json_encode($config);
-        if (! is_string($json)) {
-            return;
-        }
-        $element->add_render_attribute('_wrapper', $attr, $json);
-        $element->add_render_attribute('_wrapper', 'class', $class);
     }
 }

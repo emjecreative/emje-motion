@@ -1,4 +1,5 @@
 import gsap from 'gsap';
+import { isEditMode as sharedIsEditMode } from '../../core/env';
 import { buildTextFollow, enterTextFollow, leaveTextFollow } from './strategies/TextFollowCursor.js';
 import { buildDotRing, bindDotRingHover } from './strategies/DotRingCursor.js';
 
@@ -47,23 +48,16 @@ export default class InteractiveCursor {
         this.config.shadowBlur = Math.max(0, Math.min(60, parseInt(this.config.shadowBlur, 10) || 32));
 
         this.cursorEl = null;
-        this.dotEl = null;
         this.ringEl = null;
         this.followEl = null;
-        this.labelEl = null;
         this.xTo = null;
         this.yTo = null;
         this.isInside = false;
     }
 
     isEditMode() {
-        if (document.body.classList.contains('elementor-editor-active')) {
-            return true;
-        }
-        if (typeof window.elementorFrontend !== 'undefined' && window.elementorFrontend.isEditMode) {
-            try { return window.elementorFrontend.isEditMode(); } catch (_e) { return false; }
-        }
-        return false;
+        // Single source of truth: core/env (kept as a method for API stability).
+        return sharedIsEditMode();
     }
 
     shouldInit() {

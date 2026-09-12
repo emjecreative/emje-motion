@@ -1,4 +1,4 @@
-import { getPreviewWindow, getPreviewDocument, isValidEditorColor, pickEditorColor, findTarget } from './utils.js';
+import { getPreviewWindow, getPreviewDocument, pickEditorColor, findTarget, destroyLayerInstance } from './utils.js';
 import { DEFAULT_COLORS, LEGACY_PRESETS as LEGACY_MESH_PRESETS } from '../modules/BackgroundMotion/shared';
 
 export function buildBackgroundConfig(settings) {
@@ -27,19 +27,7 @@ export function buildBackgroundConfig(settings) {
         if (isNaN(n)) return def;
         return Math.max(min, Math.min(max, n));
     };
-    var isValidColor = isValidEditorColor;
-    var color = get('emje_background_ascii_color', '#3B82F6');
-    if (typeof color !== 'string') color = '#3B82F6';
-    var globals = get('__globals__', null);
-    if (globals && typeof globals === 'object' && globals['emje_background_ascii_color']) {
-        var gv = globals['emje_background_ascii_color'];
-        if (typeof gv === 'string' && gv.indexOf('globals/colors') !== -1) {
-            var m = gv.match(/id=([^&]+)/);
-            if (m) gv = 'var(--e-global-color-' + m[1].replace(/[^a-zA-Z0-9_-]/g, '') + ')';
-        }
-        if (isValidColor(gv)) color = gv;
-    }
-    if (!isValidColor(color)) color = '#3B82F6';
+    var color = pickEditorColor(get, 'emje_background_ascii_color', '#1227E2');
     var charset = get('emje_background_ascii_charset', 'full');
     if (['full', 'simple'].indexOf(charset) === -1) charset = 'full';
     return {
@@ -68,39 +56,23 @@ export function buildPixelConfig(settings, live) {
         if (isNaN(n)) return def;
         return Math.max(min, Math.min(max, n));
     };
-    var isValidColor = isValidEditorColor;
-    var pickColor = function(key, fallback) {
-        var c = get(key, fallback);
-        if (typeof c !== 'string') c = fallback;
-        var globals = get('__globals__', null);
-        if (globals && typeof globals === 'object' && globals[key]) {
-            var gv = globals[key];
-            if (typeof gv === 'string' && gv.indexOf('globals/colors') !== -1) {
-                var m = gv.match(/id=([^&]+)/);
-                if (m) gv = 'var(--e-global-color-' + m[1].replace(/[^a-zA-Z0-9_-]/g, '') + ')';
-            }
-            if (isValidColor(gv)) c = gv;
-        }
-        if (!isValidColor(c)) c = fallback;
-        return c;
-    };
     var fit = get('emje_background_pixel_fit', 'stretch');
     if (['stretch', 'crop'].indexOf(fit) === -1) fit = 'stretch';
     return {
         enable: true,
         effect: 'pixel',
         livePreview: live,
-        base: pickColor('emje_background_pixel_base', 'rgba(255, 255, 255, 0.08)'),
-        active: pickColor('emje_background_pixel_active', '#3B82F6'),
+        base: pickEditorColor(get, 'emje_background_pixel_base', '#1227E21A'),
+        active: pickEditorColor(get, 'emje_background_pixel_active', '#1227E2'),
         fit: fit,
         cellSize: num('emje_background_pixel_size', 56, 24, 96),
         gap: num('emje_background_pixel_gap', 2, 0, 12),
         borderW: num('emje_background_pixel_border_w', 1, 0, 2),
-        border: pickColor('emje_background_pixel_border', 'rgba(255, 255, 255, 0.15)'),
+        border: pickEditorColor(get, 'emje_background_pixel_border', '#1227E21A'),
         speed: num('emje_background_pixel_speed', 0.15, 0.05, 0.5),
         radius: num('emje_background_pixel_radius', 120, 0, 300),
         trail: num('emje_background_pixel_trail', 0.4, 0, 1.5),
-        fade: num('emje_background_pixel_fade', 10, 0, 30),
+        fade: num('emje_background_pixel_fade', 0, 0, 30),
         disableOnMobile: get('emje_background_pixel_disable_mobile', 'yes') === 'yes'
     };
 }
@@ -114,28 +86,12 @@ export function buildDitherConfig(settings, live) {
         if (isNaN(n)) return def;
         return Math.max(min, Math.min(max, n));
     };
-    var isValidColor = isValidEditorColor;
-    var pickColor = function(key, fallback) {
-        var c = get(key, fallback);
-        if (typeof c !== 'string') c = fallback;
-        var globals = get('__globals__', null);
-        if (globals && typeof globals === 'object' && globals[key]) {
-            var gv = globals[key];
-            if (typeof gv === 'string' && gv.indexOf('globals/colors') !== -1) {
-                var m = gv.match(/id=([^&]+)/);
-                if (m) gv = 'var(--e-global-color-' + m[1].replace(/[^a-zA-Z0-9_-]/g, '') + ')';
-            }
-            if (isValidColor(gv)) c = gv;
-        }
-        if (!isValidColor(c)) c = fallback;
-        return c;
-    };
     return {
         enable: true,
         effect: 'dither',
         livePreview: live,
-        fg: pickColor('emje_background_dither_fg', '#3B82F6'),
-        bg: pickColor('emje_background_dither_bg', 'rgba(255, 255, 255, 0)'),
+        fg: pickEditorColor(get, 'emje_background_dither_fg', '#1227E2'),
+        bg: pickEditorColor(get, 'emje_background_dither_bg', '#1227E21A'),
         pixel: num('emje_background_dither_pixel', 8, 4, 32),
         density: num('emje_background_dither_density', 0.5, 0, 1),
         scale: num('emje_background_dither_scale', 1.5, 0.5, 4),
@@ -460,14 +416,7 @@ export function applyBackgroundToTarget(win, target, cfg) {
 
 export function destroyBackgroundOnTarget(win, target) {
     try { target.removeAttribute('data-emje-background'); } catch (e) {}
-    try {
-        if (win.EmjeMotionBackground && win.EmjeMotionBackground._instances && win.EmjeMotionBackground._instances.get(target)) {
-            var old = win.EmjeMotionBackground._instances.get(target);
-            if (old && typeof old.destroy === 'function') old.destroy();
-            win.EmjeMotionBackground._instances.delete(target);
-            delete target.dataset.emjeBackgroundInitialized;
-        }
-    } catch (e) {}
+    destroyLayerInstance(win.EmjeMotionBackground, target, 'emjeBackgroundInitialized');
 }
 
 export function hookBackgroundPreviewRender() {

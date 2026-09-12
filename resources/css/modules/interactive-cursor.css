@@ -67,8 +67,8 @@
     padding: var(--emje-follow-py, 28px) var(--emje-follow-px, 36px);
     background: var(--emje-follow-bg, #fff);
     border-radius: var(--emje-follow-radius, 50px);
-    /* box-shadow is set inline via JS (Elementor Box Shadow group) — fallback only */
-    box-shadow: var(--emje-follow-box-shadow, 0 8px 32px rgba(0, 0, 0, 0.12));
+    /* box-shadow is set inline via JS (Elementor Box Shadow group) */
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
     position: absolute;
     top: 50%;
     left: 50%;

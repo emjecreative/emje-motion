@@ -5,18 +5,18 @@ import gsap from 'gsap';
  * Each function operates on the host InteractiveCursor instance (ctx).
  */
 export function buildDotRing(ctx) {
-    ctx.dotEl = document.createElement('div');
-    ctx.dotEl.className = 'emje-cursor__dot';
-    ctx.cursorEl.appendChild(ctx.dotEl);
+    const dotEl = document.createElement('div');
+    dotEl.className = 'emje-cursor__dot';
+    ctx.cursorEl.appendChild(dotEl);
 
     ctx.ringEl = document.createElement('div');
     ctx.ringEl.className = 'emje-cursor__ring';
 
     if (ctx.config.label) {
-        ctx.labelEl = document.createElement('span');
-        ctx.labelEl.className = 'emje-cursor__label';
-        ctx.labelEl.textContent = ctx.config.label;
-        ctx.ringEl.appendChild(ctx.labelEl);
+        const labelEl = document.createElement('span');
+        labelEl.className = 'emje-cursor__label';
+        labelEl.textContent = ctx.config.label;
+        ctx.ringEl.appendChild(labelEl);
     }
 
     ctx.cursorEl.appendChild(ctx.ringEl);

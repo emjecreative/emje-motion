@@ -1,4 +1,4 @@
-import { sanitizeImageUrl, getPreviewWindow, getPreviewDocument, isValidEditorColor, safeCssEnum, safeCssMeasure, findTarget } from './utils.js';
+import { sanitizeImageUrl, getPreviewWindow, getPreviewDocument, isValidEditorColor, pickEditorColor, safeCssEnum, safeCssMeasure, findTarget, destroyLayerInstance } from './utils.js';
 import { buildTextMotionConfig } from './textMotionBridge.js';
 
 export function buildHoverConfig(settings) {
@@ -25,7 +25,7 @@ export function buildHoverConfig(settings) {
     var size = get('emje_hover_reveal_image_size', 'medium');
     if (['thumbnail', 'medium', 'large', 'full'].indexOf(size) === -1) size = 'medium';
 
-    // Legacy PHP hardcodes these (HoverRevealFrontend); mirror for preview parity.
+    // Legacy PHP hardcodes these (InteractionMotionFrontend); mirror for preview parity.
     return {
         imageUrl: url,
         imageSize: size,
@@ -156,16 +156,7 @@ export function buildInteractionConfig(settings) {
             if (isNaN(n)) return def;
             return Math.max(min, Math.min(max, n));
         };
-        var isValidColor = isValidEditorColor;
-        var resolveGlobalColor = function(g){ if(!g||typeof g!=='string')return g; if(g.indexOf('globals/colors')!==-1){ var m=g.match(/id=([^&]+)/); if(m) return 'var(--e-global-color-'+m[1].replace(/[^a-zA-Z0-9_-]/g,'')+')'; } if(g.indexOf('var(')===0) return g; return g; };
-        var color2 = get('emje_interaction_cursor_color', '#000000');
-        if (!color2 || typeof color2 !== 'string') color2 = '#000000';
-        var globalsColorDot = get('__globals__', null);
-        if (globalsColorDot && typeof globalsColorDot === 'object' && globalsColorDot['emje_interaction_cursor_color']) {
-            var gvColorDot = resolveGlobalColor(globalsColorDot['emje_interaction_cursor_color']);
-            if (isValidColor(gvColorDot)) color2 = gvColorDot;
-        }
-        if (!isValidColor(color2)) color2 = '#000000';
+        var color2 = pickEditorColor(get, 'emje_interaction_cursor_color', '#000000');
         var scale2b = parseFloat(get('emje_interaction_cursor_hover_scale', 1.5));
         if (isNaN(scale2b)) scale2b = 1.5;
         scale2b = Math.max(1.2, Math.min(2, scale2b));
@@ -177,21 +168,8 @@ export function buildInteractionConfig(settings) {
             if (label2 === '') label2 = 'View';
             if (label2.length > 30) label2 = label2.substring(0, 30);
         }
-        var bg2 = get('emje_interaction_cursor_bg_color', '#FFFFFF');
-        var textColor2 = get('emje_interaction_cursor_text_color', '#111111');
-        var globals = get('__globals__', null);
-        if (globals && typeof globals === 'object') {
-            if (globals['emje_interaction_cursor_bg_color']) {
-                var gv = resolveGlobalColor(globals['emje_interaction_cursor_bg_color']);
-                if (isValidColor(gv)) bg2 = gv;
-            }
-            if (globals['emje_interaction_cursor_text_color']) {
-                var gv2 = resolveGlobalColor(globals['emje_interaction_cursor_text_color']);
-                if (isValidColor(gv2)) textColor2 = gv2;
-            }
-        }
-        if (!isValidColor(bg2)) bg2 = '#FFFFFF';
-        if (!isValidColor(textColor2)) textColor2 = '#111111';
+        var bg2 = pickEditorColor(get, 'emje_interaction_cursor_bg_color', '#FFFFFF');
+        var textColor2 = pickEditorColor(get, 'emje_interaction_cursor_text_color', '#111111');
         var padY2 = getSlider('emje_interaction_cursor_padding_y', 40, 8, 48);
         var padX2 = getSlider('emje_interaction_cursor_padding_x', 32, 12, 56);
         var radius2 = getSlider('emje_interaction_cursor_radius', 99, 0, 100);
@@ -429,12 +407,7 @@ export function bindEditorChange() {
                     var cfg = buildHoverConfig(settings);
                     if (!cfg.imageUrl) {
                         try { target.removeAttribute('data-emje-hover-reveal'); } catch (e) {}
-                        if (win.EmjeMotionHoverReveal && win.EmjeMotionHoverReveal._instances && win.EmjeMotionHoverReveal._instances.get(target)) {
-                            var old2 = win.EmjeMotionHoverReveal._instances.get(target);
-                            if (old2 && typeof old2.destroy === 'function') old2.destroy();
-                            win.EmjeMotionHoverReveal._instances.delete(target);
-                            delete target.dataset.emjeHoverRevealInitialized;
-                        }
+                        destroyLayerInstance(win.EmjeMotionHoverReveal, target, 'emjeHoverRevealInitialized');
                         return;
                     }
                     try { target.setAttribute('data-emje-hover-reveal', JSON.stringify(cfg)); } catch (e) {}
@@ -497,22 +470,8 @@ export function bindEditorChange() {
                         if (!t) return;
                         try { t.removeAttribute('data-emje-hover-reveal'); } catch(e){}
                         try { t.removeAttribute('data-emje-cursor'); } catch(e){}
-                        try {
-                            if (win.EmjeMotionHoverReveal && win.EmjeMotionHoverReveal._instances && win.EmjeMotionHoverReveal._instances.get(t)) {
-                                var oh = win.EmjeMotionHoverReveal._instances.get(t);
-                                if (oh && typeof oh.destroy === 'function') oh.destroy();
-                                win.EmjeMotionHoverReveal._instances.delete(t);
-                                delete t.dataset.emjeHoverRevealInitialized;
-                            }
-                        } catch(e){}
-                        try {
-                            if (win.EmjeMotionCursor && win.EmjeMotionCursor._instances && win.EmjeMotionCursor._instances.get(t)) {
-                                var oc = win.EmjeMotionCursor._instances.get(t);
-                                if (oc && typeof oc.destroy === 'function') oc.destroy();
-                                win.EmjeMotionCursor._instances.delete(t);
-                                delete t.dataset.emjeCursorInitialized;
-                            }
-                        } catch(e){}
+                        destroyLayerInstance(win.EmjeMotionHoverReveal, t, 'emjeHoverRevealInitialized');
+                        destroyLayerInstance(win.EmjeMotionCursor, t, 'emjeCursorInitialized');
                     });
                     return;
                 }
@@ -524,15 +483,9 @@ export function bindEditorChange() {
                         var targetH = findTarget(doc, widgetId, 'data-emje-hover-reveal') || anyTarget;
                         if (!targetH) targetH = findTarget(doc, widgetId, 'data-emje-cursor');
                         if (!targetH) return;
-                        try {
-                            if (win.EmjeMotionCursor && win.EmjeMotionCursor._instances && win.EmjeMotionCursor._instances.get(targetH)) {
-                                var oc3 = win.EmjeMotionCursor._instances.get(targetH);
-                                if (oc3 && typeof oc3.destroy === 'function') oc3.destroy();
-                                win.EmjeMotionCursor._instances.delete(targetH);
-                                delete targetH.dataset.emjeCursorInitialized;
-                                targetH.removeAttribute('data-emje-cursor');
-                            }
-                        } catch(e){}
+                        if (destroyLayerInstance(win.EmjeMotionCursor, targetH, 'emjeCursorInitialized')) {
+                            try { targetH.removeAttribute('data-emje-cursor'); } catch(e){}
+                        }
                         if (!cfg.imageUrl) {
                             try { targetH.removeAttribute('data-emje-hover-reveal'); } catch(e){}
                             return;
@@ -543,15 +496,9 @@ export function bindEditorChange() {
                         var targetC = findTarget(doc, widgetId, 'data-emje-cursor') || anyTarget;
                         if (!targetC) targetC = findTarget(doc, widgetId, 'data-emje-hover-reveal');
                         if (!targetC) return;
-                        try {
-                            if (win.EmjeMotionHoverReveal && win.EmjeMotionHoverReveal._instances && win.EmjeMotionHoverReveal._instances.get(targetC)) {
-                                var oh3 = win.EmjeMotionHoverReveal._instances.get(targetC);
-                                if (oh3 && typeof oh3.destroy === 'function') oh3.destroy();
-                                win.EmjeMotionHoverReveal._instances.delete(targetC);
-                                delete targetC.dataset.emjeHoverRevealInitialized;
-                                targetC.removeAttribute('data-emje-hover-reveal');
-                            }
-                        } catch(e){}
+                        if (destroyLayerInstance(win.EmjeMotionHoverReveal, targetC, 'emjeHoverRevealInitialized')) {
+                            try { targetC.removeAttribute('data-emje-hover-reveal'); } catch(e){}
+                        }
                         try { targetC.setAttribute('data-emje-cursor', JSON.stringify({type: cfg.type, size: cfg.size, color: cfg.color, hoverScale: cfg.hoverScale, hideNative: cfg.hideNative, label: cfg.label, bgColor: cfg.bgColor, textColor: cfg.textColor, paddingY: cfg.paddingY, paddingX: cfg.paddingX, radius: cfg.radius, fontSize: cfg.fontSize, typography: cfg.typography, entrance: cfg.entrance, followSmoothness: cfg.followSmoothness, boxShadow: cfg.boxShadow, shadow: cfg.shadow, shadowBlur: cfg.shadowBlur, livePreview: cfg.livePreview})); } catch(e){}
                         if (win.EmjeMotionCursor && win.EmjeMotionCursor.reInit) win.EmjeMotionCursor.reInit(targetC);
                     }

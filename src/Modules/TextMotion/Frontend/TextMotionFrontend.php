@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace EmjeCreative\EmjeMotion\Modules\TextMotion\Frontend;
 
 use Elementor\Widget_Base;
+use EmjeCreative\EmjeMotion\Support\RenderAttributes;
 
 /**
  * Handles frontend integration for the Text Motion module.
@@ -57,17 +58,7 @@ final class TextMotionFrontend
 
         $config = $this->buildConfig($settings);
 
-        $widget->add_render_attribute(
-            '_wrapper',
-            'class',
-            self::MOTION_CLASS,
-        );
-
-        $widget->add_render_attribute(
-            '_wrapper',
-            'data-emje-motion',
-            wp_json_encode($config),
-        );
+        RenderAttributes::addDataAttribute($widget, $config, 'data-emje-motion', self::MOTION_CLASS);
 
     }
 

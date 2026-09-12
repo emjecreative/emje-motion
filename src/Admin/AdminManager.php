@@ -225,7 +225,7 @@ final class AdminManager
 
         $modules = [];
 
-        // Visible modules in Overview (3)
+        // Visible modules in Overview (4)
         $posted = wp_unslash($_POST);
         foreach (['text-motion', 'smooth-scroll', 'interaction-motion', 'background-motion'] as $id) {
             // phpcs:ignore WordPress.Security.NonceVerification.Missing -- already verified
@@ -238,10 +238,15 @@ final class AdminManager
         // are dropped on the next save automatically.
         $this->settings->saveModules($modules);
 
+        $this->notifySaved('emje_motion_modules', 'emje_motion_modules_saved', esc_html__('Features saved.', 'emje-motion'));
+    }
+
+    private function notifySaved(string $setting, string $code, string $message): void
+    {
         add_settings_error(
-            'emje_motion_modules',
-            'emje_motion_modules_saved',
-            esc_html__('Features saved.', 'emje-motion'),
+            $setting,
+            $code,
+            $message,
             'updated',
         );
 
@@ -276,14 +281,7 @@ final class AdminManager
 
         $this->settings->saveSettings($settings);
 
-        add_settings_error(
-            'emje_motion_settings',
-            'emje_motion_settings_saved',
-            esc_html__('Settings saved.', 'emje-motion'),
-            'updated',
-        );
-
-        set_transient('settings_errors', get_settings_errors(), 30);
+        $this->notifySaved('emje_motion_settings', 'emje_motion_settings_saved', esc_html__('Settings saved.', 'emje-motion'));
     }
 
     private function handleCheckUpdates(): void
@@ -397,7 +395,7 @@ final class AdminManager
             ],
             'background-motion' => [
                 'label' => esc_html__('Background Motion', 'emje-motion'),
-                'description' => esc_html__('ASCII & Pixel ambient backgrounds for Container.', 'emje-motion'),
+                'description' => esc_html__('ASCII, Pixel, Dither & Mesh Gradient ambient backgrounds for Container.', 'emje-motion'),
                 'status' => esc_html__('Available', 'emje-motion'),
                 'icon' => 'sparkle',
             ],

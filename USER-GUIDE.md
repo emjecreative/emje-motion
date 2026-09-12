@@ -16,7 +16,7 @@ Beautiful motion for your website.
 
 ## Quick start
 
-1. Open **Emje Motion → Overview** and enable the modules you want (Text Motion and Interaction Motion are on by default; Smooth Scroll is opt-in).
+1. Open **Emje Motion → Overview** and enable the modules you want (Text Motion, Interaction Motion, and Background Motion are on by default; Smooth Scroll is opt-in).
 2. Edit any page with Elementor.
 3. Select a Heading, Text Editor, or Container widget, open the **Style** tab, and turn on **Enable** in the Emje Motion section.
 4. Tweak the controls — **Live Preview** replays the effect as you change it.
@@ -97,10 +97,10 @@ Available on **Container** elements, **Style** tab, **Background Motion** sectio
 
 An interactive character grid filling the Container: faint dots idle, glowing letters/numbers/symbols near the cursor.
 
-- **Character Color** — default blue (`#3B82F6`).
+- **Character Color** — default indigo (`#1227E2`).
 - **Hover Characters** — Full (default) or Simple.
-- **Cell Width / Cell Height** — grid density (defaults `22px` / `26px`).
 - **Font Size** — character size (default `14px`).
+- **Cell Width / Cell Height** — grid density (defaults `22px` / `26px`).
 - **Glow Radius / Inner Radius** — cursor light reach (defaults `360px` / `30px`).
 - **Max Opacity** — brightest glow (default `0.35`).
 - **Edge Fade** — top/bottom feather so the grid melts into the background (default `10%`).
@@ -112,15 +112,15 @@ Respects reduced motion.
 
 Interactive pixel grid that lights up under your cursor.
 
-- **Base Color** — resting cell color (default translucent white).
-- **Highlight Color** — lit cell color (default `#3B82F6`).
+- **Base Color** — resting cell color (default faint indigo `#1227E21A`).
+- **Highlight Color** — lit cell color (default `#1227E2`).
 - **Fit** — Stretch to fill (default; cells resize to fill the container, zero leftover) or Crop edges to fill (Cell Size stays precise, edge cells trimmed).
 - **Cell Size / Gap** — grid density (defaults `56px` / `2px`). Gap is the spacing between cells when Border Width is `0`; it is ignored while dividers are active.
-- **Border Width / Border Color** — single shared divider lines between cells like the reference (defaults `1px` translucent white; `0` hides them and Gap spacing applies instead).
+- **Border Width / Border Color** — single shared divider lines between cells like the reference (defaults `1px` faint indigo `#1227E21A`; `0` hides them and Gap spacing applies instead).
 - **Transition Speed** — fade in/out pace (default `0.15`).
 - **Glow Radius** — cursor light reach in pixels (default `120px`; `0` lights a single cell).
 - **Trail Fade** — how long lit cells linger before fading back, in seconds (default `0.4`; `0` snaps back instantly).
-- **Edge Fade** — top/bottom feather so the grid melts into the background (default `10%`).
+- **Edge Fade** — top/bottom feather so the grid melts into the background (default `0%`).
 - **Disable on Mobile & Tablet** — hide on touch devices (on by default).
 
 Respects reduced motion.
@@ -184,7 +184,7 @@ Version info, **System Status** (plugin, WordPress, Elementor, and PHP versions 
 
 **Motion doesn't appear.** Check in order: the module toggle in Overview is on → **Enable** is on in the widget's Style tab → clear any cache (page cache, Elementor → Tools → Regenerate CSS) → confirm you're viewing the frontend, not a cached copy.
 
-**Motion missing on mobile/tablet.** Each effect has its own **Disable on Mobile & Tablet** switch (on by default except Dither) — turn it off on that effect to show it on touch devices.
+**Motion missing on mobile/tablet.** Each effect has its own **Disable on Mobile & Tablet** switch (on by default except Dither and Mesh Gradient, which stay visible) — turn it off on that effect to show it on touch devices.
 
 **"405 Not Allowed" when uploading the zip.** Some hosts block dashboard uploads at the server level — this is not caused by the plugin. Install via File Manager instead: delete the old `emje-motion` folder, extract the release zip so the main file sits directly at `wp-content/plugins/emje-motion/emje-motion.php`, then Activate.
 

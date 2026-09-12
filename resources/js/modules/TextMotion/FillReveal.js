@@ -269,10 +269,7 @@ export default class FillReveal extends Animation {
 		document.body.removeChild(temp);
 
 		if (this.masks.length <= 1) {
-			// Fallback to single
-			if (this.dom.wrapper && this.dom.wrapper.parentNode) {
-				this.dom.wrapper.remove();
-			}
+			// Fallback to single (wrapper is still detached here, nothing to remove)
 			this.lines = [];
 			this.masks = [];
 			return false;
@@ -356,7 +353,7 @@ export default class FillReveal extends Animation {
 
 	/**
 	 * Set progress directly for scrub (linear, no ease).
-	 * Supports per-line stagger diskalakan: total = duration + (n-1)*stagger.
+	 * Supports per-line stagger scaling: total = duration + (n-1)*stagger.
 	 * @param {number} p
 	 */
 	setProgress(p) {

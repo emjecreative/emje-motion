@@ -101,3 +101,46 @@ export function findTarget(previewDoc, widgetId, attr) {
     }
     return fallback;
 }
+
+/**
+ * Walk an Elementor elements tree and collect container models.
+ * Single source of truth for the model walk previously duplicated in
+ * previewSync (kit sync + preview-loaded sync).
+ */
+export function collectContainerModels(models) {
+    var out = [];
+    var walk = function(collection) {
+        if (!collection) return;
+        var list = collection.models || collection;
+        if (!list || !list.length) return;
+        for (var i = 0; i < list.length; i++) {
+            var m = list[i];
+            if (!m || typeof m.get !== 'function') continue;
+            if (m.get('elType') === 'container') out.push(m);
+            var ch = m.get('elements');
+            if (ch) walk(ch);
+        }
+    };
+    walk(models);
+    return out;
+}
+
+/**
+ * Destroy a layer instance tracked in a module namespace's _instances map
+ * (target → {destroy}) and clear its initialized flag. Returns true when
+ * something was actually destroyed. Single source of truth for the
+ * get → destroy → delete → flag-delete dance previously copied across
+ * every bridge file.
+ */
+export function destroyLayerInstance(holder, target, flag) {
+    try {
+        if (holder && holder._instances && holder._instances.get(target)) {
+            var old = holder._instances.get(target);
+            if (old && typeof old.destroy === 'function') old.destroy();
+            holder._instances.delete(target);
+            if (flag && target.dataset) delete target.dataset[flag];
+            return true;
+        }
+    } catch (e) {}
+    return false;
+}

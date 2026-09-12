@@ -1,12 +1,7 @@
-import { smoothstep, isEditMode, applyEdgeMask, LIMITS, clampNum } from './shared';
+import { smoothstep, isEditMode, applyEdgeMask, LIMITS, clampNum, toNumber } from './shared';
 
 const MAX_CELLS = LIMITS.pixel.maxCells;
 const MAX_DELTA = 8;
-
-function toNumber(value, fallback) {
-    const n = parseFloat(value);
-    return Number.isNaN(n) ? fallback : n;
-}
 
 /**
  * Pixel — interactive pixel grid that lights up under the cursor.
@@ -22,17 +17,17 @@ export default class PixelGrid {
         const fitRaw = typeof config.fit === 'string' ? config.fit : 'stretch';
         this.container = container;
         this.config = {
-            base: typeof config.base === 'string' && config.base.trim() !== '' ? config.base : 'rgba(255, 255, 255, 0.08)',
-            active: typeof config.active === 'string' && config.active.trim() !== '' ? config.active : '#3B82F6',
+            base: typeof config.base === 'string' && config.base.trim() !== '' ? config.base : '#1227E21A',
+            active: typeof config.active === 'string' && config.active.trim() !== '' ? config.active : '#1227E2',
             fit: fitRaw === 'crop' ? 'crop' : 'stretch',
             cellSize: clampNum(toNumber(config.cellSize, 56), LIMITS.pixel.cellSize, 56),
             gap: clampNum(gapRaw, LIMITS.pixel.gap, 2),
             borderW: clampNum(borderRaw, LIMITS.pixel.borderW, 1),
-            border: typeof config.border === 'string' && config.border.trim() !== '' ? config.border : 'rgba(255, 255, 255, 0.15)',
+            border: typeof config.border === 'string' && config.border.trim() !== '' ? config.border : '#1227E21A',
             speed: clampNum(toNumber(config.speed, 0.15), LIMITS.pixel.speed, 0.15),
             radius: clampNum(radiusRaw, LIMITS.pixel.radius, 120),
             trail: clampNum(trailRaw, LIMITS.pixel.trail, 0.4),
-            fade: clampNum(toNumber(config.fade ?? 10, 10), LIMITS.pixel.fade, 10),
+            fade: clampNum(toNumber(config.fade ?? 0, 0), LIMITS.pixel.fade, 0),
             livePreview: config.livePreview ?? false,
             disableOnMobile: config.disableOnMobile ?? true,
         };

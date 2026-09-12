@@ -13,9 +13,10 @@ use EmjeCreative\EmjeMotion\Updater\MuPluginInstaller;
 final class Activator
 {
     /**
-     * @param bool $networkWide Whether activation is network-wide (multisite).
+     * @param bool $_networkWide Whether activation is network-wide (multisite).
+     *                           Unused; kept for the WordPress hook signature.
      */
-    public static function activate(bool $networkWide = false): void
+    public static function activate(bool $_networkWide = false): void
     {
         $repo = new SettingsRepository();
         $repo->ensureDefaults();

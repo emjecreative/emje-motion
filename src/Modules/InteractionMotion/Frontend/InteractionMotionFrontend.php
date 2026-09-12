@@ -6,6 +6,7 @@ namespace EmjeCreative\EmjeMotion\Modules\InteractionMotion\Frontend;
 
 use EmjeCreative\EmjeMotion\Modules\InteractionMotion\Services\ColorResolver;
 use EmjeCreative\EmjeMotion\Modules\InteractionMotion\Services\SliderResolver;
+use EmjeCreative\EmjeMotion\Support\RenderAttributes;
 
 /**
  * Renders Interaction Motion frontend attributes for Container.
@@ -67,10 +68,10 @@ final class InteractionMotionFrontend
                 if (empty($config['imageUrl'])) {
                     return;
                 }
-                $this->addDataAttribute($element, $config, 'data-emje-hover-reveal', 'emje-hover-reveal');
+                RenderAttributes::addDataAttribute($element, $config, 'data-emje-hover-reveal', 'emje-hover-reveal');
             } elseif ($newEffect === 'interactive-cursor') {
                 $config = $this->buildCursorConfig($settings, true);
-                $this->addDataAttribute($element, $config, 'data-emje-cursor', 'emje-interactive-cursor');
+                RenderAttributes::addDataAttribute($element, $config, 'data-emje-cursor', 'emje-interactive-cursor');
             }
             return;
         }
@@ -81,13 +82,13 @@ final class InteractionMotionFrontend
             if (empty($config['imageUrl'])) {
                 return;
             }
-            $this->addDataAttribute($element, $config, 'data-emje-hover-reveal', 'emje-hover-reveal');
+            RenderAttributes::addDataAttribute($element, $config, 'data-emje-hover-reveal', 'emje-hover-reveal');
         }
 
         // Legacy fallback: handle old cursor (separate check, but if both legacy were enabled, both will render — now discouraged)
         if ($isLegacyCursor) {
             $config = $this->buildCursorConfig($settings, false);
-            $this->addDataAttribute($element, $config, 'data-emje-cursor', 'emje-interactive-cursor');
+            RenderAttributes::addDataAttribute($element, $config, 'data-emje-cursor', 'emje-interactive-cursor');
         }
     }
 
@@ -668,24 +669,5 @@ final class InteractionMotionFrontend
     private function resolveSliderValue(mixed $value, int $default, int $min, int $max): int
     {
         return $this->sliderResolver->resolve($value, $default, $min, $max);
-    }
-
-    /**
-     * @param mixed $element
-     * @param array<string, mixed> $config
-     * @param string $attr
-     * @param string $class
-     */
-    private function addDataAttribute($element, array $config, string $attr, string $class): void
-    {
-        if (! is_object($element) || ! method_exists($element, 'add_render_attribute')) {
-            return;
-        }
-        $json = wp_json_encode($config);
-        if (! is_string($json)) {
-            return;
-        }
-        $element->add_render_attribute('_wrapper', $attr, $json);
-        $element->add_render_attribute('_wrapper', 'class', $class);
     }
 }

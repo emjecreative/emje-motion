@@ -1,4 +1,5 @@
 import ElementManager from './ElementManager';
+import { isEditMode as sharedIsEditMode } from './env';
 import ScrambleText from '../modules/TextMotion/ScrambleText';
 import TextUnfold from '../modules/TextMotion/TextUnfold';
 import FillReveal from '../modules/TextMotion/FillReveal';
@@ -46,9 +47,6 @@ export default class MotionEngine {
             hasPlayed = true;
         };
 
-        // Store play handler for re-use on reInit (force replay in editor)
-        animation._emjeResetPlayed = () => { hasPlayed = false; };
-
         switch (config.trigger) {
             case 'hover':
                 animation._emjeHoverHandler = () => {
@@ -77,7 +75,7 @@ export default class MotionEngine {
                 // Uses native scrollY + getBoundingClientRect, so it works with or without Lenis
                 // (no ScrollTrigger / scrollerProxy needed). Scroll up reverses, stop = pause.
                 try {
-                    // Prepare animation DOM first — preserve per-line for scrub stagger (rekomendasi diskalakan)
+                    // Prepare animation DOM first — preserve per-line scrub stagger.
                     if (typeof animation.prepare === 'function') {
                         try { animation.prepare(); } catch (e) {}
                     }
@@ -174,17 +172,8 @@ export default class MotionEngine {
     }
 
     isEditMode() {
-        if (document.body.classList.contains('elementor-editor-active')) {
-            return true;
-        }
-        if (typeof window.elementorFrontend !== 'undefined' && window.elementorFrontend.isEditMode) {
-            try {
-                return window.elementorFrontend.isEditMode();
-            } catch (e) {
-                return false;
-            }
-        }
-        return false;
+        // Single source of truth: core/env (kept as a method for API stability).
+        return sharedIsEditMode();
     }
 
     shouldSkipDueToReducedMotion() {
@@ -256,10 +245,6 @@ export default class MotionEngine {
             return;
         }
 
-        if (already && force) {
-            // Force path already destroyed, proceed
-        }
-
         const config = this.elementManager.getConfig(element);
         if (!config) {
             return;
@@ -288,11 +273,6 @@ export default class MotionEngine {
         this.configSnapshots.set(element, JSON.stringify(config));
 
         this.setupTrigger(animation, element, config);
-
-        // In edit mode, force replay even if playOnce was true before
-        if (this.isEditMode() && typeof animation._emjeResetPlayed === 'function') {
-            // Already played via setupTrigger load case, ensure it's visible
-        }
     }
 
     /**

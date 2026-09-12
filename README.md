@@ -9,7 +9,7 @@ Emje Motion gives your pages movement with a purpose — every animation earns i
 - **Text Motion** — Scramble, Unfold & Fill Reveal for Heading & Text Editor
 - **Smooth Scroll** — buttery site-wide scrolling, zero jank
 - **Interaction Motion** — Hover Reveal & Interactive Cursor for Containers
-- **Background Motion** — ASCII, Pixel & Dither ambient backgrounds for Containers
+- **Background Motion** — ASCII, Pixel, Dither & Mesh Gradient ambient backgrounds for Containers
 
 ## Requirements
 
@@ -19,7 +19,7 @@ Emje Motion gives your pages movement with a purpose — every animation earns i
 
 ## Installation
 
-1. Download the latest `emje-motion-1.0.x.zip` from [Releases](https://github.com/emjecreative/emje-motion/releases/latest)
+1. Download the latest `emje-motion-*.zip` (versioned, e.g. `emje-motion-1.2.0.zip`) from [Releases](https://github.com/emjecreative/emje-motion/releases/latest)
 2. WordPress → Plugins → Add New → Upload Plugin → Choose File → Install Now
 3. Ensure Elementor is active
 4. Configure at **Emje Motion → Overview / Settings**

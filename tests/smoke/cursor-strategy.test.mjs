@@ -1,4 +1,4 @@
-import { tmpUrl, model, eq } from './helpers.mjs';
+import { tmpUrl, eq } from './helpers.mjs';
 
 // Strategy modules expose the type-specific builders/handlers.
 const text = await import(tmpUrl('mod-textFollowCursor.mjs'));

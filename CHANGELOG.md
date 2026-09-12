@@ -5,6 +5,30 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
 
+### Changed
+- **Mesh Gradient: new Lagoon default palette** — Color 1–4 now default to deep sea navy (`#0C4A6E`), blue (`#0284C7`), mint (`#5EEAD4`), sea foam (`#F0FDFA`) instead of the old red/blue Beach. Saved pages (explicit colors or legacy presets) are unaffected; only fresh sections and unparseable-color fallbacks use the new palette.
+- **Code cleanup sweep** — removed dead code (deprecated `PRESETS` alias, empty `MotionEngine` branches, unreachable `FillReveal` cleanup, redundant `HoverReveal` fallback, unused `MOTION_LIST`) and unified duplicated helpers into single sources of truth (`core/env`, `BackgroundMotion/shared`, bridge `utils`, `Support/ModuleRegistry`, `Support/RenderAttributes`). No behavior changes.
+- **Code cleanup round 3** — fixed a dropped `livePreview` in Interactive Cursor (editor gate was dead), a Dither `disableOnMobile` default mismatch, and an ASCII numeric-fallback quirk; removed write-only fields (`rawColors`, cursor `dotEl`/`labelEl`); aligned legacy cursor bridge defaults with PHP; routed TextMotion through `RenderAttributes`; fixed stale comments.
+- **Background Motion: new indigo defaults + quieter mobile switches** — ASCII Character Color, Pixel Highlight Color, and Dither Dot Color now default to indigo (`#1227E2`); Pixel Base/Border and Dither Background default to its faint tint (`#1227E21A`); Pixel and Dither Edge Fade default to `0`. The tooltip text on all six "Disable on Mobile & Tablet" switches was removed. Saved pages keep their stored values; only fresh sections and fallbacks use the new defaults.
+- **Background Motion: tidier control order** — ASCII Font Size now sits before Cell Width/Height, Pixel Fit before Cell Size, and Mesh Motion Type above the four colors. No setting values changed.
+- **Mesh Gradient: quieter panel** — tooltips removed from Motion Type, Animation Speed, Quality, and Edge Fade; Quality now sits above Animation Speed.
+- **Dither: quieter panel + ripple divider** — tooltips removed from Background Color, Pixel Size, Animation Speed, and Edge Fade; a divider line now sits above the Enable Ripples toggle.
+- **Pixel + ASCII: quieter panel** — tooltips removed from Pixel Fit, Glow Radius, Trail Fade, Edge Fade, and ASCII Edge Fade.
+- **Background Motion: clearer Live Preview hint + mobile dividers** — the Live Preview tooltip now explains the OFF→ON repair trick, and each effect shows a divider line above its "Disable on Mobile & Tablet" switch.
+
+### Fixed
+- **Mesh Gradient: Global Colors now render** — picking an Elementor Global Color previously fell back to the default palette silently; `var()` references are now resolved against the page. `rgb()` percentages and `hsl()` colors are parsed too.
+- **Mesh Gradient: sharper long sessions on mobile GPUs** — the shader prefers `highp` precision where available so the animation doesn't degrade after running a long time.
+- **Mesh Gradient: smoother editor preview** — changing colors or Motion Type updates the running layer in place instead of re-creating the WebGL context.
+- **Mesh Gradient: blank-preview hardening** — the live-update path now refuses detached nodes and dead canvases (falls back to a full re-init), failed inits no longer leave a zombie data attribute behind, and opt-in tracing (`window._emjeBgDebug = true`) covers init/apply/update paths.
+- **Mesh Gradient: no more orphan layers in the editor** — every apply sweeps stale wrappers (one container, one layer), the render hook re-resolves the live node by data-id, and loops on detached containers stop instead of burning rAF + GL contexts.
+- **Dither: translucent backgrounds no longer fade to solid** — a non-transparent `Background Color` (e.g. the new `#1227E21A` tint) used to stack its alpha every frame, flashing then settling on full blue. The veil now starts from a cleared frame each paint, so it stays a constant tint.
+- **Dither: Global Colors now render** — Dot/Background Colors picked from Elementor Global Colors previously fell back to defaults silently (canvas 2D cannot resolve `var()`); they are now resolved against the page like Mesh Gradient. Pixel and ASCII needed no fix (plain CSS resolves `var()` natively).
+- **Global Colors resolve kit-scoped variables too** — `var()` lookup now tries the container element first (inheriting kit-scoped custom properties), then body, then `:root`, instead of `:root` only.
+
+### Added
+- **Background Motion: Mesh Gradient** — animated WebGL mesh-gradient background (raw WebGL, no Three.js): four custom color lobes move and blend, alive without mouse input. Controls: Color 1–4, Motion Type (Drift/Swirl/Pulse/Flow), Animation Speed (`0` freezes), Quality (render resolution), Opacity, Edge Fade, Disable on Mobile & Tablet (visible by default). Static-gradient fallback where WebGL is unavailable, auto-degrades under load, pauses offscreen, respects reduced motion.
+
 ## [1.2.0] - 2026-09-12
 
 ### Changed

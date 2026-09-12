@@ -9,10 +9,7 @@ use EmjeCreative\EmjeMotion\Admin\AdminNotice;
 use EmjeCreative\EmjeMotion\Admin\SettingsRepository;
 use EmjeCreative\EmjeMotion\Assets\AssetsManager;
 use EmjeCreative\EmjeMotion\Elementor\ElementorManager;
-use EmjeCreative\EmjeMotion\Modules\BackgroundMotion\BackgroundMotion;
-use EmjeCreative\EmjeMotion\Modules\InteractionMotion\InteractionMotion;
-use EmjeCreative\EmjeMotion\Modules\SmoothScroll\SmoothScroll;
-use EmjeCreative\EmjeMotion\Modules\TextMotion\TextMotion;
+use EmjeCreative\EmjeMotion\Support\ModuleRegistry;
 use EmjeCreative\EmjeMotion\Updater\GitHubUpdater;
 use EmjeCreative\EmjeMotion\Updater\MuPluginInstaller;
 
@@ -85,16 +82,7 @@ final class Plugin
      */
     private function registerModuleBindings(): void
     {
-        // Legacy HoverReveal + InteractiveCursor modules are retired; old
-        // pages keep rendering through InteractionMotion's legacy fallback.
-        $modules = [
-            TextMotion::class,
-            SmoothScroll::class,
-            InteractionMotion::class,
-            BackgroundMotion::class,
-        ];
-
-        foreach ($modules as $class) {
+        foreach (ModuleRegistry::classes() as $class) {
             $this->container->set(
                 $class,
                 static fn () => new $class(),

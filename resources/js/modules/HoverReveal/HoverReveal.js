@@ -1,4 +1,5 @@
 import gsap from 'gsap';
+import { isEditMode as sharedIsEditMode } from '../../core/env';
 
 /**
  * Hover Reveal — image follows cursor inside Container.
@@ -18,13 +19,8 @@ export default class HoverReveal {
     }
 
     isEditMode() {
-        if (document.body.classList.contains('elementor-editor-active')) {
-            return true;
-        }
-        if (typeof window.elementorFrontend !== 'undefined' && window.elementorFrontend.isEditMode) {
-            try { return window.elementorFrontend.isEditMode(); } catch (e) { return false; }
-        }
-        return false;
+        // Single source of truth: core/env (kept as a method for API stability).
+        return sharedIsEditMode();
     }
 
     shouldInit() {
@@ -138,7 +134,7 @@ export default class HoverReveal {
 
         // Scale and Rotate always (user wants Scale selalu), regardless of animation
         var targetScale = this.config.scale ?? 1;
-        var targetRotate = (this.config.rotateHover !== undefined ? this.config.rotateHover : this.config.rotate) ?? this.config.rotate ?? 0;
+        var targetRotate = (this.config.rotateHover !== undefined ? this.config.rotateHover : this.config.rotate) ?? 0;
         var duration = this.config.animation === 'scale' ? 0.35 : 0.25;
         gsap.to(this.imageEl, {
             scale: targetScale,

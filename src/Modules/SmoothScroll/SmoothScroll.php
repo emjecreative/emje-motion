@@ -112,7 +112,7 @@ final class SmoothScroll implements ModuleInterface
             return true;
         }
 
-        return $shouldLoad;
+        return false;
     }
 
     private function isElementorEditor(): bool

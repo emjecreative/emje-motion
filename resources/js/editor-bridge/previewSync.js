@@ -1,4 +1,4 @@
-import { getPreviewWindow, getPreviewDocument, findTarget } from './utils.js';
+import { getPreviewWindow, getPreviewDocument, findTarget, collectContainerModels, destroyLayerInstance } from './utils.js';
 import { buildHoverConfig, buildCursorConfig, buildInteractionConfig } from './interactionBridge.js';
 import { hookBackgroundPreviewRender, buildBackgroundConfig, applyBackgroundToTarget, destroyBackgroundOnTarget } from './backgroundBridge.js';
 
@@ -9,20 +9,8 @@ export function bindKitChange() {
         if (!win || !doc) return;
         try {
             var allModels = [];
-            var collect = function(collection) {
-                if (!collection) return;
-                var models = collection.models || collection;
-                if (!models || !models.length) return;
-                for (var i = 0; i < models.length; i++) {
-                    var m = models[i];
-                    if (!m || typeof m.get !== 'function') continue;
-                    if (m.get('elType') === 'container') allModels.push(m);
-                    var ch = m.get('elements');
-                    if (ch) collect(ch);
-                }
-            };
             if (window.elementor && window.elementor.elements && window.elementor.elements.models) {
-                collect(window.elementor.elements.models);
+                allModels = collectContainerModels(window.elementor.elements.models);
             }
             allModels.forEach(function(m){
                 try {
@@ -89,22 +77,8 @@ export function bindPreviewLoaded() {
                             if (!t) return;
                             try { t.removeAttribute('data-emje-hover-reveal'); } catch(e){}
                             try { t.removeAttribute('data-emje-cursor'); } catch(e){}
-                            try {
-                                if (win2.EmjeMotionHoverReveal && win2.EmjeMotionHoverReveal._instances && win2.EmjeMotionHoverReveal._instances.get(t)) {
-                                    var oh = win2.EmjeMotionHoverReveal._instances.get(t);
-                                    if (oh && typeof oh.destroy === 'function') oh.destroy();
-                                    win2.EmjeMotionHoverReveal._instances.delete(t);
-                                    delete t.dataset.emjeHoverRevealInitialized;
-                                }
-                            } catch(e){}
-                            try {
-                                if (win2.EmjeMotionCursor && win2.EmjeMotionCursor._instances && win2.EmjeMotionCursor._instances.get(t)) {
-                                    var oc = win2.EmjeMotionCursor._instances.get(t);
-                                    if (oc && typeof oc.destroy === 'function') oc.destroy();
-                                    win2.EmjeMotionCursor._instances.delete(t);
-                                    delete t.dataset.emjeCursorInitialized;
-                                }
-                            } catch(e){}
+                            destroyLayerInstance(win2.EmjeMotionHoverReveal, t, 'emjeHoverRevealInitialized');
+                            destroyLayerInstance(win2.EmjeMotionCursor, t, 'emjeCursorInitialized');
                         });
                         return;
                     }
@@ -114,15 +88,9 @@ export function bindPreviewLoaded() {
                         var targetH = findTarget(doc2, widgetId, 'data-emje-hover-reveal') || findTarget(doc2, widgetId, 'data-emje-cursor') || (widgetId ? doc2.querySelector('[data-id="' + widgetId + '"]') : null);
                         if (!targetH) return;
                         // Clean cursor if switching
-                        try {
-                            if (win2.EmjeMotionCursor && win2.EmjeMotionCursor._instances && win2.EmjeMotionCursor._instances.get(targetH)) {
-                                var oc3 = win2.EmjeMotionCursor._instances.get(targetH);
-                                if (oc3 && typeof oc3.destroy === 'function') oc3.destroy();
-                                win2.EmjeMotionCursor._instances.delete(targetH);
-                                delete targetH.dataset.emjeCursorInitialized;
-                                targetH.removeAttribute('data-emje-cursor');
-                            }
-                        } catch(e){}
+                        if (destroyLayerInstance(win2.EmjeMotionCursor, targetH, 'emjeCursorInitialized')) {
+                            try { targetH.removeAttribute('data-emje-cursor'); } catch(e){}
+                        }
                         if (!cfgNew.imageUrl) {
                             try { targetH.removeAttribute('data-emje-hover-reveal'); } catch(e){}
                             return;
@@ -132,15 +100,9 @@ export function bindPreviewLoaded() {
                     } else {
                         var targetC = findTarget(doc2, widgetId, 'data-emje-cursor') || findTarget(doc2, widgetId, 'data-emje-hover-reveal') || (widgetId ? doc2.querySelector('[data-id="' + widgetId + '"]') : null);
                         if (!targetC) return;
-                        try {
-                            if (win2.EmjeMotionHoverReveal && win2.EmjeMotionHoverReveal._instances && win2.EmjeMotionHoverReveal._instances.get(targetC)) {
-                                var oh3 = win2.EmjeMotionHoverReveal._instances.get(targetC);
-                                if (oh3 && typeof oh3.destroy === 'function') oh3.destroy();
-                                win2.EmjeMotionHoverReveal._instances.delete(targetC);
-                                delete targetC.dataset.emjeHoverRevealInitialized;
-                                targetC.removeAttribute('data-emje-hover-reveal');
-                            }
-                        } catch(e){}
+                        if (destroyLayerInstance(win2.EmjeMotionHoverReveal, targetC, 'emjeHoverRevealInitialized')) {
+                            try { targetC.removeAttribute('data-emje-hover-reveal'); } catch(e){}
+                        }
                         try { targetC.setAttribute('data-emje-cursor', JSON.stringify({type: cfgNew.type, size: cfgNew.size, color: cfgNew.color, hoverScale: cfgNew.hoverScale, hideNative: cfgNew.hideNative, label: cfgNew.label, bgColor: cfgNew.bgColor, textColor: cfgNew.textColor, paddingY: cfgNew.paddingY, paddingX: cfgNew.paddingX, radius: cfgNew.radius, fontSize: cfgNew.fontSize, typography: cfgNew.typography, entrance: cfgNew.entrance, followSmoothness: cfgNew.followSmoothness, boxShadow: cfgNew.boxShadow, shadow: cfgNew.shadow, shadowBlur: cfgNew.shadowBlur, livePreview: cfgNew.livePreview})); } catch(e){}
                         if (win2.EmjeMotionCursor && win2.EmjeMotionCursor.reInit) win2.EmjeMotionCursor.reInit(targetC);
                     }
@@ -223,27 +185,12 @@ export function bindPreviewLoaded() {
         var syncAllFromModels = function() {
             try {
                 var allModels = [];
-                var collect = function(collection) {
-                    if (!collection) return;
-                    var models = collection.models || collection;
-                    if (!models || !models.length) return;
-                    for (var i = 0; i < models.length; i++) {
-                        var m = models[i];
-                        if (!m || typeof m.get !== 'function') continue;
-                        var elType = m.get('elType');
-                        if (elType === 'container') {
-                            allModels.push(m);
-                        }
-                        var children = m.get('elements');
-                        if (children) collect(children);
-                    }
-                };
                 if (window.elementor && window.elementor.elements && window.elementor.elements.models) {
-                    collect(window.elementor.elements.models);
+                    allModels = collectContainerModels(window.elementor.elements.models);
                 } else if (window.elementor && window.elementor.getPreviewContainer) {
                     var previewContainer = window.elementor.getPreviewContainer();
                     if (previewContainer && previewContainer.model) {
-                        collect([previewContainer.model]);
+                        allModels = collectContainerModels([previewContainer.model]);
                     }
                 }
                 allModels.forEach(function(m) { syncContainerFromModel(m); });

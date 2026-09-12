@@ -403,8 +403,6 @@ final class CursorControls
                 'label_off' => esc_html__('Show', 'emje-motion'),
                 'return_value' => 'yes',
                 'default' => 'yes',
-                'description' => esc_html__('Hide this effect on touch devices.', 'emje-motion'),
-                'classes' => 'emje-control--has-tooltip',
                 'condition' => [
                     'emje_interaction_enable' => 'yes',
                     'emje_interaction_effect' => 'interactive-cursor',
