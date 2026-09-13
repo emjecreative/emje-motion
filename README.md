@@ -6,10 +6,10 @@ Emje Motion gives your pages movement with a purpose — every animation earns i
 
 ## Features
 
-- **Text Motion** — Scramble, Unfold & Fill Reveal for Heading & Text Editor
-- **Smooth Scroll** — buttery site-wide scrolling, zero jank
-- **Interaction Motion** — Hover Reveal & Interactive Cursor for Containers
-- **Background Motion** — ASCII, Pixel, Dither & Mesh Gradient ambient backgrounds for Containers
+- **Text Motion** — Animates text with precise timing, delay, and flexible trigger controls.
+- **Smooth Scroll** — Controls page scrolling speed and smoothness consistently across all pages.
+- **Interaction Motion** — Adds subtle motion that reacts smoothly to direct visitor interaction input.
+- **Background Motion** — Plays soft ambient animation continuously and quietly behind all content.
 
 ## Requirements
 

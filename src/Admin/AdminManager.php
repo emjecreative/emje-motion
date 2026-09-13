@@ -377,27 +377,27 @@ final class AdminManager
         return [
             'text-motion' => [
                 'label' => esc_html__('Text Motion', 'emje-motion'),
-                'description' => esc_html__('Scramble, Unfold & Fill Reveal for Heading & Text Editor. Live preview in editor.', 'emje-motion'),
+                'description' => esc_html__('Animates text with precise timing, delay, and flexible trigger controls.', 'emje-motion'),
                 'status' => esc_html__('Available', 'emje-motion'),
                 'icon' => 'text-t',
             ],
             'smooth-scroll' => [
                 'label' => esc_html__('Smooth Scroll', 'emje-motion'),
-                'description' => esc_html__('Buttery smooth scrolling — site-wide, zero-jank, native feel. Global module.', 'emje-motion'),
+                'description' => esc_html__('Controls page scrolling speed and smoothness consistently across all pages.', 'emje-motion'),
                 'status' => esc_html__('Available', 'emje-motion'),
                 'icon' => 'mouse-simple',
             ],
             'interaction-motion' => [
                 'label' => esc_html__('Interaction Motion', 'emje-motion'),
-                'description' => esc_html__('Hover Reveal & Interactive Cursor for Container — one effect per Container.', 'emje-motion'),
+                'description' => esc_html__('Adds subtle motion that reacts smoothly to direct visitor interaction input.', 'emje-motion'),
                 'status' => esc_html__('Available', 'emje-motion'),
                 'icon' => 'cursor-click',
             ],
             'background-motion' => [
                 'label' => esc_html__('Background Motion', 'emje-motion'),
-                'description' => esc_html__('ASCII, Pixel, Dither & Mesh Gradient ambient backgrounds for Container.', 'emje-motion'),
+                'description' => esc_html__('Plays soft ambient animation continuously and quietly behind all content.', 'emje-motion'),
                 'status' => esc_html__('Available', 'emje-motion'),
-                'icon' => 'sparkle',
+                'icon' => 'sphere',
             ],
         ];
     }

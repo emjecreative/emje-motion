@@ -329,9 +329,10 @@ final class GitHubUpdater
         return '<p><strong>Beautiful motion for your website.</strong></p>'
             . '<p>Emje Motion gives your pages movement with a purpose — every animation earns its place. Simple controls, visitors who stay.</p>'
             . '<p><strong>Features</strong></p>'
-            . '<ul><li><strong>Text Motion</strong> — Scramble, Unfold &amp; Fill Reveal for headings and text.</li>'
-            . '<li><strong>Smooth Scroll</strong> — buttery site-wide scrolling.</li>'
-            . '<li><strong>Interaction Motion</strong> — Hover Reveal and Interactive Cursor for containers.</li></ul>';
+            . '<ul><li><strong>Text Motion</strong> — animates text with precise timing, delay, and flexible trigger controls.</li>'
+            . '<li><strong>Smooth Scroll</strong> — controls page scrolling speed and smoothness consistently across all pages.</li>'
+            . '<li><strong>Interaction Motion</strong> — adds subtle motion that reacts smoothly to direct visitor interaction input.</li>'
+            . '<li><strong>Background Motion</strong> — plays soft ambient animation continuously and quietly behind all content.</li></ul>';
     }
 
     /**
