@@ -3,6 +3,12 @@
 All notable changes to Emje Motion are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [1.3.1] - 2026-09-13
+
+### Changed
+- **Feature descriptions generalized** — Overview Dashboard cards, README, and updater details no longer name individual effects; each feature now has a short functional description that stays valid as new effects are added.
+- **Background Motion overview icon** — card icon changed from `sparkle` to `sphere` (Phosphor).
+
 ## [1.3.0] - 2026-09-13
 
 ### Changed
