@@ -3,7 +3,7 @@
 All notable changes to Emje Motion are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## [Unreleased]
+## [1.3.0] - 2026-09-13
 
 ### Changed
 - **Mesh Gradient: new Lagoon default palette** — Color 1–4 now default to deep sea navy (`#0C4A6E`), blue (`#0284C7`), mint (`#5EEAD4`), sea foam (`#F0FDFA`) instead of the old red/blue Beach. Saved pages (explicit colors or legacy presets) are unaffected; only fresh sections and unparseable-color fallbacks use the new palette.
