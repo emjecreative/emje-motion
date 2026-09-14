@@ -1,5 +1,6 @@
 import ElementManager from './ElementManager';
 import { isEditMode as sharedIsEditMode } from './env';
+import { computeScrubProgress } from './scrub';
 import ScrambleText from '../modules/TextMotion/ScrambleText';
 import TextUnfold from '../modules/TextMotion/TextUnfold';
 import FillReveal from '../modules/TextMotion/FillReveal';
@@ -87,19 +88,15 @@ export default class MotionEngine {
                         try { gsap.set(animation.masks, { clipPath: 'inset(0 100% 0 0)' }); } catch (e) {}
                     }
 
-                    // Compute scroll progress: 0 when element top enters viewport bottom,
-                    // 1 when element bottom exits viewport top.
+                    // Compute scroll progress from configurable boundaries
+                    // (defaults: 0 when element top enters viewport bottom,
+                    // 1 when element bottom exits viewport top).
                     const computeProgress = () => {
                         const rect = element.getBoundingClientRect();
                         const vh = window.innerHeight || document.documentElement.clientHeight || 0;
                         const elDocTop = rect.top + window.scrollY;
-                        const elDocBottom = rect.bottom + window.scrollY;
-                        const startScroll = elDocTop - vh;      // element top at viewport bottom
-                        const endScroll = elDocBottom;          // element bottom at viewport top
-                        const range = endScroll - startScroll;
-                        if (!(range > 0)) return 0;
-                        const p = (window.scrollY - startScroll) / range;
-                        return Math.max(0, Math.min(1, p));
+                        const elHeight = rect.height || (rect.bottom - rect.top);
+                        return computeScrubProgress(window.scrollY, elDocTop, elHeight, vh, config);
                     };
 
                     let scrubRAF = null;
@@ -207,7 +204,7 @@ export default class MotionEngine {
                 const target = this.elementManager.getTargetElement(element);
                 gsap.set(target, { clearProps: 'all' });
                 // Also clear any split wrappers' inline styles
-                target.querySelectorAll('.emje-motion-char, .emje-motion-word').forEach((el) => {
+                target.querySelectorAll('.emje-motion-char, .emje-motion-word, .emje-motion-line').forEach((el) => {
                     gsap.set(el, { clearProps: 'all' });
                 });
             } catch (e) {}

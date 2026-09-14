@@ -188,5 +188,28 @@ check('mu-rowmeta-keeps-core-link', $muDeduped[0], $coreLink);
 $muOther = emje_motion_mu_row_meta(['<a>Docs</a>'], 'other/other.php');
 check('mu-rowmeta-ignores-other-plugin', $muOther, ['<a>Docs</a>']);
 
+// Text Motion buildConfig: retired scrub presets + unfold defaults.
+require __DIR__ . '/../../src/Support/ColorField.php';
+require __DIR__ . '/../../src/Modules/TextMotion/Frontend/TextMotionFrontend.php';
+
+use EmjeCreative\EmjeMotion\Modules\TextMotion\Frontend\TextMotionFrontend;
+
+$tmFront = new TextMotionFrontend();
+$tmBuild = new ReflectionMethod($tmFront, 'buildConfig');
+$tmBuild->setAccessible(true);
+
+$tmVisible = $tmBuild->invoke($tmFront, [ 'emje_motion_scrub' => 'visible' ]);
+check('tm-visible-scrub', $tmVisible['scrub'], 'custom');
+check('tm-visible-pos', [ $tmVisible['scrubStartPos'], $tmVisible['scrubEndPos'] ], [ 100.0, 100.0 ]);
+
+$tmLeave = $tmBuild->invoke($tmFront, [ 'emje_motion_scrub' => 'leave' ]);
+check('tm-leave-scrub', $tmLeave['scrub'], 'full');
+
+$tmDef = $tmBuild->invoke($tmFront, []);
+check('tm-scrub-default', [ $tmDef['scrub'], $tmDef['scrubStartPos'], $tmDef['scrubEndPos'] ], [ 'custom', 100.0, 30.0 ]);
+check('tm-unfold-defaults', [ $tmDef['splitBy'], $tmDef['direction'], $tmDef['distance'], $tmDef['blur'], $tmDef['stagger'] ], [ 'words', 'up', 1.2, 0.0, 0.04 ]);
+check('tm-wash-default', $tmDef['fillWashColor'], '');
+check('tm-wash-evil', $tmBuild->invoke($tmFront, [ 'emje_motion_fill_wash_color' => 'red;evil' ])['fillWashColor'], '');
+
 echo PHP_EOL . "$pass passed, $fail failed" . PHP_EOL;
 exit($fail === 0 ? 0 : 1);

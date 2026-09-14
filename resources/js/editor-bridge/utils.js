@@ -73,6 +73,23 @@ export function safeCssMeasure(v, fallback) {
     return fallback;
 }
 
+/**
+ * Parse a number, preserving explicit 0 (unlike `parseFloat(x) || default`
+ * which swallows it). Falls back only on NaN.
+ */
+export function toNumber(v, fallback) {
+    var n = parseFloat(v);
+    return isNaN(n) ? fallback : n;
+}
+
+/**
+ * Parse + clamp a number in one step. Single source of truth for the
+ * parseFloat/isNaN/Math.max/Math.min pattern copied across bridges.
+ */
+export function clampNum(v, min, max, fallback) {
+    return Math.max(min, Math.min(max, toNumber(v, fallback)));
+}
+
 export function findTarget(previewDoc, widgetId, attr) {
     if (!previewDoc) return null;
     if (widgetId) {

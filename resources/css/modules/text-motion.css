@@ -71,17 +71,39 @@
 }
 
 .emje-motion-char,
-.emje-motion-word,
-.emje-motion-line {
+.emje-motion-word {
     display: inline-block;
+}
+
+.emje-motion-line {
+    display: block;
 }
 
 .emje-motion-word {
     will-change: transform, opacity;
 }
 
+.emje-motion-line {
+    will-change: transform, opacity;
+}
+
+/* Unfold mask — overflow-hidden box each target rises inside.
+   Padding trick keeps descenders (g, y, j) visible like Fill Reveal. */
+.emje-motion-mask {
+    display: inline-block;
+    overflow: hidden;
+    vertical-align: top;
+    padding-bottom: 0.12em;
+    margin-bottom: -0.12em;
+}
+
+.emje-motion-mask--block {
+    display: block;
+}
+
 .emje-motion-char,
-.emje-motion-word {
+.emje-motion-word,
+.emje-motion-line {
 	backface-visibility: hidden;
 	transform: translateZ(0);
 }
@@ -90,6 +112,7 @@
 
 	.emje-motion-char,
 	.emje-motion-word,
+	.emje-motion-line,
 	.emje-motion-fill__mask {
 
 		animation: none !important;

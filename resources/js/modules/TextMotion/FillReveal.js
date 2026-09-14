@@ -2,6 +2,7 @@ import { gsap } from 'gsap';
 import Animation from '../../core/Animation';
 import TextSplitter from '../../services/TextSplitter';
 import { sanitizeHtml } from '../../services/sanitizeHtml';
+import { resolveFillStagger } from './fillTiming';
 
 /**
  * Handles the Fill Reveal animation.
@@ -31,6 +32,7 @@ export default class FillReveal extends Animation {
 		// Per-line state
 		this.lines = [];
 		this.masks = [];
+		this.foregrounds = [];
 		this.isPerLine = false;
 		this.resizeObserver = null;
 		this.resizeTimer = null;
@@ -39,10 +41,79 @@ export default class FillReveal extends Animation {
 	}
 
 	/**
+	 * Foreground blur in px. 0 = off (pure wipe).
+	 *
+	 * @returns {number}
+	 */
+	getFillBlur() {
+		const b = parseFloat(this.config.fillBlur ?? 0);
+		if (isNaN(b)) return 0;
+		return Math.max(0, Math.min(20, b));
+	}
+
+	/**
+	 * Starting vars for foreground blur. Null when blur is off.
+	 *
+	 * @returns {Object|null}
+	 */
+	getForegroundFromVars() {
+		const blur = this.getFillBlur();
+		if (!(blur > 0)) return null;
+		return { filter: `blur(${blur}px)` };
+	}
+
+	/**
+	 * End vars for foreground blur.
+	 *
+	 * @returns {Object}
+	 */
+	getForegroundToVars() {
+		return { filter: 'blur(0px)' };
+	}
+
+	/**
+	 * Effective stagger between lines. Sequence mode waits a full duration.
+	 *
+	 * @returns {number}
+	 */
+	getEffectiveStagger() {
+		return resolveFillStagger(
+			this.config.fillLineMode,
+			this.config.fillStagger,
+			this.config.duration,
+		);
+	}
+
+	/**
+	 * Apply wash color to a background layer. Empty = follow text color.
+	 *
+	 * @param {HTMLElement} bg
+	 */
+	applyWashColor(bg) {
+		const c = this.config.fillWashColor;
+		if (typeof c === 'string' && c !== '') {
+			bg.style.color = c;
+		}
+	}
+
+	/**
+	 * Set foreground progress directly (for scrub).
+	 *
+	 * @param {HTMLElement} fg
+	 * @param {number} local 0..1
+	 */
+	applyForegroundProgress(fg, local) {
+		const blur = this.getFillBlur();
+		if (!(blur > 0)) return;
+		const rest = 1 - local;
+		gsap.set(fg, { filter: rest <= 0 ? 'blur(0px)' : `blur(${blur * rest}px)` });
+	}
+
+	/**
 	 * Whether to use per-line stagger mode.
 	 */
 	shouldUsePerLine() {
-		const stagger = parseFloat(this.config.fillStagger);
+		const stagger = this.getEffectiveStagger();
 		if (!stagger || stagger <= 0) return false;
 		// Need at least 2 lines to stagger
 		// Quick check: if element contains block paragraphs, we can stagger per paragraph
@@ -101,6 +172,7 @@ export default class FillReveal extends Animation {
 		this.dom.foreground = this.createForeground();
 
 		this.dom.mask.appendChild( this.dom.foreground );
+		this.foregrounds = [this.dom.foreground];
 
 		this.dom.wrapper.appendChild(this.dom.background);
 		this.dom.wrapper.appendChild(this.dom.mask);
@@ -142,12 +214,13 @@ export default class FillReveal extends Animation {
 			const lineEl = document.createElement('div');
 			lineEl.className = 'emje-motion-fill__line';
 
-			const bg = document.createElement('span');
-			bg.className = 'emje-motion-fill__background';
-			bg.innerHTML = html;
-			if (typeof this.config.fillBgOpacity !== 'undefined') {
-				bg.style.opacity = String(this.config.fillBgOpacity);
-			}
+		const bg = document.createElement('span');
+		bg.className = 'emje-motion-fill__background';
+		bg.innerHTML = html;
+		if (typeof this.config.fillBgOpacity !== 'undefined') {
+			bg.style.opacity = String(this.config.fillBgOpacity);
+		}
+		this.applyWashColor(bg);
 
 			const mask = document.createElement('span');
 			mask.className = 'emje-motion-fill__mask';
@@ -160,10 +233,11 @@ export default class FillReveal extends Animation {
 			lineEl.appendChild(bg);
 			lineEl.appendChild(mask);
 
-			this.dom.wrapper.appendChild(lineEl);
-			this.lines.push(lineEl);
-			this.masks.push(mask);
-		});
+		this.dom.wrapper.appendChild(lineEl);
+		this.lines.push(lineEl);
+		this.masks.push(mask);
+		this.foregrounds.push(fg);
+	});
 
 		// Handle text nodes outside <p> (rare)
 		if (this.lines.length === 0) return false;
@@ -243,12 +317,13 @@ export default class FillReveal extends Animation {
 			const lineEl = document.createElement('div');
 			lineEl.className = 'emje-motion-fill__line';
 
-			const bg = document.createElement('span');
-			bg.className = 'emje-motion-fill__background';
-			bg.innerHTML = lineHTML;
-			if (typeof this.config.fillBgOpacity !== 'undefined') {
-				bg.style.opacity = String(this.config.fillBgOpacity);
-			}
+		const bg = document.createElement('span');
+		bg.className = 'emje-motion-fill__background';
+		bg.innerHTML = lineHTML;
+		if (typeof this.config.fillBgOpacity !== 'undefined') {
+			bg.style.opacity = String(this.config.fillBgOpacity);
+		}
+		this.applyWashColor(bg);
 
 			const mask = document.createElement('span');
 			mask.className = 'emje-motion-fill__mask';
@@ -261,10 +336,11 @@ export default class FillReveal extends Animation {
 			lineEl.appendChild(bg);
 			lineEl.appendChild(mask);
 
-			this.dom.wrapper.appendChild(lineEl);
-			this.lines.push(lineEl);
-			this.masks.push(mask);
-		});
+		this.dom.wrapper.appendChild(lineEl);
+		this.lines.push(lineEl);
+		this.masks.push(mask);
+		this.foregrounds.push(fg);
+	});
 
 		document.body.removeChild(temp);
 
@@ -311,6 +387,7 @@ export default class FillReveal extends Animation {
 		background.className = 'emje-motion-fill__background';
 		background.innerHTML = sanitizeHtml(this.originalHTML);
 		background.setAttribute('aria-hidden', 'true');
+		this.applyWashColor(background);
 
 		if (typeof this.config.fillBgOpacity !== 'undefined') {
 			background.style.opacity = String(this.config.fillBgOpacity);
@@ -361,7 +438,7 @@ export default class FillReveal extends Animation {
 
 		// Per-line stagger for scrub: distribute p across lines with normalized total
 		if (this.isPerLine && this.masks.length > 1) {
-			const stagger = parseFloat(this.config.fillStagger) || 0;
+			const stagger = this.getEffectiveStagger();
 			if (stagger > 0) {
 				const duration = parseFloat(this.config.duration) || 1;
 				const total = duration + (this.masks.length - 1) * stagger;
@@ -372,6 +449,9 @@ export default class FillReveal extends Animation {
 					const local = Math.max(0, Math.min(1, span > 0 ? (clamped - start) / span : clamped));
 					const clip = `inset(0 ${(1 - local) * 100}% 0 0)`;
 					gsap.set(mask, { clipPath: clip });
+					if (this.foregrounds[i]) {
+						this.applyForegroundProgress(this.foregrounds[i], local);
+					}
 				});
 				return;
 			}
@@ -380,13 +460,19 @@ export default class FillReveal extends Animation {
 		const clip = `inset(0 ${(1 - clamped) * 100}% 0 0)`;
 		if (this.masks && this.masks.length) {
 			gsap.set(this.masks, { clipPath: clip });
+			this.foregrounds.forEach((fg) => this.applyForegroundProgress(fg, clamped));
 		} else if (this.dom.mask) {
 			gsap.set(this.dom.mask, { clipPath: clip });
+			if (this.dom.foreground) {
+				this.applyForegroundProgress(this.dom.foreground, clamped);
+			}
 		} else {
 			// Not yet built, prepare then set
 			this.prepare();
 			const targets = this.masks && this.masks.length ? this.masks : this.dom.mask;
 			if (targets) gsap.set(targets, { clipPath: clip });
+			const fgs = this.foregrounds.length ? this.foregrounds : (this.dom.foreground ? [this.dom.foreground] : []);
+			fgs.forEach((fg) => this.applyForegroundProgress(fg, clamped));
 		}
 	}
 
@@ -403,6 +489,14 @@ export default class FillReveal extends Animation {
 			gsap.set( this.dom.mask, {
 				clipPath: 'inset(0 100% 0 0)',
 			} );
+		}
+
+		const from = this.getForegroundFromVars();
+		if (from) {
+			const fgs = this.foregrounds.length
+				? this.foregrounds
+				: (this.dom.foreground ? [this.dom.foreground] : []);
+			if (fgs.length) gsap.set(fgs, from);
 		}
 
 	}
@@ -432,22 +526,42 @@ export default class FillReveal extends Animation {
 			},
 		} );
 
-		const stagger = parseFloat(this.config.fillStagger) || 0;
+		const stagger = this.getEffectiveStagger();
+		const duration = this.config.duration;
+		const ease = this.config.ease;
 
 		if (this.isPerLine && this.masks.length > 1 && stagger > 0) {
 			this.timeline.to( this.masks, {
 				clipPath: 'inset(0 0% 0 0)',
-				duration: this.config.duration,
-				ease: this.config.ease,
+				duration: duration,
+				ease: ease,
 				stagger: stagger,
 			} );
 		} else {
 			const target = this.isPerLine ? this.masks : this.dom.mask;
 			this.timeline.to( target, {
 				clipPath: 'inset(0 0% 0 0)',
-				duration: this.config.duration,
-				ease: this.config.ease,
+				duration: duration,
+				ease: ease,
 			} );
+		}
+
+		const from = this.getForegroundFromVars();
+		if (from) {
+			const fgs = this.foregrounds.length
+				? this.foregrounds
+				: (this.dom.foreground ? [this.dom.foreground] : []);
+			if (fgs.length) {
+				this.timeline.fromTo( fgs, from, {
+					...this.getForegroundToVars(),
+					duration: duration,
+					ease: ease,
+					stagger: (this.isPerLine && this.masks.length > 1) ? stagger : 0,
+					onComplete: () => {
+						gsap.set(fgs, { clearProps: 'filter' });
+					},
+				}, 0 );
+			}
 		}
 
 	}
@@ -474,6 +588,7 @@ export default class FillReveal extends Animation {
 				this.dom = { wrapper: null, background: null, mask: null, foreground: null };
 				this.lines = [];
 				this.masks = [];
+				this.foregrounds = [];
 				this.isPerLine = false;
 				this._lastWidth = newWidth;
 				this.build();
@@ -518,6 +633,7 @@ export default class FillReveal extends Animation {
 		};
 		this.lines = [];
 		this.masks = [];
+		this.foregrounds = [];
 		this.isPerLine = false;
 
 	}

@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace EmjeCreative\EmjeMotion\Modules\TextMotion\Frontend;
 
 use Elementor\Widget_Base;
+use EmjeCreative\EmjeMotion\Modules\InteractionMotion\Services\ColorResolver;
+use EmjeCreative\EmjeMotion\Support\ColorField;
 use EmjeCreative\EmjeMotion\Support\RenderAttributes;
 
 /**
@@ -108,9 +110,28 @@ final class TextMotionFrontend
         $stagger = max(0.0, min(0.5, $stagger));
 
         $splitBy = $settings['emje_motion_unfold_split_by'] ?? 'words';
-        if (! in_array($splitBy, [ 'words', 'characters' ], true)) {
+        if (! in_array($splitBy, [ 'words', 'characters', 'lines' ], true)) {
             $splitBy = 'words';
         }
+
+        $direction = $settings['emje_motion_unfold_direction'] ?? 'up';
+        if (! in_array($direction, [ 'up', 'down', 'left', 'right' ], true)) {
+            $direction = 'up';
+        }
+
+        $distance = isset($settings['emje_motion_unfold_distance'])
+            ? (float) $settings['emje_motion_unfold_distance']
+            : 1.2;
+
+        $distance = max(0.0, min(2.0, $distance));
+
+        $mask = ($settings['emje_motion_unfold_mask'] ?? '') === 'yes';
+
+        $blur = isset($settings['emje_motion_unfold_blur'])
+            ? (float) $settings['emje_motion_unfold_blur']
+            : 0.0;
+
+        $blur = max(0.0, min(20.0, $blur));
 
         $bgOpacity = 0.25;
         if (isset($settings['emje_motion_fill_bg_opacity'])) {
@@ -129,6 +150,19 @@ final class TextMotionFrontend
             ? (float) $settings['emje_motion_fill_stagger']
             : 0.15;
         $fillStagger = max(0.0, min(0.5, $fillStagger));
+
+        $fillLineMode = $settings['emje_motion_fill_line_mode'] ?? 'overlap';
+        if (! in_array($fillLineMode, [ 'overlap', 'sequence' ], true)) {
+            $fillLineMode = 'overlap';
+        }
+
+        $fillBlur = isset($settings['emje_motion_fill_blur'])
+            ? (float) $settings['emje_motion_fill_blur']
+            : 0.0;
+
+        $fillBlur = max(0.0, min(20.0, $fillBlur));
+
+        $fillWashColor = $this->resolveWashColor($settings);
 
         $animation = $settings['emje_motion_animation'] ?? '';
         if (! in_array($animation, [ 'scramble-text', 'text-unfold', 'fill-reveal' ], true)) {
@@ -159,6 +193,45 @@ final class TextMotionFrontend
             $playOnce = ($rawPlayOnce ?? '') === 'yes'; // default No for viewport (UX)
         } else {
             $playOnce = false;
+        }
+
+        // Scrub boundaries only relevant for scroll. Default is Custom
+        // 100/30 (effect starts as text enters, finishes at the 30% line).
+        // Legacy separate Start/End keys (never released, but possibly saved
+        // in drafts or cached HTML) are translated when the new key is absent.
+        $scrubPresets = [ 'full', 'center', 'custom' ];
+
+        $scrub = $settings['emje_motion_scrub'] ?? null;
+
+        $scrubStartPos = isset($settings['emje_motion_scrub_start_position'])
+            ? (float) $settings['emje_motion_scrub_start_position']
+            : 100.0;
+
+        $scrubStartPos = max(0.0, min(100.0, $scrubStartPos));
+
+        $scrubEndPos = isset($settings['emje_motion_scrub_end_position'])
+            ? (float) $settings['emje_motion_scrub_end_position']
+            : 30.0;
+
+        $scrubEndPos = max(0.0, min(100.0, $scrubEndPos));
+
+        if ($scrub === 'visible') {
+            // Retired preset: exactly custom 100/100.
+            $scrub = 'custom';
+            $scrubStartPos = 100.0;
+            $scrubEndPos = 100.0;
+        } elseif ($scrub === 'leave') {
+            // Retired preset: closest sane fallback.
+            $scrub = 'full';
+        } elseif (! in_array($scrub, $scrubPresets, true)) {
+            $scrub = null;
+        }
+
+        if ($scrub === null) {
+            $legacy = $this->translateLegacyScrub($settings, $scrubStartPos, $scrubEndPos);
+            $scrub = $legacy['scrub'];
+            $scrubStartPos = $legacy['startPos'];
+            $scrubEndPos = $legacy['endPos'];
         }
 
         $characterSet = $settings['emje_motion_scramble_character_set'] ?? 'letters-numbers';
@@ -192,7 +265,21 @@ final class TextMotionFrontend
 
             'playOnce' => $playOnce,
 
+            'scrub' => $scrub,
+
+            'scrubStartPos' => $scrubStartPos,
+
+            'scrubEndPos' => $scrubEndPos,
+
             'splitBy' => $splitBy,
+
+            'direction' => $direction,
+
+            'distance' => $distance,
+
+            'mask' => $mask,
+
+            'blur' => $blur,
 
             'stagger' => $stagger,
 
@@ -200,7 +287,89 @@ final class TextMotionFrontend
 
             'fillStagger' => $fillStagger,
 
+            'fillLineMode' => $fillLineMode,
+
+            'fillWashColor' => $fillWashColor,
+
+            'fillBlur' => $fillBlur,
+
             'livePreview' => ($settings['emje_motion_live_preview'] ?? 'yes') === 'yes',
         ];
+    }
+
+    /**
+     * Resolve the wash color: Elementor Global Colors via __globals__ win,
+     * empty means "follow the text color".
+     *
+     * @param array<string, mixed> $settings
+     */
+    private function resolveWashColor(array $settings): string
+    {
+        return ColorField::pick($settings, 'emje_motion_fill_wash_color', '', new ColorResolver());
+    }
+
+    /**
+     * Translate pre-simplification separate Start/End keys into the combined
+     * scrub preset. Exact named matches map to presets; anything else becomes
+     * custom with equivalent viewport positions (center-center anchors on the
+     * element center, approximated here as 50 — close enough for a fallback).
+     *
+     * @param array<string, mixed> $settings
+     *
+     * @return array{scrub: string, startPos: float, endPos: float}
+     */
+    private function translateLegacyScrub(array $settings, float $startPos, float $endPos): array
+    {
+        $hasLegacy = isset($settings['emje_motion_scrub_start'])
+            || isset($settings['emje_motion_scrub_end'])
+            || isset($settings['emje_motion_scrub_start_position'])
+            || isset($settings['emje_motion_scrub_end_position']);
+
+        if (! $hasLegacy) {
+            return [ 'scrub' => 'custom', 'startPos' => $startPos, 'endPos' => $endPos ];
+        }
+
+        $start = $settings['emje_motion_scrub_start'] ?? 'top-bottom';
+        if (! in_array($start, [ 'top-bottom', 'top-center', 'center-center', 'top-top', 'custom' ], true)) {
+            $start = 'top-bottom';
+        }
+
+        $end = $settings['emje_motion_scrub_end'] ?? 'bottom-top';
+        if (! in_array($end, [ 'bottom-top', 'bottom-center', 'center-center', 'bottom-bottom', 'custom' ], true)) {
+            $end = 'bottom-top';
+        }
+
+        $named = [
+            'top-bottom/bottom-top' => 'full',
+            'top-center/bottom-center' => 'center',
+        ];
+
+        $key = $start . '/' . $end;
+        if (isset($named[$key])) {
+            return [ 'scrub' => $named[$key], 'startPos' => $startPos, 'endPos' => $endPos ];
+        }
+
+        $startLines = [
+            'top-bottom' => 100.0,
+            'top-center' => 50.0,
+            'center-center' => 50.0,
+            'top-top' => 0.0,
+        ];
+        $endLines = [
+            'bottom-top' => 0.0,
+            'bottom-center' => 50.0,
+            'center-center' => 50.0,
+            'bottom-bottom' => 100.0,
+        ];
+
+        if ($start !== 'custom') {
+            $startPos = $startLines[$start];
+        }
+
+        if ($end !== 'custom') {
+            $endPos = $endLines[$end];
+        }
+
+        return [ 'scrub' => 'custom', 'startPos' => $startPos, 'endPos' => $endPos ];
     }
 }

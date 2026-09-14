@@ -3,6 +3,21 @@
 All notable changes to Emje Motion are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [Unreleased]
+
+### Fixed
+
+### Changed
+
+### Added
+- **Text Motion Unfold: Direction + Lines** ÔÇö new Direction control (Up/Down/Left/Right, default Up so existing pages are unchanged) and new Split By Lines option (animates per visual line). Covers play + On Scroll scrub + editor live preview.
+- **Text Motion Unfold: Distance + Mask + Blur** ÔÇö new Distance control (`0`ÔÇô`2`, default `1.2` so existing pages are unchanged; `0` fades without moving), Mask switch (premium slide-from-inside-a-box reveal, off by default), and Blur control (`0`ÔÇô`20px`, default `0` off; nicest with Words or Lines). Covers play + On Scroll scrub + editor live preview.
+- **Text Motion scrub boundaries** ÔÇö On Scroll (Scrub) gains Scrub Start + Scrub End controls (preset positions, defaults reproduce the legacy enterÔåÆleave range so existing pages are unchanged) each with a Custom screen-line position (`0`ÔÇô`100`). Degenerate ranges now behave as a step instead of freezing at 0.
+- **Text Motion scrub simplified** ÔÇö separate Scrub Start/End menus merged into one Scrub menu (Enter + Leave, Center Stage, Custom) with tooltips on the Custom Start/End Position fields. Previously saved separate Start/End values translate automatically.
+- **Text Motion scrub new defaults** ÔÇö On Scroll now defaults to Custom 100/30 (starts as text enters, finishes at the 30% screen line) instead of the full enterÔåÆleave range, so effects complete earlier. The Fully Enters and While Leaving presets were removed (`visible` maps to Custom 100/100, `leave` falls back to Enter + Leave).
+- **Text Motion Fill Reveal: Wash Color + Blur** ÔÇö new Wash Color control (empty follows the text color, supports Global Colors) and Blur control (`0`ÔÇô`20px`, default `0` off; text sharpens as it is revealed, per line, in sync with On Scroll scrub).
+- **Text Motion Fill Reveal: Line Mode** ÔÇö new One by One mode (each line waits until the previous finishes, each getting the full Duration; Line Stagger hides in this mode, and Ease auto-switches to Linear when selected). Default Overlapping is unchanged.
+
 ## [1.3.2] - 2026-09-14
 
 ### Fixed

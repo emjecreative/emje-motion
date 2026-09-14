@@ -36,9 +36,13 @@ Random characters cycle before settling into your real text.
 
 ### Unfold
 
-Words or characters rise into place one after another.
+Words, characters, or lines slide into place one after another.
 
-- **Split By** — Words (default) or Characters.
+- **Split By** — Words (default), Characters, or Lines.
+- **Direction** — Up (default), Down, Left, or Right.
+- **Distance** — how far pieces travel (`0`–`2`, default `1.2`; `0` fades without moving).
+- **Mask** — slide from inside an invisible box for a premium reveal (off by default).
+- **Blur** — start blurred, land sharp (`0`–`20px`, default `0` off; nicest with Words or Lines).
 - **Stagger** — delay between each piece, in seconds (default `0.04`).
 
 ### Fill Reveal
@@ -46,7 +50,10 @@ Words or characters rise into place one after another.
 Text fades in from a soft background wash, line by line.
 
 - **Background Opacity** — strength of the wash (default `0.25`).
-- **Line Stagger** — delay between lines (default `0.15`; `0` reveals all lines together).
+- **Line Mode** — Overlapping (default, lines share the timeline) or One by One (each line waits until the previous finishes; Ease moves to Linear automatically for a steady handoff).
+- **Line Stagger** — with Overlapping, delay between lines (default `0.15`; `0` reveals all lines together).
+- **Wash Color** — color of the wash (empty follows your text color; supports Global Colors).
+- **Blur** — text starts blurred and sharpens as it is revealed (`0`–`20px`, default `0` off).
 
 ### Timing (all Text Motion effects)
 
@@ -58,6 +65,8 @@ Text fades in from a soft background wash, line by line.
 
 - **Event** — Page Load (default), Scroll Into View, Hover, or On Scroll (Scrub, follows the scroll position).
 - **Play Once** — with Scroll Into View, stop replaying after the first run.
+- **Scrub** — with On Scroll, the scroll range the effect plays across: Enter + Leave Viewport (longest), Center Stage (around the screen center), or Custom (default, starts as text enters and finishes at the 30% screen line).
+- **Start / End Position** — with Custom scrub, the screen lines (`0` = top, `100` = bottom; defaults `100` / `30`). Hover the info icon for a reminder.
 
 Tip: keep **Live Preview** on while designing, and use the **Preview Animation** button to replay on demand (it replays even when Play Once is set).
 

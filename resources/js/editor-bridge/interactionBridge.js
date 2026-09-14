@@ -356,6 +356,22 @@ export function bindEditorChange() {
         if (!win || !doc) return;
 
         if (widgetType === 'heading' || widgetType === 'text-editor') {
+            // One by One line mode flows best with a Linear ease: when the
+            // mode is just switched to sequence and Ease is still the
+            // default, move Ease to Linear automatically. One-way only and
+            // loop-safe (the follow-up change no longer matches).
+            try {
+                var changedAttrs = settings.changed || {};
+                if (changedAttrs.emje_motion_fill_line_mode === 'sequence'
+                    && settings.get('emje_motion_animation') === 'fill-reveal'
+                    && (settings.get('emje_motion_ease') || 'power2.out') === 'power2.out'
+                    && typeof settings.set === 'function') {
+                    settings.set('emje_motion_ease', 'none');
+                }
+            } catch (e) {}
+        }
+
+        if (widgetType === 'heading' || widgetType === 'text-editor') {
             if (settings.get('emje_motion_live_preview') !== 'yes') return;
             if (settings.get('emje_motion_enable') !== 'yes') return;
             var liveView = editedView || view;

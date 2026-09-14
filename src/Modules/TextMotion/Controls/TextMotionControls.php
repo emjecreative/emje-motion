@@ -245,6 +245,7 @@ final class TextMotionControls
                 'options' => [
                     'words' => esc_html__('Words', 'emje-motion'),
                     'characters' => esc_html__('Characters', 'emje-motion'),
+                    'lines' => esc_html__('Lines', 'emje-motion'),
                 ],
                 'condition' => [
                     'emje_motion_enable' => 'yes',
@@ -252,6 +253,81 @@ final class TextMotionControls
                 ],
                 'frontend_available' => true,
                 'render_type' => 'template',
+            ],
+        );
+
+        $element->add_control(
+            'emje_motion_unfold_direction',
+            [
+                'label' => esc_html__('Direction', 'emje-motion'),
+                'type' => Controls_Manager::SELECT,
+                'default' => 'up',
+                'options' => [
+                    'up' => esc_html__('Up', 'emje-motion'),
+                    'down' => esc_html__('Down', 'emje-motion'),
+                    'left' => esc_html__('Left', 'emje-motion'),
+                    'right' => esc_html__('Right', 'emje-motion'),
+                ],
+                'condition' => [
+                    'emje_motion_enable' => 'yes',
+                    'emje_motion_animation' => 'text-unfold',
+                ],
+                'frontend_available' => true,
+                'render_type' => 'none',
+            ],
+        );
+
+        $element->add_control(
+            'emje_motion_unfold_distance',
+            [
+                'label' => esc_html__('Distance', 'emje-motion'),
+                'type' => Controls_Manager::NUMBER,
+                'default' => 1.2,
+                'min' => 0,
+                'max' => 2,
+                'step' => 0.1,
+                'condition' => [
+                    'emje_motion_enable' => 'yes',
+                    'emje_motion_animation' => 'text-unfold',
+                ],
+                'frontend_available' => true,
+                'render_type' => 'none',
+            ],
+        );
+
+        $element->add_control(
+            'emje_motion_unfold_mask',
+            [
+                'label' => esc_html__('Mask', 'emje-motion'),
+                'type' => Controls_Manager::SWITCHER,
+                'label_on' => esc_html__('On', 'emje-motion'),
+                'label_off' => esc_html__('Off', 'emje-motion'),
+                'return_value' => 'yes',
+                'default' => '',
+                'condition' => [
+                    'emje_motion_enable' => 'yes',
+                    'emje_motion_animation' => 'text-unfold',
+                ],
+                'frontend_available' => true,
+                'render_type' => 'none',
+            ],
+        );
+
+        $element->add_control(
+            'emje_motion_unfold_blur',
+            [
+                'label' => esc_html__('Blur', 'emje-motion'),
+                'type' => Controls_Manager::NUMBER,
+                'default' => 0,
+                'min' => 0,
+                'max' => 20,
+                'step' => 1,
+                'condition' => [
+                    'emje_motion_enable' => 'yes',
+                    'emje_motion_animation' => 'text-unfold',
+                ],
+                'frontend_available' => true,
+                'render_type' => 'none',
             ],
         );
 
@@ -399,9 +475,6 @@ final class TextMotionControls
                 'min' => 0,
                 'step' => 0.1,
                 'description' => esc_html__(
-                    'Delay before the animation starts, in seconds.',
-                    'emje-motion',
-                ),
                 'classes' => 'emje-control--has-tooltip',
                 'condition' => [
                     'emje_motion_enable' => 'yes',
@@ -529,14 +602,77 @@ final class TextMotionControls
                 'label_off' => esc_html__('No', 'emje-motion'),
                 'return_value' => 'yes',
                 'default' => '',
+                'condition' => [
+                    'emje_motion_enable' => 'yes',
+                    'emje_motion_trigger' => 'viewport',
+                ],
+                'frontend_available' => true,
+                'render_type' => 'none',
+            ],
+        );
+
+        $element->add_control(
+            'emje_motion_scrub',
+            [
+                'label' => esc_html__('Scrub', 'emje-motion'),
+                'type' => Controls_Manager::SELECT,
+                'default' => 'custom',
+                'options' => [
+                    'full' => esc_html__('Enter + Leave Viewport', 'emje-motion'),
+                    'center' => esc_html__('Center Stage', 'emje-motion'),
+                    'custom' => esc_html__('Custom', 'emje-motion'),
+                ],
+                'condition' => [
+                    'emje_motion_enable' => 'yes',
+                    'emje_motion_trigger' => 'scroll',
+                ],
+                'frontend_available' => true,
+                'render_type' => 'none',
+            ],
+        );
+
+        $element->add_control(
+            'emje_motion_scrub_start_position',
+            [
+                'label' => esc_html__('Start Position', 'emje-motion'),
+                'type' => Controls_Manager::NUMBER,
+                'default' => 100,
+                'min' => 0,
+                'max' => 100,
+                'step' => 1,
                 'description' => esc_html__(
-                    'Prevent the animation from replaying after it has completed.',
+                    'Screen line where the effect starts: 0 is the top of the screen, 100 is the bottom.',
                     'emje-motion',
                 ),
                 'classes' => 'emje-control--has-tooltip',
                 'condition' => [
                     'emje_motion_enable' => 'yes',
-                    'emje_motion_trigger' => 'viewport',
+                    'emje_motion_trigger' => 'scroll',
+                    'emje_motion_scrub' => 'custom',
+                ],
+                'frontend_available' => true,
+                'render_type' => 'none',
+            ],
+        );
+
+        $element->add_control(
+            'emje_motion_scrub_end_position',
+            [
+                'label' => esc_html__('End Position', 'emje-motion'),
+                'type' => Controls_Manager::NUMBER,
+                'default' => 30,
+                'min' => 0,
+                'max' => 100,
+                'step' => 1,
+                'description' => esc_html__(
+                    'Screen line where the effect finishes: 0 is the top of the screen, 100 is the bottom.',
+                    'emje-motion',
+                ),
+                'classes' => 'emje-control--has-tooltip',
+                'condition' => [
+                    'emje_motion_enable' => 'yes',
+                    'emje_motion_trigger' => 'scroll',
+                    'emje_motion_scrub' => 'custom',
                 ],
                 'frontend_available' => true,
                 'render_type' => 'none',
