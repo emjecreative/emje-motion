@@ -3,6 +3,11 @@
 All notable changes to Emje Motion are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [1.3.2] - 2026-09-14
+
+### Fixed
+- **Multisite: single "View details" link** — the plugin row showed "View details | View details" whenever an update was available because WordPress core auto-adds the link once the updater sets the plugin slug, on top of our custom link. Both `AdminManager` and the mu-helper now skip adding theirs when core's link is already present (Network Admin + subsite).
+
 ## [1.3.1] - 2026-09-13
 
 ### Changed
