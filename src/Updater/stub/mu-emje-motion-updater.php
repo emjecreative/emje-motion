@@ -525,6 +525,9 @@ if (! function_exists('emje_motion_mu_row_meta')) {
     // Kode utama tidak dimuat di Network Admin saat aktif per-site,
     // jadi mu yang mendaftarkan; AdminManager mundur saat multisite
     // agar link tidak dobel di dashboard subsite.
+    // Core juga menambah link yang sama otomatis saat update tersedia
+    // (slug terisi dari transient), jadi lewati kalau sudah ada agar
+    // tidak tampil "View details | View details".
     function emje_motion_mu_row_meta($links, $pluginFile)
     {
         if (! is_array($links)) {
@@ -532,6 +535,11 @@ if (! function_exists('emje_motion_mu_row_meta')) {
         }
         if ($pluginFile !== 'emje-motion/emje-motion.php') {
             return $links;
+        }
+        foreach ($links as $link) {
+            if (str_contains((string) $link, 'plugin-information') || str_contains((string) $link, 'open-plugin-details-modal')) {
+                return $links;
+            }
         }
         $url = self_admin_url('plugin-install.php?tab=plugin-information&plugin=emje-motion&TB_iframe=true&width=640&height=662');
         $links[] = sprintf(

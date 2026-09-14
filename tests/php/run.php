@@ -111,5 +111,82 @@ check('hex-bad', $resolver->sanitizeColor('#12345', 'fallback'), 'fallback');
 check('injection', $resolver->sanitizeColor('red;evil', 'fallback'), 'fallback');
 check('var', $resolver->sanitizeColor('var(--e-global-color-abc)', 'fallback'), 'var(--e-global-color-abc)');
 
+// Row meta "View details" dedupe (core adds one when update slug is set).
+if (! defined('ABSPATH')) {
+    define('ABSPATH', '/tmp/wordpress/');
+}
+if (! defined('EMJE_MOTION_FILE')) {
+    define('EMJE_MOTION_FILE', '/tmp/wordpress/wp-content/plugins/emje-motion/emje-motion.php');
+}
+if (! function_exists('plugin_basename')) {
+    function plugin_basename($file) {
+        if (is_string($file) && str_contains($file, 'emje-motion.php')) {
+            return 'emje-motion/emje-motion.php';
+        }
+
+        return is_string($file) ? basename($file) : '';
+    }
+}
+if (! function_exists('self_admin_url')) {
+    function self_admin_url($path = '') {
+        return 'https://example.test/wp-admin/' . ltrim((string) $path, '/');
+    }
+}
+if (! function_exists('esc_url')) {
+    function esc_url($url) {
+        return is_string($url) ? $url : '';
+    }
+}
+if (! function_exists('esc_attr__')) {
+    function esc_attr__($text, $domain = null) {
+        return (string) $text;
+    }
+}
+if (! function_exists('esc_html__')) {
+    function esc_html__($text, $domain = null) {
+        return (string) $text;
+    }
+}
+if (! function_exists('add_filter')) {
+    function add_filter($hook, $cb, $prio = 10, $args = 1) {
+        return true;
+    }
+}
+if (! function_exists('add_action')) {
+    function add_action($hook, $cb, $prio = 10, $args = 1) {
+        return true;
+    }
+}
+
+require __DIR__ . '/../../src/Admin/AdminManager.php';
+require __DIR__ . '/../../src/Updater/stub/mu-emje-motion-updater.php';
+
+use EmjeCreative\EmjeMotion\Admin\AdminManager;
+use EmjeCreative\EmjeMotion\Admin\SettingsRepository;
+
+$admin = new AdminManager(new SettingsRepository());
+$coreLink = '<a href="https://example.test/wp-admin/plugin-install.php?tab=plugin-information&plugin=emje-motion&TB_iframe=true&width=600&height=550" class="thickbox open-plugin-details-modal">View details</a>';
+
+$added = $admin->rowMeta([], 'emje-motion/emje-motion.php');
+check('rowmeta-adds-when-missing', count($added), 1);
+check('rowmeta-adds-modal', str_contains($added[0], 'open-plugin-details-modal'), true);
+
+$deduped = $admin->rowMeta([$coreLink], 'emje-motion/emje-motion.php');
+check('rowmeta-no-double-with-core', count($deduped), 1);
+check('rowmeta-keeps-core-link', $deduped[0], $coreLink);
+
+$other = $admin->rowMeta(['<a>Docs</a>'], 'other/other.php');
+check('rowmeta-ignores-other-plugin', $other, ['<a>Docs</a>']);
+
+$muAdded = emje_motion_mu_row_meta([], 'emje-motion/emje-motion.php');
+check('mu-rowmeta-adds-when-missing', count($muAdded), 1);
+
+$muDeduped = emje_motion_mu_row_meta([$coreLink], 'emje-motion/emje-motion.php');
+check('mu-rowmeta-no-double-with-core', count($muDeduped), 1);
+check('mu-rowmeta-keeps-core-link', $muDeduped[0], $coreLink);
+
+$muOther = emje_motion_mu_row_meta(['<a>Docs</a>'], 'other/other.php');
+check('mu-rowmeta-ignores-other-plugin', $muOther, ['<a>Docs</a>']);
+
 echo PHP_EOL . "$pass passed, $fail failed" . PHP_EOL;
 exit($fail === 0 ? 0 : 1);

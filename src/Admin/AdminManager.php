@@ -52,9 +52,12 @@ final class AdminManager
     /**
      * Add a "View details" modal link like wordpress.org plugins have.
      *
-     * Core only grants it to wordpress.org plugins; ours is excluded by
-     * the Update URI header, so we add our own (content comes from the
-     * GitHub updater's plugins_api response: Description + Changelog).
+     * Core auto-adds this link once our update response sets
+     * `$plugin_data['slug']` (see WP_Plugins_List_Table::single_row()),
+     * so only add ours when it is not already there — otherwise the
+     * row shows "View details | View details" whenever an update
+     * is available. Content comes from the GitHub updater's
+     * plugins_api response: Description + Changelog.
      *
      * @param string[] $links
      * @param string $pluginFile
@@ -65,6 +68,12 @@ final class AdminManager
     {
         if ($pluginFile !== plugin_basename(EMJE_MOTION_FILE)) {
             return $links;
+        }
+
+        foreach ($links as $link) {
+            if (str_contains((string) $link, 'plugin-information') || str_contains((string) $link, 'open-plugin-details-modal')) {
+                return $links;
+            }
         }
 
         $url = self_admin_url('plugin-install.php?tab=plugin-information&plugin=emje-motion&TB_iframe=true&width=640&height=662');
