@@ -30,6 +30,8 @@ const sources = {
     'mod-env.mjs': 'resources/js/core/env.js',
     'mod-scrub.mjs': 'resources/js/core/scrub.js',
     'mod-meshgradient.mjs': 'resources/js/modules/BackgroundMotion/MeshGradient.js',
+    'mod-meshColor.mjs': 'resources/js/modules/BackgroundMotion/meshColor.js',
+    'mod-meshShader.mjs': 'resources/js/modules/BackgroundMotion/meshShader.js',
     'mod-backgroundmotion.mjs': 'resources/js/modules/BackgroundMotion/BackgroundMotion.js',
     'mod-asciiinteractive.mjs': 'resources/js/modules/BackgroundMotion/AsciiInteractive.js',
     'mod-pixelgrid.mjs': 'resources/js/modules/BackgroundMotion/PixelGrid.js',
