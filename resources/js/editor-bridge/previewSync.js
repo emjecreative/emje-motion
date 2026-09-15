@@ -1,6 +1,7 @@
 import { getPreviewWindow, getPreviewDocument, findTarget, collectContainerModels, destroyLayerInstance } from './utils.js';
 import { buildHoverConfig, buildCursorConfig, buildInteractionConfig, serializeHoverPayload, serializeCursorPayload } from './interactionConfig.js';
-import { hookBackgroundPreviewRender, buildBackgroundConfig, applyBackgroundToTarget, destroyBackgroundOnTarget } from './backgroundBridge.js';
+import { hookBackgroundPreviewRender, applyBackgroundToTarget, destroyBackgroundOnTarget } from './backgroundBridge.js';
+import { buildBackgroundConfig } from './backgroundConfig.js';
 
 export function bindKitChange() {
     var syncKit = function() {

@@ -16,6 +16,7 @@ mkdirSync(tmp, { recursive: true });
 const sources = {
     'eb-utils.mjs': 'resources/js/editor-bridge/utils.js',
     'eb-backgroundBridge.mjs': 'resources/js/editor-bridge/backgroundBridge.js',
+    'eb-backgroundConfig.mjs': 'resources/js/editor-bridge/backgroundConfig.js',
     'eb-textMotionBridge.mjs': 'resources/js/editor-bridge/textMotionBridge.js',
     'eb-interactionBridge.mjs': 'resources/js/editor-bridge/interactionBridge.js',
     'eb-interactionConfig.mjs': 'resources/js/editor-bridge/interactionConfig.js',
