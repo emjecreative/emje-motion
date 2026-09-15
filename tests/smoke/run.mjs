@@ -18,6 +18,7 @@ const sources = {
     'eb-backgroundBridge.mjs': 'resources/js/editor-bridge/backgroundBridge.js',
     'eb-textMotionBridge.mjs': 'resources/js/editor-bridge/textMotionBridge.js',
     'eb-interactionBridge.mjs': 'resources/js/editor-bridge/interactionBridge.js',
+    'eb-interactionConfig.mjs': 'resources/js/editor-bridge/interactionConfig.js',
     'eb-tooltip.mjs': 'resources/js/editor-bridge/tooltip.js',
     'eb-previewSync.mjs': 'resources/js/editor-bridge/previewSync.js',
     'mod-shared.mjs': 'resources/js/modules/BackgroundMotion/shared.js',
