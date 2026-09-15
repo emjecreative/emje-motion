@@ -25,8 +25,13 @@ function esc_url_raw($url) {
 require __DIR__ . '/../../src/Admin/SettingsRepository.php';
 require __DIR__ . '/../../src/Modules/InteractionMotion/Services/ColorResolver.php';
 require __DIR__ . '/../../src/Modules/InteractionMotion/Services/SliderResolver.php';
+require __DIR__ . '/../../src/Support/ColorField.php';
+require __DIR__ . '/../../src/Modules/InteractionMotion/Frontend/HoverConfig.php';
+require __DIR__ . '/../../src/Modules/InteractionMotion/Frontend/CursorConfig.php';
 require __DIR__ . '/../../src/Modules/InteractionMotion/Frontend/InteractionMotionFrontend.php';
 
+use EmjeCreative\EmjeMotion\Modules\InteractionMotion\Frontend\CursorConfig;
+use EmjeCreative\EmjeMotion\Modules\InteractionMotion\Frontend\HoverConfig;
 use EmjeCreative\EmjeMotion\Modules\InteractionMotion\Frontend\InteractionMotionFrontend;
 use EmjeCreative\EmjeMotion\Modules\InteractionMotion\Services\ColorResolver;
 
@@ -42,11 +47,10 @@ function check(string $name, $actual, $expected): void {
     }
 }
 
-$front = new InteractionMotionFrontend();
-$m = new ReflectionMethod($front, 'buildCursorConfig');
-$m->setAccessible(true);
+$cursorCfg = new CursorConfig();
+$hoverCfg = new HoverConfig();
 
-$out = $m->invoke($front, [
+$out = $cursorCfg->buildCursorConfig([
     'emje_interaction_cursor_type' => 'text-follow',
     'emje_interaction_cursor_size' => ['size' => 24, 'unit' => 'px'],
     'emje_interaction_cursor_color' => '#123456',
@@ -77,15 +81,13 @@ check('live', $out['livePreview'], true);
 check('keyCount', count($out), 20);
 
 // Retired Comet Trail falls through to text-follow (new + legacy paths).
-$trail = $m->invoke($front, ['emje_interaction_cursor_type' => 'trail'], true);
+$trail = $cursorCfg->buildCursorConfig(['emje_interaction_cursor_type' => 'trail'], true);
 check('trail-fallback', $trail['type'], 'text-follow');
-$legacyTrail = $m->invoke($front, ['emje_cursor_type' => 'trail'], false);
+$legacyTrail = $cursorCfg->buildCursorConfig(['emje_cursor_type' => 'trail'], false);
 check('legacy-trail-fallback', $legacyTrail['type'], 'text-follow');
 
 // Hover Reveal: new and legacy key families produce the same shape.
-$mh = new ReflectionMethod($front, 'buildHoverConfig');
-$mh->setAccessible(true);
-$newHover = $mh->invoke($front, [
+$newHover = $hoverCfg->buildHoverConfig([
     'emje_interaction_hover_image' => ['id' => 7, 'url' => 'https://example.test/fallback.jpg'],
     'emje_interaction_hover_image_size' => 'thumbnail',
     'emje_interaction_hover_follow_speed' => 0.2,
@@ -95,7 +97,7 @@ $newHover = $mh->invoke($front, [
 check('hover-url', $newHover['imageUrl'], 'https://example.test/img-7-thumbnail.jpg');
 check('hover-anim-clamp', $newHover['animation'], 'fade');
 check('hover-speed', $newHover['followSpeed'], 0.2);
-$legacyHover = $mh->invoke($front, [
+$legacyHover = $hoverCfg->buildHoverConfig([
     'emje_hover_reveal_image' => ['id' => 7, 'url' => 'https://example.test/fallback.jpg'],
     'emje_hover_reveal_image_size' => 'thumbnail',
     'emje_hover_reveal_live_preview' => 'yes',
@@ -189,7 +191,7 @@ $muOther = emje_motion_mu_row_meta(['<a>Docs</a>'], 'other/other.php');
 check('mu-rowmeta-ignores-other-plugin', $muOther, ['<a>Docs</a>']);
 
 // Text Motion buildConfig: retired scrub presets + unfold defaults.
-require __DIR__ . '/../../src/Support/ColorField.php';
+require_once __DIR__ . '/../../src/Support/ColorField.php';
 require __DIR__ . '/../../src/Modules/TextMotion/Frontend/TextMotionFrontend.php';
 
 use EmjeCreative\EmjeMotion\Modules\TextMotion\Frontend\TextMotionFrontend;
