@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Emje Motion 1.3.2\n"
 "Report-Msgid-Bugs-To: https://github.com/emjecreative/emje-motion/issues\n"
-"POT-Creation-Date: 2026-09-14T17:42:13+00:00\n"
+"POT-Creation-Date: 2026-09-15T00:17:13+00:00\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -27,7 +27,7 @@ msgstr ""
 msgid "ASCII"
 msgstr ""
 
-#: src/Admin/AdminManager.php:128 src/Admin/AdminManager.php:129
+#: src/Admin/AdminManager.php:130 src/Admin/AdminManager.php:131
 #: src/Admin/Views/about.php:39 src/Admin/Views/about.php:47
 #: src/Admin/Views/about.php:63 src/Admin/Views/overview.php:36
 #: src/Admin/Views/overview.php:44 src/Admin/Views/settings.php:25
@@ -35,7 +35,7 @@ msgstr ""
 msgid "About"
 msgstr ""
 
-#: src/Admin/AdminManager.php:401
+#: src/Admin/AdminManager.php:403
 msgid "Adds subtle motion that reacts smoothly to direct visitor interaction input."
 msgstr ""
 
@@ -51,11 +51,11 @@ msgstr ""
 msgid "Animated retro dither that lives on its own. Click/tap sends a ripple."
 msgstr ""
 
-#: src/Admin/AdminManager.php:389
+#: src/Admin/AdminManager.php:391
 msgid "Animates text with precise timing, delay, and flexible trigger controls."
 msgstr ""
 
-#: src/Modules/TextMotion/Controls/TextMotionControls.php:101
+#: src/Modules/TextMotion/Controls/TextMotionControls.php:102
 msgid "Animation"
 msgstr ""
 
@@ -68,12 +68,12 @@ msgstr ""
 msgid "Auto preview in Editor. Off saves resources."
 msgstr ""
 
-#: src/Admin/AdminManager.php:390 src/Admin/AdminManager.php:396
-#: src/Admin/AdminManager.php:402 src/Admin/AdminManager.php:408
+#: src/Admin/AdminManager.php:392 src/Admin/AdminManager.php:398
+#: src/Admin/AdminManager.php:404 src/Admin/AdminManager.php:410
 msgid "Available"
 msgstr ""
 
-#: src/Modules/TextMotion/Controls/TextMotionControls.php:513
+#: src/Modules/TextMotion/Controls/TextMotionControls.php:514
 msgid "Back Out"
 msgstr ""
 
@@ -85,12 +85,12 @@ msgstr ""
 msgid "Background Color"
 msgstr ""
 
-#: src/Admin/AdminManager.php:406
+#: src/Admin/AdminManager.php:408
 #: src/Modules/BackgroundMotion/Controls/BackgroundMotionControls.php:34
 msgid "Background Motion"
 msgstr ""
 
-#: src/Modules/TextMotion/Controls/TextMotionControls.php:369
+#: src/Modules/TextMotion/Controls/TextMotionControls.php:370
 msgid "Background Opacity"
 msgstr ""
 
@@ -110,8 +110,8 @@ msgstr ""
 msgid "Behavior"
 msgstr ""
 
-#: src/Modules/TextMotion/Controls/TextMotionControls.php:314
-#: src/Modules/TextMotion/Controls/TextMotionControls.php:448
+#: src/Modules/TextMotion/Controls/TextMotionControls.php:315
+#: src/Modules/TextMotion/Controls/TextMotionControls.php:449
 msgid "Blur"
 msgstr ""
 
@@ -139,11 +139,11 @@ msgstr ""
 msgid "Cell Width"
 msgstr ""
 
-#: src/Modules/TextMotion/Controls/TextMotionControls.php:184
+#: src/Modules/TextMotion/Controls/TextMotionControls.php:185
 msgid "Center Out"
 msgstr ""
 
-#: src/Modules/TextMotion/Controls/TextMotionControls.php:606
+#: src/Modules/TextMotion/Controls/ScrubControls.php:27
 msgid "Center Stage"
 msgstr ""
 
@@ -151,11 +151,11 @@ msgstr ""
 msgid "Character Color"
 msgstr ""
 
-#: src/Modules/TextMotion/Controls/TextMotionControls.php:139
+#: src/Modules/TextMotion/Controls/TextMotionControls.php:140
 msgid "Character Set"
 msgstr ""
 
-#: src/Modules/TextMotion/Controls/TextMotionControls.php:242
+#: src/Modules/TextMotion/Controls/TextMotionControls.php:243
 msgid "Characters"
 msgstr ""
 
@@ -191,7 +191,7 @@ msgstr ""
 msgid "Color 4"
 msgstr ""
 
-#: src/Admin/AdminManager.php:395
+#: src/Admin/AdminManager.php:397
 msgid "Controls page scrolling speed and smoothness consistently across all pages."
 msgstr ""
 
@@ -207,20 +207,20 @@ msgstr ""
 msgid "Cursor Type"
 msgstr ""
 
-#: src/Modules/TextMotion/Controls/TextMotionControls.php:147
-#: src/Modules/TextMotion/Controls/TextMotionControls.php:607
+#: src/Modules/TextMotion/Controls/ScrubControls.php:28
+#: src/Modules/TextMotion/Controls/TextMotionControls.php:148
 msgid "Custom"
 msgstr ""
 
-#: src/Modules/TextMotion/Controls/TextMotionControls.php:161
+#: src/Modules/TextMotion/Controls/TextMotionControls.php:162
 msgid "Custom Characters"
 msgstr ""
 
-#: src/Modules/TextMotion/Controls/TextMotionControls.php:488
+#: src/Modules/TextMotion/Controls/TextMotionControls.php:489
 msgid "Delay"
 msgstr ""
 
-#: src/Modules/TextMotion/Controls/TextMotionControls.php:257
+#: src/Modules/TextMotion/Controls/TextMotionControls.php:258
 msgid "Direction"
 msgstr ""
 
@@ -249,7 +249,7 @@ msgstr ""
 msgid "Dismiss"
 msgstr ""
 
-#: src/Modules/TextMotion/Controls/TextMotionControls.php:278
+#: src/Modules/TextMotion/Controls/TextMotionControls.php:279
 msgid "Distance"
 msgstr ""
 
@@ -270,7 +270,7 @@ msgstr ""
 msgid "Dot Color"
 msgstr ""
 
-#: src/Modules/TextMotion/Controls/TextMotionControls.php:262
+#: src/Modules/TextMotion/Controls/TextMotionControls.php:263
 msgid "Down"
 msgstr ""
 
@@ -278,11 +278,11 @@ msgstr ""
 msgid "Drift"
 msgstr ""
 
-#: src/Modules/TextMotion/Controls/TextMotionControls.php:472
+#: src/Modules/TextMotion/Controls/TextMotionControls.php:473
 msgid "Duration"
 msgstr ""
 
-#: src/Modules/TextMotion/Controls/TextMotionControls.php:504
+#: src/Modules/TextMotion/Controls/TextMotionControls.php:505
 msgid "Ease"
 msgstr ""
 
@@ -298,11 +298,11 @@ msgstr ""
 msgid "Effect"
 msgstr ""
 
-#: src/Modules/TextMotion/Controls/TextMotionControls.php:514
+#: src/Modules/TextMotion/Controls/TextMotionControls.php:515
 msgid "Elastic Out"
 msgstr ""
 
-#: src/Admin/AdminManager.php:100 src/Admin/AdminManager.php:99
+#: src/Admin/AdminManager.php:101 src/Admin/AdminManager.php:102
 #: src/Admin/AdminNotice.php:28
 msgid "Emje Motion"
 msgstr ""
@@ -316,14 +316,14 @@ msgstr ""
 msgid "Emje Motion is incompletely installed (missing files). Please reinstall it: "
 msgstr ""
 
-#: src/Updater/GitHubUpdater.php:85
-#: src/Updater/stub/mu-emje-motion-updater.php:582
+#: src/Updater/GitHubUpdater.php:91
+#: src/Updater/stub/mu-emje-motion-updater.php:586
 msgid "Emje Motion update rejected: source archive has no built files. Please update from the release asset (emje-motion-x.y.z.zip), or reinstall manually from the latest release."
 msgstr ""
 
 #: src/Modules/BackgroundMotion/Controls/BackgroundMotionControls.php:42
 #: src/Modules/InteractionMotion/Controls/InteractionMotionControls.php:42
-#: src/Modules/TextMotion/Controls/TextMotionControls.php:87
+#: src/Modules/TextMotion/Controls/TextMotionControls.php:88
 msgid "Enable"
 msgstr ""
 
@@ -339,15 +339,15 @@ msgstr ""
 msgid "Enabled"
 msgstr ""
 
-#: src/Modules/TextMotion/Controls/TextMotionControls.php:645
+#: src/Modules/TextMotion/Controls/ScrubControls.php:66
 msgid "End Position"
 msgstr ""
 
-#: src/Modules/TextMotion/Controls/TextMotionControls.php:605
+#: src/Modules/TextMotion/Controls/ScrubControls.php:26
 msgid "Enter + Leave Viewport"
 msgstr ""
 
-#: src/Modules/TextMotion/Controls/TextMotionControls.php:164
+#: src/Modules/TextMotion/Controls/TextMotionControls.php:165
 msgid "Enter custom characters"
 msgstr ""
 
@@ -363,12 +363,12 @@ msgstr ""
 msgid "Features"
 msgstr ""
 
-#: src/Admin/AdminManager.php:250
+#: src/Admin/AdminManager.php:252
 msgid "Features saved."
 msgstr ""
 
-#: src/Modules/TextMotion/Controls/TextMotionControls.php:107
-#: src/Modules/TextMotion/Controls/TextMotionControls.php:356
+#: src/Modules/TextMotion/Controls/TextMotionControls.php:108
+#: src/Modules/TextMotion/Controls/TextMotionControls.php:357
 msgid "Fill Reveal"
 msgstr ""
 
@@ -454,7 +454,7 @@ msgstr ""
 msgid "Horizontal padding. Controls circle width. Longer text becomes pill."
 msgstr ""
 
-#: src/Modules/TextMotion/Controls/TextMotionControls.php:569
+#: src/Modules/TextMotion/Controls/TextMotionControls.php:570
 msgid "Hover"
 msgstr ""
 
@@ -495,11 +495,11 @@ msgstr ""
 msgid "Inner Radius"
 msgstr ""
 
-#: src/Admin/AdminManager.php:198
+#: src/Admin/AdminManager.php:200
 msgid "Insufficient permissions."
 msgstr ""
 
-#: src/Admin/AdminManager.php:400
+#: src/Admin/AdminManager.php:402
 #: src/Modules/InteractionMotion/Controls/InteractionMotionControls.php:34
 msgid "Interaction Motion"
 msgstr ""
@@ -517,37 +517,37 @@ msgstr ""
 msgid "Large"
 msgstr ""
 
-#: src/Modules/TextMotion/Controls/TextMotionControls.php:263
+#: src/Modules/TextMotion/Controls/TextMotionControls.php:264
 msgid "Left"
 msgstr ""
 
-#: src/Modules/TextMotion/Controls/TextMotionControls.php:182
+#: src/Modules/TextMotion/Controls/TextMotionControls.php:183
 msgid "Left → Right"
 msgstr ""
 
-#: src/Modules/TextMotion/Controls/TextMotionControls.php:143
+#: src/Modules/TextMotion/Controls/TextMotionControls.php:144
 msgid "Letters"
 msgstr ""
 
-#: src/Modules/TextMotion/Controls/TextMotionControls.php:145
+#: src/Modules/TextMotion/Controls/TextMotionControls.php:146
 msgid "Letters & Numbers"
 msgstr ""
 
-#: src/Modules/TextMotion/Controls/TextMotionControls.php:395
+#: src/Modules/TextMotion/Controls/TextMotionControls.php:396
 msgid "Line Mode"
 msgstr ""
 
-#: src/Modules/TextMotion/Controls/TextMotionControls.php:414
+#: src/Modules/TextMotion/Controls/TextMotionControls.php:415
 msgid "Line Stagger"
 msgstr ""
 
-#: src/Modules/TextMotion/Controls/TextMotionControls.php:243
+#: src/Modules/TextMotion/Controls/TextMotionControls.php:244
 msgid "Lines"
 msgstr ""
 
 #: src/Modules/BackgroundMotion/Controls/BackgroundMotionControls.php:1014
 #: src/Modules/InteractionMotion/Controls/InteractionMotionControls.php:89
-#: src/Modules/TextMotion/Controls/TextMotionControls.php:531
+#: src/Modules/TextMotion/Controls/TextMotionControls.php:532
 msgid "Live Preview"
 msgstr ""
 
@@ -571,7 +571,7 @@ msgstr ""
 msgid "Manage preferences & performance"
 msgstr ""
 
-#: src/Modules/TextMotion/Controls/TextMotionControls.php:296
+#: src/Modules/TextMotion/Controls/TextMotionControls.php:297
 msgid "Mask"
 msgstr ""
 
@@ -598,7 +598,7 @@ msgid "Motion Type"
 msgstr ""
 
 #: src/Modules/InteractionMotion/Controls/CursorControls.php:356
-#: src/Modules/TextMotion/Controls/TextMotionControls.php:586
+#: src/Modules/TextMotion/Controls/TextMotionControls.php:587
 msgid "No"
 msgstr ""
 
@@ -614,7 +614,7 @@ msgstr ""
 msgid "None"
 msgstr ""
 
-#: src/Modules/TextMotion/Controls/TextMotionControls.php:508
+#: src/Modules/TextMotion/Controls/TextMotionControls.php:509
 msgid "None (Linear)"
 msgstr ""
 
@@ -622,7 +622,7 @@ msgstr ""
 msgid "Not detected"
 msgstr ""
 
-#: src/Modules/TextMotion/Controls/TextMotionControls.php:144
+#: src/Modules/TextMotion/Controls/TextMotionControls.php:145
 msgid "Numbers"
 msgstr ""
 
@@ -631,9 +631,9 @@ msgstr ""
 #: src/Modules/BackgroundMotion/Controls/BackgroundMotionControls.php:697
 #: src/Modules/InteractionMotion/Controls/InteractionMotionControls.php:45
 #: src/Modules/InteractionMotion/Controls/InteractionMotionControls.php:92
-#: src/Modules/TextMotion/Controls/TextMotionControls.php:299
-#: src/Modules/TextMotion/Controls/TextMotionControls.php:534
-#: src/Modules/TextMotion/Controls/TextMotionControls.php:90
+#: src/Modules/TextMotion/Controls/TextMotionControls.php:300
+#: src/Modules/TextMotion/Controls/TextMotionControls.php:535
+#: src/Modules/TextMotion/Controls/TextMotionControls.php:91
 msgid "Off"
 msgstr ""
 
@@ -650,17 +650,17 @@ msgstr ""
 #: src/Modules/BackgroundMotion/Controls/BackgroundMotionControls.php:696
 #: src/Modules/InteractionMotion/Controls/InteractionMotionControls.php:44
 #: src/Modules/InteractionMotion/Controls/InteractionMotionControls.php:91
-#: src/Modules/TextMotion/Controls/TextMotionControls.php:298
-#: src/Modules/TextMotion/Controls/TextMotionControls.php:533
-#: src/Modules/TextMotion/Controls/TextMotionControls.php:89
+#: src/Modules/TextMotion/Controls/TextMotionControls.php:299
+#: src/Modules/TextMotion/Controls/TextMotionControls.php:534
+#: src/Modules/TextMotion/Controls/TextMotionControls.php:90
 msgid "On"
 msgstr ""
 
-#: src/Modules/TextMotion/Controls/TextMotionControls.php:570
+#: src/Modules/TextMotion/Controls/TextMotionControls.php:571
 msgid "On Scroll (Scrub)"
 msgstr ""
 
-#: src/Modules/TextMotion/Controls/TextMotionControls.php:400
+#: src/Modules/TextMotion/Controls/TextMotionControls.php:401
 msgid "One by One"
 msgstr ""
 
@@ -668,11 +668,11 @@ msgstr ""
 msgid "Opacity"
 msgstr ""
 
-#: src/Modules/TextMotion/Controls/TextMotionControls.php:399
+#: src/Modules/TextMotion/Controls/TextMotionControls.php:400
 msgid "Overlapping"
 msgstr ""
 
-#: src/Admin/AdminManager.php:110 src/Admin/AdminManager.php:111
+#: src/Admin/AdminManager.php:112 src/Admin/AdminManager.php:113
 #: src/Admin/Views/about.php:37 src/Admin/Views/about.php:45
 #: src/Admin/Views/overview.php:34 src/Admin/Views/overview.php:42
 #: src/Admin/Views/settings.php:23 src/Admin/Views/settings.php:31
@@ -687,7 +687,7 @@ msgstr ""
 msgid "Padding Y"
 msgstr ""
 
-#: src/Modules/TextMotion/Controls/TextMotionControls.php:567
+#: src/Modules/TextMotion/Controls/TextMotionControls.php:568
 msgid "Page Load"
 msgstr ""
 
@@ -708,11 +708,11 @@ msgstr ""
 msgid "Pixel Size"
 msgstr ""
 
-#: src/Modules/TextMotion/Controls/TextMotionControls.php:583
+#: src/Modules/TextMotion/Controls/TextMotionControls.php:584
 msgid "Play Once"
 msgstr ""
 
-#: src/Admin/AdminManager.php:407
+#: src/Admin/AdminManager.php:409
 msgid "Plays soft ambient animation continuously and quietly behind all content."
 msgstr ""
 
@@ -720,19 +720,19 @@ msgstr ""
 msgid "Plugin"
 msgstr ""
 
-#: src/Modules/TextMotion/Controls/TextMotionControls.php:509
+#: src/Modules/TextMotion/Controls/TextMotionControls.php:510
 msgid "Power1 Out"
 msgstr ""
 
-#: src/Modules/TextMotion/Controls/TextMotionControls.php:510
+#: src/Modules/TextMotion/Controls/TextMotionControls.php:511
 msgid "Power2 Out"
 msgstr ""
 
-#: src/Modules/TextMotion/Controls/TextMotionControls.php:511
+#: src/Modules/TextMotion/Controls/TextMotionControls.php:512
 msgid "Power3 Out"
 msgstr ""
 
-#: src/Modules/TextMotion/Controls/TextMotionControls.php:512
+#: src/Modules/TextMotion/Controls/TextMotionControls.php:513
 msgid "Power4 Out"
 msgstr ""
 
@@ -740,7 +740,7 @@ msgstr ""
 msgid "Preview"
 msgstr ""
 
-#: src/Modules/TextMotion/Controls/TextMotionControls.php:549
+#: src/Modules/TextMotion/Controls/TextMotionControls.php:550
 msgid "Preview Animation"
 msgstr ""
 
@@ -757,7 +757,7 @@ msgstr ""
 msgid "Quality"
 msgstr ""
 
-#: src/Modules/TextMotion/Controls/TextMotionControls.php:185
+#: src/Modules/TextMotion/Controls/TextMotionControls.php:186
 msgid "Random"
 msgstr ""
 
@@ -777,15 +777,15 @@ msgstr ""
 msgid "Reveal Image"
 msgstr ""
 
-#: src/Modules/TextMotion/Controls/TextMotionControls.php:178
+#: src/Modules/TextMotion/Controls/TextMotionControls.php:179
 msgid "Reveal Order"
 msgstr ""
 
-#: src/Modules/TextMotion/Controls/TextMotionControls.php:264
+#: src/Modules/TextMotion/Controls/TextMotionControls.php:265
 msgid "Right"
 msgstr ""
 
-#: src/Modules/TextMotion/Controls/TextMotionControls.php:183
+#: src/Modules/TextMotion/Controls/TextMotionControls.php:184
 msgid "Right → Left"
 msgstr ""
 
@@ -834,36 +834,36 @@ msgstr ""
 msgid "Scale when hovering links/buttons inside the container."
 msgstr ""
 
-#: src/Modules/TextMotion/Controls/TextMotionControls.php:105
-#: src/Modules/TextMotion/Controls/TextMotionControls.php:126
+#: src/Modules/TextMotion/Controls/TextMotionControls.php:106
+#: src/Modules/TextMotion/Controls/TextMotionControls.php:127
 msgid "Scramble"
 msgstr ""
 
-#: src/Modules/TextMotion/Controls/TextMotionControls.php:199
+#: src/Modules/TextMotion/Controls/TextMotionControls.php:200
 msgid "Scramble Speed"
 msgstr ""
 
-#: src/Modules/TextMotion/Controls/TextMotionControls.php:651
+#: src/Modules/TextMotion/Controls/ScrubControls.php:72
 msgid "Screen line where the effect finishes: 0 is the top of the screen, 100 is the bottom."
 msgstr ""
 
-#: src/Modules/TextMotion/Controls/TextMotionControls.php:627
+#: src/Modules/TextMotion/Controls/ScrubControls.php:48
 msgid "Screen line where the effect starts: 0 is the top of the screen, 100 is the bottom."
 msgstr ""
 
-#: src/Modules/TextMotion/Controls/TextMotionControls.php:568
+#: src/Modules/TextMotion/Controls/TextMotionControls.php:569
 msgid "Scroll Into View"
 msgstr ""
 
-#: src/Modules/TextMotion/Controls/TextMotionControls.php:601
+#: src/Modules/TextMotion/Controls/ScrubControls.php:22
 msgid "Scrub"
 msgstr ""
 
-#: src/Admin/AdminManager.php:194
+#: src/Admin/AdminManager.php:196
 msgid "Security check failed."
 msgstr ""
 
-#: src/Admin/AdminManager.php:119 src/Admin/AdminManager.php:120
+#: src/Admin/AdminManager.php:121 src/Admin/AdminManager.php:122
 #: src/Admin/Views/about.php:38 src/Admin/Views/about.php:46
 #: src/Admin/Views/overview.php:35 src/Admin/Views/overview.php:43
 #: src/Admin/Views/settings.php:24 src/Admin/Views/settings.php:32
@@ -871,7 +871,7 @@ msgstr ""
 msgid "Settings"
 msgstr ""
 
-#: src/Admin/AdminManager.php:293
+#: src/Admin/AdminManager.php:295
 msgid "Settings saved."
 msgstr ""
 
@@ -900,7 +900,7 @@ msgstr ""
 msgid "Size"
 msgstr ""
 
-#: src/Admin/AdminManager.php:394 src/Admin/Views/settings.php:80
+#: src/Admin/AdminManager.php:396 src/Admin/Views/settings.php:80
 msgid "Smooth Scroll"
 msgstr ""
 
@@ -912,15 +912,15 @@ msgstr ""
 msgid "Spacing between cells when Border Width is 0. Ignored while dividers are active."
 msgstr ""
 
-#: src/Modules/TextMotion/Controls/TextMotionControls.php:237
+#: src/Modules/TextMotion/Controls/TextMotionControls.php:238
 msgid "Split By"
 msgstr ""
 
-#: src/Modules/TextMotion/Controls/TextMotionControls.php:332
+#: src/Modules/TextMotion/Controls/TextMotionControls.php:333
 msgid "Stagger"
 msgstr ""
 
-#: src/Modules/TextMotion/Controls/TextMotionControls.php:621
+#: src/Modules/TextMotion/Controls/ScrubControls.php:42
 msgid "Start Position"
 msgstr ""
 
@@ -940,7 +940,7 @@ msgstr ""
 msgid "Swirl"
 msgstr ""
 
-#: src/Modules/TextMotion/Controls/TextMotionControls.php:146
+#: src/Modules/TextMotion/Controls/TextMotionControls.php:147
 msgid "Symbols"
 msgstr ""
 
@@ -960,7 +960,7 @@ msgstr ""
 msgid "Text Label"
 msgstr ""
 
-#: src/Admin/AdminManager.php:388
+#: src/Admin/AdminManager.php:390
 #: src/Modules/TextMotion/Controls/TextMotionControls.php:62
 msgid "Text Motion"
 msgstr ""
@@ -986,7 +986,7 @@ msgstr ""
 msgid "Transition Speed"
 msgstr ""
 
-#: src/Modules/TextMotion/Controls/TextMotionControls.php:563
+#: src/Modules/TextMotion/Controls/TextMotionControls.php:564
 msgid "Trigger"
 msgstr ""
 
@@ -1002,12 +1002,12 @@ msgstr ""
 msgid "Typography"
 msgstr ""
 
-#: src/Modules/TextMotion/Controls/TextMotionControls.php:106
-#: src/Modules/TextMotion/Controls/TextMotionControls.php:224
+#: src/Modules/TextMotion/Controls/TextMotionControls.php:107
+#: src/Modules/TextMotion/Controls/TextMotionControls.php:225
 msgid "Unfold"
 msgstr ""
 
-#: src/Modules/TextMotion/Controls/TextMotionControls.php:261
+#: src/Modules/TextMotion/Controls/TextMotionControls.php:262
 msgid "Up"
 msgstr ""
 
@@ -1028,17 +1028,17 @@ msgstr ""
 msgid "Vertical padding. Controls circle height."
 msgstr ""
 
-#: src/Admin/AdminManager.php:83
-#: src/Updater/stub/mu-emje-motion-updater.php:548
+#: src/Admin/AdminManager.php:85
+#: src/Updater/stub/mu-emje-motion-updater.php:552
 msgid "View Emje Motion details"
 msgstr ""
 
-#: src/Admin/AdminManager.php:84
-#: src/Updater/stub/mu-emje-motion-updater.php:549
+#: src/Admin/AdminManager.php:86
+#: src/Updater/stub/mu-emje-motion-updater.php:553
 msgid "View details"
 msgstr ""
 
-#: src/Modules/TextMotion/Controls/TextMotionControls.php:433
+#: src/Modules/TextMotion/Controls/TextMotionControls.php:434
 msgid "Wash Color"
 msgstr ""
 
@@ -1058,12 +1058,12 @@ msgstr ""
 msgid "Whole Container"
 msgstr ""
 
-#: src/Modules/TextMotion/Controls/TextMotionControls.php:241
+#: src/Modules/TextMotion/Controls/TextMotionControls.php:242
 msgid "Words"
 msgstr ""
 
 #: src/Modules/InteractionMotion/Controls/CursorControls.php:355
-#: src/Modules/TextMotion/Controls/TextMotionControls.php:585
+#: src/Modules/TextMotion/Controls/TextMotionControls.php:586
 msgid "Yes"
 msgstr ""
 
