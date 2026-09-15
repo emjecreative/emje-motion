@@ -29,9 +29,6 @@ import { initPreviewSync } from './editor-bridge/previewSync.js';
     if (window.elementor && window.elementor.channels && window.elementor.channels.editor) {
         initBridge();
     }
-    if (window.jQuery) {
-        window.jQuery(window).on('elementor:init', initBridge);
-    } else {
-        window.addEventListener('elementor:init', initBridge);
-    }
+    // window.jQuery is guaranteed by the guard above.
+    window.jQuery(window).on('elementor:init', initBridge);
 })();

@@ -125,10 +125,9 @@ export default class InteractiveCursor {
 
         this.cursorEl.classList.remove('emje-cursor--hidden');
 
-        // Reduced motion: simple fade.
-        const isReduced = !this.isEditMode() && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-        if (this.config.type === 'text-follow' && this.followEl && !isReduced) {
+        // Reduced motion never reaches here: shouldInit() blocks it on the
+        // frontend, and edit mode always animates for preview fidelity.
+        if (this.config.type === 'text-follow' && this.followEl) {
             enterTextFollow(this);
         } else {
             gsap.to(this.cursorEl, { opacity: 1, duration: 0.2, ease: 'power2.out' });
@@ -140,9 +139,7 @@ export default class InteractiveCursor {
 
         if (!this.cursorEl) return;
 
-        const isReduced = !this.isEditMode() && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-        if (this.config.type === 'text-follow' && this.followEl && !isReduced && this.config.entrance !== 'none') {
+        if (this.config.type === 'text-follow' && this.followEl && this.config.entrance !== 'none') {
             leaveTextFollow(this);
         } else {
             gsap.to(this.cursorEl, { opacity: 0, duration: 0.15, ease: 'power2.in', onComplete: () => {

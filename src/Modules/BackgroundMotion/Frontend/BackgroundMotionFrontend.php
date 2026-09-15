@@ -6,6 +6,7 @@ namespace EmjeCreative\EmjeMotion\Modules\BackgroundMotion\Frontend;
 
 use EmjeCreative\EmjeMotion\Modules\InteractionMotion\Services\ColorResolver;
 use EmjeCreative\EmjeMotion\Modules\InteractionMotion\Services\SliderResolver;
+use EmjeCreative\EmjeMotion\Support\ColorField;
 use EmjeCreative\EmjeMotion\Support\RenderAttributes;
 
 /**
@@ -86,14 +87,7 @@ final class BackgroundMotionFrontend
      */
     private function buildAsciiConfig(array $settings): array
     {
-        $colorRaw = trim((string) ($settings['emje_background_ascii_color'] ?? ''));
-        $globals = $settings['__globals__'] ?? [];
-        if (is_array($globals) && isset($globals['emje_background_ascii_color']) && is_string($globals['emje_background_ascii_color']) && trim($globals['emje_background_ascii_color']) !== '') {
-            $colorRaw = $this->colorResolver->resolveGlobalColorVar($globals['emje_background_ascii_color']);
-        }
-        if ($colorRaw === '') {
-            $colorRaw = '#1227E2';
-        }
+        $color = ColorField::pick($settings, 'emje_background_ascii_color', '#1227E2', $this->colorResolver);
 
         $charset = isset($settings['emje_background_ascii_charset']) ? (string) $settings['emje_background_ascii_charset'] : 'full';
         if (! in_array($charset, ['full', 'simple'], true)) {
@@ -102,7 +96,7 @@ final class BackgroundMotionFrontend
 
         return [
             'effect' => 'ascii',
-            'color' => $this->colorResolver->sanitizeColor($colorRaw, '#1227E2'),
+            'color' => $color,
             'charset' => $charset,
             'cellW' => $this->sliderResolver->resolveFloat($settings['emje_background_ascii_cell_w'] ?? 22, 22, 8, 60),
             'cellH' => $this->sliderResolver->resolveFloat($settings['emje_background_ascii_cell_h'] ?? 26, 26, 8, 60),
@@ -123,32 +117,9 @@ final class BackgroundMotionFrontend
      */
     private function buildPixelConfig(array $settings): array
     {
-        $baseRaw = trim((string) ($settings['emje_background_pixel_base'] ?? ''));
-        $activeRaw = trim((string) ($settings['emje_background_pixel_active'] ?? ''));
-        $globals = $settings['__globals__'] ?? [];
-        if (is_array($globals)) {
-            if (isset($globals['emje_background_pixel_base']) && is_string($globals['emje_background_pixel_base']) && trim($globals['emje_background_pixel_base']) !== '') {
-                $baseRaw = $this->colorResolver->resolveGlobalColorVar($globals['emje_background_pixel_base']);
-            }
-            if (isset($globals['emje_background_pixel_active']) && is_string($globals['emje_background_pixel_active']) && trim($globals['emje_background_pixel_active']) !== '') {
-                $activeRaw = $this->colorResolver->resolveGlobalColorVar($globals['emje_background_pixel_active']);
-            }
-        }
-        if ($baseRaw === '') {
-            $baseRaw = '#1227E21A';
-        }
-        if ($activeRaw === '') {
-            $activeRaw = '#1227E2';
-        }
-        $borderRaw = trim((string) ($settings['emje_background_pixel_border'] ?? ''));
-        if (is_array($globals)) {
-            if (isset($globals['emje_background_pixel_border']) && is_string($globals['emje_background_pixel_border']) && trim($globals['emje_background_pixel_border']) !== '') {
-                $borderRaw = $this->colorResolver->resolveGlobalColorVar($globals['emje_background_pixel_border']);
-            }
-        }
-        if ($borderRaw === '') {
-            $borderRaw = '#1227E21A';
-        }
+        $base = ColorField::pick($settings, 'emje_background_pixel_base', '#1227E21A', $this->colorResolver);
+        $active = ColorField::pick($settings, 'emje_background_pixel_active', '#1227E2', $this->colorResolver);
+        $border = ColorField::pick($settings, 'emje_background_pixel_border', '#1227E21A', $this->colorResolver);
 
         $fit = isset($settings['emje_background_pixel_fit']) ? (string) $settings['emje_background_pixel_fit'] : 'stretch';
         if (! in_array($fit, ['stretch', 'crop'], true)) {
@@ -157,13 +128,13 @@ final class BackgroundMotionFrontend
 
         return [
             'effect' => 'pixel',
-            'base' => $this->colorResolver->sanitizeColor($baseRaw, '#1227E21A'),
-            'active' => $this->colorResolver->sanitizeColor($activeRaw, '#1227E2'),
+            'base' => $base,
+            'active' => $active,
             'fit' => $fit,
             'cellSize' => $this->sliderResolver->resolveFloat($settings['emje_background_pixel_size'] ?? 56, 56, 24, 96),
             'gap' => $this->sliderResolver->resolveFloat($settings['emje_background_pixel_gap'] ?? 2, 2, 0, 12),
             'borderW' => $this->sliderResolver->resolveFloat($settings['emje_background_pixel_border_w'] ?? 1, 1, 0, 2),
-            'border' => $this->colorResolver->sanitizeColor($borderRaw, '#1227E21A'),
+            'border' => $border,
             'speed' => $this->sliderResolver->resolveFloat($settings['emje_background_pixel_speed'] ?? 0.15, 0.15, 0.05, 0.5),
             'radius' => $this->sliderResolver->resolveFloat($settings['emje_background_pixel_radius'] ?? 120, 120, 0, 300),
             'trail' => $this->sliderResolver->resolveFloat($settings['emje_background_pixel_trail'] ?? 0.4, 0.4, 0, 1.5),
@@ -180,28 +151,13 @@ final class BackgroundMotionFrontend
      */
     private function buildDitherConfig(array $settings): array
     {
-        $fgRaw = trim((string) ($settings['emje_background_dither_fg'] ?? ''));
-        $bgRaw = trim((string) ($settings['emje_background_dither_bg'] ?? ''));
-        $globals = $settings['__globals__'] ?? [];
-        if (is_array($globals)) {
-            if (isset($globals['emje_background_dither_fg']) && is_string($globals['emje_background_dither_fg']) && trim($globals['emje_background_dither_fg']) !== '') {
-                $fgRaw = $this->colorResolver->resolveGlobalColorVar($globals['emje_background_dither_fg']);
-            }
-            if (isset($globals['emje_background_dither_bg']) && is_string($globals['emje_background_dither_bg']) && trim($globals['emje_background_dither_bg']) !== '') {
-                $bgRaw = $this->colorResolver->resolveGlobalColorVar($globals['emje_background_dither_bg']);
-            }
-        }
-        if ($fgRaw === '') {
-            $fgRaw = '#1227E2';
-        }
-        if ($bgRaw === '') {
-            $bgRaw = '#1227E21A';
-        }
+        $fg = ColorField::pick($settings, 'emje_background_dither_fg', '#1227E2', $this->colorResolver);
+        $bg = ColorField::pick($settings, 'emje_background_dither_bg', '#1227E21A', $this->colorResolver);
 
         return [
             'effect' => 'dither',
-            'fg' => $this->colorResolver->sanitizeColor($fgRaw, '#1227E2'),
-            'bg' => $this->colorResolver->sanitizeColor($bgRaw, '#1227E21A'),
+            'fg' => $fg,
+            'bg' => $bg,
             'pixel' => $this->sliderResolver->resolveFloat($settings['emje_background_dither_pixel'] ?? 8, 8, 4, 32),
             'density' => $this->sliderResolver->resolveFloat($settings['emje_background_dither_density'] ?? 0.5, 0.5, 0, 1),
             'scale' => $this->sliderResolver->resolveFloat($settings['emje_background_dither_scale'] ?? 1.5, 1.5, 0.5, 4),
@@ -234,18 +190,10 @@ final class BackgroundMotionFrontend
         $preset = isset($settings['emje_background_mesh_preset']) ? (string) $settings['emje_background_mesh_preset'] : '';
         $legacy = $legacyPalettes[$preset] ?? null;
 
-        $globals = $settings['__globals__'] ?? [];
         $colors = [];
         $fallbacks = $legacy ?? ['#0C4A6E', '#0284C7', '#5EEAD4', '#F0FDFA'];
         foreach (['emje_background_mesh_c1', 'emje_background_mesh_c2', 'emje_background_mesh_c3', 'emje_background_mesh_c4'] as $i => $key) {
-            $raw = trim((string) ($settings[$key] ?? ''));
-            if (is_array($globals) && isset($globals[$key]) && is_string($globals[$key]) && trim($globals[$key]) !== '') {
-                $raw = $this->colorResolver->resolveGlobalColorVar($globals[$key]);
-            }
-            if ($raw === '') {
-                $raw = $fallbacks[$i];
-            }
-            $colors[] = $this->colorResolver->sanitizeColor($raw, $fallbacks[$i]);
+            $colors[] = ColorField::pick($settings, $key, $fallbacks[$i], $this->colorResolver);
         }
 
         $motion = isset($settings['emje_background_mesh_motion']) ? (string) $settings['emje_background_mesh_motion'] : 'drift';

@@ -49,10 +49,8 @@ final class SmoothScroll implements ModuleInterface
 
         $allSettings = $this->settings->getSettings();
 
-        $lerp = isset($allSettings['smooth_scroll_lerp']) ? (float) $allSettings['smooth_scroll_lerp'] : 0.075;
-        $lerp = max(0.05, min(0.15, $lerp));
-        $wheel = isset($allSettings['smooth_scroll_wheel_multiplier']) ? (float) $allSettings['smooth_scroll_wheel_multiplier'] : 1.2;
-        $wheel = max(0.8, min(1.5, $wheel));
+        $lerp = SmoothScrollConfig::sanitizeLerp($allSettings['smooth_scroll_lerp'] ?? null);
+        $wheel = SmoothScrollConfig::sanitizeWheel($allSettings['smooth_scroll_wheel_multiplier'] ?? null);
 
         $config = [
             'enabled' => $this->settings->isEnabled($this->getId()),

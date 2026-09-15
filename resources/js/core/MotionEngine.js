@@ -104,18 +104,9 @@ export default class MotionEngine {
                     const updateScrub = () => {
                         scrubRAF = null;
                         const p = computeProgress();
+                        // All factory animations implement setProgress.
                         if (typeof animation.setProgress === 'function') {
                             try { animation.setProgress(p); } catch (e) {}
-                        } else if (animation.timeline && typeof animation.timeline.progress === 'function') {
-                            try { animation.timeline.progress(p); } catch (e) {}
-                        } else {
-                            const masks = animation.masks && animation.masks.length ? animation.masks : (animation.dom && animation.dom.mask ? [animation.dom.mask] : []);
-                            masks.forEach((m) => {
-                                try { gsap.set(m, { clipPath: `inset(0 ${(1 - p) * 100}% 0 0)` }); } catch (e) {}
-                            });
-                            if (typeof animation.renderFrame === 'function') {
-                                try { animation.renderFrame(p); } catch (e) {}
-                            }
                         }
                         // Debug (enable in console: window.__EMJE_SCRUB_DEBUG = true)
                         try {
@@ -194,10 +185,9 @@ export default class MotionEngine {
                 try { instance._emjeScrubCleanup(); } catch (e) {}
                 instance._emjeScrubCleanup = null;
             }
+            // All factory animations extend Animation and implement destroy().
             if (typeof instance.destroy === 'function') {
                 try { instance.destroy(); } catch (e) {}
-            } else if (typeof instance.killTimeline === 'function') {
-                try { instance.killTimeline(); } catch (e) {}
             }
             // Clean GSAP props on target
             try {

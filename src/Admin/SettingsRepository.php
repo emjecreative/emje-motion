@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace EmjeCreative\EmjeMotion\Admin;
 
+use EmjeCreative\EmjeMotion\Modules\SmoothScroll\SmoothScrollConfig;
+
 /**
  * Centralized access to plugin options.
  */
@@ -144,11 +146,15 @@ final class SettingsRepository
     {
         $current = $this->getSettings();
 
-        $lerp = isset($settings['smooth_scroll_lerp']) ? (float) $settings['smooth_scroll_lerp'] : (float) $current['smooth_scroll_lerp'];
-        $lerp = max(0.05, min(0.15, $lerp));
+        $lerp = SmoothScrollConfig::sanitizeLerp(
+            $settings['smooth_scroll_lerp'] ?? null,
+            (float) $current['smooth_scroll_lerp'],
+        );
 
-        $wheel = isset($settings['smooth_scroll_wheel_multiplier']) ? (float) $settings['smooth_scroll_wheel_multiplier'] : (float) $current['smooth_scroll_wheel_multiplier'];
-        $wheel = max(0.8, min(1.5, $wheel));
+        $wheel = SmoothScrollConfig::sanitizeWheel(
+            $settings['smooth_scroll_wheel_multiplier'] ?? null,
+            (float) $current['smooth_scroll_wheel_multiplier'],
+        );
 
         $sanitized = [
             'respect_reduced_motion' => isset($settings['respect_reduced_motion']) ? (bool) $settings['respect_reduced_motion'] : $current['respect_reduced_motion'],

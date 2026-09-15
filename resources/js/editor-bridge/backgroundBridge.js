@@ -1,4 +1,4 @@
-import { getPreviewWindow, getPreviewDocument, pickEditorColor, findTarget, destroyLayerInstance } from './utils.js';
+import { getPreviewWindow, getPreviewDocument, pickEditorColor, findTarget, destroyLayerInstance, resolveEditedModel } from './utils.js';
 import { DEFAULT_COLORS, LEGACY_PRESETS as LEGACY_MESH_PRESETS } from '../modules/BackgroundMotion/shared';
 
 export function buildBackgroundConfig(settings) {
@@ -282,41 +282,13 @@ export function bindBackgroundBridge() {
     if (!window.elementor || !window.elementor.channels || !window.elementor.channels.editor) return;
     window.elementor.channels.editor.on('change', function(view) {
         // NOTE: `view` here is often the CONTROL view (view.model = the
-        // control model), not the element — same pitfall already handled
-        // in bindEditorChange. Resolve via editedElementView first.
-        var editedView = null;
-        try {
-            editedView = window.elementor.channels.editor.request('editedElementView');
-        } catch (err) {}
-        var model = null;
-        var settings = null;
-        var widgetType = null;
-        var widgetId = null;
-        if (editedView && editedView.model) {
-            model = editedView.model;
-            settings = model.get('settings');
-            widgetType = model.get('widgetType') || model.get('elType');
-            widgetId = model.get('id');
-        } else if (view && view.model) {
-            model = view.model;
-            settings = model.get('settings');
-            if (settings && typeof settings.get !== 'function') {
-                settings = view.model.get('settings');
-            }
-            widgetType = model.get('widgetType') || model.get('elType');
-            widgetId = model.get('id');
-            if (!widgetType && view.container) {
-                var containerSettings = view.container.settings;
-                if (containerSettings) {
-                    settings = containerSettings;
-                    model = view.container.model || model;
-                    widgetType = model.get('widgetType') || model.get('elType');
-                    widgetId = model.get('id');
-                }
-            }
-        }
+        // control model), not the element — resolved via editedElementView.
+        var resolved = resolveEditedModel(view);
+        var settings = resolved.settings;
+        var widgetType = resolved.widgetType;
+        var widgetId = resolved.widgetId;
         bgDebug('bridge change', {
-            via: editedView ? 'editedElementView' : 'view',
+            via: resolved.editedView ? 'editedElementView' : 'view',
             type: widgetType, id: widgetId,
             hasSettings: !!(settings && typeof settings.get === 'function'),
             enable: settings && typeof settings.get === 'function' ? settings.get('emje_background_enable') : '(n/a)'

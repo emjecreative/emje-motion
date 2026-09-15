@@ -202,11 +202,6 @@ final class TextMotionControls
                 'min' => 0.5,
                 'max' => 5,
                 'step' => 0.1,
-                'description' => esc_html__(
-                    'Controls how quickly random characters change. 1 = Normal speed.',
-                    'emje-motion',
-                ),
-                'classes' => 'emje-control--has-tooltip',
                 'condition' => [
                     'emje_motion_enable' => 'yes',
                     'emje_motion_animation' => 'scramble-text',
@@ -340,11 +335,6 @@ final class TextMotionControls
                 'min' => 0,
                 'max' => 0.5,
                 'step' => 0.01,
-                'description' => esc_html__(
-                    'Delay between each word/character animation, in seconds.',
-                    'emje-motion',
-                ),
-                'classes' => 'emje-control--has-tooltip',
                 'condition' => [
                     'emje_motion_enable' => 'yes',
                     'emje_motion_animation' => 'text-unfold',
@@ -390,11 +380,25 @@ final class TextMotionControls
                     'size' => 0.25,
                     'unit' => 'px',
                 ],
-                'description' => esc_html__(
-                    'Opacity of the background text layer.',
-                    'emje-motion',
-                ),
-                'classes' => 'emje-control--has-tooltip',
+                'condition' => [
+                    'emje_motion_enable' => 'yes',
+                    'emje_motion_animation' => 'fill-reveal',
+                ],
+                'frontend_available' => true,
+                'render_type' => 'none',
+            ],
+        );
+
+        $element->add_control(
+            'emje_motion_fill_line_mode',
+            [
+                'label' => esc_html__('Line Mode', 'emje-motion'),
+                'type' => Controls_Manager::SELECT,
+                'default' => 'overlap',
+                'options' => [
+                    'overlap' => esc_html__('Overlapping', 'emje-motion'),
+                    'sequence' => esc_html__('One by One', 'emje-motion'),
+                ],
                 'condition' => [
                     'emje_motion_enable' => 'yes',
                     'emje_motion_animation' => 'fill-reveal',
@@ -413,11 +417,40 @@ final class TextMotionControls
                 'min' => 0,
                 'max' => 0.5,
                 'step' => 0.01,
-                'description' => esc_html__(
-                    'Delay between lines. 0 = together, 0.15 = next line starts after 0.15s. For 25% overlap with 1s duration use 0.25.',
-                    'emje-motion',
-                ),
-                'classes' => 'emje-control--has-tooltip',
+                'condition' => [
+                    'emje_motion_enable' => 'yes',
+                    'emje_motion_animation' => 'fill-reveal',
+                    'emje_motion_fill_line_mode' => 'overlap',
+                ],
+                'frontend_available' => true,
+                'render_type' => 'none',
+            ],
+        );
+
+        $element->add_control(
+            'emje_motion_fill_wash_color',
+            [
+                'label' => esc_html__('Wash Color', 'emje-motion'),
+                'type' => Controls_Manager::COLOR,
+                'default' => '',
+                'condition' => [
+                    'emje_motion_enable' => 'yes',
+                    'emje_motion_animation' => 'fill-reveal',
+                ],
+                'frontend_available' => true,
+                'render_type' => 'none',
+            ],
+        );
+
+        $element->add_control(
+            'emje_motion_fill_blur',
+            [
+                'label' => esc_html__('Blur', 'emje-motion'),
+                'type' => Controls_Manager::NUMBER,
+                'default' => 0,
+                'min' => 0,
+                'max' => 20,
+                'step' => 1,
                 'condition' => [
                     'emje_motion_enable' => 'yes',
                     'emje_motion_animation' => 'fill-reveal',
@@ -434,18 +467,6 @@ final class TextMotionControls
     private function registerPlaybackControls(mixed $element): void
     {
         $element->add_control(
-            'emje_motion_playback_heading',
-            [
-                'label' => esc_html__('Timing', 'emje-motion'),
-                'type' => Controls_Manager::HEADING,
-                'separator' => 'before',
-                'condition' => [
-                    'emje_motion_enable' => 'yes',
-                ],
-            ],
-        );
-
-        $element->add_control(
             'emje_motion_duration',
             [
                 'label' => esc_html__('Duration', 'emje-motion'),
@@ -453,11 +474,6 @@ final class TextMotionControls
                 'default' => 1,
                 'min' => 0,
                 'step' => 0.1,
-                'description' => esc_html__(
-                    'Total animation duration in seconds.',
-                    'emje-motion',
-                ),
-                'classes' => 'emje-control--has-tooltip',
                 'condition' => [
                     'emje_motion_enable' => 'yes',
                 ],
@@ -474,8 +490,6 @@ final class TextMotionControls
                 'default' => 0,
                 'min' => 0,
                 'step' => 0.1,
-                'description' => esc_html__(
-                'classes' => 'emje-control--has-tooltip',
                 'condition' => [
                     'emje_motion_enable' => 'yes',
                 ],
@@ -499,11 +513,6 @@ final class TextMotionControls
                     'back.out(1.7)' => esc_html__('Back Out', 'emje-motion'),
                     'elastic.out(1, 0.3)' => esc_html__('Elastic Out', 'emje-motion'),
                 ],
-                'description' => esc_html__(
-                    'Controls the animation easing.',
-                    'emje-motion',
-                ),
-                'classes' => 'emje-control--has-tooltip',
                 'condition' => [
                     'emje_motion_enable' => 'yes',
                 ],
@@ -517,18 +526,6 @@ final class TextMotionControls
     private function registerPreviewControls(mixed $element): void
     {
         $element->add_control(
-            'emje_motion_preview_heading',
-            [
-                'label' => esc_html__('Preview', 'emje-motion'),
-                'type' => Controls_Manager::HEADING,
-                'separator' => 'before',
-                'condition' => [
-                    'emje_motion_enable' => 'yes',
-                ],
-            ],
-        );
-
-        $element->add_control(
             'emje_motion_live_preview',
             [
                 'label' => esc_html__('Live Preview', 'emje-motion'),
@@ -537,8 +534,6 @@ final class TextMotionControls
                 'label_off' => esc_html__('Off', 'emje-motion'),
                 'return_value' => 'yes',
                 'default' => 'yes',
-                'description' => esc_html__('Automatically replay animation when controls change.', 'emje-motion'),
-                'classes' => 'emje-control--has-tooltip',
                 'frontend_available' => true,
                 'render_type' => 'none',
                 'condition' => [
@@ -551,7 +546,7 @@ final class TextMotionControls
             'emje_motion_preview_button',
             [
                 'type' => Controls_Manager::RAW_HTML,
-                'raw' => '<button type="button" class="elementor-button elementor-button-success emje-motion-preview-btn" style="width:100%;margin-top:8px;"><i class="eicon-play" aria-hidden="true"></i> ' . esc_html__('Preview Animation', 'emje-motion') . '</button><div class="elementor-control-field-description">' . esc_html__('Replays animation regardless of Play Once.', 'emje-motion') . '</div>',
+                'raw' => '<button type="button" class="elementor-button elementor-button-success emje-motion-preview-btn" style="width:100%;margin-top:8px;"><i class="eicon-play" aria-hidden="true"></i> ' . esc_html__('Preview Animation', 'emje-motion') . '</button>',
                 'condition' => [
                     'emje_motion_enable' => 'yes',
                     'emje_motion_live_preview' => 'yes',
@@ -563,20 +558,9 @@ final class TextMotionControls
     private function registerTriggerControls(mixed $element): void
     {
         $element->add_control(
-            'emje_motion_trigger_heading',
-            [
-                'label' => esc_html__('Trigger', 'emje-motion'),
-                'type' => Controls_Manager::HEADING,
-                'condition' => [
-                    'emje_motion_enable' => 'yes',
-                ],
-            ],
-        );
-
-        $element->add_control(
             'emje_motion_trigger',
             [
-                'label' => esc_html__('Event', 'emje-motion'),
+                'label' => esc_html__('Trigger', 'emje-motion'),
                 'type' => Controls_Manager::SELECT,
                 'default' => 'load',
                 'options' => [

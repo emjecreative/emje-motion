@@ -45,21 +45,13 @@ export function buildTextMotionConfig(settings) {
     if (customChars.length > 200) customChars = customChars.substring(0, 200);
     if (customChars === '') customChars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
 
-    var scrambleSpeed = parseFloat(get('emje_motion_scramble_speed', 1));
-    if (isNaN(scrambleSpeed)) scrambleSpeed = 1;
-    scrambleSpeed = Math.max(0.5, Math.min(5, scrambleSpeed));
+    var scrambleSpeed = clampNum(get('emje_motion_scramble_speed', 1), 0.5, 5, 1);
 
-    var duration = parseFloat(get('emje_motion_duration', 1));
-    if (isNaN(duration)) duration = 1;
-    duration = Math.max(0, duration);
+    var duration = Math.max(0, toNumber(get('emje_motion_duration', 1), 1));
 
-    var delay = parseFloat(get('emje_motion_delay', 0));
-    if (isNaN(delay)) delay = 0;
-    delay = Math.max(0, delay);
+    var delay = Math.max(0, toNumber(get('emje_motion_delay', 0), 0));
 
-    var stagger = parseFloat(get('emje_motion_unfold_stagger', 0.04));
-    if (isNaN(stagger)) stagger = 0.04;
-    stagger = Math.max(0, Math.min(0.5, stagger));
+    var stagger = clampNum(get('emje_motion_unfold_stagger', 0.04), 0, 0.5, 0.04);
 
     var splitBy = get('emje_motion_unfold_split_by', 'words');
     if (['words', 'characters', 'lines'].indexOf(splitBy) === -1) splitBy = 'words';
@@ -84,9 +76,15 @@ export function buildTextMotionConfig(settings) {
     }
     bgOpacity = Math.max(0, Math.min(1, bgOpacity));
 
-    var fillStagger = parseFloat(get('emje_motion_fill_stagger', 0.15));
-    if (isNaN(fillStagger)) fillStagger = 0.15;
-    fillStagger = Math.max(0, Math.min(0.5, fillStagger));
+    var fillStagger = clampNum(get('emje_motion_fill_stagger', 0.15), 0, 0.5, 0.15);
+
+    var fillLineMode = get('emje_motion_fill_line_mode', 'overlap');
+    if (['overlap', 'sequence'].indexOf(fillLineMode) === -1) fillLineMode = 'overlap';
+
+    var fillBlur = clampNum(get('emje_motion_fill_blur', 0), 0, 20, 0);
+
+    // Empty wash color means "follow the text color" (legacy look).
+    var fillWashColor = pickEditorColor(get, 'emje_motion_fill_wash_color', '');
 
     var fillLineMode = get('emje_motion_fill_line_mode', 'overlap');
     if (['overlap', 'sequence'].indexOf(fillLineMode) === -1) fillLineMode = 'overlap';

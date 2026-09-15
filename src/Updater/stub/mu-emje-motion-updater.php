@@ -6,6 +6,10 @@ declare(strict_types=1);
  * Emje Motion MU Updater Shim
  * Auto-loaded in all multisite contexts (Network Admin, wp-cron, REST) even when per-site Activate.
  * Lightweight GitHub releases check — does not load Elementor or ModuleLoader.
+ *
+ * NOTE: this file must stay fully standalone (it is copied to mu-plugins
+ * and must keep working when plugin files are missing). Update logic is
+ * intentionally mirrored in src/Updater/GitHubUpdater.php — change both.
  */
 
 defined('ABSPATH') || exit;

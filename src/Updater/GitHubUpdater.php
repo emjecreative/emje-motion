@@ -9,6 +9,12 @@ namespace EmjeCreative\EmjeMotion\Updater;
  *
  * Hooks into WordPress update transients to provide 1-click updates
  * from https://github.com/emjecreative/emje-motion/releases
+ *
+ * NOTE: update logic is intentionally mirrored in
+ * src/Updater/stub/mu-emje-motion-updater.php. The mu copy must stay
+ * fully standalone (it heals installs whose plugin files are missing,
+ * so it cannot require shared files). When changing behavior here,
+ * mirror it there, and vice versa.
  */
 final class GitHubUpdater
 {

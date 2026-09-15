@@ -28,13 +28,13 @@ function bootstrapSmoothScroll() {
         return;
     }
 
-    if (window._emjeScroller) {
+    if (window._emjeSmoothScrollBooted) {
         return;
     }
+    window._emjeSmoothScrollBooted = true;
 
     const scroller = new LenisScroll(config);
     scroller.init();
-    window._emjeScroller = scroller;
 }
 
 function bootstrapEmjeMotion() {

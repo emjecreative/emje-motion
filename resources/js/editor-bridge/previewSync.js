@@ -1,5 +1,5 @@
 import { getPreviewWindow, getPreviewDocument, findTarget, collectContainerModels, destroyLayerInstance } from './utils.js';
-import { buildHoverConfig, buildCursorConfig, buildInteractionConfig } from './interactionBridge.js';
+import { buildHoverConfig, buildCursorConfig, buildInteractionConfig, serializeHoverPayload, serializeCursorPayload } from './interactionBridge.js';
 import { hookBackgroundPreviewRender, buildBackgroundConfig, applyBackgroundToTarget, destroyBackgroundOnTarget } from './backgroundBridge.js';
 
 export function bindKitChange() {
@@ -25,7 +25,7 @@ export function bindKitChange() {
                     if (cfg.effect !== 'interactive-cursor') return;
                     var target = findTarget(doc2, wid, 'data-emje-cursor') || doc2.querySelector('[data-id="' + wid + '"]');
                     if (!target) return;
-                    try { target.setAttribute('data-emje-cursor', JSON.stringify({type: cfg.type, size: cfg.size, color: cfg.color, hoverScale: cfg.hoverScale, hideNative: cfg.hideNative, label: cfg.label, bgColor: cfg.bgColor, textColor: cfg.textColor, paddingY: cfg.paddingY, paddingX: cfg.paddingX, radius: cfg.radius, fontSize: cfg.fontSize, typography: cfg.typography, entrance: cfg.entrance, followSmoothness: cfg.followSmoothness, boxShadow: cfg.boxShadow, shadow: cfg.shadow, shadowBlur: cfg.shadowBlur, livePreview: cfg.livePreview})); } catch(e){}
+                    try { target.setAttribute('data-emje-cursor', JSON.stringify(serializeCursorPayload(cfg))); } catch(e){}
                     if (win2.EmjeMotionCursor && win2.EmjeMotionCursor.reInit) win2.EmjeMotionCursor.reInit(target);
                 } catch(e){}
             });
@@ -95,7 +95,7 @@ export function bindPreviewLoaded() {
                             try { targetH.removeAttribute('data-emje-hover-reveal'); } catch(e){}
                             return;
                         }
-                        try { targetH.setAttribute('data-emje-hover-reveal', JSON.stringify({imageUrl: cfgNew.imageUrl, imageSize: cfgNew.imageSize, followSpeed: cfgNew.followSpeed, scale: cfgNew.scale, animation: cfgNew.animation, triggerArea: cfgNew.triggerArea, livePreview: cfgNew.livePreview, offsetX: cfgNew.offsetX, offsetY: cfgNew.offsetY, rotate: cfgNew.rotate, rotateHover: cfgNew.rotateHover})); } catch(e){}
+                        try { targetH.setAttribute('data-emje-hover-reveal', JSON.stringify(serializeHoverPayload(cfgNew))); } catch(e){}
                         if (win2.EmjeMotionHoverReveal && win2.EmjeMotionHoverReveal.reInit) win2.EmjeMotionHoverReveal.reInit(targetH);
                     } else {
                         var targetC = findTarget(doc2, widgetId, 'data-emje-cursor') || findTarget(doc2, widgetId, 'data-emje-hover-reveal') || (widgetId ? doc2.querySelector('[data-id="' + widgetId + '"]') : null);
@@ -103,7 +103,7 @@ export function bindPreviewLoaded() {
                         if (destroyLayerInstance(win2.EmjeMotionHoverReveal, targetC, 'emjeHoverRevealInitialized')) {
                             try { targetC.removeAttribute('data-emje-hover-reveal'); } catch(e){}
                         }
-                        try { targetC.setAttribute('data-emje-cursor', JSON.stringify({type: cfgNew.type, size: cfgNew.size, color: cfgNew.color, hoverScale: cfgNew.hoverScale, hideNative: cfgNew.hideNative, label: cfgNew.label, bgColor: cfgNew.bgColor, textColor: cfgNew.textColor, paddingY: cfgNew.paddingY, paddingX: cfgNew.paddingX, radius: cfgNew.radius, fontSize: cfgNew.fontSize, typography: cfgNew.typography, entrance: cfgNew.entrance, followSmoothness: cfgNew.followSmoothness, boxShadow: cfgNew.boxShadow, shadow: cfgNew.shadow, shadowBlur: cfgNew.shadowBlur, livePreview: cfgNew.livePreview})); } catch(e){}
+                        try { targetC.setAttribute('data-emje-cursor', JSON.stringify(serializeCursorPayload(cfgNew))); } catch(e){}
                         if (win2.EmjeMotionCursor && win2.EmjeMotionCursor.reInit) win2.EmjeMotionCursor.reInit(targetC);
                     }
                     return;
@@ -128,14 +128,7 @@ export function bindPreviewLoaded() {
                     var th2 = findTarget(doc2, widgetId, 'data-emje-hover-reveal');
                     if (th2) {
                         try { th2.removeAttribute('data-emje-hover-reveal'); } catch(e){}
-                        try {
-                            if (win2.EmjeMotionHoverReveal && win2.EmjeMotionHoverReveal._instances && win2.EmjeMotionHoverReveal._instances.get(th2)) {
-                                var oh2 = win2.EmjeMotionHoverReveal._instances.get(th2);
-                                if (oh2 && typeof oh2.destroy === 'function') oh2.destroy();
-                                win2.EmjeMotionHoverReveal._instances.delete(th2);
-                                delete th2.dataset.emjeHoverRevealInitialized;
-                            }
-                        } catch(e){}
+                        destroyLayerInstance(win2.EmjeMotionHoverReveal, th2, 'emjeHoverRevealInitialized');
                     }
                 }
                 // Cursor
@@ -151,14 +144,7 @@ export function bindPreviewLoaded() {
                     var tc2 = findTarget(doc2, widgetId, 'data-emje-cursor');
                     if (tc2) {
                         try { tc2.removeAttribute('data-emje-cursor'); } catch(e){}
-                        try {
-                            if (win2.EmjeMotionCursor && win2.EmjeMotionCursor._instances && win2.EmjeMotionCursor._instances.get(tc2)) {
-                                var oc2 = win2.EmjeMotionCursor._instances.get(tc2);
-                                if (oc2 && typeof oc2.destroy === 'function') oc2.destroy();
-                                win2.EmjeMotionCursor._instances.delete(tc2);
-                                delete tc2.dataset.emjeCursorInitialized;
-                            }
-                        } catch(e){}
+                        destroyLayerInstance(win2.EmjeMotionCursor, tc2, 'emjeCursorInitialized');
                     }
                 }
                 // Background Motion — sync from model for unsaved drafts.

@@ -76,7 +76,9 @@ final class MuPluginInstaller
             return $normalize($src) !== $normalize($dst);
         }
 
-        return filemtime($source) > filemtime($target);
+        // Unreadable either side: recopy rather than comparing mtimes of
+        // files in different directories (meaningless result).
+        return true;
     }
 
     public static function uninstall(): void

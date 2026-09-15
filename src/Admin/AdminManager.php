@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace EmjeCreative\EmjeMotion\Admin;
 
+use EmjeCreative\EmjeMotion\Modules\SmoothScroll\SmoothScrollConfig;
+
 /**
  * Registers admin menu and handles saving.
  */
@@ -272,8 +274,8 @@ final class AdminManager
         $posted = wp_unslash($_POST);
         // Reset to default when disabled (Opsi A hide total)
         if ($isSmoothEnabled) {
-            $lerp = isset($posted['smooth_scroll_lerp']) ? (float) $posted['smooth_scroll_lerp'] : 0.075;
-            $wheel = isset($posted['smooth_scroll_wheel_multiplier']) ? (float) $posted['smooth_scroll_wheel_multiplier'] : 1.2;
+            $lerp = SmoothScrollConfig::sanitizeLerp($posted['smooth_scroll_lerp'] ?? null);
+            $wheel = SmoothScrollConfig::sanitizeWheel($posted['smooth_scroll_wheel_multiplier'] ?? null);
             $disableSmooth = isset($posted['disable_smooth_on_mobile']) && $posted['disable_smooth_on_mobile'] === '1';
         } else {
             $lerp = 0.075;

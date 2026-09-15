@@ -161,3 +161,44 @@ export function destroyLayerInstance(holder, target, flag) {
     } catch (e) {}
     return false;
 }
+
+/**
+ * Resolve the edited element (model, settings, type, id) from an editor
+ * channel `change` view. `view` is often the CONTROL view, not the
+ * element — so resolve via editedElementView first. Single source of
+ * truth for the lookup previously copied in every bridge file.
+ */
+export function resolveEditedModel(view) {
+    var editedView = null;
+    try {
+        editedView = window.elementor.channels.editor.request('editedElementView');
+    } catch (err) {}
+    var model = null;
+    var settings = null;
+    var widgetType = null;
+    var widgetId = null;
+    if (editedView && editedView.model) {
+        model = editedView.model;
+        settings = model.get('settings');
+        widgetType = model.get('widgetType') || model.get('elType');
+        widgetId = model.get('id');
+    } else if (view && view.model) {
+        model = view.model;
+        settings = model.get('settings');
+        if (settings && typeof settings.get !== 'function') {
+            settings = view.model.get('settings');
+        }
+        widgetType = model.get('widgetType') || model.get('elType');
+        widgetId = model.get('id');
+        if (!widgetType && view.container) {
+            var containerSettings = view.container.settings;
+            if (containerSettings) {
+                settings = containerSettings;
+                model = view.container.model || model;
+                widgetType = model.get('widgetType') || model.get('elType');
+                widgetId = model.get('id');
+            }
+        }
+    }
+    return { editedView: editedView, model: model, settings: settings, widgetType: widgetType, widgetId: widgetId };
+}

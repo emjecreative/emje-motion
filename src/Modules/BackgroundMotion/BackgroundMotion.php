@@ -10,7 +10,7 @@ use EmjeCreative\EmjeMotion\Modules\BackgroundMotion\Frontend\BackgroundMotionFr
 
 /**
  * Background Motion module — ambient Container backgrounds.
- * Effects: ascii / pixel.
+ * Effects: ascii / pixel / dither / mesh.
  */
 final class BackgroundMotion implements ModuleInterface
 {

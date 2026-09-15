@@ -1,7 +1,10 @@
 import { tmpUrl, eq } from './helpers.mjs';
 
-const { pickEditorColor, collectContainerModels, destroyLayerInstance } =
+const { pickEditorColor, collectContainerModels, destroyLayerInstance, toNumber, clampNum, resolveEditedModel } =
     await import(tmpUrl('eb-utils.mjs'));
+
+const { serializeCursorPayload, serializeHoverPayload } =
+    await import(tmpUrl('eb-interactionBridge.mjs'));
 
 const store = (obj) => ({ get: (k, d) => (k in obj ? obj[k] : d) });
 
@@ -55,3 +58,45 @@ eq('destroy-flag', target.dataset.emjeCursorInitialized, undefined);
 eq('destroy-missing', destroyLayerInstance({ _instances: { get: () => undefined } }, {}, 'f'), false);
 eq('destroy-noholder', destroyLayerInstance(null, {}, 'f'), false);
 eq('destroy-throws', destroyLayerInstance({ _instances: { get: () => { throw new Error('x'); } } }, {}, 'f'), false);
+
+// Numeric helpers: explicit 0 survives, garbage falls back, clamps hold.
+eq('tonum-zero', toNumber(0, 99), 0);
+eq('tonum-str', toNumber('0.5', 99), 0.5);
+eq('tonum-garbage', toNumber('abc', 99), 99);
+eq('clamp-ok', clampNum(0.2, 0.05, 0.3, 0.12), 0.2);
+eq('clamp-hi', clampNum(9, 0.05, 0.3, 0.12), 0.3);
+eq('clamp-lo', clampNum(-5, 0.05, 0.3, 0.12), 0.05);
+eq('clamp-garbage', clampNum('xx', 0.05, 0.3, 0.12), 0.12);
+eq('clamp-zero', clampNum(0, 0, 20, 5), 0);
+
+// Edited-model resolution: editedElementView wins; control-view fallback works.
+globalThis.window.elementor.channels.editor.request = () => null;
+const edSettings = { get: () => 'yes' };
+const edModel = { get: (k) => (k === 'settings' ? edSettings : k === 'id' ? 'w1' : 'container') };
+globalThis.window.elementor.channels.editor.request = () => ({ model: edModel });
+eq('resolve-edited', resolveEditedModel({}), { editedView: { model: edModel }, model: edModel, settings: edSettings, widgetType: 'container', widgetId: 'w1' });
+globalThis.window.elementor.channels.editor.request = () => { throw new Error('nope'); };
+const ctrlSettings = { get: () => 'no' };
+const ctrlView = { model: { get: (k) => (k === 'settings' ? ctrlSettings : k === 'id' ? 'w2' : 'heading') } };
+eq('resolve-control', resolveEditedModel(ctrlView).settings, ctrlSettings);
+eq('resolve-empty', resolveEditedModel(null), { editedView: null, model: null, settings: null, widgetType: null, widgetId: null });
+
+// Payload serializers: exact key sets the runtime consumes.
+const cursorPayload = serializeCursorPayload({
+    type: 'text-follow', size: 20, color: '#000', hoverScale: 1.5, hideNative: false,
+    label: 'View', bgColor: '#fff', textColor: '#111', paddingY: 40, paddingX: 32,
+    radius: 99, fontSize: 14, typography: {}, entrance: 'scale', followSmoothness: 0.5,
+    boxShadow: 'none', shadow: false, shadowBlur: 32, disableOnMobile: false, livePreview: true,
+});
+eq('cursor-payload-mobile', cursorPayload.disableOnMobile, false);
+eq('cursor-payload-keys', Object.keys(cursorPayload).length, 20);
+const cursorLegacy = serializeCursorPayload({ type: 'text-follow', livePreview: true });
+eq('cursor-payload-legacy-mobile', cursorLegacy.disableOnMobile, true);
+
+const hoverPayload = serializeHoverPayload({
+    imageUrl: 'x', imageSize: 'medium', followSpeed: 0.12, scale: 1, animation: 'fade',
+    triggerArea: 'container', livePreview: true, offsetX: 0, offsetY: 0, rotate: 0,
+    rotateHover: 15, disableOnMobile: true,
+});
+eq('hover-payload-mobile', hoverPayload.disableOnMobile, true);
+eq('hover-payload-keys', Object.keys(hoverPayload).length, 12);
