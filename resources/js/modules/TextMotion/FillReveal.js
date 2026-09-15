@@ -1,7 +1,7 @@
 import { gsap } from 'gsap';
 import Animation from '../../core/Animation';
-import TextSplitter from '../../services/TextSplitter';
 import { sanitizeHtml } from '../../services/sanitizeHtml';
+import { buildSingleFill, buildPerLineFill } from './fillBuild';
 import { resolveFillStagger } from './fillTiming';
 
 /**
@@ -85,18 +85,6 @@ export default class FillReveal extends Animation {
 	}
 
 	/**
-	 * Apply wash color to a background layer. Empty = follow text color.
-	 *
-	 * @param {HTMLElement} bg
-	 */
-	applyWashColor(bg) {
-		const c = this.config.fillWashColor;
-		if (typeof c === 'string' && c !== '') {
-			bg.style.color = c;
-		}
-	}
-
-	/**
 	 * Set foreground progress directly (for scrub).
 	 *
 	 * @param {HTMLElement} fg
@@ -152,8 +140,13 @@ export default class FillReveal extends Animation {
 		}
 
 		if (this.shouldUsePerLine()) {
-			const built = this.buildPerLine();
+			const built = buildPerLineFill(this.element, this.originalHTML, this.config);
 			if (built) {
+				this.dom = built.dom;
+				this.lines = built.lines;
+				this.masks = built.masks;
+				this.foregrounds = built.foregrounds;
+				if (typeof built.width === 'number') this._lastWidth = built.width;
 				this.isPerLine = true;
 				this.observeResize();
 				return;
@@ -161,270 +154,10 @@ export default class FillReveal extends Animation {
 		}
 
 		this.isPerLine = false;
-		this.buildSingle();
-
-	}
-
-	buildSingle() {
-		this.dom.wrapper = this.createWrapper();
-		this.dom.background = this.createBackground();
-		this.dom.mask = this.createMask();
-		this.dom.foreground = this.createForeground();
-
-		this.dom.mask.appendChild( this.dom.foreground );
-		this.foregrounds = [this.dom.foreground];
-
-		this.dom.wrapper.appendChild(this.dom.background);
-		this.dom.wrapper.appendChild(this.dom.mask);
-
-		this.element.innerHTML = '';
-		this.element.appendChild( this.dom.wrapper );
-		this.masks = [this.dom.mask];
-	}
-
-	buildPerLine() {
-		// If has <p> paragraphs, stagger per paragraph (preserves HTML)
-		if (this.hasBlockParagraphs()) {
-			return this.buildPerParagraph();
-		}
-		return this.buildPerVisualLine();
-	}
-
-	buildPerParagraph() {
-		const paragraphs = Array.from(this.element.querySelectorAll('p'));
-		// If no <p> or single <p> with short text, fallback to visual
-		if (paragraphs.length === 0) return false;
-		// If single paragraph but long, we could still do visual lines inside it
-		// For now, if single paragraph, try visual lines for that paragraph
-		if (paragraphs.length === 1) {
-			const singleText = paragraphs[0].textContent.trim();
-			if (singleText.split(/\s+/).length < 6) return false;
-			// Try visual lines for single paragraph
-			const visual = this.buildVisualLinesForElement(paragraphs[0]);
-			if (visual) return true;
-			// Fallback to paragraph as single line
-		}
-
-		this.dom.wrapper = this.createWrapper();
-		this.dom.wrapper.style.display = 'block';
-
-		paragraphs.forEach((p) => {
-			const html = sanitizeHtml(p.innerHTML);
-			if (!html.trim()) return;
-			const lineEl = document.createElement('div');
-			lineEl.className = 'emje-motion-fill__line';
-
-		const bg = document.createElement('span');
-		bg.className = 'emje-motion-fill__background';
-		bg.innerHTML = html;
-		if (typeof this.config.fillBgOpacity !== 'undefined') {
-			bg.style.opacity = String(this.config.fillBgOpacity);
-		}
-		this.applyWashColor(bg);
-
-			const mask = document.createElement('span');
-			mask.className = 'emje-motion-fill__mask';
-
-			const fg = document.createElement('span');
-			fg.className = 'emje-motion-fill__foreground';
-			fg.innerHTML = html;
-
-			mask.appendChild(fg);
-			lineEl.appendChild(bg);
-			lineEl.appendChild(mask);
-
-		this.dom.wrapper.appendChild(lineEl);
-		this.lines.push(lineEl);
-		this.masks.push(mask);
-		this.foregrounds.push(fg);
-	});
-
-		// Handle text nodes outside <p> (rare)
-		if (this.lines.length === 0) return false;
-
-		this.element.innerHTML = '';
-		this.element.appendChild(this.dom.wrapper);
-		// Keep dom refs for single compatibility (first line)
-		this.dom.background = this.lines[0].querySelector('.emje-motion-fill__background');
-		this.dom.mask = this.masks[0];
-		this.dom.foreground = this.lines[0].querySelector('.emje-motion-fill__foreground');
-		return true;
-	}
-
-	buildPerVisualLine() {
-		return this.buildVisualLinesForElement(this.element);
-	}
-
-	buildVisualLinesForElement(targetEl) {
-		// Create off-screen measuring container with same styles
-		const rect = targetEl.getBoundingClientRect();
-		const width = rect.width || targetEl.offsetWidth || targetEl.clientWidth || 300;
-		if (width < 50) return false;
-
-		const temp = document.createElement('div');
-		temp.style.position = 'absolute';
-		temp.style.visibility = 'hidden';
-		temp.style.pointerEvents = 'none';
-		temp.style.top = '-9999px';
-		temp.style.left = '-9999px';
-		temp.style.width = width + 'px';
-		temp.style.whiteSpace = 'normal';
-		temp.style.overflowWrap = 'break-word';
-		temp.style.wordBreak = 'break-word';
-
-		// Copy relevant computed styles
-		try {
-			const cs = window.getComputedStyle(targetEl);
-			temp.style.font = cs.font;
-			temp.style.fontFamily = cs.fontFamily;
-			temp.style.fontSize = cs.fontSize;
-			temp.style.fontWeight = cs.fontWeight;
-			temp.style.letterSpacing = cs.letterSpacing;
-			temp.style.lineHeight = cs.lineHeight;
-			temp.style.wordSpacing = cs.wordSpacing;
-			temp.style.textTransform = cs.textTransform;
-			temp.style.padding = cs.padding;
-		} catch (e) {}
-
-		temp.innerHTML = sanitizeHtml(this.originalHTML);
-		document.body.appendChild(temp);
-
-		// Use TextSplitter to split into visual lines
-		const splitter = new TextSplitter(temp);
-		let lineEls = [];
-		try {
-			lineEls = splitter.split({ by: 'lines' });
-		} catch (e) {
-			document.body.removeChild(temp);
-			return false;
-		}
-
-		// If only 1 line, no need for per-line
-		if (!lineEls || lineEls.length <= 1) {
-			document.body.removeChild(temp);
-			return false;
-		}
-
-		// Build real DOM per line using lineEls' word contents
-		this.dom.wrapper = this.createWrapper();
-		this.dom.wrapper.style.display = 'block';
-
-		lineEls.forEach((lineDiv) => {
-			// lineDiv contains word spans with \u00A0
-			const lineHTML = sanitizeHtml(lineDiv.innerHTML);
-			if (!lineHTML.trim()) return;
-
-			const lineEl = document.createElement('div');
-			lineEl.className = 'emje-motion-fill__line';
-
-		const bg = document.createElement('span');
-		bg.className = 'emje-motion-fill__background';
-		bg.innerHTML = lineHTML;
-		if (typeof this.config.fillBgOpacity !== 'undefined') {
-			bg.style.opacity = String(this.config.fillBgOpacity);
-		}
-		this.applyWashColor(bg);
-
-			const mask = document.createElement('span');
-			mask.className = 'emje-motion-fill__mask';
-
-			const fg = document.createElement('span');
-			fg.className = 'emje-motion-fill__foreground';
-			fg.innerHTML = lineHTML;
-
-			mask.appendChild(fg);
-			lineEl.appendChild(bg);
-			lineEl.appendChild(mask);
-
-		this.dom.wrapper.appendChild(lineEl);
-		this.lines.push(lineEl);
-		this.masks.push(mask);
-		this.foregrounds.push(fg);
-	});
-
-		document.body.removeChild(temp);
-
-		if (this.masks.length <= 1) {
-			// Fallback to single (wrapper is still detached here, nothing to remove)
-			this.lines = [];
-			this.masks = [];
-			return false;
-		}
-
-		this.element.innerHTML = '';
-		this.element.appendChild(this.dom.wrapper);
-		this.dom.background = this.lines[0].querySelector('.emje-motion-fill__background');
-		this.dom.mask = this.masks[0];
-		this.dom.foreground = this.lines[0].querySelector('.emje-motion-fill__foreground');
-		this._lastWidth = width;
-		return true;
-	}
-
-	/**
-	 * Create the wrapper element.
-	 *
-	 * @returns {HTMLElement}
-	 */
-	createWrapper() {
-
-		const wrapper = document.createElement( 'span' );
-
-		wrapper.className = 'emje-motion-fill';
-
-		return wrapper;
-
-	}
-
-	/**
-	 * Create the background layer.
-	 *
-	 * @returns {HTMLElement}
-	 */
-	createBackground() {
-
-		const background = document.createElement( 'span' );
-
-		background.className = 'emje-motion-fill__background';
-		background.innerHTML = sanitizeHtml(this.originalHTML);
-		background.setAttribute('aria-hidden', 'true');
-		this.applyWashColor(background);
-
-		if (typeof this.config.fillBgOpacity !== 'undefined') {
-			background.style.opacity = String(this.config.fillBgOpacity);
-		}
-
-		return background;
-
-	}
-
-	/**
-	 * Create the mask element.
-	 *
-	 * @returns {HTMLElement}
-	 */
-	createMask() {
-
-		const mask = document.createElement( 'span' );
-
-		mask.className = 'emje-motion-fill__mask';
-
-		return mask;
-
-	}
-
-	/**
-	 * Create the foreground layer.
-	 *
-	 * @returns {HTMLElement}
-	 */
-	createForeground() {
-
-		const foreground = document.createElement( 'span' );
-
-		foreground.className = 'emje-motion-fill__foreground';
-		foreground.innerHTML = sanitizeHtml(this.originalHTML);
-
-		return foreground;
+		const single = buildSingleFill(this.element, this.originalHTML, this.config);
+		this.dom = single.dom;
+		this.masks = single.masks;
+		this.foregrounds = single.foregrounds;
 
 	}
 
