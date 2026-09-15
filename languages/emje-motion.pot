@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Emje Motion 1.3.2\n"
 "Report-Msgid-Bugs-To: https://github.com/emjecreative/emje-motion/issues\n"
-"POT-Creation-Date: 2026-09-15T00:17:13+00:00\n"
+"POT-Creation-Date: 2026-09-15T00:26:33+00:00\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -22,8 +22,8 @@ msgstr ""
 msgid "0 = square, 12 = rounded, 50+ = circle/pill."
 msgstr ""
 
+#: src/Modules/BackgroundMotion/Controls/AsciiControls.php:27
 #: src/Modules/BackgroundMotion/Controls/BackgroundMotionControls.php:60
-#: src/Modules/BackgroundMotion/Controls/BackgroundMotionControls.php:81
 msgid "ASCII"
 msgstr ""
 
@@ -43,11 +43,11 @@ msgstr ""
 msgid "All features active"
 msgstr ""
 
-#: src/Modules/BackgroundMotion/Controls/BackgroundMotionControls.php:831
+#: src/Modules/BackgroundMotion/Controls/MeshControls.php:29
 msgid "Animated WebGL mesh gradient. Lives on its own, no cursor needed."
 msgstr ""
 
-#: src/Modules/BackgroundMotion/Controls/BackgroundMotionControls.php:562
+#: src/Modules/BackgroundMotion/Controls/DitherControls.php:29
 msgid "Animated retro dither that lives on its own. Click/tap sends a ripple."
 msgstr ""
 
@@ -59,8 +59,8 @@ msgstr ""
 msgid "Animation"
 msgstr ""
 
-#: src/Modules/BackgroundMotion/Controls/BackgroundMotionControls.php:663
-#: src/Modules/BackgroundMotion/Controls/BackgroundMotionControls.php:922
+#: src/Modules/BackgroundMotion/Controls/DitherControls.php:130
+#: src/Modules/BackgroundMotion/Controls/MeshControls.php:120
 msgid "Animation Speed"
 msgstr ""
 
@@ -81,7 +81,7 @@ msgstr ""
 msgid "Background"
 msgstr ""
 
-#: src/Modules/BackgroundMotion/Controls/BackgroundMotionControls.php:582
+#: src/Modules/BackgroundMotion/Controls/DitherControls.php:49
 msgid "Background Color"
 msgstr ""
 
@@ -94,11 +94,11 @@ msgstr ""
 msgid "Background Opacity"
 msgstr ""
 
-#: src/Modules/BackgroundMotion/Controls/BackgroundMotionControls.php:910
+#: src/Modules/BackgroundMotion/Controls/MeshControls.php:108
 msgid "Balanced"
 msgstr ""
 
-#: src/Modules/BackgroundMotion/Controls/BackgroundMotionControls.php:317
+#: src/Modules/BackgroundMotion/Controls/PixelControls.php:37
 msgid "Base Color"
 msgstr ""
 
@@ -115,7 +115,7 @@ msgstr ""
 msgid "Blur"
 msgstr ""
 
-#: src/Modules/BackgroundMotion/Controls/BackgroundMotionControls.php:428
+#: src/Modules/BackgroundMotion/Controls/PixelControls.php:148
 msgid "Border Color"
 msgstr ""
 
@@ -123,19 +123,19 @@ msgstr ""
 msgid "Border Radius"
 msgstr ""
 
-#: src/Modules/BackgroundMotion/Controls/BackgroundMotionControls.php:405
+#: src/Modules/BackgroundMotion/Controls/PixelControls.php:125
 msgid "Border Width"
 msgstr ""
 
-#: src/Modules/BackgroundMotion/Controls/BackgroundMotionControls.php:164
+#: src/Modules/BackgroundMotion/Controls/AsciiControls.php:110
 msgid "Cell Height"
 msgstr ""
 
-#: src/Modules/BackgroundMotion/Controls/BackgroundMotionControls.php:357
+#: src/Modules/BackgroundMotion/Controls/PixelControls.php:77
 msgid "Cell Size"
 msgstr ""
 
-#: src/Modules/BackgroundMotion/Controls/BackgroundMotionControls.php:141
+#: src/Modules/BackgroundMotion/Controls/AsciiControls.php:87
 msgid "Cell Width"
 msgstr ""
 
@@ -147,7 +147,7 @@ msgstr ""
 msgid "Center Stage"
 msgstr ""
 
-#: src/Modules/BackgroundMotion/Controls/BackgroundMotionControls.php:90
+#: src/Modules/BackgroundMotion/Controls/AsciiControls.php:36
 msgid "Character Color"
 msgstr ""
 
@@ -175,19 +175,19 @@ msgstr ""
 msgid "Color"
 msgstr ""
 
-#: src/Modules/BackgroundMotion/Controls/BackgroundMotionControls.php:857
+#: src/Modules/BackgroundMotion/Controls/MeshControls.php:55
 msgid "Color 1"
 msgstr ""
 
-#: src/Modules/BackgroundMotion/Controls/BackgroundMotionControls.php:869
+#: src/Modules/BackgroundMotion/Controls/MeshControls.php:67
 msgid "Color 2"
 msgstr ""
 
-#: src/Modules/BackgroundMotion/Controls/BackgroundMotionControls.php:881
+#: src/Modules/BackgroundMotion/Controls/MeshControls.php:79
 msgid "Color 3"
 msgstr ""
 
-#: src/Modules/BackgroundMotion/Controls/BackgroundMotionControls.php:893
+#: src/Modules/BackgroundMotion/Controls/MeshControls.php:91
 msgid "Color 4"
 msgstr ""
 
@@ -199,7 +199,7 @@ msgstr ""
 msgid "Controls scroll distance per tick. Range 0.8–1.5, default 1.2."
 msgstr ""
 
-#: src/Modules/BackgroundMotion/Controls/BackgroundMotionControls.php:346
+#: src/Modules/BackgroundMotion/Controls/PixelControls.php:66
 msgid "Crop edges to fill"
 msgstr ""
 
@@ -228,10 +228,10 @@ msgstr ""
 msgid "Disable Smooth Scroll on Mobile"
 msgstr ""
 
-#: src/Modules/BackgroundMotion/Controls/BackgroundMotionControls.php:287
-#: src/Modules/BackgroundMotion/Controls/BackgroundMotionControls.php:540
-#: src/Modules/BackgroundMotion/Controls/BackgroundMotionControls.php:809
-#: src/Modules/BackgroundMotion/Controls/BackgroundMotionControls.php:999
+#: src/Modules/BackgroundMotion/Controls/AsciiControls.php:233
+#: src/Modules/BackgroundMotion/Controls/DitherControls.php:276
+#: src/Modules/BackgroundMotion/Controls/MeshControls.php:197
+#: src/Modules/BackgroundMotion/Controls/PixelControls.php:260
 #: src/Modules/InteractionMotion/Controls/CursorControls.php:400
 #: src/Modules/InteractionMotion/Controls/HoverControls.php:262
 msgid "Disable on Mobile & Tablet"
@@ -253,8 +253,8 @@ msgstr ""
 msgid "Distance"
 msgstr ""
 
-#: src/Modules/BackgroundMotion/Controls/BackgroundMotionControls.php:560
 #: src/Modules/BackgroundMotion/Controls/BackgroundMotionControls.php:62
+#: src/Modules/BackgroundMotion/Controls/DitherControls.php:27
 msgid "Dither"
 msgstr ""
 
@@ -266,7 +266,7 @@ msgstr ""
 msgid "Dot + Ring"
 msgstr ""
 
-#: src/Modules/BackgroundMotion/Controls/BackgroundMotionControls.php:570
+#: src/Modules/BackgroundMotion/Controls/DitherControls.php:37
 msgid "Dot Color"
 msgstr ""
 
@@ -274,7 +274,7 @@ msgstr ""
 msgid "Down"
 msgstr ""
 
-#: src/Modules/BackgroundMotion/Controls/BackgroundMotionControls.php:843
+#: src/Modules/BackgroundMotion/Controls/MeshControls.php:41
 msgid "Drift"
 msgstr ""
 
@@ -286,10 +286,10 @@ msgstr ""
 msgid "Ease"
 msgstr ""
 
-#: src/Modules/BackgroundMotion/Controls/BackgroundMotionControls.php:256
-#: src/Modules/BackgroundMotion/Controls/BackgroundMotionControls.php:509
-#: src/Modules/BackgroundMotion/Controls/BackgroundMotionControls.php:778
-#: src/Modules/BackgroundMotion/Controls/BackgroundMotionControls.php:968
+#: src/Modules/BackgroundMotion/Controls/AsciiControls.php:202
+#: src/Modules/BackgroundMotion/Controls/DitherControls.php:245
+#: src/Modules/BackgroundMotion/Controls/MeshControls.php:166
+#: src/Modules/BackgroundMotion/Controls/PixelControls.php:229
 msgid "Edge Fade"
 msgstr ""
 
@@ -331,7 +331,7 @@ msgstr ""
 msgid "Enable JavaScript to track changes."
 msgstr ""
 
-#: src/Modules/BackgroundMotion/Controls/BackgroundMotionControls.php:694
+#: src/Modules/BackgroundMotion/Controls/DitherControls.php:161
 msgid "Enable Ripples"
 msgstr ""
 
@@ -372,11 +372,11 @@ msgstr ""
 msgid "Fill Reveal"
 msgstr ""
 
-#: src/Modules/BackgroundMotion/Controls/BackgroundMotionControls.php:341
+#: src/Modules/BackgroundMotion/Controls/PixelControls.php:61
 msgid "Fit"
 msgstr ""
 
-#: src/Modules/BackgroundMotion/Controls/BackgroundMotionControls.php:846
+#: src/Modules/BackgroundMotion/Controls/MeshControls.php:44
 msgid "Flow"
 msgstr ""
 
@@ -388,7 +388,7 @@ msgstr ""
 msgid "Follow Speed"
 msgstr ""
 
-#: src/Modules/BackgroundMotion/Controls/BackgroundMotionControls.php:118
+#: src/Modules/BackgroundMotion/Controls/AsciiControls.php:64
 msgid "Font Size"
 msgstr ""
 
@@ -396,11 +396,11 @@ msgstr ""
 msgid "Full"
 msgstr ""
 
-#: src/Modules/BackgroundMotion/Controls/BackgroundMotionControls.php:106
+#: src/Modules/BackgroundMotion/Controls/AsciiControls.php:52
 msgid "Full (letters, numbers & symbols)"
 msgstr ""
 
-#: src/Modules/BackgroundMotion/Controls/BackgroundMotionControls.php:380
+#: src/Modules/BackgroundMotion/Controls/PixelControls.php:100
 msgid "Gap"
 msgstr ""
 
@@ -412,8 +412,8 @@ msgstr ""
 msgid "Global smooth scroll. Enabled via Overview → Smooth Scroll toggle."
 msgstr ""
 
-#: src/Modules/BackgroundMotion/Controls/BackgroundMotionControls.php:187
-#: src/Modules/BackgroundMotion/Controls/BackgroundMotionControls.php:463
+#: src/Modules/BackgroundMotion/Controls/AsciiControls.php:133
+#: src/Modules/BackgroundMotion/Controls/PixelControls.php:183
 msgid "Glow Radius"
 msgstr ""
 
@@ -421,10 +421,10 @@ msgstr ""
 msgid "Heading Only"
 msgstr ""
 
-#: src/Modules/BackgroundMotion/Controls/BackgroundMotionControls.php:1001
-#: src/Modules/BackgroundMotion/Controls/BackgroundMotionControls.php:289
-#: src/Modules/BackgroundMotion/Controls/BackgroundMotionControls.php:542
-#: src/Modules/BackgroundMotion/Controls/BackgroundMotionControls.php:811
+#: src/Modules/BackgroundMotion/Controls/AsciiControls.php:235
+#: src/Modules/BackgroundMotion/Controls/DitherControls.php:278
+#: src/Modules/BackgroundMotion/Controls/MeshControls.php:199
+#: src/Modules/BackgroundMotion/Controls/PixelControls.php:262
 #: src/Modules/InteractionMotion/Controls/CursorControls.php:402
 #: src/Modules/InteractionMotion/Controls/HoverControls.php:264
 msgid "Hide"
@@ -434,11 +434,11 @@ msgstr ""
 msgid "Hide Native Cursor"
 msgstr ""
 
-#: src/Modules/BackgroundMotion/Controls/BackgroundMotionControls.php:911
+#: src/Modules/BackgroundMotion/Controls/MeshControls.php:109
 msgid "High (sharpest)"
 msgstr ""
 
-#: src/Modules/BackgroundMotion/Controls/BackgroundMotionControls.php:329
+#: src/Modules/BackgroundMotion/Controls/PixelControls.php:49
 msgid "Highlight Color"
 msgstr ""
 
@@ -458,7 +458,7 @@ msgstr ""
 msgid "Hover"
 msgstr ""
 
-#: src/Modules/BackgroundMotion/Controls/BackgroundMotionControls.php:102
+#: src/Modules/BackgroundMotion/Controls/AsciiControls.php:48
 msgid "Hover Characters"
 msgstr ""
 
@@ -491,7 +491,7 @@ msgstr ""
 msgid "Information & updates"
 msgstr ""
 
-#: src/Modules/BackgroundMotion/Controls/BackgroundMotionControls.php:210
+#: src/Modules/BackgroundMotion/Controls/AsciiControls.php:156
 msgid "Inner Radius"
 msgstr ""
 
@@ -509,7 +509,7 @@ msgstr ""
 msgid "Interactive Cursor"
 msgstr ""
 
-#: src/Modules/BackgroundMotion/Controls/BackgroundMotionControls.php:309
+#: src/Modules/BackgroundMotion/Controls/PixelControls.php:29
 msgid "Interactive pixel grid that lights up under your cursor."
 msgstr ""
 
@@ -545,13 +545,13 @@ msgstr ""
 msgid "Lines"
 msgstr ""
 
-#: src/Modules/BackgroundMotion/Controls/BackgroundMotionControls.php:1014
+#: src/Modules/BackgroundMotion/Controls/MeshControls.php:212
 #: src/Modules/InteractionMotion/Controls/InteractionMotionControls.php:89
 #: src/Modules/TextMotion/Controls/TextMotionControls.php:532
 msgid "Live Preview"
 msgstr ""
 
-#: src/Modules/BackgroundMotion/Controls/BackgroundMotionControls.php:909
+#: src/Modules/BackgroundMotion/Controls/MeshControls.php:107
 msgid "Low (fastest)"
 msgstr ""
 
@@ -575,7 +575,7 @@ msgstr ""
 msgid "Mask"
 msgstr ""
 
-#: src/Modules/BackgroundMotion/Controls/BackgroundMotionControls.php:233
+#: src/Modules/BackgroundMotion/Controls/AsciiControls.php:179
 msgid "Max Opacity"
 msgstr ""
 
@@ -584,7 +584,7 @@ msgid "Medium"
 msgstr ""
 
 #: src/Modules/BackgroundMotion/Controls/BackgroundMotionControls.php:63
-#: src/Modules/BackgroundMotion/Controls/BackgroundMotionControls.php:829
+#: src/Modules/BackgroundMotion/Controls/MeshControls.php:27
 msgid "Mesh Gradient"
 msgstr ""
 
@@ -593,7 +593,7 @@ msgstr ""
 msgid "Mobile navigation"
 msgstr ""
 
-#: src/Modules/BackgroundMotion/Controls/BackgroundMotionControls.php:839
+#: src/Modules/BackgroundMotion/Controls/MeshControls.php:37
 msgid "Motion Type"
 msgstr ""
 
@@ -626,9 +626,9 @@ msgstr ""
 msgid "Numbers"
 msgstr ""
 
-#: src/Modules/BackgroundMotion/Controls/BackgroundMotionControls.php:1017
 #: src/Modules/BackgroundMotion/Controls/BackgroundMotionControls.php:45
-#: src/Modules/BackgroundMotion/Controls/BackgroundMotionControls.php:697
+#: src/Modules/BackgroundMotion/Controls/DitherControls.php:164
+#: src/Modules/BackgroundMotion/Controls/MeshControls.php:215
 #: src/Modules/InteractionMotion/Controls/InteractionMotionControls.php:45
 #: src/Modules/InteractionMotion/Controls/InteractionMotionControls.php:92
 #: src/Modules/TextMotion/Controls/TextMotionControls.php:300
@@ -645,9 +645,9 @@ msgstr ""
 msgid "Offset Y"
 msgstr ""
 
-#: src/Modules/BackgroundMotion/Controls/BackgroundMotionControls.php:1016
 #: src/Modules/BackgroundMotion/Controls/BackgroundMotionControls.php:44
-#: src/Modules/BackgroundMotion/Controls/BackgroundMotionControls.php:696
+#: src/Modules/BackgroundMotion/Controls/DitherControls.php:163
+#: src/Modules/BackgroundMotion/Controls/MeshControls.php:214
 #: src/Modules/InteractionMotion/Controls/InteractionMotionControls.php:44
 #: src/Modules/InteractionMotion/Controls/InteractionMotionControls.php:91
 #: src/Modules/TextMotion/Controls/TextMotionControls.php:299
@@ -664,7 +664,7 @@ msgstr ""
 msgid "One by One"
 msgstr ""
 
-#: src/Modules/BackgroundMotion/Controls/BackgroundMotionControls.php:945
+#: src/Modules/BackgroundMotion/Controls/MeshControls.php:143
 msgid "Opacity"
 msgstr ""
 
@@ -691,20 +691,20 @@ msgstr ""
 msgid "Page Load"
 msgstr ""
 
-#: src/Modules/BackgroundMotion/Controls/BackgroundMotionControls.php:617
+#: src/Modules/BackgroundMotion/Controls/DitherControls.php:84
 msgid "Pattern Density"
 msgstr ""
 
-#: src/Modules/BackgroundMotion/Controls/BackgroundMotionControls.php:640
+#: src/Modules/BackgroundMotion/Controls/DitherControls.php:107
 msgid "Pattern Scale"
 msgstr ""
 
-#: src/Modules/BackgroundMotion/Controls/BackgroundMotionControls.php:307
 #: src/Modules/BackgroundMotion/Controls/BackgroundMotionControls.php:61
+#: src/Modules/BackgroundMotion/Controls/PixelControls.php:27
 msgid "Pixel"
 msgstr ""
 
-#: src/Modules/BackgroundMotion/Controls/BackgroundMotionControls.php:594
+#: src/Modules/BackgroundMotion/Controls/DitherControls.php:61
 msgid "Pixel Size"
 msgstr ""
 
@@ -749,11 +749,11 @@ msgstr ""
 msgid "Primary"
 msgstr ""
 
-#: src/Modules/BackgroundMotion/Controls/BackgroundMotionControls.php:845
+#: src/Modules/BackgroundMotion/Controls/MeshControls.php:43
 msgid "Pulse"
 msgstr ""
 
-#: src/Modules/BackgroundMotion/Controls/BackgroundMotionControls.php:905
+#: src/Modules/BackgroundMotion/Controls/MeshControls.php:103
 msgid "Quality"
 msgstr ""
 
@@ -789,15 +789,15 @@ msgstr ""
 msgid "Right → Left"
 msgstr ""
 
-#: src/Modules/BackgroundMotion/Controls/BackgroundMotionControls.php:755
+#: src/Modules/BackgroundMotion/Controls/DitherControls.php:222
 msgid "Ripple Speed"
 msgstr ""
 
-#: src/Modules/BackgroundMotion/Controls/BackgroundMotionControls.php:709
+#: src/Modules/BackgroundMotion/Controls/DitherControls.php:176
 msgid "Ripple Strength"
 msgstr ""
 
-#: src/Modules/BackgroundMotion/Controls/BackgroundMotionControls.php:732
+#: src/Modules/BackgroundMotion/Controls/DitherControls.php:199
 msgid "Ripple Width"
 msgstr ""
 
@@ -883,16 +883,16 @@ msgstr ""
 msgid "Shape what's next"
 msgstr ""
 
-#: src/Modules/BackgroundMotion/Controls/BackgroundMotionControls.php:1002
-#: src/Modules/BackgroundMotion/Controls/BackgroundMotionControls.php:290
-#: src/Modules/BackgroundMotion/Controls/BackgroundMotionControls.php:543
-#: src/Modules/BackgroundMotion/Controls/BackgroundMotionControls.php:812
+#: src/Modules/BackgroundMotion/Controls/AsciiControls.php:236
+#: src/Modules/BackgroundMotion/Controls/DitherControls.php:279
+#: src/Modules/BackgroundMotion/Controls/MeshControls.php:200
+#: src/Modules/BackgroundMotion/Controls/PixelControls.php:263
 #: src/Modules/InteractionMotion/Controls/CursorControls.php:403
 #: src/Modules/InteractionMotion/Controls/HoverControls.php:265
 msgid "Show"
 msgstr ""
 
-#: src/Modules/BackgroundMotion/Controls/BackgroundMotionControls.php:107
+#: src/Modules/BackgroundMotion/Controls/AsciiControls.php:53
 msgid "Simple (dots & dashes)"
 msgstr ""
 
@@ -908,7 +908,7 @@ msgstr ""
 msgid "Smoothness"
 msgstr ""
 
-#: src/Modules/BackgroundMotion/Controls/BackgroundMotionControls.php:394
+#: src/Modules/BackgroundMotion/Controls/PixelControls.php:114
 msgid "Spacing between cells when Border Width is 0. Ignored while dividers are active."
 msgstr ""
 
@@ -928,7 +928,7 @@ msgstr ""
 msgid "Static rotate. For hover rotate, set Hover Rotate below."
 msgstr ""
 
-#: src/Modules/BackgroundMotion/Controls/BackgroundMotionControls.php:345
+#: src/Modules/BackgroundMotion/Controls/PixelControls.php:65
 msgid "Stretch to fill"
 msgstr ""
 
@@ -936,7 +936,7 @@ msgstr ""
 msgid "Support"
 msgstr ""
 
-#: src/Modules/BackgroundMotion/Controls/BackgroundMotionControls.php:844
+#: src/Modules/BackgroundMotion/Controls/MeshControls.php:42
 msgid "Swirl"
 msgstr ""
 
@@ -978,11 +978,11 @@ msgstr ""
 msgid "Toggle navigation"
 msgstr ""
 
-#: src/Modules/BackgroundMotion/Controls/BackgroundMotionControls.php:486
+#: src/Modules/BackgroundMotion/Controls/PixelControls.php:206
 msgid "Trail Fade"
 msgstr ""
 
-#: src/Modules/BackgroundMotion/Controls/BackgroundMotionControls.php:440
+#: src/Modules/BackgroundMotion/Controls/PixelControls.php:160
 msgid "Transition Speed"
 msgstr ""
 
@@ -994,7 +994,7 @@ msgstr ""
 msgid "Trigger Area"
 msgstr ""
 
-#: src/Modules/BackgroundMotion/Controls/BackgroundMotionControls.php:1020
+#: src/Modules/BackgroundMotion/Controls/MeshControls.php:218
 msgid "Turn ON to preview. If a change doesn't appear, toggle OFF then ON again."
 msgstr ""
 
