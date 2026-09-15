@@ -4,21 +4,17 @@ declare(strict_types=1);
 
 namespace EmjeCreative\EmjeMotion\Modules\InteractionMotion\Frontend;
 
-use EmjeCreative\EmjeMotion\Modules\InteractionMotion\Services\ColorResolver;
 use EmjeCreative\EmjeMotion\Modules\InteractionMotion\Services\SliderResolver;
-use EmjeCreative\EmjeMotion\Support\ColorField;
 
 /**
  * Hover Reveal config builder for Interaction Motion.
  */
 final class HoverConfig
 {
-    private ColorResolver $colorResolver;
     private SliderResolver $sliderResolver;
 
     public function __construct()
     {
-        $this->colorResolver = new ColorResolver();
         $this->sliderResolver = new SliderResolver();
     }
 

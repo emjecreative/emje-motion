@@ -3,7 +3,7 @@
 All notable changes to Emje Motion are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## [Unreleased]
+## [1.4.0] - 2026-09-15
 
 ### Fixed
 - **Scrub preset `visible` ignored** — `TextMotionFrontend` translated the retired `visible` preset to custom 100/100 and then overwrote it while parsing positions. Order fixed; retired `leave` mapping and legacy translation covered by new PHP tests.
