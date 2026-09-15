@@ -2,7 +2,7 @@
  * Shared helpers for Background Motion effects (ASCII / Pixel / Dither / Mesh).
  * Single source of truth — do not duplicate into effect files.
  */
-export { isEditMode } from '../../core/env';
+export { isEditMode, debugLog } from '../../core/env';
 
 // Default mesh palette (Lagoon) — also the fallback when a custom color
 // is unparseable.

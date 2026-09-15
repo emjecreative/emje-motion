@@ -11,6 +11,7 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - **Code cleanup batch 1+2** — removed dead code (zombie `_emjeScroller` global, unreachable scrub fallbacks + `killTimeline` fallback in `MotionEngine`, dead reduced-motion forks in `InteractiveCursor`, unreachable `else` in editor entry) and unified duplications (cursor/hover payload serializers, `resolveEditedModel`, `destroyLayerInstance` everywhere, `clampNum`/`toNumber` bridge helpers, `SmoothScrollConfig` bounds, `Support\ColorField` for all color settings). No behavior changes except: editor preview payloads now include `disableOnMobile` (matching the frontend), and garbage Smooth Scroll input keeps the current value instead of snapping to the minimum.
 - **Updater duplication documented** — `GitHubUpdater` and the mu stub intentionally mirror each other (the mu copy must stay standalone to heal missing plugin files); both files now say so.
+- **Cosmetic sweep** — `isEditMode` method wrappers removed (direct `core/env` import), the three tracing wrappers unified behind `debugLog`, stale/duplicate comments cleaned. Verified intentional and left alone: per-effect `disableOnMobile` defaults, idempotent frontend boot, updater mirroring.
 
 ### Added
 - **Text Motion Unfold: Direction + Lines** — new Direction control (Up/Down/Left/Right, default Up so existing pages are unchanged) and new Split By Lines option (animates per visual line). Covers play + On Scroll scrub + editor live preview.

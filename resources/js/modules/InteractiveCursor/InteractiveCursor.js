@@ -1,5 +1,5 @@
 import gsap from 'gsap';
-import { isEditMode as sharedIsEditMode } from '../../core/env';
+import { isEditMode } from '../../core/env';
 import { buildTextFollow, enterTextFollow, leaveTextFollow } from './strategies/TextFollowCursor.js';
 import { buildDotRing, bindDotRingHover } from './strategies/DotRingCursor.js';
 
@@ -55,16 +55,11 @@ export default class InteractiveCursor {
         this.isInside = false;
     }
 
-    isEditMode() {
-        // Single source of truth: core/env (kept as a method for API stability).
-        return sharedIsEditMode();
-    }
-
     shouldInit() {
-        if (this.isEditMode() && this.config.livePreview === false) {
+        if (isEditMode() && this.config.livePreview === false) {
             return false;
         }
-        if (!this.isEditMode()) {
+        if (!isEditMode()) {
             if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
                 return false;
             }

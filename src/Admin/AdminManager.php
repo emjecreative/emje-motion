@@ -146,10 +146,10 @@ final class AdminManager
             return;
         }
 
-        // Phosphor Icons — Duotone (Opsi A)
+        // Phosphor Icons (Duotone) via CDN.
         wp_enqueue_style('phosphor-icons-duotone', 'https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/duotone/style.css', [], '2.1.1');
 
-        // Geist — Google Fonts (hanya dashboard Emje Motion, CDN)
+        // Geist webfont (dashboard only) via Google Fonts CDN.
         wp_enqueue_style('geist-font', 'https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&display=swap', [], null);
 
         $css = EMJE_MOTION_URL . 'assets/css/admin.css';

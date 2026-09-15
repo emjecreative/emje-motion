@@ -114,7 +114,6 @@ final class Plugin
     private function registerHooks(): void
     {
         add_action('plugins_loaded', [ $this, 'onPluginsLoaded' ]);
-        // Updater must run in all contexts (including wp-cron, not just is_admin) for multisite per-site activation.
         $this->registerUpdater();
     }
 

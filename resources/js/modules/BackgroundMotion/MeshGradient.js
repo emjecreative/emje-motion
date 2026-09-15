@@ -1,26 +1,16 @@
-import { isEditMode, applyEdgeMask, LIMITS, clampNum, toNumber, DEFAULT_COLORS, LEGACY_PRESETS, resolveCssVar } from './shared.js';
+import { isEditMode, applyEdgeMask, LIMITS, clampNum, toNumber, DEFAULT_COLORS, LEGACY_PRESETS, resolveCssVar, debugLog } from './shared.js';
 
 export { DEFAULT_COLORS, LEGACY_PRESETS, resolveCssVar };
 
 function meshDebug() {
     // Opt-in tracing for the editor blank-preview diagnostic: run
     // `window._emjeBgDebug = true` in the console, then reproduce.
-    // Zero overhead when off; never logs per-frame.
+    var w = (typeof window !== 'undefined') ? window : null;
+    var on = false;
     try {
-        var w = (typeof window !== 'undefined') ? window : null;
-        if (!w) {
-            return;
-        }
-        var on = w._emjeBgDebug || (w.top && w.top._emjeBgDebug);
-        if (!on) {
-            return;
-        }
-        var args = Array.prototype.slice.call(arguments);
-        args.unshift('[emje-mesh]');
-        if (w.console && w.console.log) {
-            w.console.log.apply(w.console, args);
-        }
+        on = !!(w && (w._emjeBgDebug || (w.top && w.top._emjeBgDebug)));
     } catch (_e) {}
+    debugLog(on, '[emje-mesh]', arguments);
 }
 
 // Motion Type → shader branch index for `u_motion`.

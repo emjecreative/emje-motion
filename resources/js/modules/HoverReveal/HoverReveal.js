@@ -1,5 +1,5 @@
 import gsap from 'gsap';
-import { isEditMode as sharedIsEditMode } from '../../core/env';
+import { isEditMode } from '../../core/env';
 
 /**
  * Hover Reveal — image follows cursor inside Container.
@@ -18,19 +18,14 @@ export default class HoverReveal {
         this.triggerEl = null;
     }
 
-    isEditMode() {
-        // Single source of truth: core/env (kept as a method for API stability).
-        return sharedIsEditMode();
-    }
-
     shouldInit() {
         // Respect live preview toggle in editor
-        if (this.isEditMode() && this.config.livePreview === false) {
+        if (isEditMode() && this.config.livePreview === false) {
             return false;
         }
 
         // In editor preview, allow even with reduced-motion / touch when live is On
-        if (!this.isEditMode()) {
+        if (!isEditMode()) {
             if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
                 return false;
             }

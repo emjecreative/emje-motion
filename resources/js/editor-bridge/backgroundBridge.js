@@ -1,4 +1,5 @@
 import { getPreviewWindow, getPreviewDocument, pickEditorColor, findTarget, destroyLayerInstance, resolveEditedModel } from './utils.js';
+import { debugLog } from '../core/env.js';
 import { DEFAULT_COLORS, LEGACY_PRESETS as LEGACY_MESH_PRESETS } from '../modules/BackgroundMotion/shared';
 
 export function buildBackgroundConfig(settings) {
@@ -210,12 +211,7 @@ export function buildBackgroundPayload(cfg) {
 function bgDebug() {
     // Opt-in tracing: run `window._emjeBgDebug = true` in the editor
     // top-frame console, then reproduce. Zero overhead when off.
-    try {
-        if (!window._emjeBgDebug) return;
-        var args = Array.prototype.slice.call(arguments);
-        args.unshift('[emje-bg]');
-        if (window.console && window.console.log) window.console.log.apply(window.console, args);
-    } catch (e) {}
+    debugLog(window._emjeBgDebug, '[emje-bg]', arguments);
 }
 
 export function backgroundLayerPresent(target) {

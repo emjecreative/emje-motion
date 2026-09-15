@@ -1,5 +1,5 @@
 import ElementManager from './ElementManager';
-import { isEditMode as sharedIsEditMode } from './env';
+import { isEditMode, debugLog } from './env';
 import { computeScrubProgress } from './scrub';
 import ScrambleText from '../modules/TextMotion/ScrambleText';
 import TextUnfold from '../modules/TextMotion/TextUnfold';
@@ -109,14 +109,10 @@ export default class MotionEngine {
                             try { animation.setProgress(p); } catch (e) {}
                         }
                         // Debug (enable in console: window.__EMJE_SCRUB_DEBUG = true)
-                        try {
-                            if (window.__EMJE_SCRUB_DEBUG && Date.now() - lastLogged > 300) {
-                                lastLogged = Date.now();
-                                if (typeof console.debug === 'function') {
-                                    console.debug('[EmjeMotion] scrub p=', p.toFixed(3), 'scrollY=', window.scrollY);
-                                }
-                            }
-                        } catch (e) {}
+                        if (window.__EMJE_SCRUB_DEBUG && Date.now() - lastLogged > 300) {
+                            lastLogged = Date.now();
+                            debugLog(true, '[EmjeMotion]', ['scrub p=', p.toFixed(3), 'scrollY=', window.scrollY]);
+                        }
                     };
                     const onScroll = () => {
                         if (scrubRAF) return;
@@ -159,13 +155,8 @@ export default class MotionEngine {
         return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     }
 
-    isEditMode() {
-        // Single source of truth: core/env (kept as a method for API stability).
-        return sharedIsEditMode();
-    }
-
     shouldSkipDueToReducedMotion() {
-        if (this.isEditMode()) {
+        if (isEditMode()) {
             return false;
         }
         return this.prefersReducedMotion();
@@ -242,7 +233,7 @@ export default class MotionEngine {
         }
 
         // Respect live preview toggle in editor (Opsi AUX): if livePreview is explicitly false in edit mode, skip init
-        if (this.isEditMode() && config.livePreview === false) {
+        if (isEditMode() && config.livePreview === false) {
             return;
         }
 
