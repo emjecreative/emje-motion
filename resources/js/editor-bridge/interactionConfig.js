@@ -2,7 +2,7 @@
  * Interaction Motion config builders + preview payload serializers.
  * Pure settings-to-config mapping (no DOM, no Elementor channels).
  */
-import { sanitizeImageUrl, isValidEditorColor, pickEditorColor, safeCssEnum, safeCssMeasure, clampNum } from './utils.js';
+import { sanitizeImageUrl, isValidEditorColor, pickEditorColor, safeCssEnum, safeCssMeasure, clampNum, getSliderInt, getSliderFloat } from './utils.js';
 
 /**
  * P4: samakan gambar editor vs web.
@@ -78,11 +78,7 @@ export function buildCursorConfig(settings) {
     if (type === 'dot' || type === 'ring') type = 'dot-ring';
     if (['dot-ring', 'text-follow'].indexOf(type) === -1) type = 'text-follow';
 
-    var size = 20;
-    var rawSize = get('emje_cursor_size', null);
-    if (rawSize && typeof rawSize === 'object' && rawSize.size !== undefined) size = parseInt(rawSize.size, 10);
-    else if (!isNaN(parseInt(rawSize, 10))) size = parseInt(rawSize, 10);
-    size = Math.max(12, Math.min(40, size));
+    var size = getSliderInt(get, 'emje_cursor_size', 20, 12, 40);
 
     var color = get('emje_cursor_color', '#000000');
     if (!color || typeof color !== 'string') color = '#000000';
@@ -124,6 +120,8 @@ export function buildInteractionConfig(settings) {
         var img = get('emje_interaction_hover_image', null);
         var url = pickHoverImageUrl(img, size2);
         var follow = clampNum(get('emje_interaction_hover_follow_speed', 0.12), 0.05, 0.3, 0.12);
+        // Kontrol 'Scale on Hover' dihapus dari panel, tapi nilai yang
+        // sudah tersimpan di halaman lama tetap dibaca (back-compat).
         var scale2 = clampNum(get('emje_interaction_hover_scale', 1), 0.8, 1.2, 1);
         var anim = get('emje_interaction_hover_animation', 'fade');
         // 'scale' dihapus: nilai lama otomatis jadi 'fade'.
@@ -134,30 +132,16 @@ export function buildInteractionConfig(settings) {
         if (['left', 'right', 'top', 'bottom'].indexOf(clipDir) === -1) clipDir = 'left';
         // Durasi bawaan = perilaku lama per animasi. Kontrol baru default 0.3.
         var durDef = anim === 'clip' ? 0.4 : 0.25;
-        var durRaw = get('emje_interaction_hover_duration', null);
-        if (durRaw && typeof durRaw === 'object' && durRaw.size !== undefined) durRaw = durRaw.size;
-        var duration = parseFloat(durRaw);
-        if (isNaN(duration)) duration = durDef;
-        duration = Math.max(0.1, Math.min(1, duration));
-        var getNum = function(k, def, min, max) {
-            var v = get(k, null);
-            if (v && typeof v === 'object' && v.size !== undefined) v = v.size;
-            var n = parseInt(v, 10);
-            if (isNaN(n)) return def;
-            return Math.max(min, Math.min(max, n));
-        };
-        var cols = getNum('emje_interaction_hover_blocks_columns', 5, 2, 10);
-        var rows = getNum('emje_interaction_hover_blocks_rows', 7, 2, 12);
+        var duration = getSliderFloat(get, 'emje_interaction_hover_duration', durDef, 0.1, 1);
+        var cols = getSliderInt(get, 'emje_interaction_hover_blocks_columns', 5, 2, 10);
+        var rows = getSliderInt(get, 'emje_interaction_hover_blocks_rows', 7, 2, 12);
         var order = get('emje_interaction_hover_blocks_order', 'random');
         if (['random', 'rows'].indexOf(order) === -1) order = 'random';
-        var speedRaw = get('emje_interaction_hover_blocks_speed', null);
-        var blockSpeed = parseFloat(speedRaw);
-        if (isNaN(blockSpeed)) blockSpeed = 0.02;
-        blockSpeed = Math.max(0.005, Math.min(0.06, blockSpeed));
-        var offsetX = getNum('emje_interaction_hover_offset_x', 0, -200, 200);
-        var offsetY = getNum('emje_interaction_hover_offset_y', 0, -200, 200);
-        var rotate = getNum('emje_interaction_hover_rotate', 0, -360, 360);
-        var rotateHover = getNum('emje_interaction_hover_rotate_hover', 15, -360, 360);
+        var blockSpeed = getSliderFloat(get, 'emje_interaction_hover_blocks_speed', 0.02, 0.005, 0.06);
+        var offsetX = getSliderInt(get, 'emje_interaction_hover_offset_x', 0, -200, 200);
+        var offsetY = getSliderInt(get, 'emje_interaction_hover_offset_y', 0, -200, 200);
+        var rotate = getSliderInt(get, 'emje_interaction_hover_rotate', 0, -360, 360);
+        var rotateHover = getSliderInt(get, 'emje_interaction_hover_rotate_hover', 15, -360, 360);
         return {
             enable: true,
             effect: effect,
@@ -185,18 +169,7 @@ export function buildInteractionConfig(settings) {
         if (type2 === 'dot' || type2 === 'ring') type2 = 'dot-ring';
         // Retired 'trail' (Comet Trail) falls through to text-follow.
         if (['dot-ring', 'text-follow'].indexOf(type2) === -1) type2 = 'text-follow';
-        var size2b = 20;
-        var rawSize2 = get('emje_interaction_cursor_size', null);
-        if (rawSize2 && typeof rawSize2 === 'object' && rawSize2.size !== undefined) size2b = parseInt(rawSize2.size, 10);
-        else if (!isNaN(parseInt(rawSize2, 10))) size2b = parseInt(rawSize2, 10);
-        size2b = Math.max(12, Math.min(40, size2b));
-        var getSlider = function(k, def, min, max) {
-            var v = get(k, null);
-            if (v && typeof v === 'object' && v.size !== undefined) v = v.size;
-            var n = parseInt(v, 10);
-            if (isNaN(n)) return def;
-            return Math.max(min, Math.min(max, n));
-        };
+        var size2b = getSliderInt(get, 'emje_interaction_cursor_size', 20, 12, 40);
         var color2 = pickEditorColor(get, 'emje_interaction_cursor_color', '#000000');
         var scale2b = clampNum(get('emje_interaction_cursor_hover_scale', 1.5), 1.2, 2, 1.5);
         var hide2 = get('emje_interaction_cursor_hide_native', '') === 'yes';
@@ -209,9 +182,9 @@ export function buildInteractionConfig(settings) {
         }
         var bg2 = pickEditorColor(get, 'emje_interaction_cursor_bg_color', '#FFFFFF');
         var textColor2 = pickEditorColor(get, 'emje_interaction_cursor_text_color', '#111111');
-        var padY2 = getSlider('emje_interaction_cursor_padding_y', 40, 8, 48);
-        var padX2 = getSlider('emje_interaction_cursor_padding_x', 32, 12, 56);
-        var radius2 = getSlider('emje_interaction_cursor_radius', 99, 0, 100);
+        var padY2 = getSliderInt(get, 'emje_interaction_cursor_padding_y', 40, 8, 48);
+        var padX2 = getSliderInt(get, 'emje_interaction_cursor_padding_x', 32, 12, 56);
+        var radius2 = getSliderInt(get, 'emje_interaction_cursor_radius', 99, 0, 100);
         var typo = {};
         var typoFamily = get('emje_interaction_cursor_typography_font_family', '');
         if (typeof typoFamily === 'string') typo.fontFamily = typoFamily;
@@ -222,7 +195,7 @@ export function buildInteractionConfig(settings) {
         } else {
             // Legacy v1.0.0 compat: old pages stored a plain font_size
             // slider with no matching Elementor control.
-            var legacyFs = getSlider('emje_interaction_cursor_font_size', 14, 10, 24);
+            var legacyFs = getSliderInt(get, 'emje_interaction_cursor_font_size', 14, 10, 24);
             typo.fontSize = legacyFs;
             typo.fontSizeUnit = 'px';
         }
@@ -240,12 +213,7 @@ export function buildInteractionConfig(settings) {
         else if (typoLetter) typo.letterSpacing = safeCssMeasure(typoLetter, '');
         var entrance2 = get('emje_interaction_cursor_entrance', 'scale');
         if (['scale', 'scale-bounce', 'none'].indexOf(entrance2) === -1) entrance2 = 'scale';
-        var smoothRaw2 = get('emje_interaction_cursor_follow_smoothness', null);
-        var smooth2 = 0.5;
-        if (smoothRaw2 && typeof smoothRaw2 === 'object' && smoothRaw2.size !== undefined) smooth2 = parseFloat(smoothRaw2.size);
-        else if (!isNaN(parseFloat(smoothRaw2))) smooth2 = parseFloat(smoothRaw2);
-        if (isNaN(smooth2)) smooth2 = 0.5;
-        smooth2 = Math.max(0.05, Math.min(0.6, smooth2));
+        var smooth2 = getSliderFloat(get, 'emje_interaction_cursor_follow_smoothness', 0.5, 0.05, 0.6);
         var boxShadowType = get('emje_interaction_cursor_box_shadow_box_shadow_type', 'yes');
         var boxShadowVal = get('emje_interaction_cursor_box_shadow_box_shadow', null);
         var boxShadowStr = '0px 8px 32px 0px rgba(0, 0, 0, 0.12)';
@@ -263,7 +231,7 @@ export function buildInteractionConfig(settings) {
         // Legacy v1.0.0 compat: old pages stored plain shadow
         // settings with no matching Elementor control.
         var legacyShadow = get('emje_interaction_cursor_shadow', 'yes') === 'yes';
-        var legacyBlur = getSlider('emje_interaction_cursor_shadow_blur', 32, 0, 60);
+        var legacyBlur = getSliderInt(get, 'emje_interaction_cursor_shadow_blur', 32, 0, 60);
         if (boxShadowStr === '0px 8px 32px 0px rgba(0, 0, 0, 0.12)' && !legacyShadow) {
             boxShadowStr = 'none';
         }

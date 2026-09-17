@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Emje Motion 1.4.0\n"
 "Report-Msgid-Bugs-To: https://github.com/emjecreative/emje-motion/issues\n"
-"POT-Creation-Date: 2026-09-17T11:13:15+00:00\n"
+"POT-Creation-Date: 2026-09-17T16:50:06+00:00\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -102,11 +102,11 @@ msgstr ""
 msgid "Behavior"
 msgstr ""
 
-#: src/Modules/InteractionMotion/Controls/HoverControls.php:97
+#: src/Modules/InteractionMotion/Controls/HoverControls.php:79
 msgid "Blocks"
 msgstr ""
 
-#: src/Modules/InteractionMotion/Controls/HoverControls.php:218
+#: src/Modules/InteractionMotion/Controls/HoverControls.php:200
 msgid "Blocks Speed"
 msgstr ""
 
@@ -127,7 +127,7 @@ msgstr ""
 msgid "Border Width"
 msgstr ""
 
-#: src/Modules/InteractionMotion/Controls/HoverControls.php:118
+#: src/Modules/InteractionMotion/Controls/HoverControls.php:100
 msgid "Bottom"
 msgstr ""
 
@@ -171,11 +171,11 @@ msgstr ""
 msgid "Check if a newer version is available."
 msgstr ""
 
-#: src/Modules/InteractionMotion/Controls/HoverControls.php:111
+#: src/Modules/InteractionMotion/Controls/HoverControls.php:93
 msgid "Clip Direction"
 msgstr ""
 
-#: src/Modules/InteractionMotion/Controls/HoverControls.php:96
+#: src/Modules/InteractionMotion/Controls/HoverControls.php:78
 msgid "Clip Path"
 msgstr ""
 
@@ -240,8 +240,8 @@ msgstr ""
 #: src/Modules/BackgroundMotion/Controls/DitherControls.php:276
 #: src/Modules/BackgroundMotion/Controls/MeshControls.php:197
 #: src/Modules/BackgroundMotion/Controls/PixelControls.php:260
-#: src/Modules/InteractionMotion/Controls/CursorControls.php:386
-#: src/Modules/InteractionMotion/Controls/HoverControls.php:360
+#: src/Modules/InteractionMotion/Controls/InteractionMotionControls.php:108
+#: src/Modules/InteractionMotion/Controls/InteractionMotionControls.php:90
 msgid "Disable on Mobile & Tablet"
 msgstr ""
 
@@ -363,7 +363,7 @@ msgstr ""
 msgid "Entrance"
 msgstr ""
 
-#: src/Modules/InteractionMotion/Controls/HoverControls.php:95
+#: src/Modules/InteractionMotion/Controls/HoverControls.php:77
 msgid "Fade"
 msgstr ""
 
@@ -392,7 +392,7 @@ msgstr ""
 msgid "Follow Smoothness"
 msgstr ""
 
-#: src/Modules/InteractionMotion/Controls/HoverControls.php:73
+#: src/Modules/InteractionMotion/Controls/HoverControls.php:219
 msgid "Follow Speed"
 msgstr ""
 
@@ -425,11 +425,11 @@ msgstr ""
 msgid "Glow Radius"
 msgstr ""
 
-#: src/Modules/InteractionMotion/Controls/HoverControls.php:160
+#: src/Modules/InteractionMotion/Controls/HoverControls.php:142
 msgid "Grid Columns"
 msgstr ""
 
-#: src/Modules/InteractionMotion/Controls/HoverControls.php:179
+#: src/Modules/InteractionMotion/Controls/HoverControls.php:161
 msgid "Grid Rows"
 msgstr ""
 
@@ -441,8 +441,8 @@ msgstr ""
 #: src/Modules/BackgroundMotion/Controls/DitherControls.php:278
 #: src/Modules/BackgroundMotion/Controls/MeshControls.php:199
 #: src/Modules/BackgroundMotion/Controls/PixelControls.php:262
-#: src/Modules/InteractionMotion/Controls/CursorControls.php:388
-#: src/Modules/InteractionMotion/Controls/HoverControls.php:362
+#: src/Modules/InteractionMotion/Controls/InteractionMotionControls.php:110
+#: src/Modules/InteractionMotion/Controls/InteractionMotionControls.php:92
 msgid "Hide"
 msgstr ""
 
@@ -517,7 +517,7 @@ msgstr ""
 msgid "Large"
 msgstr ""
 
-#: src/Modules/InteractionMotion/Controls/HoverControls.php:115
+#: src/Modules/InteractionMotion/Controls/HoverControls.php:97
 #: src/Modules/TextMotion/Controls/TextMotionControls.php:264
 msgid "Left"
 msgstr ""
@@ -547,7 +547,7 @@ msgid "Lines"
 msgstr ""
 
 #: src/Modules/BackgroundMotion/Controls/MeshControls.php:212
-#: src/Modules/InteractionMotion/Controls/InteractionMotionControls.php:89
+#: src/Modules/InteractionMotion/Controls/InteractionMotionControls.php:126
 #: src/Modules/TextMotion/Controls/TextMotionControls.php:532
 msgid "Live Preview"
 msgstr ""
@@ -626,8 +626,8 @@ msgstr ""
 #: src/Modules/BackgroundMotion/Controls/BackgroundMotionControls.php:45
 #: src/Modules/BackgroundMotion/Controls/DitherControls.php:164
 #: src/Modules/BackgroundMotion/Controls/MeshControls.php:215
+#: src/Modules/InteractionMotion/Controls/InteractionMotionControls.php:129
 #: src/Modules/InteractionMotion/Controls/InteractionMotionControls.php:45
-#: src/Modules/InteractionMotion/Controls/InteractionMotionControls.php:92
 #: src/Modules/TextMotion/Controls/TextMotionControls.php:300
 #: src/Modules/TextMotion/Controls/TextMotionControls.php:535
 #: src/Modules/TextMotion/Controls/TextMotionControls.php:91
@@ -645,8 +645,8 @@ msgstr ""
 #: src/Modules/BackgroundMotion/Controls/BackgroundMotionControls.php:44
 #: src/Modules/BackgroundMotion/Controls/DitherControls.php:163
 #: src/Modules/BackgroundMotion/Controls/MeshControls.php:214
+#: src/Modules/InteractionMotion/Controls/InteractionMotionControls.php:128
 #: src/Modules/InteractionMotion/Controls/InteractionMotionControls.php:44
-#: src/Modules/InteractionMotion/Controls/InteractionMotionControls.php:91
 #: src/Modules/TextMotion/Controls/TextMotionControls.php:299
 #: src/Modules/TextMotion/Controls/TextMotionControls.php:534
 #: src/Modules/TextMotion/Controls/TextMotionControls.php:90
@@ -733,10 +733,6 @@ msgstr ""
 msgid "Power4 Out"
 msgstr ""
 
-#: src/Modules/InteractionMotion/Controls/InteractionMotionControls.php:77
-msgid "Preview"
-msgstr ""
-
 #: src/Modules/TextMotion/Controls/TextMotionControls.php:550
 msgid "Preview Animation"
 msgstr ""
@@ -754,7 +750,7 @@ msgstr ""
 msgid "Quality"
 msgstr ""
 
-#: src/Modules/InteractionMotion/Controls/HoverControls.php:202
+#: src/Modules/InteractionMotion/Controls/HoverControls.php:184
 #: src/Modules/TextMotion/Controls/TextMotionControls.php:186
 msgid "Random"
 msgstr ""
@@ -767,11 +763,11 @@ msgstr ""
 msgid "Respect Reduced Motion"
 msgstr ""
 
-#: src/Modules/InteractionMotion/Controls/HoverControls.php:91
+#: src/Modules/InteractionMotion/Controls/HoverControls.php:73
 msgid "Reveal Animation"
 msgstr ""
 
-#: src/Modules/InteractionMotion/Controls/HoverControls.php:133
+#: src/Modules/InteractionMotion/Controls/HoverControls.php:115
 msgid "Reveal Duration"
 msgstr ""
 
@@ -779,12 +775,12 @@ msgstr ""
 msgid "Reveal Image"
 msgstr ""
 
-#: src/Modules/InteractionMotion/Controls/HoverControls.php:198
+#: src/Modules/InteractionMotion/Controls/HoverControls.php:180
 #: src/Modules/TextMotion/Controls/TextMotionControls.php:179
 msgid "Reveal Order"
 msgstr ""
 
-#: src/Modules/InteractionMotion/Controls/HoverControls.php:116
+#: src/Modules/InteractionMotion/Controls/HoverControls.php:98
 #: src/Modules/TextMotion/Controls/TextMotionControls.php:265
 msgid "Right"
 msgstr ""
@@ -809,7 +805,7 @@ msgstr ""
 msgid "Rotate"
 msgstr ""
 
-#: src/Modules/InteractionMotion/Controls/HoverControls.php:203
+#: src/Modules/InteractionMotion/Controls/HoverControls.php:185
 msgid "Rows"
 msgstr ""
 
@@ -882,8 +878,8 @@ msgstr ""
 #: src/Modules/BackgroundMotion/Controls/DitherControls.php:279
 #: src/Modules/BackgroundMotion/Controls/MeshControls.php:200
 #: src/Modules/BackgroundMotion/Controls/PixelControls.php:263
-#: src/Modules/InteractionMotion/Controls/CursorControls.php:389
-#: src/Modules/InteractionMotion/Controls/HoverControls.php:363
+#: src/Modules/InteractionMotion/Controls/InteractionMotionControls.php:111
+#: src/Modules/InteractionMotion/Controls/InteractionMotionControls.php:93
 msgid "Show"
 msgstr ""
 
@@ -965,7 +961,7 @@ msgstr ""
 msgid "Toggle navigation"
 msgstr ""
 
-#: src/Modules/InteractionMotion/Controls/HoverControls.php:117
+#: src/Modules/InteractionMotion/Controls/HoverControls.php:99
 msgid "Top"
 msgstr ""
 

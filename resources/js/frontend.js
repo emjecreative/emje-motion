@@ -70,6 +70,13 @@ function handleNode(node) {
     if (!(node instanceof HTMLElement)) {
         return;
     }
+    // Text Motion — engine.initElement aman dipanggil ulang (guard flag).
+    if (node.matches && node.matches('[data-emje-motion]')) {
+        getEngine().initElement(node);
+    }
+    if (node.querySelectorAll) {
+        node.querySelectorAll('[data-emje-motion]').forEach(function(e) { getEngine().initElement(e); });
+    }
     if (node.matches && node.matches('[data-emje-hover-reveal]')) {
         HoverReveal.reInit(node);
     }
@@ -90,16 +97,48 @@ function handleNode(node) {
     }
 }
 
+// Perubahan atribut config (misal ditulis ulang oleh bridge preview):
+// refresh hanya yang konfigurasinya benar-benar berubah.
+function handleAttributeChange(node) {
+    if (!(node instanceof HTMLElement)) {
+        return;
+    }
+    if (node.hasAttribute('data-emje-motion')) {
+        getEngine().refreshIfChanged(node);
+    }
+    if (node.hasAttribute('data-emje-hover-reveal') && window.EmjeMotionHoverReveal) {
+        window.EmjeMotionHoverReveal.reInit(node);
+    }
+    if (node.hasAttribute('data-emje-cursor') && window.EmjeMotionCursor) {
+        window.EmjeMotionCursor.reInit(node);
+    }
+}
+
 function hookElementorFrontend() {
     if (typeof window.elementorFrontend === 'undefined' || !window.elementorFrontend.hooks) {
         return;
     }
+    var unwrap = function($el) {
+        var el = (typeof jQuery !== 'undefined' && $el instanceof jQuery) ? $el[0] : $el;
+        return el || null;
+    };
     // Ensure container added via Elementor AJAX/preview is handled
     window.elementorFrontend.hooks.addAction('frontend/element_ready/container', function($el) {
-        var el = (typeof jQuery !== 'undefined' && $el instanceof jQuery) ? $el[0] : $el;
+        var el = unwrap($el);
         if (!el) return;
         handleNode(el);
     });
+    // Text Motion widgets — didelegasikan ke engine (satu-satunya hook).
+    var motionHandler = function($el) {
+        var el = unwrap($el);
+        if (!el || !el.matches) return;
+        if (el.matches('[data-emje-motion]')) getEngine().initElement(el);
+        if (el.querySelectorAll) {
+            el.querySelectorAll('[data-emje-motion]').forEach(function(child) { getEngine().initElement(child); });
+        }
+    };
+    window.elementorFrontend.hooks.addAction('frontend/element_ready/heading', motionHandler);
+    window.elementorFrontend.hooks.addAction('frontend/element_ready/text-editor', motionHandler);
     window.elementorFrontend.hooks.addAction('frontend/element_ready/global', function() { bootstrapAll(); });
 }
 
@@ -110,14 +149,24 @@ function observeNewElements() {
     if (window._emjeFrontendObserver) {
         return;
     }
+    // Satu-satunya observer: elemen baru + perubahan atribut config.
     var observer = new MutationObserver(function(mutations) {
         mutations.forEach(function(m) {
-            m.addedNodes.forEach(function(node) {
-                handleNode(node);
-            });
+            if (m.type === 'childList') {
+                m.addedNodes.forEach(function(node) {
+                    handleNode(node);
+                });
+            } else if (m.type === 'attributes') {
+                handleAttributeChange(m.target);
+            }
         });
     });
-    observer.observe(document.body, { childList: true, subtree: true });
+    observer.observe(document.body, {
+        childList: true,
+        subtree: true,
+        attributes: true,
+        attributeFilter: ['data-emje-motion', 'data-emje-hover-reveal', 'data-emje-cursor'],
+    });
     window._emjeFrontendObserver = observer;
 }
 

@@ -24,6 +24,8 @@ final class TextMotionFrontend
         'text-editor',
     ];
 
+    // Marker class for render parity with MotionEngine.js (no CSS rule
+    // by design — selection always goes through [data-emje-motion]).
     private const MOTION_CLASS = 'emje-motion';
 
     /**

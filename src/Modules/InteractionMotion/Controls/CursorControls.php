@@ -379,23 +379,5 @@ final class CursorControls
                 'render_type' => 'none',
             ],
         );
-
-        $element->add_control(
-            'emje_interaction_cursor_disable_mobile',
-            [
-                'label' => esc_html__('Disable on Mobile & Tablet', 'emje-motion'),
-                'type' => Controls_Manager::SWITCHER,
-                'label_on' => esc_html__('Hide', 'emje-motion'),
-                'label_off' => esc_html__('Show', 'emje-motion'),
-                'return_value' => 'yes',
-                'default' => 'yes',
-                'condition' => [
-                    'emje_interaction_enable' => 'yes',
-                    'emje_interaction_effect' => 'interactive-cursor',
-                ],
-                'frontend_available' => true,
-                'render_type' => 'template',
-            ],
-        );
     }
 }

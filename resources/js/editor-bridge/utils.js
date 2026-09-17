@@ -90,6 +90,29 @@ export function clampNum(v, min, max, fallback) {
     return Math.max(min, Math.min(max, toNumber(v, fallback)));
 }
 
+/**
+ * Read an Elementor slider setting ({size} object or plain scalar) and
+ * clamp it. Single source of truth for the getNum/getSlider/num closures
+ * previously copied into every config builder.
+ */
+function sliderRaw(get, key) {
+    var v = get(key, null);
+    if (v && typeof v === 'object' && v.size !== undefined) v = v.size;
+    return v;
+}
+
+export function getSliderInt(get, key, def, min, max) {
+    var n = parseInt(sliderRaw(get, key), 10);
+    if (isNaN(n)) return def;
+    return Math.max(min, Math.min(max, n));
+}
+
+export function getSliderFloat(get, key, def, min, max) {
+    var n = parseFloat(sliderRaw(get, key));
+    if (isNaN(n)) return def;
+    return Math.max(min, Math.min(max, n));
+}
+
 export function findTarget(previewDoc, widgetId, attr) {
     if (!previewDoc) return null;
     if (widgetId) {

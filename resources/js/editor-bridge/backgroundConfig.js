@@ -2,7 +2,7 @@
  * Background Motion config builders + payload serializer.
  * Pure settings-to-config mapping (no DOM, no Elementor channels).
  */
-import { pickEditorColor } from './utils.js';
+import { pickEditorColor, getSliderFloat } from './utils.js';
 import { DEFAULT_COLORS, LEGACY_PRESETS as LEGACY_MESH_PRESETS } from '../modules/BackgroundMotion/shared';
 
 export function buildBackgroundConfig(settings) {
@@ -24,13 +24,7 @@ export function buildBackgroundConfig(settings) {
     if (effect === 'mesh') {
         return buildMeshConfig(settings, live);
     }
-    var num = function(k, def, min, max) {
-        var v = get(k, null);
-        if (v && typeof v === 'object' && v.size !== undefined) v = v.size;
-        var n = parseFloat(v);
-        if (isNaN(n)) return def;
-        return Math.max(min, Math.min(max, n));
-    };
+    var num = function(k, def, min, max) { return getSliderFloat(get, k, def, min, max); };
     var color = pickEditorColor(get, 'emje_background_ascii_color', '#1227E2');
     var charset = get('emje_background_ascii_charset', 'full');
     if (['full', 'simple'].indexOf(charset) === -1) charset = 'full';
@@ -53,13 +47,7 @@ export function buildBackgroundConfig(settings) {
 
 export function buildPixelConfig(settings, live) {
     var get = function(k, d) { var v = settings.get(k); return v !== undefined && v !== null ? v : d; };
-    var num = function(k, def, min, max) {
-        var v = get(k, null);
-        if (v && typeof v === 'object' && v.size !== undefined) v = v.size;
-        var n = parseFloat(v);
-        if (isNaN(n)) return def;
-        return Math.max(min, Math.min(max, n));
-    };
+    var num = function(k, def, min, max) { return getSliderFloat(get, k, def, min, max); };
     var fit = get('emje_background_pixel_fit', 'stretch');
     if (['stretch', 'crop'].indexOf(fit) === -1) fit = 'stretch';
     return {
@@ -83,13 +71,7 @@ export function buildPixelConfig(settings, live) {
 
 export function buildDitherConfig(settings, live) {
     var get = function(k, d) { var v = settings.get(k); return v !== undefined && v !== null ? v : d; };
-    var num = function(k, def, min, max) {
-        var v = get(k, null);
-        if (v && typeof v === 'object' && v.size !== undefined) v = v.size;
-        var n = parseFloat(v);
-        if (isNaN(n)) return def;
-        return Math.max(min, Math.min(max, n));
-    };
+    var num = function(k, def, min, max) { return getSliderFloat(get, k, def, min, max); };
     return {
         enable: true,
         effect: 'dither',
@@ -111,13 +93,7 @@ export function buildDitherConfig(settings, live) {
 
 export function buildMeshConfig(settings, live) {
     var get = function(k, d) { var v = settings.get(k); return v !== undefined && v !== null ? v : d; };
-    var num = function(k, def, min, max) {
-        var v = get(k, null);
-        if (v && typeof v === 'object' && v.size !== undefined) v = v.size;
-        var n = parseFloat(v);
-        if (isNaN(n)) return def;
-        return Math.max(min, Math.min(max, n));
-    };
+    var num = function(k, def, min, max) { return getSliderFloat(get, k, def, min, max); };
     // Removed preset control: saved pages may still carry a preset value,
     // used here only as color fallback so old sections look the same.
     var legacyPreset = get('emje_background_mesh_preset', '');

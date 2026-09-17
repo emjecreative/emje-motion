@@ -72,14 +72,51 @@ final class InteractionMotionControls
         (new CursorControls())->register($element);
 
         $element->add_control(
-            'emje_interaction_preview_heading',
+            'emje_interaction_divider_bottom',
             [
-                'label' => esc_html__('Preview', 'emje-motion'),
-                'type' => Controls_Manager::HEADING,
-                'separator' => 'before',
+                'type' => Controls_Manager::DIVIDER,
                 'condition' => [
                     'emje_interaction_enable' => 'yes',
                 ],
+            ],
+        );
+
+        // ID dipertahankan (nilai tersimpan + frontend tidak berubah),
+        // cuma pindah posisi ke bawah divider. Versi hover dan cursor
+        // eksklusif per efek, jadi yang tampil cuma satu.
+        $element->add_control(
+            'emje_interaction_hover_disable_mobile',
+            [
+                'label' => esc_html__('Disable on Mobile & Tablet', 'emje-motion'),
+                'type' => Controls_Manager::SWITCHER,
+                'label_on' => esc_html__('Hide', 'emje-motion'),
+                'label_off' => esc_html__('Show', 'emje-motion'),
+                'return_value' => 'yes',
+                'default' => 'yes',
+                'condition' => [
+                    'emje_interaction_enable' => 'yes',
+                    'emje_interaction_effect' => 'hover-reveal',
+                ],
+                'frontend_available' => true,
+                'render_type' => 'template',
+            ],
+        );
+
+        $element->add_control(
+            'emje_interaction_cursor_disable_mobile',
+            [
+                'label' => esc_html__('Disable on Mobile & Tablet', 'emje-motion'),
+                'type' => Controls_Manager::SWITCHER,
+                'label_on' => esc_html__('Hide', 'emje-motion'),
+                'label_off' => esc_html__('Show', 'emje-motion'),
+                'return_value' => 'yes',
+                'default' => 'yes',
+                'condition' => [
+                    'emje_interaction_enable' => 'yes',
+                    'emje_interaction_effect' => 'interactive-cursor',
+                ],
+                'frontend_available' => true,
+                'render_type' => 'template',
             ],
         );
 

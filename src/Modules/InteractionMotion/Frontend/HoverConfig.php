@@ -89,6 +89,8 @@ final class HoverConfig
             $imageUrl = $image;
         }
         $followSpeed = isset($settings[$prefix . 'follow_speed']) ? (float) $settings[$prefix . 'follow_speed'] : 0.12;
+        // Kontrol 'Scale on Hover' dihapus dari panel, tapi nilai yang
+        // sudah tersimpan di halaman lama tetap dibaca (back-compat).
         $scale = isset($settings[$prefix . 'scale']) ? (float) $settings[$prefix . 'scale'] : 1.0;
         $animation = isset($settings[$prefix . 'animation']) ? (string) $settings[$prefix . 'animation'] : 'fade';
         $triggerArea = isset($settings[$prefix . 'trigger_area']) ? (string) $settings[$prefix . 'trigger_area'] : 'container';

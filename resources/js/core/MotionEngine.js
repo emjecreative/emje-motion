@@ -15,7 +15,6 @@ export default class MotionEngine {
         this.instances = new WeakMap();
         this.configSnapshots = new WeakMap();
         this.debounceTimers = new WeakMap();
-        this._hookRegistered = false;
     }
 
     /**
@@ -184,15 +183,14 @@ export default class MotionEngine {
     }
 
     /**
-     * Initialize the engine.
+     * Initialize the engine. Lifecycle (observer + Elementor hooks)
+     * dimiliki frontend.js — engine hanya render teks.
      */
     init() {
         const elements = this.elementManager.getElements();
         if (elements.length > 0) {
             elements.forEach((element) => this.initElement(element));
         }
-        this.observeNewElements();
-        this.hookElementorFrontend();
         // Expose singleton for editor bridge
         if (!window.EmjeMotion) {
             window.EmjeMotion = {};
@@ -208,102 +206,16 @@ export default class MotionEngine {
     }
 
     /**
-     * Observe dynamically added elements and attribute changes.
+     * Refresh satu elemen hanya jika atribut confignya benar-benar
+     * berubah (dipakai observer terpusat di frontend.js).
      */
-    observeNewElements() {
-        if (typeof MutationObserver === 'undefined') {
+    refreshIfChanged(element) {
+        if (!(element instanceof HTMLElement) || !element.hasAttribute('data-emje-motion')) {
             return;
         }
-
-        const observer = new MutationObserver((mutations) => {
-            mutations.forEach((mutation) => {
-                if (mutation.type === 'childList') {
-                    mutation.addedNodes.forEach((node) => {
-                        if (!(node instanceof HTMLElement)) {
-                            return;
-                        }
-                        if (node.matches('[data-emje-motion]')) {
-                            this.initElement(node);
-                        }
-                        node.querySelectorAll('[data-emje-motion]').forEach((el) => {
-                            this.initElement(el);
-                        });
-                        // Also handle Hover/Cursor containers added dynamically
-                        if (node.matches('[data-emje-hover-reveal]') || node.matches('[data-emje-cursor]')) {
-                            // Let respective modules handle via their initAll - trigger manually if exposed
-                            if (window.EmjeMotionHoverReveal) {
-                                window.EmjeMotionHoverReveal.initAll();
-                            }
-                            if (window.EmjeMotionCursor) {
-                                window.EmjeMotionCursor.initAll();
-                            }
-                        }
-                    });
-                } else if (mutation.type === 'attributes') {
-                    const target = mutation.target;
-                    if (target instanceof HTMLElement && target.hasAttribute('data-emje-motion')) {
-                        const newRaw = target.getAttribute('data-emje-motion');
-                        const oldSnapshot = this.configSnapshots.get(target);
-                        if (newRaw !== oldSnapshot) {
-                            this.reInitElement(target);
-                        }
-                    }
-                    if (target instanceof HTMLElement && (target.hasAttribute('data-emje-hover-reveal') || target.hasAttribute('data-emje-cursor'))) {
-                        // For hover/cursor, trigger their reInit via global
-                        if (target.hasAttribute('data-emje-hover-reveal') && window.EmjeMotionHoverReveal) {
-                            window.EmjeMotionHoverReveal.reInit(target);
-                        }
-                        if (target.hasAttribute('data-emje-cursor') && window.EmjeMotionCursor) {
-                            window.EmjeMotionCursor.reInit(target);
-                        }
-                    }
-                }
-            });
-        });
-
-        observer.observe(document.body, {
-            childList: true,
-            subtree: true,
-            attributes: true,
-            attributeFilter: ['data-emje-motion', 'data-emje-hover-reveal', 'data-emje-cursor'],
-        });
-    }
-
-    /**
-     * Hook into Elementor frontend lifecycle.
-     */
-    hookElementorFrontend() {
-        if (this._hookRegistered) {
-            return;
-        }
-
-        if (typeof window.elementorFrontend === 'undefined') {
-            window.addEventListener('elementor/frontend/init', () => this.hookElementorFrontend());
-            return;
-        }
-
-        this._hookRegistered = true;
-
-        if (window.elementorFrontend.hooks) {
-            const handler = ($el) => {
-                const el = (typeof jQuery !== 'undefined' && $el instanceof jQuery) ? $el[0] : $el;
-                if (!el) {
-                    return;
-                }
-                if (el.matches && el.matches('[data-emje-motion]')) {
-                    this.initElement(el);
-                }
-                if (el.querySelectorAll) {
-                    el.querySelectorAll('[data-emje-motion]').forEach((child) => {
-                        this.initElement(child);
-                    });
-                }
-            };
-
-            // Specific hooks are more reliable than global
-            window.elementorFrontend.hooks.addAction('frontend/element_ready/heading', handler);
-            window.elementorFrontend.hooks.addAction('frontend/element_ready/text-editor', handler);
-            window.elementorFrontend.hooks.addAction('frontend/element_ready/container', handler);
+        const newRaw = element.getAttribute('data-emje-motion');
+        if (newRaw !== this.configSnapshots.get(element)) {
+            this.reInitElement(element);
         }
     }
 }

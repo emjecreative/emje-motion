@@ -21,6 +21,26 @@ export function bindKitChange() {
                     var win2 = getPreviewWindow();
                     var doc2 = getPreviewDocument();
                     if (!win2 || !doc2) return;
+                    // Background Motion — warnanya bisa dari Global Colors,
+                    // jadi ikut disinkron. Hover-reveal sengaja tidak ikut:
+                    // tidak ada field warna/global di sana.
+                    try {
+                        var bgEn = s.get('emje_background_enable');
+                        var bgLive = s.get('emje_background_live_preview') === 'yes';
+                        var bgTarget = findTarget(doc2, wid, 'data-emje-background') || doc2.querySelector('[data-id="' + wid + '"]');
+                        if (bgTarget) {
+                            if (bgEn === 'yes' && bgLive) {
+                                var bgCfg = buildBackgroundConfig(s);
+                                if (bgCfg.enable) {
+                                    applyBackgroundToTarget(win2, bgTarget, bgCfg);
+                                } else {
+                                    destroyBackgroundOnTarget(win2, bgTarget);
+                                }
+                            } else if (bgEn !== undefined) {
+                                destroyBackgroundOnTarget(win2, bgTarget);
+                            }
+                        }
+                    } catch(e){}
                     var cfg = buildInteractionConfig(s);
                     if (!cfg.enable || !cfg.livePreview) return;
                     if (cfg.effect !== 'interactive-cursor') return;
