@@ -113,8 +113,6 @@ final class CursorControls
                 'min' => 1.2,
                 'max' => 2.0,
                 'step' => 0.1,
-                'description' => esc_html__('Scale when hovering links/buttons inside the container.', 'emje-motion'),
-                'classes' => 'emje-control--has-tooltip',
                 'condition' => [
                     'emje_interaction_enable' => 'yes',
                     'emje_interaction_effect' => 'interactive-cursor',
@@ -138,8 +136,6 @@ final class CursorControls
                 'type' => Controls_Manager::TEXT,
                 'default' => 'View',
                 'placeholder' => esc_html__('e.g. View', 'emje-motion'),
-                'description' => esc_html__('Text shown inside the Text Follow cursor.', 'emje-motion'),
-                'classes' => 'emje-control--has-tooltip',
                 'condition' => [
                     'emje_interaction_enable' => 'yes',
                     'emje_interaction_effect' => 'interactive-cursor',
@@ -220,8 +216,6 @@ final class CursorControls
                     'size' => 40,
                     'unit' => 'px',
                 ],
-                'description' => esc_html__('Vertical padding. Controls circle height.', 'emje-motion'),
-                'classes' => 'emje-control--has-tooltip',
                 'condition' => [
                     'emje_interaction_enable' => 'yes',
                     'emje_interaction_effect' => 'interactive-cursor',
@@ -249,8 +243,6 @@ final class CursorControls
                     'size' => 32,
                     'unit' => 'px',
                 ],
-                'description' => esc_html__('Horizontal padding. Controls circle width. Longer text becomes pill.', 'emje-motion'),
-                'classes' => 'emje-control--has-tooltip',
                 'condition' => [
                     'emje_interaction_enable' => 'yes',
                     'emje_interaction_effect' => 'interactive-cursor',
@@ -278,8 +270,6 @@ final class CursorControls
                     'size' => 99,
                     'unit' => 'px',
                 ],
-                'description' => esc_html__('0 = square, 12 = rounded, 50+ = circle/pill.', 'emje-motion'),
-                'classes' => 'emje-control--has-tooltip',
                 'condition' => [
                     'emje_interaction_enable' => 'yes',
                     'emje_interaction_effect' => 'interactive-cursor',
@@ -301,8 +291,6 @@ final class CursorControls
                     'scale-bounce' => esc_html__('Scale Bounce', 'emje-motion'),
                     'none' => esc_html__('None', 'emje-motion'),
                 ],
-                'description' => esc_html__('How the cursor appears when entering the container.', 'emje-motion'),
-                'classes' => 'emje-control--has-tooltip',
                 'condition' => [
                     'emje_interaction_enable' => 'yes',
                     'emje_interaction_effect' => 'interactive-cursor',
@@ -382,8 +370,6 @@ final class CursorControls
                     'size' => 0.5,
                     'unit' => 's',
                 ],
-                'description' => esc_html__('Lower = snappier, higher = more lag.', 'emje-motion'),
-                'classes' => 'emje-control--has-tooltip',
                 'condition' => [
                     'emje_interaction_enable' => 'yes',
                     'emje_interaction_effect' => 'interactive-cursor',

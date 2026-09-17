@@ -94,9 +94,17 @@ const cursorLegacy = serializeCursorPayload({ type: 'text-follow', livePreview: 
 eq('cursor-payload-legacy-mobile', cursorLegacy.disableOnMobile, true);
 
 const hoverPayload = serializeHoverPayload({
-    imageUrl: 'x', imageSize: 'medium', followSpeed: 0.12, scale: 1, animation: 'fade',
+    imageUrl: 'x', imageSize: 'medium', followSpeed: 0.12, scale: 1, animation: 'clip',
+    clipDirection: 'right', duration: 0.6, cols: 8, rows: 9, blockOrder: 'rows', blockSpeed: 0.03,
     triggerArea: 'container', livePreview: true, offsetX: 0, offsetY: 0, rotate: 0,
     rotateHover: 15, disableOnMobile: true,
 });
 eq('hover-payload-mobile', hoverPayload.disableOnMobile, true);
-eq('hover-payload-keys', Object.keys(hoverPayload).length, 12);
+eq('hover-payload-keys', Object.keys(hoverPayload).length, 18);
+eq('hover-payload-dir', hoverPayload.clipDirection, 'right');
+eq('hover-payload-dur', hoverPayload.duration, 0.6);
+eq('hover-payload-grid', [hoverPayload.cols, hoverPayload.rows, hoverPayload.blockOrder, hoverPayload.blockSpeed], [8, 9, 'rows', 0.03]);
+const hoverLegacy = serializeHoverPayload({ animation: 'fade', livePreview: true });
+eq('hover-payload-legacy-dir', hoverLegacy.clipDirection, 'left');
+eq('hover-payload-legacy-dur', hoverLegacy.duration, 0.25);
+eq('hover-payload-legacy-grid', [hoverLegacy.cols, hoverLegacy.rows, hoverLegacy.blockOrder, hoverLegacy.blockSpeed], [5, 7, 'random', 0.02]);

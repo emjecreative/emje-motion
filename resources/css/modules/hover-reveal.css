@@ -27,12 +27,80 @@
 }
 
 .emje-hover-reveal__image--clip {
-    clip-path: inset(0 100% 0 0);
     transition: clip-path 0.4s ease;
+}
+
+/* Arah wipe Clip (hidden state). Durasi diatur inline via JS
+   mengikuti kontrol Reveal Duration. */
+.emje-hover-reveal__image--clip-left {
+    clip-path: inset(0 100% 0 0);
+}
+
+.emje-hover-reveal__image--clip-right {
+    clip-path: inset(0 0 0 100%);
+}
+
+.emje-hover-reveal__image--clip-top {
+    clip-path: inset(0 0 100% 0);
+}
+
+.emje-hover-reveal__image--clip-bottom {
+    clip-path: inset(100% 0 0 0);
 }
 
 .emje-hover-reveal__image--clip.emje-hover-reveal__image--visible {
     clip-path: inset(0 0 0 0);
+}
+
+/* Blocks: gambar dipecah jadi kotak-kotak (5x7).
+   Tiap kotak = potongan gambar, awalnya bolong lalu muncul acak. */
+.emje-hover-reveal__image--blocks {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    grid-template-rows: repeat(7, 1fr);
+    gap: 0;
+    overflow: hidden;
+}
+
+.emje-hover-reveal__tile {
+    display: block;
+    background-repeat: no-repeat;
+    /* Cuma opacity: will-change transform bikin tiap kotak jadi
+       lapisan sendiri = garis halus di sambungan. */
+    will-change: opacity;
+}
+
+/* Gambar utuh pengaman di belakang tiles (khusus Blocks).
+   Sejajar persis dengan potongan tiles, jadi celah antar kotak
+   memperlihatkan pixel yang sama = garis tidak kelihatan. */
+.emje-hover-reveal__image--blocks .emje-hover-reveal__full {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    /* cover = proporsi asli dijaga (dipotong tengah), sama kayak
+       mode Fade/Scale/Clip. Jangan fill (bikin gepeng). */
+    object-fit: cover;
+    z-index: 0;
+}
+
+.emje-hover-reveal__image--blocks .emje-hover-reveal__tile {
+    position: relative;
+    z-index: 1;
+    overflow: hidden;
+}
+
+/* Potongan gambar di tiap kotak: <img> asli ukuran penuh yang
+   digeser. Cover dikerjakan browser = sama persis dengan gambar
+   belakang. max-width:none melindungi dari reset tema/Elementor. */
+.emje-hover-reveal__image--blocks .emje-hover-reveal__slice {
+    position: absolute;
+    top: 0;
+    left: 0;
+    max-width: none !important;
+    max-height: none !important;
+    object-fit: cover;
+    pointer-events: none;
 }
 
 .emje-hover-reveal__fallback {

@@ -79,10 +79,14 @@ Available on **Container** elements, **Style** tab, **Interaction Motion** secti
 An image follows the visitor's cursor inside the container.
 
 - **Reveal Image** — pick any media image.
-- **Image Size** — Thumbnail, Medium (default), Large, or Full.
+- **Image Size** — Thumbnail, Medium (default), Large, or Full. File yang di-download selalu 1 tingkat di atasnya supaya tajam (termasuk di layar retina); ukuran kotak tampil tetap.
 - **Follow Speed** — how quickly the image chases the cursor (default `0.12`; lower is smoother).
-- **Scale on Hover** — image scale while hovering (default `1.0`).
-- **Reveal Animation** — Fade (default), Scale, or Clip Path.
+- **Reveal Animation** — Fade (default), Clip Path, or Blocks (kotak potongan gambar muncul acak sampai full).
+- **Clip Direction** — arah tirai Clip: Left (default), Right, Top, atau Bottom.
+- **Reveal Duration** — kecepatan muncul untuk Fade dan Clip (default `0.3s`).
+- **Grid Columns / Grid Rows** — jumlah kotak Blocks (default `5` / `7`).
+- **Reveal Order** — urutan muncul kotak: Random (default) atau Rows (baris per baris dari atas).
+- **Blocks Speed** — jeda antar kotak (default `0.02s`; kecilkan biar cepat).
 - **Trigger Area** — Whole Container (default) or Heading Only.
 - **Offset X / Offset Y** — nudge the image, in pixels (negative moves left/up).
 - **Rotate / Hover Rotate** — resting tilt and tilt while hovering (default `0°` / `15°`).

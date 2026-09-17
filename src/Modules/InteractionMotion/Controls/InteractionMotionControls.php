@@ -92,8 +92,6 @@ final class InteractionMotionControls
                 'label_off' => esc_html__('Off', 'emje-motion'),
                 'return_value' => 'yes',
                 'default' => '',
-                'description' => esc_html__('Auto preview in Editor. Off saves resources.', 'emje-motion'),
-                'classes' => 'emje-control--has-tooltip',
                 'frontend_available' => true,
                 'render_type' => 'none',
                 'condition' => [

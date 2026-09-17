@@ -4,25 +4,45 @@
  */
 import { sanitizeImageUrl, isValidEditorColor, pickEditorColor, safeCssEnum, safeCssMeasure, clampNum } from './utils.js';
 
+/**
+ * P4: samakan gambar editor vs web.
+ * PHP pakai sized URL (thumbnail/medium/large/full).
+ * Editor coba pakai sized URL kalau Elementor menyimpannya,
+ * kalau tidak ada tetap pakai url asli (tampilan ukuran tetap sama
+ * karena HoverReveal.js pakai sizeMap yang sama di editor + frontend).
+ */
+function pickHoverImageUrl(img, size) {
+    if (!img) return '';
+    if (typeof img === 'string') return sanitizeImageUrl(img);
+    if (typeof img === 'object') {
+        var sizes = img.sizes || img.size_urls || null;
+        if (sizes && typeof sizes === 'object' && size && sizes[size]) {
+            var s = sizes[size];
+            if (typeof s === 'string' && s) return sanitizeImageUrl(s);
+            if (s && typeof s === 'object' && s.url) return sanitizeImageUrl(s.url);
+        }
+        if (img.url) return sanitizeImageUrl(img.url);
+    }
+    return '';
+}
+
 export function buildHoverConfig(settings) {
     var get = function(k, d) { var v = settings.get(k); return v !== undefined && v !== null ? v : d; };
     var img = get('emje_hover_reveal_image', null);
-    var url = '';
-    if (img && typeof img === 'object' && img.url) url = sanitizeImageUrl(img.url);
-    else if (typeof img === 'string') url = sanitizeImageUrl(img);
+    var size = get('emje_hover_reveal_image_size', 'medium');
+    if (['thumbnail', 'medium', 'large', 'full'].indexOf(size) === -1) size = 'medium';
+    var url = pickHoverImageUrl(img, size);
 
     var follow = clampNum(get('emje_hover_reveal_follow_speed', 0.12), 0.05, 0.3, 0.12);
 
     var scale = clampNum(get('emje_hover_reveal_scale', 1), 0.8, 1.2, 1);
 
     var anim = get('emje_hover_reveal_animation', 'fade');
-    if (['fade', 'scale', 'clip'].indexOf(anim) === -1) anim = 'fade';
+    // 'scale' dihapus: nilai lama otomatis jadi 'fade'.
+    if (['fade', 'clip', 'blocks'].indexOf(anim) === -1) anim = 'fade';
 
     var trigger = get('emje_hover_reveal_trigger_area', 'container');
     if (['container', 'heading'].indexOf(trigger) === -1) trigger = 'container';
-
-    var size = get('emje_hover_reveal_image_size', 'medium');
-    if (['thumbnail', 'medium', 'large', 'full'].indexOf(size) === -1) size = 'medium';
 
     // Legacy PHP hardcodes these (InteractionMotionFrontend); mirror for preview parity.
     return {
@@ -31,6 +51,12 @@ export function buildHoverConfig(settings) {
         followSpeed: follow,
         scale: scale,
         animation: anim,
+        clipDirection: 'left',
+        duration: anim === 'clip' ? 0.4 : 0.25,
+        cols: 5,
+        rows: 7,
+        blockOrder: 'random',
+        blockSpeed: 0.02,
         triggerArea: trigger,
         offsetX: 0,
         offsetY: 0,
@@ -93,18 +119,26 @@ export function buildInteractionConfig(settings) {
     }
 
     if (effect === 'hover-reveal') {
+        var size2 = get('emje_interaction_hover_image_size', 'medium');
+        if (['thumbnail', 'medium', 'large', 'full'].indexOf(size2) === -1) size2 = 'medium';
         var img = get('emje_interaction_hover_image', null);
-        var url = '';
-        if (img && typeof img === 'object' && img.url) url = sanitizeImageUrl(img.url);
-        else if (typeof img === 'string') url = sanitizeImageUrl(img);
+        var url = pickHoverImageUrl(img, size2);
         var follow = clampNum(get('emje_interaction_hover_follow_speed', 0.12), 0.05, 0.3, 0.12);
         var scale2 = clampNum(get('emje_interaction_hover_scale', 1), 0.8, 1.2, 1);
         var anim = get('emje_interaction_hover_animation', 'fade');
-        if (['fade', 'scale', 'clip'].indexOf(anim) === -1) anim = 'fade';
+        // 'scale' dihapus: nilai lama otomatis jadi 'fade'.
+        if (['fade', 'clip', 'blocks'].indexOf(anim) === -1) anim = 'fade';
         var trigger = get('emje_interaction_hover_trigger_area', 'container');
         if (['container', 'heading'].indexOf(trigger) === -1) trigger = 'container';
-        var size2 = get('emje_interaction_hover_image_size', 'medium');
-        if (['thumbnail', 'medium', 'large', 'full'].indexOf(size2) === -1) size2 = 'medium';
+        var clipDir = get('emje_interaction_hover_clip_direction', 'left');
+        if (['left', 'right', 'top', 'bottom'].indexOf(clipDir) === -1) clipDir = 'left';
+        // Durasi bawaan = perilaku lama per animasi. Kontrol baru default 0.3.
+        var durDef = anim === 'clip' ? 0.4 : 0.25;
+        var durRaw = get('emje_interaction_hover_duration', null);
+        if (durRaw && typeof durRaw === 'object' && durRaw.size !== undefined) durRaw = durRaw.size;
+        var duration = parseFloat(durRaw);
+        if (isNaN(duration)) duration = durDef;
+        duration = Math.max(0.1, Math.min(1, duration));
         var getNum = function(k, def, min, max) {
             var v = get(k, null);
             if (v && typeof v === 'object' && v.size !== undefined) v = v.size;
@@ -112,10 +146,18 @@ export function buildInteractionConfig(settings) {
             if (isNaN(n)) return def;
             return Math.max(min, Math.min(max, n));
         };
+        var cols = getNum('emje_interaction_hover_blocks_columns', 5, 2, 10);
+        var rows = getNum('emje_interaction_hover_blocks_rows', 7, 2, 12);
+        var order = get('emje_interaction_hover_blocks_order', 'random');
+        if (['random', 'rows'].indexOf(order) === -1) order = 'random';
+        var speedRaw = get('emje_interaction_hover_blocks_speed', null);
+        var blockSpeed = parseFloat(speedRaw);
+        if (isNaN(blockSpeed)) blockSpeed = 0.02;
+        blockSpeed = Math.max(0.005, Math.min(0.06, blockSpeed));
         var offsetX = getNum('emje_interaction_hover_offset_x', 0, -200, 200);
         var offsetY = getNum('emje_interaction_hover_offset_y', 0, -200, 200);
-        var rotate = getNum('emje_interaction_hover_rotate', 0, 0, 360);
-        var rotateHover = getNum('emje_interaction_hover_rotate_hover', 15, 0, 360);
+        var rotate = getNum('emje_interaction_hover_rotate', 0, -360, 360);
+        var rotateHover = getNum('emje_interaction_hover_rotate_hover', 15, -360, 360);
         return {
             enable: true,
             effect: effect,
@@ -125,6 +167,12 @@ export function buildInteractionConfig(settings) {
             followSpeed: follow,
             scale: scale2,
             animation: anim,
+            clipDirection: clipDir,
+            duration: duration,
+            cols: cols,
+            rows: rows,
+            blockOrder: order,
+            blockSpeed: blockSpeed,
             triggerArea: trigger,
             offsetX: offsetX,
             offsetY: offsetY,
@@ -271,7 +319,11 @@ export function serializeCursorPayload(cfg) {
 export function serializeHoverPayload(cfg) {
     return {
         imageUrl: cfg.imageUrl, imageSize: cfg.imageSize, followSpeed: cfg.followSpeed,
-        scale: cfg.scale, animation: cfg.animation, triggerArea: cfg.triggerArea,
+        scale: cfg.scale, animation: cfg.animation, clipDirection: cfg.clipDirection || 'left',
+        duration: cfg.duration !== undefined ? cfg.duration : (cfg.animation === 'clip' ? 0.4 : 0.25),
+        cols: cfg.cols || 5, rows: cfg.rows || 7,
+        blockOrder: cfg.blockOrder || 'random', blockSpeed: cfg.blockSpeed || 0.02,
+        triggerArea: cfg.triggerArea,
         livePreview: cfg.livePreview, offsetX: cfg.offsetX, offsetY: cfg.offsetY,
         rotate: cfg.rotate, rotateHover: cfg.rotateHover, disableOnMobile: cfg.disableOnMobile !== false
     };

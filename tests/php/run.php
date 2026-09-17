@@ -94,15 +94,44 @@ $newHover = $hoverCfg->buildHoverConfig([
     'emje_interaction_hover_animation' => 'bogus',
     'emje_interaction_live_preview' => 'yes',
 ], true);
-check('hover-url', $newHover['imageUrl'], 'https://example.test/img-7-thumbnail.jpg');
+check('hover-url', $newHover['imageUrl'], 'https://example.test/img-7-medium.jpg');
 check('hover-anim-clamp', $newHover['animation'], 'fade');
 check('hover-speed', $newHover['followSpeed'], 0.2);
+// Ketajaman: thumbnail ambil file medium, kotak tampil tetap thumbnail.
+check('hover-size-key', $newHover['imageSize'], 'thumbnail');
+// Opsi 'scale' dihapus: nilai lama harus jadi 'fade'.
+$retiredScale = $hoverCfg->buildHoverConfig([
+    'emje_interaction_hover_image' => ['id' => 7, 'url' => 'https://example.test/fallback.jpg'],
+    'emje_interaction_hover_animation' => 'scale',
+], true);
+check('hover-scale-retired', $retiredScale['animation'], 'fade');
+// Kontrol baru: default = perilaku lama (fade 0.25, arah kiri).
+check('hover-dir-default', $newHover['clipDirection'], 'left');
+check('hover-dur-default', $newHover['duration'], 0.25);
+$clipHover = $hoverCfg->buildHoverConfig([
+    'emje_interaction_hover_image' => ['id' => 7, 'url' => 'https://example.test/fallback.jpg'],
+    'emje_interaction_hover_animation' => 'clip',
+    'emje_interaction_hover_clip_direction' => 'bogus',
+    'emje_interaction_hover_duration' => ['size' => 5, 'unit' => 's'],
+], true);
+check('hover-dir-clamp', $clipHover['clipDirection'], 'left');
+check('hover-dur-clamp', $clipHover['duration'], 1.0);
+// Blocks: default = perilaku lama (5x7, acak, 0.02).
+check('hover-blocks-default', [$newHover['cols'], $newHover['rows'], $newHover['blockOrder'], $newHover['blockSpeed']], [5, 7, 'random', 0.02]);
+$bigBlocks = $hoverCfg->buildHoverConfig([
+    'emje_interaction_hover_animation' => 'blocks',
+    'emje_interaction_hover_blocks_columns' => 99,
+    'emje_interaction_hover_blocks_rows' => 0,
+    'emje_interaction_hover_blocks_order' => 'bogus',
+    'emje_interaction_hover_blocks_speed' => 9,
+], true);
+check('hover-blocks-clamp', [$bigBlocks['cols'], $bigBlocks['rows'], $bigBlocks['blockOrder'], $bigBlocks['blockSpeed']], [10, 2, 'random', 0.06]);
 $legacyHover = $hoverCfg->buildHoverConfig([
     'emje_hover_reveal_image' => ['id' => 7, 'url' => 'https://example.test/fallback.jpg'],
     'emje_hover_reveal_image_size' => 'thumbnail',
     'emje_hover_reveal_live_preview' => 'yes',
 ], false);
-check('legacy-hover-url', $legacyHover['imageUrl'], 'https://example.test/img-7-thumbnail.jpg');
+check('legacy-hover-url', $legacyHover['imageUrl'], 'https://example.test/img-7-medium.jpg');
 check('legacy-hover-offset', [$legacyHover['offsetX'], $legacyHover['offsetY'], $legacyHover['rotate'], $legacyHover['rotateHover']], [0, 0, 0, 15]);
 check('legacy-hover-keys', array_keys($legacyHover), array_keys($newHover));
 
