@@ -3,6 +3,11 @@
 All notable changes to Emje Motion are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [1.5.1] - 2026-09-18
+
+### Changed
+- **WordPress 7.1.1 compatibility** — `Tested up to` bumped to 7.1.1 so the version warning no longer shows. No code changes.
+
 ## [1.5.0] - 2026-09-18
 
 ### Added
