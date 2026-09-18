@@ -39,6 +39,11 @@ function isTransparentColor(color) {
     if (hexAlpha) {
         return hexAlpha[1].slice(6, 8) === '00';
     }
+    // 4-digit #RGBA — kembangkan ke 8-digit dulu.
+    const hexAlpha4 = c.match(/^#([0-9a-f]{4})$/);
+    if (hexAlpha4) {
+        return hexAlpha4[1][3] + hexAlpha4[1][3] === '00';
+    }
     return false;
 }
 
@@ -68,6 +73,11 @@ export function bgAlpha(color) {
     m = c.match(/^#([0-9a-f]{8})$/);
     if (m) {
         return parseInt(m[1].slice(6, 8), 16) / 255;
+    }
+    // 4-digit #RGBA — gandakan tiap digit (#RGBA -> #RRGGBBAA).
+    m = c.match(/^#([0-9a-f]{4})$/);
+    if (m) {
+        return parseInt(m[1][3] + m[1][3], 16) / 255;
     }
     return 1;
 }
@@ -123,6 +133,7 @@ export default class DitherCanvas {
         this.cssW = 0;
         this.cssH = 0;
         this.ripples = [];
+        this._burstTimers = [];
         this.visible = true;
         this.running = false;
         this._raf = 0;
@@ -417,20 +428,31 @@ export default class DitherCanvas {
             }
             // If frozen (speed 0), kick a short burst so the ripple is visible.
             // Ripples run on wall-clock `now`, independent of _animTime.
+            // Timer dilacak supaya bisa dibatalkan (burst baru / destroy).
             if (this.config.speed <= 0) {
                 this.start();
-                setTimeout(() => this.stop(), 1800);
+                this.clearBurstTimers();
+                this._burstTimers.push(setTimeout(() => this.stop(), 1800));
                 // Re-freeze on the resting frame after the burst.
-                setTimeout(() => {
+                this._burstTimers.push(setTimeout(() => {
                     if (this.config.speed <= 0 && this.visible) {
                         this.ripples = [];
                         try {
                             this.draw(((typeof performance !== 'undefined' && performance.now) ? performance.now() : Date.now()));
                         } catch (_e) {}
                     }
-                }, 2000);
+                }, 2000));
             }
         } catch (_e) {}
+    }
+
+    clearBurstTimers() {
+        if (this._burstTimers && this._burstTimers.length) {
+            try {
+                this._burstTimers.forEach((t) => clearTimeout(t));
+            } catch (_e) {}
+        }
+        this._burstTimers = [];
     }
 
     bindEvents() {
@@ -506,6 +528,7 @@ export default class DitherCanvas {
 
     destroy() {
         this.stop();
+        this.clearBurstTimers();
         if (this._observer) {
             try { this._observer.disconnect(); } catch (_e) {}
             this._observer = null;
@@ -524,6 +547,11 @@ export default class DitherCanvas {
         }
         if (this.wrapEl && this.wrapEl.parentNode) {
             this.wrapEl.parentNode.removeChild(this.wrapEl);
+        }
+        // Copot tempelan container supaya tidak ada sisa layout/stacking
+        // setelah efek dimatikan (wajib untuk skema z-index negatif).
+        if (this.container) {
+            try { this.container.classList.remove('emje-background-motion'); } catch (_e) {}
         }
         this.wrapEl = null;
         this.canvas = null;

@@ -29,7 +29,8 @@ export function isValidEditorColor(c) {
     if (/[;{}<>"']|url\(/i.test(c)) return false;
     if (/^#([0-9A-F]{3}|[0-9A-F]{4}|[0-9A-F]{6}|[0-9A-F]{8})$/i.test(c)) return true;
     if (/^(?:rgba?|hsla?)\s*\([0-9.,%\s\/]+\)$/i.test(c)) return true;
-    if (/^var\(\s*--[a-zA-Z0-9_-]+\s*\)$/i.test(c)) return true;
+    // CSS custom property, boleh bawa fallback: var(--x, #fff).
+    if (/^var\(\s*--[a-zA-Z0-9_-]+\s*(,\s*[^;{}<>"']+)?\)$/i.test(c)) return true;
     if (/^[a-zA-Z]+$/.test(c)) return true;
     return false;
 }

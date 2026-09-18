@@ -58,6 +58,10 @@ export default class PixelGrid {
         if (isEditMode()) {
             return this.config.livePreview === true;
         }
+        // Hormati preferensi kurangi-gerakan, sama kayak ASCII/Dither/Mesh.
+        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+            return false;
+        }
         if (this.config.disableOnMobile && (window.matchMedia('(hover: none)').matches
             || window.matchMedia('(pointer: coarse)').matches)) {
             return false;
@@ -440,6 +444,11 @@ export default class PixelGrid {
         }
         if (this.wrapEl && this.wrapEl.parentNode) {
             this.wrapEl.parentNode.removeChild(this.wrapEl);
+        }
+        // Copot tempelan container supaya tidak ada sisa layout/stacking
+        // setelah efek dimatikan (wajib untuk skema z-index negatif).
+        if (this.container) {
+            try { this.container.classList.remove('emje-background-motion'); } catch (_e) {}
         }
         this.wrapEl = null;
         this.gridEl = null;

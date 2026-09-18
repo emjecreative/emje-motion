@@ -3,10 +3,10 @@ import { tmpUrl, eq } from './helpers.mjs';
 const { isValidEditorColor, safeCssEnum, safeCssMeasure } = await import(tmpUrl('eb-utils.mjs'));
 const { LIMITS, clampNum, smoothstep, toNumber } = await import(tmpUrl('mod-shared.mjs'));
 
-for (const c of ['#3B82F6', '#fff', '#ffffffff', 'rgba(255,255,255,0.08)', 'var(--e-global-color-abc)', 'red']) {
+for (const c of ['#3B82F6', '#fff', '#ffffffff', 'rgba(255,255,255,0.08)', 'var(--e-global-color-abc)', 'var(--e-global-color-abc, #fff)', 'red']) {
     eq(`color-ok ${c}`, isValidEditorColor(c), true);
 }
-for (const c of ['var(--x);color:red)', '#12345', '#1234567', 'rgba(0,0,0);evil(', 'red;', 'url(x)', 'var(--a)url(x)', '']) {
+for (const c of ['var(--x);color:red)', '#12345', '#1234567', 'rgba(0,0,0);evil(', 'red;', 'url(x)', 'var(--a)url(x)', 'var(--a, red;evil)', '']) {
     eq(`color-bad ${c}`, isValidEditorColor(c), false);
 }
 

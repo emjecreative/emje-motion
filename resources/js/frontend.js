@@ -112,6 +112,9 @@ function handleAttributeChange(node) {
     if (node.hasAttribute('data-emje-cursor') && window.EmjeMotionCursor) {
         window.EmjeMotionCursor.reInit(node);
     }
+    if (node.hasAttribute('data-emje-background') && window.EmjeMotionBackground) {
+        window.EmjeMotionBackground.reInit(node);
+    }
 }
 
 function hookElementorFrontend() {
@@ -165,7 +168,7 @@ function observeNewElements() {
         childList: true,
         subtree: true,
         attributes: true,
-        attributeFilter: ['data-emje-motion', 'data-emje-hover-reveal', 'data-emje-cursor'],
+        attributeFilter: ['data-emje-motion', 'data-emje-hover-reveal', 'data-emje-cursor', 'data-emje-background'],
     });
     window._emjeFrontendObserver = observer;
 }

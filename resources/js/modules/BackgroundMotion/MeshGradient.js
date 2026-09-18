@@ -463,6 +463,11 @@ export default class MeshGradient {
         if (this.wrapEl && this.wrapEl.parentNode) {
             this.wrapEl.parentNode.removeChild(this.wrapEl);
         }
+        // Copot tempelan container supaya tidak ada sisa layout/stacking
+        // setelah efek dimatikan (wajib untuk skema z-index negatif).
+        if (this.container) {
+            try { this.container.classList.remove('emje-background-motion'); } catch (_e) {}
+        }
         this.wrapEl = null;
         this.canvas = null;
         this.gl = null;

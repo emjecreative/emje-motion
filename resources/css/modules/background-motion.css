@@ -1,5 +1,10 @@
+/* Container dikunci stacking-nya (isolation) supaya lapisan negatif
+   tetap di dalam: urutan gambar = background container -> lapisan
+   animasi -> isi konten. Isi TIDAK ditempel apa-apa (sticky/absolute
+   aman). Class ini dicopot JS saat efek dimatikan. */
 .emje-background-motion {
     position: relative;
+    isolation: isolate;
 }
 
 .emje-ascii {
@@ -7,7 +12,7 @@
     inset: 0;
     overflow: hidden;
     pointer-events: none;
-    z-index: 0;
+    z-index: -1;
 }
 
 .emje-ascii__grid {
@@ -32,11 +37,8 @@
     transition: opacity 0.06s ease;
 }
 
-/* Keep Elementor content above the ambient layer without stealing clicks. */
-.emje-background-motion > :not(.emje-ascii):not(.emje-pixel):not(.emje-dither):not(.emje-mesh) {
-    position: relative;
-    z-index: 1;
-}
+/* Isi konten tidak disentuh (lihat .emje-background-motion di atas):
+   lapisan negatif otomatis di belakang isi tapi di depan background. */
 
 @media (prefers-reduced-motion: reduce) {
     .emje-ascii__cell {
@@ -51,7 +53,7 @@
     inset: 0;
     overflow: hidden;
     pointer-events: none;
-    z-index: 0;
+    z-index: -1;
 }
 
 .emje-pixel__grid {
@@ -90,7 +92,7 @@
     inset: 0;
     overflow: hidden;
     pointer-events: none;
-    z-index: 0;
+    z-index: -1;
 }
 
 .emje-dither__canvas {
@@ -107,7 +109,7 @@
     inset: 0;
     overflow: hidden;
     pointer-events: none;
-    z-index: 0;
+    z-index: -1;
 }
 
 .emje-mesh__canvas {

@@ -61,7 +61,10 @@ final class ColorResolver
         if (preg_match('/^(?:rgba?|hsla?)\s*\([0-9.,%\s\/]+\)$/i', $value)) {
             return $value;
         }
-        if (preg_match('/^var\(\s*--[a-zA-Z0-9_-]+\s*\)$/i', $value)) {
+        // CSS custom properties, boleh bawa fallback: var(--x, #fff).
+        // Isi fallback tidak boleh ada karakter break-out (sudah ditolak
+        // di atas, dikunci lagi di sini).
+        if (preg_match('/^var\(\s*--[a-zA-Z0-9_-]+\s*(,\s*[^;{}<>"\']+)?\)$/i', $value)) {
             return $value;
         }
 

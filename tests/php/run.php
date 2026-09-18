@@ -141,6 +141,8 @@ check('hex8', $resolver->sanitizeColor('#3B82F680', 'fallback'), '#3B82F680');
 check('hex-bad', $resolver->sanitizeColor('#12345', 'fallback'), 'fallback');
 check('injection', $resolver->sanitizeColor('red;evil', 'fallback'), 'fallback');
 check('var', $resolver->sanitizeColor('var(--e-global-color-abc)', 'fallback'), 'var(--e-global-color-abc)');
+check('var-fallback', $resolver->sanitizeColor('var(--e-global-color-abc, #fff)', 'fallback'), 'var(--e-global-color-abc, #fff)');
+check('var-fallback-evil', $resolver->sanitizeColor('var(--a, red;evil)', 'fallback'), 'fallback');
 
 // Row meta "View details" dedupe (core adds one when update slug is set).
 if (! defined('ABSPATH')) {

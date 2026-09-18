@@ -18,7 +18,7 @@ export const QUALITY_SCALE = {
     high: 1.0,
 };
 /**
- * Parse a CSS color into [r, g, b] 0-1. Supports #RGB, #RRGGBB,
+ * Parse a CSS color into [r, g, b] 0-1. Supports #RGB, #RGBA, #RRGGBB,
  * #RRGGBBAA (alpha ignored — opacity has its own control),
  * rgb()/rgba() (numeric or % channels), and hsl()/hsla().
  * Returns null when unparseable.
@@ -28,10 +28,10 @@ export function parseCssColor(color) {
         return null;
     }
     const c = color.trim().toLowerCase();
-    let m = c.match(/^#([0-9a-f]{3}|[0-9a-f]{6}|[0-9a-f]{8})$/);
+    let m = c.match(/^#([0-9a-f]{3}|[0-9a-f]{4}|[0-9a-f]{6}|[0-9a-f]{8})$/);
     if (m) {
         let hex = m[1];
-        if (hex.length === 3) {
+        if (hex.length === 3 || hex.length === 4) {
             hex = hex.split('').map((ch) => ch + ch).join('');
         }
         return [

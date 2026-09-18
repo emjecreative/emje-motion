@@ -30,11 +30,11 @@ export default class AsciiInteractive {
         this.config = {
             color: config.color ?? '#1227E2',
             charset: config.charset === 'simple' ? 'simple' : 'full',
-            cellW: clampNum(parseFloat(config.cellW) || 22, LIMITS.ascii.cell, 22),
-            cellH: clampNum(parseFloat(config.cellH) || 26, LIMITS.ascii.cell, 26),
-            fontSize: clampNum(parseFloat(config.fontSize) || 14, LIMITS.ascii.fontSize, 14),
-            radius: clampNum(parseFloat(config.radius) || 360, LIMITS.ascii.radius, 360),
-            innerRadius: clampNum(parseFloat(config.innerRadius) || 30, LIMITS.ascii.innerRadius, 30),
+            cellW: clampNum(toNumber(config.cellW ?? 22, 22), LIMITS.ascii.cell, 22),
+            cellH: clampNum(toNumber(config.cellH ?? 26, 26), LIMITS.ascii.cell, 26),
+            fontSize: clampNum(toNumber(config.fontSize ?? 14, 14), LIMITS.ascii.fontSize, 14),
+            radius: clampNum(toNumber(config.radius ?? 360, 360), LIMITS.ascii.radius, 360),
+            innerRadius: clampNum(toNumber(config.innerRadius ?? 30, 30), LIMITS.ascii.innerRadius, 30),
             maxOpacity: clampNum(toNumber(config.maxOpacity ?? 0.35, 0.35), LIMITS.ascii.maxOpacity, 0.35),
             fade: clampNum(toNumber(config.fade ?? 10, 10), LIMITS.ascii.fade, 10),
             livePreview: config.livePreview ?? false,
@@ -273,6 +273,11 @@ export default class AsciiInteractive {
         }
         if (this.wrapEl && this.wrapEl.parentNode) {
             this.wrapEl.parentNode.removeChild(this.wrapEl);
+        }
+        // Copot tempelan container supaya tidak ada sisa layout/stacking
+        // setelah efek dimatikan (wajib untuk skema z-index negatif).
+        if (this.container) {
+            try { this.container.classList.remove('emje-background-motion'); } catch (_e) {}
         }
         this.wrapEl = null;
         this.gridEl = null;
