@@ -3,6 +3,21 @@
 All notable changes to Emje Motion are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [1.5.0] - 2026-09-18
+
+### Added
+- **Hover Reveal: Blocks animation** — image builds from tiles appearing in random or row order (5×7 default). Controls: Grid Columns (2–10), Grid Rows (2–12), Reveal Order (Random/Rows), Blocks Speed. Cover-cropped like other animations, seamless backstop layer, sharp sized files.
+- **Hover Reveal: Clip Direction + Reveal Duration** — Clip Path wipes from Left (default), Right, Top, or Bottom. New Reveal Duration control (0.1–1s, default 0.3s) paces Fade and Clip.
+
+### Changed
+- **Hover Reveal: quieter panel** — all 13 Interaction Motion tooltips removed, Scale animation and Scale on Hover control retired (saved values keep rendering), Preview heading removed, Follow Speed moved above Trigger Area, Disable on Mobile & Tablet moved below a divider next to Live Preview.
+- **Hover Reveal: sharper images** — downloaded file is now one size tier above the display box (thumbnail→medium, medium→large, large/full→full) so portrait photos and retina screens stay sharp.
+- **Code cleanup batch 3+** — slider readers unified (`getSliderInt`/`getSliderFloat`), single frontend observer + Elementor hook set (`MotionEngine` slimmed by ~100 lines), kit-change sync now covers Background Motion, `var(--x, fallback)` colors accepted, stale comments and identical branches merged.
+- **Background Motion layering redesigned** — ambient layers sit at `z-index: -1` inside an isolated container; children are no longer forced `position: relative`, so sticky/absolute content is safe. Container class is removed on destroy.
+
+### Fixed
+- **Background Motion: 12 bug fixes** — Pixel honors reduced motion; Inner Radius 0 works; 4-digit hex alpha supported (Dither + Mesh); ripple timers tracked and cancelled; container class removed on destroy; background re-inits on config change; cell cap loops to fit giant containers; container resize (accordion/tab/font) rebuilds all four effects via ResizeObserver; Dither/Mesh quality recovers after sustained smooth frames; Pixel glow radius no longer cut off (delta 8→16).
+
 ## [1.4.0] - 2026-09-15
 
 ### Fixed

@@ -1,6 +1,6 @@
 {
   "name": "emje-motion",
-  "version": "1.4.0",
+  "version": "1.5.0",
   "description": "Beautiful motion for your website.",
   "scripts": {
     "dev": "vite",
