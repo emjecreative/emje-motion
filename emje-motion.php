@@ -13,7 +13,7 @@
  * Description: Beautiful motion for your website.
  * Version: 1.5.0
  * Requires at least: 6.7
- * Tested up to: 7.1
+ * Tested up to: 7.1.1
  * Requires PHP: 8.2
  * Requires Plugins: elementor
  * Author: Emje Creative
