@@ -1,4 +1,4 @@
-import { isEditMode, applyEdgeMask, LIMITS, clampNum, toNumber, DEFAULT_COLORS, LEGACY_PRESETS, resolveCssVar, debugLog } from './shared.js';
+import { isEditMode, applyEdgeMask, LIMITS, clampNum, toNumber, DEFAULT_COLORS, LEGACY_PRESETS, resolveCssVar, debugLog, observeContainerSize } from './shared.js';
 import { MOTIONS, QUALITY_SCALE, parseCssColor, resolveColors, resolveMotion, rgbToCss } from './meshColor.js';
 import { VERT_SRC, FRAG_SRC, compileShader, linkProgram } from './meshShader.js';
 
@@ -43,6 +43,8 @@ export default class MeshGradient {
             disableOnMobile: cfg.disableOnMobile ?? false,
         };
         this._qualityScale = QUALITY_SCALE[this.config.quality] || QUALITY_SCALE.balanced;
+        // Batas atas pemulihan = setting awal (jangan lampaui Low/Balanced).
+        this._baseQualityScale = this._qualityScale;
 
         this.wrapEl = null;
         this.canvas = null;
@@ -57,6 +59,7 @@ export default class MeshGradient {
         this._animTime = 0;
         this._lastFrame = 0;
         this._slowFrames = 0;
+        this._fastFrames = 0;
         this._onResize = null;
         this._onVisibility = null;
         this._onContextLost = null;
@@ -311,6 +314,23 @@ export default class MeshGradient {
                 this.draw();
             } catch (_e) {}
         }
+        // Pemulihan: 600 frame cepat beruntun (~10 detik) → naik 1
+        // tingkat menuju kualitas awal (tidak melampaui setting user).
+        // Tenang (tidak naik-turun) karena butuh 10 detik lancar penuh.
+        if (cost < 14 && this._qualityScale < this._baseQualityScale) {
+            this._fastFrames += 1;
+        } else {
+            this._fastFrames = 0;
+        }
+        if (this._fastFrames >= 600) {
+            this._fastFrames = 0;
+            this._slowFrames = 0;
+            this._qualityScale = Math.min(this._baseQualityScale, this._qualityScale / 0.8);
+            this.resize();
+            try {
+                this.draw();
+            } catch (_e) {}
+        }
         this._raf = requestAnimationFrame(this.tick);
     };
 
@@ -341,7 +361,7 @@ export default class MeshGradient {
 
     bindEvents() {
         let resizeTimer = null;
-        this._onResize = () => {
+        const scheduleRebuild = () => {
             clearTimeout(resizeTimer);
             resizeTimer = setTimeout(() => {
                 this.resize();
@@ -352,7 +372,10 @@ export default class MeshGradient {
                 }
             }, 200);
         };
+        this._onResize = scheduleRebuild;
         window.addEventListener('resize', this._onResize);
+        // Kotak berubah sendiri (accordion/tab/font) → hitung ulang juga.
+        this._disconnectSize = observeContainerSize(this.container, scheduleRebuild);
 
         this._onVisibility = () => {
             if (document.hidden) {
@@ -446,6 +469,10 @@ export default class MeshGradient {
         }
         if (this._onResize) {
             try { window.removeEventListener('resize', this._onResize); } catch (_e) {}
+        }
+        if (this._disconnectSize) {
+            try { this._disconnectSize(); } catch (_e) {}
+            this._disconnectSize = null;
         }
         if (this._onVisibility) {
             try { document.removeEventListener('visibilitychange', this._onVisibility); } catch (_e) {}

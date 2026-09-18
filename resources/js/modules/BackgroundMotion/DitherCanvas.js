@@ -1,4 +1,4 @@
-import { isEditMode, applyEdgeMask, LIMITS, clampNum, toNumber, resolveCssVar } from './shared';
+import { isEditMode, applyEdgeMask, LIMITS, clampNum, toNumber, resolveCssVar, observeContainerSize } from './shared';
 
 // 4x4 Bayer matrix, normalized 0-1. Gives the retro print feel
 // on top of the smooth noise field.
@@ -144,6 +144,7 @@ export default class DitherCanvas {
         this._lastFrame = 0;
         this._autoPixel = this.config.pixel;
         this._slowFrames = 0;
+        this._fastFrames = 0;
         this._onClick = null;
         this._onTouch = null;
         this._onResize = null;
@@ -380,6 +381,23 @@ export default class DitherCanvas {
                 this.draw(now);
             } catch (_e) {}
         }
+        // Pemulihan: 600 frame cepat beruntun (~10 detik) → naik 1
+        // tingkat menuju Pixel Size asli. Tenang (tidak naik-turun)
+        // karena butuh 10 detik lancar penuh tiap tingkat.
+        if (cost < 14 && this._autoPixel > this.config.pixel) {
+            this._fastFrames += 1;
+        } else {
+            this._fastFrames = 0;
+        }
+        if (this._fastFrames >= 600) {
+            this._fastFrames = 0;
+            this._slowFrames = 0;
+            this._autoPixel = Math.max(this.config.pixel, this._autoPixel / 1.3);
+            this.resize();
+            try {
+                this.draw(now);
+            } catch (_e) {}
+        }
         this._raf = requestAnimationFrame(this.tick);
     };
 
@@ -466,7 +484,7 @@ export default class DitherCanvas {
         this.container.addEventListener('touchstart', this._onTouch, { passive: true });
 
         let resizeTimer = null;
-        this._onResize = () => {
+        const scheduleRebuild = () => {
             clearTimeout(resizeTimer);
             resizeTimer = setTimeout(() => {
                 this.resize();
@@ -477,7 +495,10 @@ export default class DitherCanvas {
                 }
             }, 200);
         };
+        this._onResize = scheduleRebuild;
         window.addEventListener('resize', this._onResize);
+        // Kotak berubah sendiri (accordion/tab/font) → hitung ulang juga.
+        this._disconnectSize = observeContainerSize(this.container, scheduleRebuild);
 
         this._onVisibility = () => {
             if (document.hidden) {
@@ -535,6 +556,10 @@ export default class DitherCanvas {
         }
         if (this._onResize) {
             try { window.removeEventListener('resize', this._onResize); } catch (_e) {}
+        }
+        if (this._disconnectSize) {
+            try { this._disconnectSize(); } catch (_e) {}
+            this._disconnectSize = null;
         }
         if (this._onVisibility) {
             try { document.removeEventListener('visibilitychange', this._onVisibility); } catch (_e) {}

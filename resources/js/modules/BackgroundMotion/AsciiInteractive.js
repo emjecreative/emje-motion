@@ -1,4 +1,4 @@
-import { smoothstep, isEditMode, applyEdgeMask, LIMITS, clampNum, toNumber } from './shared';
+import { smoothstep, isEditMode, applyEdgeMask, LIMITS, clampNum, toNumber, observeContainerSize } from './shared';
 
 const SIMPLE_CHARS = ['.', '-', ':'];
 const FULL_CHARS = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz!@#$%^&*_+-=|;:,.?/~`'.split('');
@@ -222,14 +222,17 @@ export default class AsciiInteractive {
         this.container.addEventListener('touchend', this._onTouchEnd);
 
         let resizeTimer = null;
-        this._onResize = () => {
+        const scheduleRebuild = () => {
             clearTimeout(resizeTimer);
             resizeTimer = setTimeout(() => {
                 this.populate();
                 this.reset();
             }, 200);
         };
+        this._onResize = scheduleRebuild;
         window.addEventListener('resize', this._onResize);
+        // Kotak berubah sendiri (accordion/tab/font) → hitung ulang juga.
+        this._disconnectSize = observeContainerSize(this.container, scheduleRebuild);
 
         if (typeof IntersectionObserver !== 'undefined') {
             this._observer = new IntersectionObserver((entries) => {
@@ -262,6 +265,10 @@ export default class AsciiInteractive {
         }
         if (this._onResize) {
             try { window.removeEventListener('resize', this._onResize); } catch (_e) {}
+        }
+        if (this._disconnectSize) {
+            try { this._disconnectSize(); } catch (_e) {}
+            this._disconnectSize = null;
         }
         if (this.container) {
             try {

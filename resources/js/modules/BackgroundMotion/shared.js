@@ -68,6 +68,40 @@ export function toNumber(value, fallback) {
     const n = parseFloat(value);
     return Number.isNaN(n) ? fallback : n;
 }
+
+/**
+ * Amati ukuran container sendiri (accordion/tab/font-load/Elementor
+ * stretch), bukan cuma jendela. Callback dipanggil hanya saat ukuran
+ * benar-benar berubah (pengaman anti pantulan — lapisan kita absolute
+ * sehingga rebuild tidak mengubah ukuran container).
+ * Mengembalikan fungsi disconnect. No-op kalau browser tidak dukung.
+ */
+export function observeContainerSize(container, cb) {
+    if (typeof ResizeObserver === 'undefined' || !container) {
+        return function() {};
+    }
+    let w = container.offsetWidth;
+    let h = container.offsetHeight;
+    let ro = null;
+    try {
+        ro = new ResizeObserver(() => {
+            const nw = container.offsetWidth;
+            const nh = container.offsetHeight;
+            if (nw === w && nh === h) {
+                return;
+            }
+            w = nw;
+            h = nh;
+            cb();
+        });
+        ro.observe(container);
+    } catch (_e) {
+        return function() {};
+    }
+    return function() {
+        try { ro.disconnect(); } catch (_e) {}
+    };
+}
 export function smoothstep(edge0, edge1, x) {
     if (edge1 <= edge0) {
         return x < edge0 ? 0 : 1;

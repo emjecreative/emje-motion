@@ -1,7 +1,11 @@
-import { smoothstep, isEditMode, applyEdgeMask, LIMITS, clampNum, toNumber } from './shared';
+import { smoothstep, isEditMode, applyEdgeMask, LIMITS, clampNum, toNumber, observeContainerSize } from './shared';
 
 const MAX_CELLS = LIMITS.pixel.maxCells;
-const MAX_DELTA = 8;
+// Batas kotak yang diperiksa per gerakan mouse. 16 × sel terkecil (24px)
+// = 384px > radius maksimal (300px), jadi semua kombinasi slider
+// tertutup tanpa potong. Loop-nya hitungan ringan; yang mahal (tulis
+// warna) memang dibatasi luas lingkaran — tidak bertambah karena ini.
+const MAX_DELTA = 16;
 
 /**
  * Pixel — interactive pixel grid that lights up under the cursor.
@@ -113,8 +117,12 @@ export default class PixelGrid {
         let cols = countFor(width);
         let rows = countFor(height);
 
-        // Perf guard: grow cells when the grid would be too dense.
-        if (cols * rows > MAX_CELLS) {
+        // Perf guard: grow cells sampai grid muat (loop, bukan sekali).
+        // Container raksasa + sel sudah maksimal (96) tetap dibatasi —
+        // kotak jadi kasar tapi tidak freeze.
+        let guard = 0;
+        while (cols * rows > MAX_CELLS && cellSize < 96 && guard < 8) {
+            guard++;
             const scale = Math.sqrt((cols * rows) / MAX_CELLS);
             cellSize = Math.min(96, cellSize * scale);
             cols = countFor(width);
@@ -393,14 +401,17 @@ export default class PixelGrid {
         this.container.addEventListener('touchend', this._onTouchEnd);
 
         let resizeTimer = null;
-        this._onResize = () => {
+        const scheduleRebuild = () => {
             clearTimeout(resizeTimer);
             resizeTimer = setTimeout(() => {
                 this.populate();
                 this.reset();
             }, 200);
         };
+        this._onResize = scheduleRebuild;
         window.addEventListener('resize', this._onResize);
+        // Kotak berubah sendiri (accordion/tab/font) → hitung ulang juga.
+        this._disconnectSize = observeContainerSize(this.container, scheduleRebuild);
 
         if (typeof IntersectionObserver !== 'undefined') {
             this._observer = new IntersectionObserver((entries) => {
@@ -433,6 +444,10 @@ export default class PixelGrid {
         }
         if (this._onResize) {
             try { window.removeEventListener('resize', this._onResize); } catch (_e) {}
+        }
+        if (this._disconnectSize) {
+            try { this._disconnectSize(); } catch (_e) {}
+            this._disconnectSize = null;
         }
         if (this.container) {
             try {
