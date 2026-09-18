@@ -203,8 +203,9 @@ export default class HoverReveal {
         this.imageEl.classList.add('emje-hover-reveal__image--visible');
 
         // Tiap animasi beda jelas.
-        // - fade: hanya opacity (ukuran langsung ke target).
-        // - clip: tirai terbuka via CSS + opacity (ukuran langsung ke target).
+        // - fade/clip: hanya opacity (ukuran langsung ke target).
+        //   Clip tambah tirai via CSS. Keduanya satu cabang karena kodenya
+        //   sama persis (dulu sempat terduplikat).
         // - blocks: kotak potongan gambar muncul acak sampai full.
         // Scale on Hover tetap jadi ukuran akhir untuk semua animasi.
         var targetScale = this.config.scale ?? 1;
@@ -250,15 +251,8 @@ export default class HoverReveal {
                     { opacity: 0 },
                     { opacity: 1, duration: 0.3, delay: backDelay, ease: 'power1.out', overwrite: 'auto' });
             }
-        } else if (anim === 'clip') {
-            gsap.set(this.imageEl, { scale: targetScale });
-            gsap.to(this.imageEl, {
-                rotation: targetRotate,
-                opacity: 1,
-                duration: revealDur,
-                ease: 'power2.out',
-            });
         } else {
+            // fade + clip.
             gsap.set(this.imageEl, { scale: targetScale });
             gsap.to(this.imageEl, {
                 rotation: targetRotate,

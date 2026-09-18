@@ -359,8 +359,8 @@ export default class DitherCanvas {
         if (this.ripples.length) {
             this.ripples = this.ripples.filter((r) => now - r.t0 < 3500);
         }
-        // Auto-scale resolution: react fast (10 slow frames) so a heavy
-        // shape degrades gracefully instead of janking for a full second.
+        // Auto-scale resolution: react fast (10 slow frames) so heavy
+        // frames degrade gracefully instead of janking for a full second.
         // Growth is capped at 2x the configured Pixel Size — beyond that
         // the dots would visibly change character ("grew by itself").
         const cost = perfNow() - frameStart;
@@ -373,13 +373,7 @@ export default class DitherCanvas {
         if (this._slowFrames >= 10 && this._autoPixel < autoCap) {
             this._slowFrames = 0;
             this._autoPixel = Math.min(autoCap, this._autoPixel * 1.3);
-            this.resize();
-            // resize() blanks the canvas (width reset) — repaint in the
-            // SAME frame instead of leaving one blank flash for the
-            // browser to paint before the next tick.
-            try {
-                this.draw(now);
-            } catch (_e) {}
+            this.redrawNow(now);
         }
         // Pemulihan: 600 frame cepat beruntun (~10 detik) → naik 1
         // tingkat menuju Pixel Size asli. Tenang (tidak naik-turun)
@@ -393,10 +387,7 @@ export default class DitherCanvas {
             this._fastFrames = 0;
             this._slowFrames = 0;
             this._autoPixel = Math.max(this.config.pixel, this._autoPixel / 1.3);
-            this.resize();
-            try {
-                this.draw(now);
-            } catch (_e) {}
+            this.redrawNow(now);
         }
         this._raf = requestAnimationFrame(this.tick);
     };
@@ -471,6 +462,16 @@ export default class DitherCanvas {
             } catch (_e) {}
         }
         this._burstTimers = [];
+    }
+
+    // Resize + gambar ulang dalam frame yang SAMA. resize() mengosongkan
+    // kanvas (width reset) — tanpa repaint langsung, browser sempat
+    // menampilkan satu kedip kosong sebelum tick berikutnya.
+    redrawNow(now) {
+        this.resize();
+        try {
+            this.draw(now);
+        } catch (_e) {}
     }
 
     bindEvents() {

@@ -309,10 +309,7 @@ export default class MeshGradient {
         if (this._slowFrames >= 20 && this._qualityScale > 0.4) {
             this._slowFrames = 0;
             this._qualityScale = Math.max(0.4, this._qualityScale * 0.8);
-            this.resize();
-            try {
-                this.draw();
-            } catch (_e) {}
+            this.redrawNow();
         }
         // Pemulihan: 600 frame cepat beruntun (~10 detik) → naik 1
         // tingkat menuju kualitas awal (tidak melampaui setting user).
@@ -326,10 +323,7 @@ export default class MeshGradient {
             this._fastFrames = 0;
             this._slowFrames = 0;
             this._qualityScale = Math.min(this._baseQualityScale, this._qualityScale / 0.8);
-            this.resize();
-            try {
-                this.draw();
-            } catch (_e) {}
+            this.redrawNow();
         }
         this._raf = requestAnimationFrame(this.tick);
     };
@@ -357,6 +351,15 @@ export default class MeshGradient {
             cancelAnimationFrame(this._raf);
             this._raf = 0;
         }
+    }
+
+    // Resize + gambar ulang dalam frame yang SAMA (tanpa ini browser
+    // sempat menampilkan satu kedip kosong).
+    redrawNow() {
+        this.resize();
+        try {
+            this.draw();
+        } catch (_e) {}
     }
 
     bindEvents() {
