@@ -244,5 +244,41 @@ check('tm-unfold-defaults', [ $tmDef['splitBy'], $tmDef['direction'], $tmDef['di
 check('tm-wash-default', $tmDef['fillWashColor'], '');
 check('tm-wash-evil', $tmBuild->invoke($tmFront, [ 'emje_motion_fill_wash_color' => 'red;evil' ])['fillWashColor'], '');
 
+// Updater compatibility: single source of truth is emje-motion.php header.
+require __DIR__ . '/../../src/Updater/GitHubUpdater.php';
+
+use EmjeCreative\EmjeMotion\Updater\GitHubUpdater;
+
+$headerFile = __DIR__ . '/../../emje-motion.php';
+$headerHead = is_readable($headerFile) ? (string) file_get_contents($headerFile, false, null, 0, 8192) : '';
+$parseHeader = static function (string $name) use ($headerHead): string {
+    if ($headerHead !== '' && preg_match('/^[ \t\/*#@]*' . preg_quote($name, '/') . ':[ \t]*([0-9]+(?:\.[0-9]+)*)/mi', $headerHead, $m) === 1) {
+        return trim((string) $m[1]);
+    }
+
+    return '';
+};
+$headerTested = $parseHeader('Tested up to');
+$headerRequires = $parseHeader('Requires at least');
+$headerRequiresPhp = $parseHeader('Requires PHP');
+
+check('compat-header-present', ($headerTested !== '' && $headerRequires !== '' && $headerRequiresPhp !== ''), true);
+
+$updater = new GitHubUpdater($headerFile);
+$compatMethod = new ReflectionMethod($updater, 'getCompatibility');
+$compatMethod->setAccessible(true);
+$compat = $compatMethod->invoke($updater);
+check('compat-tested-matches-header', $compat['tested'], $headerTested);
+check('compat-requires-matches-header', $compat['requires'], $headerRequires);
+check('compat-requires-php-matches-header', $compat['requires_php'], $headerRequiresPhp);
+check('compat-tested-covers-wp711', version_compare($compat['tested'], '7.1.1', '<'), false);
+
+$fallbackTested = (string) (new ReflectionClassConstant(GitHubUpdater::class, 'FALLBACK_TESTED'))->getValue();
+$fallbackRequires = (string) (new ReflectionClassConstant(GitHubUpdater::class, 'FALLBACK_REQUIRES'))->getValue();
+$fallbackRequiresPhp = (string) (new ReflectionClassConstant(GitHubUpdater::class, 'FALLBACK_REQUIRES_PHP'))->getValue();
+check('compat-fallback-tested-in-sync', $fallbackTested, $headerTested);
+check('compat-fallback-requires-in-sync', $fallbackRequires, $headerRequires);
+check('compat-fallback-requires-php-in-sync', $fallbackRequiresPhp, $headerRequiresPhp);
+
 echo PHP_EOL . "$pass passed, $fail failed" . PHP_EOL;
 exit($fail === 0 ? 0 : 1);

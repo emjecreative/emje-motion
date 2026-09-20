@@ -3,6 +3,11 @@
 All notable changes to Emje Motion are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [1.5.3] - 2026-09-20
+
+### Fixed
+- **View details warning on WordPress 7.1.1** — the plugin header already said `Tested up to: 7.1.1`, but the updater (`GitHubUpdater` + mu-helper) still sent `tested: 7.1` to the View details modal, so WordPress kept showing "This plugin has not been tested with your current version". Compatibility data is now read from the plugin header (single source of truth, cached per request, safe fallbacks), mirrored in both updater copies, with an anti-drift test locking header, fallbacks, and modal data together.
+
 ## [1.5.2] - 2026-09-20
 
 ### Fixed

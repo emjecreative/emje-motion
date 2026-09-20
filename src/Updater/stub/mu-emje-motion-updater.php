@@ -160,6 +160,75 @@ if (! function_exists('emje_motion_mu_get_icons')) {
     }
 }
 
+if (! function_exists('emje_motion_mu_get_compatibility')) {
+    // Single source of truth: Tested/Requires dibaca dari header
+    // emje-motion.php agar View details tidak drift. Cache per request,
+    // fallback ke konstanta bila header tidak terbaca.
+    // @return array{tested: string, requires: string, requires_php: string}
+    function emje_motion_mu_get_compatibility(): array
+    {
+        static $cached = null;
+        if (is_array($cached)) {
+            return $cached;
+        }
+
+        $compat = [
+            'tested' => '7.1.1',
+            'requires' => '6.7',
+            'requires_php' => '8.2',
+        ];
+
+        $file = defined('WP_PLUGIN_DIR') ? rtrim((string) WP_PLUGIN_DIR, '/\\') . '/emje-motion/emje-motion.php' : '';
+        if ($file !== '' && is_readable($file)) {
+            $headers = ['tested' => '', 'requires' => '', 'requires_php' => ''];
+
+            if (function_exists('get_file_data')) {
+                $data = get_file_data(
+                    $file,
+                    ['tested' => 'Tested up to', 'requires' => 'Requires at least', 'requires_php' => 'Requires PHP'],
+                    'plugin'
+                );
+                if (is_array($data)) {
+                    foreach (['tested', 'requires', 'requires_php'] as $key) {
+                        if (isset($data[$key]) && is_string($data[$key]) && trim($data[$key]) !== '') {
+                            $headers[$key] = trim($data[$key]);
+                        }
+                    }
+                }
+            }
+
+            if ($headers['tested'] === '' || $headers['requires'] === '' || $headers['requires_php'] === '') {
+                $head = @file_get_contents($file, false, null, 0, 8192);
+                if (is_string($head) && $head !== '') {
+                    $map = [
+                        'tested' => '/^[ \t\/*#@]*Tested up to:[ \t]*([0-9]+(?:\.[0-9]+)*)/mi',
+                        'requires' => '/^[ \t\/*#@]*Requires at least:[ \t]*([0-9]+(?:\.[0-9]+)*)/mi',
+                        'requires_php' => '/^[ \t\/*#@]*Requires PHP:[ \t]*([0-9]+(?:\.[0-9]+)*)/mi',
+                    ];
+                    foreach ($map as $key => $pattern) {
+                        if ($headers[$key] !== '') {
+                            continue;
+                        }
+                        if (preg_match($pattern, $head, $m) === 1 && isset($m[1]) && $m[1] !== '') {
+                            $headers[$key] = trim((string) $m[1]);
+                        }
+                    }
+                }
+            }
+
+            foreach (['tested', 'requires', 'requires_php'] as $key) {
+                if ($headers[$key] !== '' && preg_match('/^[0-9]+(\.[0-9]+)*$/', $headers[$key]) === 1) {
+                    $compat[$key] = $headers[$key];
+                }
+            }
+        }
+
+        $cached = $compat;
+
+        return $compat;
+    }
+}
+
 if (! function_exists('emje_motion_mu_check_update')) {
     function emje_motion_mu_check_update($transient)
     {
@@ -187,15 +256,16 @@ if (! function_exists('emje_motion_mu_check_update')) {
         }
         $remoteVersion = $release['version'];
         if (version_compare($remoteVersion, $currentVersion, '>')) {
+            $compat = emje_motion_mu_get_compatibility();
             $transient->response[$pluginFile] = (object) [
                 'slug' => 'emje-motion',
                 'plugin' => $pluginFile,
                 'new_version' => $remoteVersion,
                 'package' => $release['download_url'],
                 'url' => 'https://github.com/emjecreative/emje-motion',
-                'tested' => '7.1',
-                'requires' => '6.7',
-                'requires_php' => '8.2',
+                'tested' => $compat['tested'],
+                'requires' => $compat['requires'],
+                'requires_php' => $compat['requires_php'],
                 'icons' => emje_motion_mu_get_icons(),
             ];
         } else {
@@ -241,15 +311,16 @@ if (! function_exists('emje_motion_mu_merge_update')) {
             return $value;
         }
         if (version_compare($release['version'], $currentVersion, '>')) {
+            $compat = emje_motion_mu_get_compatibility();
             $value->response[$pluginFile] = (object) [
                 'slug' => 'emje-motion',
                 'plugin' => $pluginFile,
                 'new_version' => $release['version'],
                 'package' => $release['download_url'],
                 'url' => 'https://github.com/emjecreative/emje-motion',
-                'tested' => '7.1',
-                'requires' => '6.7',
-                'requires_php' => '8.2',
+                'tested' => $compat['tested'],
+                'requires' => $compat['requires'],
+                'requires_php' => $compat['requires_php'],
                 'icons' => emje_motion_mu_get_icons(),
             ];
         } else {
@@ -270,6 +341,7 @@ if (! function_exists('emje_motion_mu_plugin_info')) {
         if ($release === null) {
             return $result;
         }
+        $compat = emje_motion_mu_get_compatibility();
         $info = [
             'name' => 'Emje Motion',
             'slug' => 'emje-motion',
@@ -278,9 +350,9 @@ if (! function_exists('emje_motion_mu_plugin_info')) {
             'homepage' => 'https://github.com/emjecreative/emje-motion',
             'download_link' => $release['download_url'],
             'trunk' => $release['download_url'],
-            'requires' => '6.7',
-            'tested' => '7.1',
-            'requires_php' => '8.2',
+            'requires' => $compat['requires'],
+            'tested' => $compat['tested'],
+            'requires_php' => $compat['requires_php'],
             'last_updated' => $release['published_at'],
             'icons' => emje_motion_mu_get_icons(),
             'sections' => [
