@@ -30,7 +30,6 @@ export default class FillReveal extends Animation {
 		};
 
 		// Per-line state
-		this.lines = [];
 		this.masks = [];
 		this.foregrounds = [];
 		this.isPerLine = false;
@@ -114,13 +113,6 @@ export default class FillReveal extends Animation {
 	}
 
 	/**
-	 * Check if element has block paragraphs (text-editor).
-	 */
-	hasBlockParagraphs() {
-		return !!this.element.querySelector('p');
-	}
-
-	/**
 	 * Prepare the animation.
 	 */
 	prepare() {
@@ -139,11 +131,26 @@ export default class FillReveal extends Animation {
 			return;
 		}
 
+		// The source may have changed since construction (late render in
+		// the editor, or an external re-render). Our own markup always
+		// carries .emje-motion-fill, so anything else is fresh source
+		// worth capturing. An empty source is never adopted — that would
+		// lock in a blank animation.
+		if (!this.element.querySelector('.emje-motion-fill')) {
+			const current = sanitizeHtml(this.element.innerHTML);
+			if (typeof current === 'string' && current.trim() !== '') {
+				this.originalHTML = current;
+			}
+		}
+
+		if (typeof this.originalHTML !== 'string' || this.originalHTML.trim() === '') {
+			return;
+		}
+
 		if (this.shouldUsePerLine()) {
 			const built = buildPerLineFill(this.element, this.originalHTML, this.config);
 			if (built) {
 				this.dom = built.dom;
-				this.lines = built.lines;
 				this.masks = built.masks;
 				this.foregrounds = built.foregrounds;
 				if (typeof built.width === 'number') this._lastWidth = built.width;
@@ -243,6 +250,10 @@ export default class FillReveal extends Animation {
 
 		this.prepare();
 
+		if (!this.dom.wrapper) {
+			return;
+		}
+
 		this.animate();
 
 	}
@@ -300,7 +311,10 @@ export default class FillReveal extends Animation {
 	}
 
 	observeResize() {
-		if (!this.isPerLine || this.hasBlockParagraphs()) return;
+		if (!this.isPerLine) return;
+		// Only width-dependent (visual-line) splits need rebuilds;
+		// per-paragraph splits are immune to width changes.
+		if (!(this._lastWidth > 0)) return;
 		if (typeof ResizeObserver === 'undefined') return;
 		if (this.resizeObserver) return;
 
@@ -319,7 +333,6 @@ export default class FillReveal extends Animation {
 					this.element.innerHTML = this.originalHTML;
 				} catch (e) {}
 				this.dom = { wrapper: null, background: null, mask: null, foreground: null };
-				this.lines = [];
 				this.masks = [];
 				this.foregrounds = [];
 				this.isPerLine = false;
@@ -351,12 +364,7 @@ export default class FillReveal extends Animation {
 		}
 		clearTimeout(this.resizeTimer);
 
-		if ( ! this.dom.wrapper ) {
-			return;
-		}
-
-		// TextSplitter revert is handled via destroy recreating innerHTML
-		this.element.innerHTML = this.originalHTML;
+		const wrapper = this.dom.wrapper;
 
 		this.dom = {
 			wrapper: null,
@@ -364,10 +372,29 @@ export default class FillReveal extends Animation {
 			mask: null,
 			foreground: null,
 		};
-		this.lines = [];
 		this.masks = [];
 		this.foregrounds = [];
 		this.isPerLine = false;
+
+		if ( ! wrapper ) {
+			return;
+		}
+
+		// Only restore when our own markup is still in the DOM. If an
+		// external render (edit, re-render) already replaced it, the new
+		// content is authoritative — restoring would clobber it.
+		let stillThere = false;
+		try {
+			stillThere = typeof this.element.contains === 'function'
+				&& this.element.contains(wrapper);
+		} catch (e) {}
+
+		if ( ! stillThere ) {
+			return;
+		}
+
+		// TextSplitter revert is handled via destroy recreating innerHTML
+		this.element.innerHTML = this.originalHTML;
 
 	}
 

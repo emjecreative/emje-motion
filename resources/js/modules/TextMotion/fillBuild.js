@@ -65,7 +65,7 @@ function buildPerParagraph(element, originalHTML, config) {
 		const singleText = paragraphs[0].textContent.trim();
 		if (singleText.split(/\s+/).length < 6) return null;
 		// Try visual lines for single paragraph
-		const visual = buildVisualLinesForElement(paragraphs[0]);
+		const visual = buildVisualLinesForElement(paragraphs[0], paragraphs[0].innerHTML, config);
 		if (visual) return visual;
 		// Fallback to paragraph as single line
 	}
@@ -82,6 +82,7 @@ function buildPerParagraph(element, originalHTML, config) {
 	const bg = document.createElement('span');
 	bg.className = 'emje-motion-fill__background';
 	bg.innerHTML = html;
+	bg.setAttribute('aria-hidden', 'true');
 	if (typeof config.fillBgOpacity !== 'undefined') {
 		bg.style.opacity = String(config.fillBgOpacity);
 	}
@@ -117,11 +118,13 @@ function buildPerParagraph(element, originalHTML, config) {
 }
 
 function buildPerVisualLine(element, originalHTML, config) {
-	return buildVisualLinesForElement(element);
+	return buildVisualLinesForElement(element, originalHTML, config);
 }
 
 function buildVisualLinesForElement(targetEl, originalHTML, config) {
 	const state = newState();
+	if (typeof originalHTML !== 'string' || originalHTML.trim() === '') return null;
+	if (!config || typeof config !== 'object') config = {};
 	// Create off-screen measuring container with same styles
 	const rect = targetEl.getBoundingClientRect();
 	const width = rect.width || targetEl.offsetWidth || targetEl.clientWidth || 300;
@@ -186,6 +189,7 @@ function buildVisualLinesForElement(targetEl, originalHTML, config) {
 	const bg = document.createElement('span');
 	bg.className = 'emje-motion-fill__background';
 	bg.innerHTML = lineHTML;
+	bg.setAttribute('aria-hidden', 'true');
 	if (typeof config.fillBgOpacity !== 'undefined') {
 		bg.style.opacity = String(config.fillBgOpacity);
 	}
@@ -217,8 +221,8 @@ function buildVisualLinesForElement(targetEl, originalHTML, config) {
 		return null;
 	}
 
-	element.innerHTML = '';
-	element.appendChild(state.dom.wrapper);
+	targetEl.innerHTML = '';
+	targetEl.appendChild(state.dom.wrapper);
 	state.dom.background = state.lines[0].querySelector('.emje-motion-fill__background');
 	state.dom.mask = state.masks[0];
 	state.dom.foreground = state.lines[0].querySelector('.emje-motion-fill__foreground');

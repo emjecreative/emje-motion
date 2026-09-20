@@ -86,14 +86,6 @@ export function buildTextMotionConfig(settings) {
     // Empty wash color means "follow the text color" (legacy look).
     var fillWashColor = pickEditorColor(get, 'emje_motion_fill_wash_color', '');
 
-    var fillLineMode = get('emje_motion_fill_line_mode', 'overlap');
-    if (['overlap', 'sequence'].indexOf(fillLineMode) === -1) fillLineMode = 'overlap';
-
-    var fillBlur = clampNum(get('emje_motion_fill_blur', 0), 0, 20, 0);
-
-    // Empty wash color means "follow the text color" (legacy look).
-    var fillWashColor = pickEditorColor(get, 'emje_motion_fill_wash_color', '');
-
     var animation = get('emje_motion_animation', 'scramble-text');
     if (['scramble-text', 'text-unfold', 'fill-reveal'].indexOf(animation) === -1) animation = 'scramble-text';
 
@@ -140,11 +132,17 @@ export function buildTextMotionConfig(settings) {
         scrubEndPos = translated.endPos;
     }
 
+    var characterSet = get('emje_motion_scramble_character_set', 'letters-numbers');
+    if (['letters', 'numbers', 'letters-numbers', 'symbols', 'custom'].indexOf(characterSet) === -1) characterSet = 'letters-numbers';
+
+    var revealOrder = get('emje_motion_scramble_reveal_order', 'left-to-right');
+    if (['left-to-right', 'right-to-left', 'center-out', 'random'].indexOf(revealOrder) === -1) revealOrder = 'left-to-right';
+
     return {
         animation: animation,
-        characterSet: get('emje_motion_scramble_character_set', 'letters-numbers'),
+        characterSet: characterSet,
         customCharacters: customChars,
-        revealOrder: get('emje_motion_scramble_reveal_order', 'left-to-right'),
+        revealOrder: revealOrder,
         scrambleSpeed: scrambleSpeed,
         duration: duration,
         delay: delay,

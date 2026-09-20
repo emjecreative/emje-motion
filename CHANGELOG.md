@@ -3,6 +3,13 @@
 All notable changes to Emje Motion are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [Unreleased]
+
+### Fixed
+- **Text Motion Fill Reveal: per-line mode dead for plain headings** — `buildPerVisualLine` and the single-paragraph path dropped `originalHTML`/`config`, so the measuring box held the literal text "undefined" and visual line splitting always bailed to single-fill. Line Stagger / Line Mode now work for multi-line headings. A latent `element is not defined` crash on the success path (masked by the first bug) is fixed too.
+- **Text Motion Fill Reveal: destroy no longer clobbers external edits** — restore only runs when the built markup is still in the DOM; empty sources are never adopted, and `play()` skips when there is nothing to animate.
+- **Text Motion Fill Reveal: resize rebuild covers single-paragraph visual splits** — the observer is now gated on width-dependent splits instead of paragraph presence; per-line backgrounds carry `aria-hidden` so screen readers hear the text once.
+
 ## [1.5.1] - 2026-09-18
 
 ### Changed

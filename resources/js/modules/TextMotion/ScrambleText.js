@@ -16,18 +16,48 @@ export default class ScrambleText extends Animation {
         super(element, config);
 
 		this.originalText = '';
+		this.hasOriginal = false;
 		this.characters = [];
 		this.revealSequence = [];
 
 		this.scrambledCharacters = [];
 		this.lastScrambleUpdate = 0;
+
+		// Tracks what this instance last wrote, so destroy() never wipes
+		// content it didn't create (e.g. re-init before first play) and
+		// never clobbers external edits (e.g. typing in the editor).
+		this.hasRendered = false;
+		this.lastRendered = '';
     }
 
 	/**
 	 * Prepare the animation.
+	 *
+	 * Captures the clean text once and keeps it. Re-captures only when
+	 * the DOM shows our own stale output (replay) or a genuine external
+	 * change (edit / re-render). An empty DOM is never adopted, so a
+	 * too-early init can be retried later instead of locking in ''.
 	 */
 	prepare() {
-		this.originalText = this.element.textContent;
+		const current = this.element.textContent ?? '';
+
+		if (!this.hasOriginal) {
+			if (current === '') {
+				this.characters = [];
+				this.revealSequence = [];
+				this.scrambledCharacters = [];
+				return;
+			}
+
+			this.originalText = current;
+			this.hasOriginal = true;
+		} else if (current !== this.originalText) {
+			if (this.hasRendered && current === this.lastRendered) {
+				this.element.textContent = this.originalText;
+			} else {
+				this.originalText = current;
+			}
+		}
 
 		this.characters = Array.from(
         	this.originalText
@@ -89,8 +119,16 @@ export default class ScrambleText extends Animation {
 				return result;
 			}
 
-			case 'random':
-				return sequence.sort(() => Math.random() - 0.5);
+			case 'random': {
+				const shuffled = [...sequence];
+
+				for (let i = shuffled.length - 1; i > 0; i -= 1) {
+					const j = Math.floor(Math.random() * (i + 1));
+					[shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+				}
+
+				return shuffled;
+			}
 
 			default:
 				return sequence;
@@ -135,15 +173,17 @@ export default class ScrambleText extends Animation {
 
 		}
 
-		if (!characters.length) {
-			characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-		}
-
-		const randomIndex = Math.floor(
-			Math.random() * characters.length
+		const pool = Array.from(
+			characters.length
+				? characters
+				: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
 		);
 
-		return characters[randomIndex];
+		const randomIndex = Math.floor(
+			Math.random() * pool.length
+		);
+
+		return pool[randomIndex];
 
 	}
 
@@ -182,6 +222,10 @@ export default class ScrambleText extends Animation {
 	 */
 	renderFrame(progress) {
 
+		if (!this.characters.length) {
+			return;
+		}
+
 		const revealedCharacters = Math.floor(
 			this.characters.length * progress
 		);
@@ -209,7 +253,9 @@ export default class ScrambleText extends Animation {
 
 		});
 
-		this.element.textContent = output.join('');
+		this.lastRendered = output.join('');
+		this.hasRendered = true;
+		this.element.textContent = this.lastRendered;
 
 	}
 
@@ -233,6 +279,11 @@ export default class ScrambleText extends Animation {
 		this.killTimeline();
 
 		this.prepare();
+
+		if (!this.characters.length) {
+			return;
+		}
+
 		const animation = {
 			progress: 0,
 		};
@@ -261,6 +312,14 @@ export default class ScrambleText extends Animation {
 	destroy() {
 
 		super.destroy();
+
+		if (!this.hasRendered || !this.hasOriginal) {
+			return;
+		}
+
+		if ((this.element.textContent ?? '') !== this.lastRendered) {
+			return;
+		}
 
 		this.element.textContent = this.originalText;
 
