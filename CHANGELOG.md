@@ -3,6 +3,16 @@
 All notable changes to Emje Motion are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [1.5.5] - 2026-09-27
+
+### Security
+- **HTML sanitizer hardened (CodeQL High)** — `sanitizeHtml` rewritten from regex filtering to a single-pass tokenizer: dangerous elements are dropped with their whole subtree (including unclosed/nested payloads), unknown elements are unwrapped, and only allowlisted tags and attributes survive. Event handlers, `style` attributes, and unsafe URL schemes (`javascript:`, entity-smuggled schemes) never pass. `target="_blank"` now gains `rel="noopener"`. Covered by 32 new smoke assertions.
+- **Workflow least privilege (CodeQL Medium)** — `Tests` workflow pinned to `permissions: contents: read`.
+- **Dev-tool cleanup (CodeQL Medium)** — removed a no-op string replacement in `tools/make-pot.js` (generated `.pot` byte-identical).
+
+### Changed
+- **Dependabot schedule** — routine npm + Composer updates now run weekly (Monday, grouped); security updates stay immediate. `SECURITY.md` added with the vulnerability reporting policy.
+
 ## [1.5.4] - 2026-09-27
 
 ### Changed

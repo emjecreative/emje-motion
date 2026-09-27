@@ -221,7 +221,7 @@ function main() {
     }
 
     fs.mkdirSync(path.dirname(OUT), { recursive: true });
-    fs.writeFileSync(OUT, pot.replace(/\n/g, '\n'), 'utf8');
+    fs.writeFileSync(OUT, pot, 'utf8');
     console.log('Wrote ' + path.relative(ROOT, OUT) + ' with ' + sorted.length + ' strings from ' + files.length + ' files.');
 }
 
