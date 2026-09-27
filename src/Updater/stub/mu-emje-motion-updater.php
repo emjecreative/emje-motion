@@ -173,7 +173,7 @@ if (! function_exists('emje_motion_mu_get_compatibility')) {
         }
 
         $compat = [
-            'tested' => '7.1.1',
+            'tested' => '7.1.2',
             'requires' => '6.7',
             'requires_php' => '8.2',
         ];

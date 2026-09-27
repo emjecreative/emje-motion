@@ -24,7 +24,7 @@ final class GitHubUpdater
 
     private const CACHE_TTL_DEBUG = 300; // 5 minutes when WP_DEBUG
 
-    private const FALLBACK_TESTED = '7.1.1';
+    private const FALLBACK_TESTED = '7.1.2';
 
     private const FALLBACK_REQUIRES = '6.7';
 

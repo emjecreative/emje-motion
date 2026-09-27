@@ -13,7 +13,7 @@ Emje Motion gives your pages movement with a purpose — every animation earns i
 
 ## Requirements
 
-- WordPress 6.7+ (tested up to 7.1.1)
+- WordPress 6.7+ (tested up to 7.1.2)
 - Elementor 3.23+ (Free)
 - PHP 8.2+
 

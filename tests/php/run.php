@@ -271,7 +271,7 @@ $compat = $compatMethod->invoke($updater);
 check('compat-tested-matches-header', $compat['tested'], $headerTested);
 check('compat-requires-matches-header', $compat['requires'], $headerRequires);
 check('compat-requires-php-matches-header', $compat['requires_php'], $headerRequiresPhp);
-check('compat-tested-covers-wp711', version_compare($compat['tested'], '7.1.1', '<'), false);
+check('compat-tested-covers-wp712', version_compare($compat['tested'], '7.1.2', '<'), false);
 
 $fallbackTested = (string) (new ReflectionClassConstant(GitHubUpdater::class, 'FALLBACK_TESTED'))->getValue();
 $fallbackRequires = (string) (new ReflectionClassConstant(GitHubUpdater::class, 'FALLBACK_REQUIRES'))->getValue();
