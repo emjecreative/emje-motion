@@ -3,6 +3,11 @@
 All notable changes to Emje Motion are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [1.5.6] - 2026-09-27
+
+### Changed
+- **Code cleanup batch 4** — removed dead code (unused `originalHTML` parameter in TextMotion paragraph builds, write-only grid fields in Background ASCII) and deduplicated constants (Smooth Scroll defaults in settings save, motion setting keys in asset loading). No behavior changes.
+
 ## [1.5.5] - 2026-09-27
 
 ### Security
