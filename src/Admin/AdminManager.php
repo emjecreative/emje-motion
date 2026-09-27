@@ -278,8 +278,8 @@ final class AdminManager
             $wheel = SmoothScrollConfig::sanitizeWheel($posted['smooth_scroll_wheel_multiplier'] ?? null);
             $disableSmooth = isset($posted['disable_smooth_on_mobile']) && $posted['disable_smooth_on_mobile'] === '1';
         } else {
-            $lerp = 0.075;
-            $wheel = 1.2;
+            $lerp = SmoothScrollConfig::DEFAULT_LERP;
+            $wheel = SmoothScrollConfig::DEFAULT_WHEEL;
             $disableSmooth = $currentSettings['disable_smooth_on_mobile'] ?? true;
         }
 

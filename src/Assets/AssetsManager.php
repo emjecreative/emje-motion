@@ -30,6 +30,20 @@ final class AssetsManager
     private const EDITOR_STYLE = 'emje-motion-editor';
 
     /**
+     * Elementor setting keys that mark motion as enabled (single source of
+     * truth for the widget-settings check and the postmeta scan below).
+     *
+     * @var list<string>
+     */
+    private const MOTION_SETTING_KEYS = [
+        'emje_motion_enable',
+        'emje_hover_reveal_enable',
+        'emje_cursor_enable',
+        'emje_interaction_enable',
+        'emje_background_enable',
+    ];
+
+    /**
      * Whether frontend assets are needed on current request.
      */
     private bool $needsFrontendAssets = false;
@@ -94,7 +108,16 @@ final class AssetsManager
         if ($widget !== null && is_object($widget) && method_exists($widget, 'get_settings_for_display')) {
             /** @var mixed $settings */
             $settings = $widget->get_settings_for_display();
-            if (is_array($settings) && empty($settings['emje_motion_enable']) && empty($settings['emje_hover_reveal_enable']) && empty($settings['emje_cursor_enable']) && empty($settings['emje_interaction_enable']) && empty($settings['emje_background_enable'])) {
+            $motionEnabled = false;
+            if (is_array($settings)) {
+                foreach (self::MOTION_SETTING_KEYS as $key) {
+                    if (! empty($settings[$key])) {
+                        $motionEnabled = true;
+                        break;
+                    }
+                }
+            }
+            if (! $motionEnabled) {
                 return;
             }
         }
@@ -188,7 +211,7 @@ final class AssetsManager
 
         if ($postId > 0) {
             $elementorData = get_post_meta($postId, '_elementor_data', true);
-            $needleKeys = ['emje_motion_enable', 'emje_hover_reveal_enable', 'emje_cursor_enable', 'emje_interaction_enable', 'emje_background_enable'];
+            $needleKeys = self::MOTION_SETTING_KEYS;
 
             if (! empty($elementorData) && is_string($elementorData)) {
                 foreach ($needleKeys as $needle) {

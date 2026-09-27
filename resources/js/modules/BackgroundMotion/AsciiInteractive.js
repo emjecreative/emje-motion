@@ -44,8 +44,6 @@ export default class AsciiInteractive {
         this.wrapEl = null;
         this.gridEl = null;
         this.cells = [];
-        this.cols = 0;
-        this.rows = 0;
         this.visible = true;
         this.twinkleTimer = null;
         this.twinkleTimeouts = [];
@@ -109,8 +107,6 @@ export default class AsciiInteractive {
             rows = Math.max(1, Math.ceil(height / cellH));
         }
 
-        this.cols = cols;
-        this.rows = rows;
         this.gridEl.style.gridTemplateColumns = `repeat(${cols}, ${cellW}px)`;
         this.gridEl.style.gridTemplateRows = `repeat(${rows}, ${cellH}px)`;
         this.gridEl.innerHTML = '';

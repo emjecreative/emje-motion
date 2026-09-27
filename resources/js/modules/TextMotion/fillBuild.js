@@ -29,7 +29,7 @@ function applyWashColor(bg, config) {
 /** Route per-line builds: paragraphs first (preserves HTML), else visual lines. */
 export function buildPerLineFill(element, originalHTML, config) {
 	if (element.querySelector('p')) {
-		const byParagraph = buildPerParagraph(element, originalHTML, config);
+		const byParagraph = buildPerParagraph(element, config);
 		if (byParagraph) return byParagraph;
 	}
 	return buildPerVisualLine(element, originalHTML, config);
@@ -54,7 +54,7 @@ export function buildSingleFill(element, originalHTML, config) {
 	return state;
 	}
 
-function buildPerParagraph(element, originalHTML, config) {
+function buildPerParagraph(element, config) {
 	const state = newState();
 	const paragraphs = Array.from(element.querySelectorAll('p'));
 	// If no <p> or single <p> with short text, fallback to visual
